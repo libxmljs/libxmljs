@@ -12,7 +12,7 @@ Load (int argc, char *argv[])
 
   Local<Object> sax = Object::New();
   libxml_js_obj->Set(String::NewSymbol("sax"), sax);
-  // Sax::Initialize(sax);
+  SaxParser::Initialize(sax);
   SaxPushParser::Initialize(sax);
 
   return scope.Close(libxml_js_obj);
