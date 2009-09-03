@@ -1,32 +1,38 @@
-var callbacks = {
-  document: null,
-  current: null,
+function Callbacks() {
+  this.document = null;
+  this.current = null;
 
-  startDocument: function() {},
-  endDocument: function() {},
+  this.startDocument = function() {};
+  this.endDocument = function() {};
 
-  startElement: function(elem, attrs) {},
-  endElement: function(elem) {},
+  this.startElement = function(elem, attrs) {};
+  this.endElement = function(elem) {};
 
-  startElementNS: function(elem, attrs, prefix, uri, namespaces) {},
-  endElementNS: function(elem, prefix, uri) {},
+  this.startElementNS = function(elem, attrs, prefix, uri, namespaces) {};
+  this.endElementNS = function(elem, prefix, uri) {};
 
-  characters: function(chars) {},
-  cdata: function(cdata) {},
+  this.characters = function(chars) {};
+  this.cdata = function(cdata) {};
 
-  warning: function(msg) {},
-  error: function(msg) {}
+  this.comment = function(msg) {};
+
+  this.warning = function(msg) {};
+  this.error = function(msg) {};
 };
 
 
 /** SAX Push Parser **/
-var saxPushParser = libxml.sax.createPushParser(callbacks);
-
+var saxPushParser = libxml.createSAXPushParser(new Callbacks(), {html: true});
 while(data) {
   saxPushParser.push(data);
 };
 
 
 /** SAX Parser **/
-var saxParser = libxml.sax.createParser(callbacks);
-saxParser.parse(document);
+var saxParser = libxml.createSAXParser(new Callbacks());
+saxParser.parseString(document);
+
+
+/** Parser **/
+var fromFile = libxml.parseFile('./document.xml');
+var formMem = libxml.parseString(doc);
