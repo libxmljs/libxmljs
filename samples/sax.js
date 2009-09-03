@@ -1,35 +1,32 @@
-function Callbacks() {
-  this.document = null;
-  this.current = null;
+var callbacks = {
+  startDocument: function() {},
+  endDocument: function() {},
 
-  this.startDocument = function() {};
-  this.endDocument = function() {};
+  startElement: function(elem, attrs) {},
+  endElement: function(elem) {},
 
-  this.startElement = function(elem, attrs) {};
-  this.endElement = function(elem) {};
+  startElementNS: function(elem, attrs, prefix, uri, namespaces) {},
+  endElementNS: function(elem, prefix, uri) {},
 
-  this.startElementNS = function(elem, attrs, prefix, uri, namespaces) {};
-  this.endElementNS = function(elem, prefix, uri) {};
+  characters: function(chars) {},
+  cdata: function(cdata) {},
 
-  this.characters = function(chars) {};
-  this.cdata = function(cdata) {};
+  comment: function(msg) {},
 
-  this.comment = function(msg) {};
-
-  this.warning = function(msg) {};
-  this.error = function(msg) {};
+  warning: function(msg) {},
+  error: function(msg) {}
 };
 
 
 /** SAX Push Parser **/
-var saxPushParser = libxml.createSAXPushParser(new Callbacks(), {html: true});
+var saxPushParser = libxml.createSAXPushParser(callbacks, {html: true});
 while(data) {
   saxPushParser.push(data);
 };
 
 
 /** SAX Parser **/
-var saxParser = libxml.createSAXParser(new Callbacks());
+var saxParser = libxml.createSAXParser(callbacks);
 saxParser.parseString(document);
 
 
