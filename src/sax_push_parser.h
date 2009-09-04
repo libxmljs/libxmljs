@@ -11,6 +11,7 @@ public:
 
   SaxPushParser(v8::Handle<v8::Object> callbacks);
   ~SaxPushParser();
+
 };
 
 } // namespace libxml_js

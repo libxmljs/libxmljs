@@ -23,17 +23,6 @@ struct SaxParserCallback
     void* context);
 
   static void
-  start_element(
-    void* context,
-    const xmlChar* name,
-    const xmlChar** p);
-
-  static void
-  end_element(
-    void* context,
-    const xmlChar* name);
-
-  static void
   start_element_ns(
     void * context,
     const xmlChar * localname,
@@ -90,6 +79,16 @@ struct SaxParserCallback
 class SaxParser : public Parser {
 public:
   static void Initialize (v8::Handle<v8::Object> target);
+
+  SaxParser(v8::Handle<v8::Object> callbacks) : callbacks_(callbacks);
+  virtual ~SaxParser();
+
+  void Callback(const char * what);
+  void Callback(const char * what, int argc, Handle<Value> argv[]);
+
+  // Coming Soon
+  // virtual void parseFile(const char* filename);
+  // virtual void parseString(const char* string, unsigned int size);
 
   void
   start_document();
@@ -148,6 +147,9 @@ public:
   void
   structured_error(
     xmlErrorPtr xerror);
+
+protected:
+  v8::Handle<v8::Object> callbacks_;
 };
 
 } // namespace libxml_js
