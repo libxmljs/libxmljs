@@ -1,7 +1,10 @@
-#include <libxml_js.h>
+#include "sax_parser.h"
 
-SaxParser::SaxParser()
-  : sax_handler_( new _xmlSAXHandler )
+using namespace v8;
+using namespace libxmljs;
+
+SaxParser::SaxParser(v8::Handle<v8::Function> callbacks) :
+  sax_handler_( new _xmlSAXHandler )
 {
   xmlSAXHandler temp = {
     0, // internalSubset;
@@ -29,16 +32,23 @@ SaxParser::SaxParser()
     SaxParserCallback::error, // error;
     0, // fatalError; /* unused error() get all the errors */
     0, // getParameterEntity;
-    SaxParserCallback::cdata_block cdataBlock;
+    SaxParserCallback::cdata_block, // cdataBlock;
     0, // externalSubset;
     XML_SAX2_MAGIC, /* force SAX2 */
     0, /* _private */
     SaxParserCallback::start_element_ns, // startElementNs;
     SaxParserCallback::end_element_ns, // endElementNs;
-    SaxParserCallback::structured_error serror
+    SaxParserCallback::structured_error // serror
   };
   *sax_handler_ = temp;
+
+  // Setup callbacks
+  callbacks_ = libxml.SaxCallbacks->NewInstance();
+  callbacks->Call(callbacks_, 0, Null());
 }
+
+SaxParser::~SaxParser()
+{}
 
 void
 SaxParser::Initialize (Handle<Object> target)
@@ -58,11 +68,56 @@ SaxParser::Callback(
 void
 SaxParser::Callback(
   const char * what,
-  int argc
+  int argc,
   Handle<Value> argv[])
 {
   HandleScope scope;
   
+}
+
+void
+SaxParser::parse_string(
+  const char* string,
+  unsigned int size)
+{
+  context_ = xmlCreateMemoryParserCtxt(string, size);
+  parse();
+}
+
+void
+SaxParser::parse()
+{
+  //   ctxt->sax2 = 1;
+  //   ctxt->sax = 
+  //   xmlParseDocument(ctxt);
+  //   ctxt->sax = NULL;
+  //   int status;
+  //   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
+  //   xmlParserCtxtPtr ctxt;
+  //   Data_Get_Struct(context, xmlParserCtxt, ctxt);
+  // 
+  //   ctxt->sax2 = 1;
+  // ctxt->userData = (void*)rb_ivar_get(self, CALLBACKS_ATTR);
+  // 
+  //   if (ctxt->sax != (xmlSAXHandlerPtr) &xmlDefaultSAXHandler)
+  //     xmlFree(ctxt->sax);
+  //     
+  //   ctxt->sax = (xmlSAXHandlerPtr)&rxml_sax_handler;
+  //     
+  //   status = xmlParseDocument(ctxt);
+  // 
+  //   /* IMPORTANT - null the handle to our sax handler
+  //      so libxml doesn't try to free it.*/
+  //   ctxt->sax = NULL;
+  //   
+  //   /* Now check the parsing result*/
+  //   if (status == -1 || !ctxt->wellFormed)
+  //   {
+  //     if (ctxt->myDoc)
+  //       xmlFreeDoc(ctxt->myDoc);
+  // 
+  //     rxml_raise(&ctxt->lastError);
+  //   }
 }
 
 void
@@ -92,37 +147,37 @@ SaxParser::start_element_ns(
 
   int i;
   int j;
-  Handle<Value> elem;
+  Handle<Array> elem;
 
   // Initialize argv with localname, prefix, and uri
   Handle<Value> argv[5] = {
-    String::New(localname),
-    prefix ? String::New(prefix) : Value::New(),
-    uri ? String::New(uri) : Value::New()
+    String::New((const char*)localname),
+    prefix ? String::New((const char*)prefix) : Null(),
+    uri ? String::New((const char*)uri) : Null()
   };
 
   // Build namespace array of arrays [[prefix, ns], [prefix, ns]]
-  Handle<Value> nsList = Array::New(nb_namespaces);
+  Handle<Array> nsList = Array::New(nb_namespaces);
   if (namespaces) {
     for (i = 0, j = 0; i < nb_namespaces * 2; i += 2, j++) {
       elem = Array::New(2);
-      elem->Set(0, String::New(namespaces[i+0]));
-      elem->Set(1, String::New(namespaces[i+1]));
-      nsList->Set(j, elem);
+      elem->Set(Integer::New(0), String::New((const char*)namespaces[i+0]), None);
+      elem->Set(Integer::New(1), String::New((const char*)namespaces[i+1]), None);
+      nsList->Set(Integer::New(j), elem, None);
     }
   }
 
   // Build attributes list
   // Each attribute is an array of [localname, prefix, URI, value, end]
-  Handle<Value> attrList = Array::New(nb_attributes);
+  Handle<Array> attrList = Array::New(nb_attributes);
   if (attributes) {
     for (i = 0, j = 0; i < nb_attributes; i += 5, j++) {
       elem = Array::New(4);
-      elem->Set(0, String::New(attributes[i+0]));
-      elem->Set(1, String::New(attributes[i+1]));
-      elem->Set(2, String::New(attributes[i+2]));
-      elem->Set(3, String::New(attributes[i+3], attributes[i+4] - attributes[i+3]));
-      attrList->Set(j, elem);
+      elem->Set(Integer::New(0), String::New((const char*)attributes[i+0]), None);
+      elem->Set(Integer::New(1), String::New((const char*)attributes[i+1]), None);
+      elem->Set(Integer::New(2), String::New((const char*)attributes[i+2]), None);
+      elem->Set(Integer::New(3), String::New((const char*)attributes[i+3], attributes[i+4] - attributes[i+3]), None);
+      attrList->Set(Integer::New(j), elem);
     }
   }
 
@@ -138,9 +193,9 @@ SaxParser::end_element_ns (
   HandleScope scope;
 
   Handle<Value> argv[3] = {
-    String::New(localname),
-    prefix ? String::New(prefix) : Value::New(),
-    uri ? String::New(uri) : Value::New()
+    String::New((const char*)localname),
+    prefix ? String::New((const char*)prefix) : Null(),
+    uri ? String::New((const char*)uri) : Null()
   };
 
   Callback("endElementNS", 3, argv);
@@ -152,7 +207,7 @@ SaxParser::characters(
   int len)
 {
   HandleScope scope;
-  Handle<Value> argv[1] = { String::New(ch) };
+  Handle<Value> argv[1] = { String::New((const char*)ch) };
   Callback("characters", 1, argv);
 }
 
@@ -161,7 +216,7 @@ SaxParser::comment(
   const xmlChar* value)
 {
   HandleScope scope;
-  Handle<Value> argv[1] = { String::New(value) };
+  Handle<Value> argv[1] = { String::New((const char*)value) };
   Callback("characters", 1, argv);
 }
 
@@ -171,7 +226,7 @@ SaxParser::cdata_block(
   int len)
 {
   HandleScope scope;
-  Handle<Value> argv[1] = { String::New(value) };
+  Handle<Value> argv[1] = { String::New((const char*)value) };
   Callback("characters", 1, argv);
 }
   
@@ -180,7 +235,7 @@ SaxParser::warning(
   const char* message)
 {
   HandleScope scope;
-  Handle<Value> argv[1] = { String::New(message) };
+  Handle<Value> argv[1] = { String::New((const char*)message) };
   Callback("characters", 1, argv);
 }
 
@@ -190,7 +245,7 @@ SaxParser::error(
   const char* message)
 {
   HandleScope scope;
-  Handle<Value> argv[1] = { String::New(message) };
+  Handle<Value> argv[1] = { String::New((const char*)message) };
   Callback("characters", 1, argv);
 }
 
@@ -232,7 +287,7 @@ SaxParserCallback::start_element_ns(
   const xmlChar ** attributes)
 {
   SaxParser* parser = LIBXML_JS_GET_PARSER_FROM_CONTEXT(context);
-  parser->start_element_ns(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, bn_defaulted, attributes);
+  parser->start_element_ns(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, attributes);
 }
 
 void

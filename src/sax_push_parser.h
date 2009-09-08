@@ -1,9 +1,12 @@
-#ifndef sax_push_parser_h
-#define sax_push_parser_h
+#ifndef __sax_push_parser_h__
+#define __sax_push_parser_h__
+
+#include "libxml_js.h"
+#include "sax_parser.h"
 
 #include <v8.h>
 
-namespace libxml_js {
+namespace libxmljs {
 
 class SaxPushParser : public SaxParser {
 public:
@@ -14,6 +17,6 @@ public:
 
 };
 
-} // namespace libxml_js
+} // namespace libxmljs
 
-#endif //sax_push_parser_h
+#endif //__sax_push_parser_h__

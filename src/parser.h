@@ -1,17 +1,21 @@
-#ifndef parser_h
-#define parser_h
+#ifndef __parser_h__
+#define __parser_h__
+
+#include "libxml_js.h"
 
 #include <v8.h>
+#include <cassert> // for assert()
 
 extern "C" {
   struct _xmlParserCtxt;
+  struct _xmlSAXHandler;
 }
 
-namespace libxml_js {
+namespace libxmljs {
 
 class Parser {
 public:
-  Parser();
+  Parser() : context_(0) {};
   virtual ~Parser();
 
   static void Initialize (v8::Handle<v8::Object> target);
@@ -27,6 +31,6 @@ protected:
   _xmlParserCtxt* context_;
 };
 
-} // namespace libxml_js
+} // namespace libxmljs
 
-#endif //parser_h
+#endif //__parser_h__

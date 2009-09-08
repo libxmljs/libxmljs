@@ -1,4 +1,7 @@
-#include <libxml_js.h>
+#include "parser.h"
+
+using namespace v8;
+using namespace libxmljs;
 
 void
 Parser::Initialize (Handle<Object> target)
@@ -6,8 +9,7 @@ Parser::Initialize (Handle<Object> target)
   HandleScope scope;
 }
 
-Parser::Parser()
-  : context_(0)
+Parser::~Parser()
 {}
 
 void
