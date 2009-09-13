@@ -16,11 +16,8 @@ parser.o: parser.cc Makefile
 sax_parser.o: sax_parser.cc Makefile
 	g++ ${CFLAGS} sax_parser.cc -c -o sax_parser.o
 
-sax_push_parser.o: sax_push_parser.cc Makefile
-	g++ ${CFLAGS} sax_push_parser.cc -c -o sax_push_parser.o
-
-libxmljs.a: libxmljs.o parser.o sax_parser.o sax_push_parser.o Makefile
-	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} libxmljs.o parser.o sax_parser.o sax_push_parser.o -o libxmljs.a
+libxmljs.a: libxmljs.o parser.o sax_parser.o Makefile
+	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} libxmljs.o parser.o sax_parser.o -o libxmljs.a
 
 clean:
 	rm -f *.{o,a}

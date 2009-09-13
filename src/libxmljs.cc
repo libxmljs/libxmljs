@@ -4,7 +4,6 @@
 #include "object_wrap.h"
 #include "parser.h"
 #include "sax_parser.h"
-#include "sax_push_parser.h"
 
 #include <v8.h>
 #include <string>
@@ -118,7 +117,6 @@ InitializeLibXMLJS(
 
   Parser::Initialize(target);
   SaxParser::Initialize(target);
-  SaxPushParser::Initialize(target);
 
   ExecuteNativeJS("sax_parser.js", native_sax_parser);
 }

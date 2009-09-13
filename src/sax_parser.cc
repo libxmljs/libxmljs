@@ -43,11 +43,8 @@ SaxParser::SaxParser()
   *sax_handler_ = tmp;
 }
 
-SaxParser::~SaxParser()
-{}
-
 Handle<Value>
-SaxParser::New(
+SaxParser::NewParser(
   const Arguments& args)
 {
   HandleScope scope;
@@ -59,6 +56,20 @@ SaxParser::New(
   parser->SetCallbacks(Local<Function>::Cast(args[0]));
 
   return args.This();
+}
+
+Handle<Value>
+SaxParser::NewPushParser(
+  const Arguments& args)
+{
+  HandleScope scope;
+
+  Handle<Value> return_val = NewParser(args);
+
+  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+  parser->initialize_push_parser();
+
+  return return_val;
 }
 
 void
@@ -112,7 +123,41 @@ SaxParser::Callback(
   callback->Call(global, argc+1, args);
 }
 
-v8::Handle<v8::Value>
+Handle<Value>
+SaxParser::Push(
+ const Arguments& args)
+{
+  HandleScope scope;
+  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0], IsString, "Bad Argument: parseString requires a string");
+
+  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+
+  String::Utf8Value parsable(args[0]->ToString());
+
+  bool terminate = args.Length() > 1 ? args[1]->ToBoolean()->Value() : false;
+
+  parser->push(*parsable, parsable.length(), terminate);
+
+  return Boolean::New(true);
+}
+
+void
+SaxParser::initialize_push_parser()
+{
+  context_ = xmlCreatePushParserCtxt(sax_handler_, NULL, NULL, 0, "");
+  initializeContext();
+}
+
+void
+SaxParser::push(
+  const char* string,
+  unsigned int size,
+  bool terminate = false)
+{
+  xmlParseChunk(context_, string, size, terminate);
+}
+
+Handle<Value>
 SaxParser::ParseString(
  const Arguments& args)
 {
@@ -134,6 +179,7 @@ SaxParser::parse_string(
 {
   context_ = xmlCreateMemoryParserCtxt(string, size);
   parse();
+  xmlFreeParserCtxt(context_);
 }
 
 void
@@ -422,12 +468,16 @@ void
 SaxParser::Initialize (Handle<Object> target)
 {
   HandleScope scope;
-  Local<FunctionTemplate> t = FunctionTemplate::New(New);
-  Persistent<FunctionTemplate> constructor_template = Persistent<FunctionTemplate>::New(t);
-  // constructor_template->Inherit(SaxParser::constructor_template);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+  Local<FunctionTemplate> parser_t = FunctionTemplate::New(NewParser);
+  Persistent<FunctionTemplate> sax_parser_template = Persistent<FunctionTemplate>::New(parser_t);
+  sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
+  target->Set(String::NewSymbol("createSAXParser"), sax_parser_template->GetFunction());
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parseString", SaxParser::ParseString);
 
-  target->Set(String::NewSymbol("createSAXParser"), constructor_template->GetFunction());
+  Local<FunctionTemplate> push_parser_t = FunctionTemplate::New(NewPushParser);
+  Persistent<FunctionTemplate> sax_push_parser_template = Persistent<FunctionTemplate>::New(push_parser_t);
+  sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_push_parser_template, "push", SaxParser::Push);
+  target->Set(String::NewSymbol("createSAXPushParser"), sax_push_parser_template->GetFunction());
 }

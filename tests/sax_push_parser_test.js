@@ -1,7 +1,7 @@
 include('helpers.js');
 
-var callbacks = callbackTest;
-var parser = new libxml.createSAXParser(function(cb) {
+var callbacks = clone(callbackTest);
+var parser = new libxml.createSAXPushParser(function(cb) {
   function argsToArray(args) {
     var ary = [];
     for (i = 0; i < args.length; i++)
@@ -46,23 +46,21 @@ var parser = new libxml.createSAXParser(function(cb) {
   });
 });
 
-parser.parseString(
-  '<?xml-warning?>'+
-  '<error>'+
-  '<stream:stream xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="example.com" version="1.0">'+
-    '<!-- comment -->'+
-    '<message type="chat" to="n@d" from="n@d/r" id="id1">'+
-      '<![CDATA[ some cdata ]]>'+
-      '<body>exit</body>'+
-      '<html xmlns="http://jabber.org/protocol/xhtml-im">'+
-        '<body xmlns="http://www.w3.org/1999/xhtml">exit</body>'+
-      '</html>'+
-    '</message>'+
-    '<stream:prefixed />'+
-  '</stream:stream>'
-);
-assertEquals(JSON.stringify(callbackControl), JSON.stringify(callbacks));
-// 
-// var callbacks = callbackTest;
-// parser.parseFile('fixtures/sax_parser_test.xml');
-// assertEquals(callbackControl, callbacks);
+parser.push('<?xml-warning?>');
+parser.push('<error>');
+parser.push('<stream:stream xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="example.com" version="1.0">');
+parser.push('<!-- comment -->');
+parser.push('<message type="chat" to="n@d" from="n@d/r" id="id1">');
+parser.push('<![CDATA[ some cdata ]]>');
+parser.push('<body>exit</body>');
+parser.push('<html xmlns="http://jabber.org/protocol/xhtml-im">');
+parser.push('<body xmlns="http://www.w3.org/1999/xhtml">exit</body>');
+parser.push('</html>');
+parser.push('</message>');
+parser.push('<stream:prefixed />');
+parser.push('</stream:stream>', true);
+
+var control = clone(callbackControl);
+control.error = [["Extra content at the end of the document\n"]];
+
+assertEquals(JSON.stringify(control), JSON.stringify(callbacks));

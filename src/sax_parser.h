@@ -25,15 +25,28 @@ CreateSAXParser(
 
 class SaxParser : public Parser {
 public:
+  SaxParser();
+
   static void
   Initialize (
     v8::Handle<v8::Object> target);
 
-  SaxParser();
-  virtual ~SaxParser();
+  static v8::Handle<v8::Value>
+  NewParser(
+    const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  New(
+  NewPushParser(
+    const v8::Arguments& args);
+
+  // Coming Soon
+  // virtual void parseFile(const char* filename);
+  static v8::Handle<v8::Value>
+  ParseString(
+    const v8::Arguments& args);
+
+  static v8::Handle<v8::Value>
+  Push(
     const v8::Arguments& args);
 
   void
@@ -50,16 +63,19 @@ public:
     int argc,
     v8::Handle<v8::Value> argv[]);
 
-  static v8::Handle<v8::Value>
-  ParseString(
-    const v8::Arguments& args);
-
-  // Coming Soon
-  // virtual void parseFile(const char* filename);
   void
   parse_string(
     const char* string,
     unsigned int size);
+
+  void
+  initialize_push_parser();
+
+  void
+  push(
+    const char* string,
+    unsigned int size,
+    bool terminate);
 
   void
   start_document();
