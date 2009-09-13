@@ -1,4 +1,4 @@
-libxml.SaxCallbacks = function() {
+var LibXMLSaxCallbacks = function() {
   var callbackList = {};
 
   function addCallback(name, callback) {
@@ -9,10 +9,10 @@ libxml.SaxCallbacks = function() {
   };
 
   this.callback = function() {
+    var name = arguments[0];
     if (!(callback = callbackList[name]))
       return;
 
-    var name = arguments[0];
     var args = [];
     for (i = 1; i < arguments.length; i++)
       args.push(arguments[i]);
@@ -59,3 +59,6 @@ libxml.SaxCallbacks = function() {
 
   return this;
 };
+
+if (typeof exports != 'undefined')
+  exports.LibXMLSaxCallbacks = LibXMLSaxCallbacks;

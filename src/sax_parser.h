@@ -18,20 +18,41 @@ namespace libxmljs {
     static_cast<SaxParser*>(the_context->_private); \
   })
 
+static v8::Handle<v8::Value>
+CreateSAXParser(
+  const v8::Arguments& args);
+
+
 class SaxParser : public Parser {
 public:
-  static void Initialize (v8::Handle<v8::Object> target);
+  static void
+  Initialize (
+    v8::Handle<v8::Object> target);
 
-  SaxParser(v8::Handle<v8::Object> callbacks);
+  SaxParser();
   virtual ~SaxParser();
 
-  void Callback(
+  static v8::Handle<v8::Value>
+  New(
+    const v8::Arguments& args);
+
+  void
+  SetCallbacks(
+    const v8::Handle<v8::Function> callbacks);
+
+  void
+  Callback(
     const char * what);
 
-  void Callback(
+  void
+  Callback(
     const char * what,
     int argc,
     v8::Handle<v8::Value> argv[]);
+
+  static v8::Handle<v8::Value>
+  ParseString(
+    const v8::Arguments& args);
 
   // Coming Soon
   // virtual void parseFile(const char* filename);
@@ -71,7 +92,7 @@ public:
     const xmlChar * localname,
     const xmlChar * prefix,
     const xmlChar * uri);
-  
+
   void
   characters(
     const xmlChar* ch,
@@ -86,7 +107,7 @@ public:
     const xmlChar* value,
     int len);
 
-  void 
+  void
   warning(
     const char* message);
 
@@ -99,8 +120,8 @@ public:
     xmlErrorPtr xerror);
 
 protected:
-  v8::Local<v8::Object> callbacks_;
-  std::auto_ptr<_xmlSAXHandler> sax_handler_;
+  v8::Persistent<v8::Object> callbacks_;
+  _xmlSAXHandler * sax_handler_;
 
 private:
   friend struct SaxParserCallback;
@@ -135,7 +156,7 @@ struct SaxParserCallback
     const xmlChar * localname,
     const xmlChar * prefix,
     const xmlChar * uri);
-  
+
   static void
   characters(
     void* context,
@@ -153,7 +174,7 @@ struct SaxParserCallback
     const xmlChar* value,
     int len);
 
-  static void 
+  static void
   warning(
     void* context,
     const char* fmt,
