@@ -1,7 +1,8 @@
 #ifndef __parser_h__
 #define __parser_h__
 
-#include "libxml_js.h"
+#include "libxmljs.h"
+#include "object_wrap.h"
 
 #include <v8.h>
 #include <cassert> // for assert()
@@ -13,7 +14,7 @@ extern "C" {
 
 namespace libxmljs {
 
-class Parser {
+class Parser : public ObjectWrap {
 public:
   Parser() : context_(0) {};
   virtual ~Parser();

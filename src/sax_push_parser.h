@@ -1,7 +1,7 @@
 #ifndef __sax_push_parser_h__
 #define __sax_push_parser_h__
 
-#include "libxml_js.h"
+#include "libxmljs.h"
 #include "sax_parser.h"
 
 #include <v8.h>
