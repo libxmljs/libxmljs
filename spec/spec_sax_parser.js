@@ -4,7 +4,6 @@ describe("SAX Push Parser", function() {
   var callbacks = {};
 
   function createParser(parserType) {
-    callbacks = clone(callbackTest);
     parser = new libxml[parserType](function(cb) {
       function argsToArray(args) {
         var ary = [];
@@ -31,7 +30,8 @@ describe("SAX Push Parser", function() {
       });
 
       cb.onCharacters(function(chars) {
-        callbacks.characters.push(argsToArray(arguments));
+        if (chars[0] && !chars[0].match(/^[\s\n\r]+$/))
+          callbacks.characters.push(argsToArray(arguments));
       });
 
       cb.onCdata(function(cdata) {
@@ -52,6 +52,10 @@ describe("SAX Push Parser", function() {
     });
     return parser;
   };
+
+  beforeEach(function() {
+    callbacks = clone(callbackTest);
+  });
 
   it('will properly parse a regular string', function() {
     parser = createParser('createSAXParser');
@@ -91,6 +95,15 @@ describe("SAX Push Parser", function() {
     
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
+    assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
+  });
+
+  it('will properly parse a file', function() {
+    parser = createParser('createSAXParser');
+    parser.parseFile(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml');
+
+    var control = clone(callbackControl);
+    control.error = [["Premature end of data in tag error line 2\n"]];
     assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
   });
 });
