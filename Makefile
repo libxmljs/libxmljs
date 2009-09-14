@@ -12,7 +12,7 @@ libxmljs.a: src/libxmljs.o src/parser.o src/sax_parser.o Makefile
 	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} src/libxmljs.o src/parser.o src/sax_parser.o -o libxmljs.a
 
 src/natives.h: src/sax_parser.js Makefile
-	tools/build_natives.py src/sax_parser.js src/natives.h
+	tools/build_natives.py src/natives.h src/sax_parser.js
 
 src/libxmljs.o: src/libxmljs.cc src/natives.h Makefile
 	g++ ${CFLAGS} src/libxmljs.cc -c -o src/libxmljs.o
