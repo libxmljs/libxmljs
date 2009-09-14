@@ -1,4 +1,3 @@
-include('mjsunit.js');
 exports.libxml = require('../src/libxmljs.node');
 
 exports.clone = function(obj) {
