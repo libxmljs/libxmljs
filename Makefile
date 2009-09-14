@@ -8,6 +8,9 @@ node: libxmljs.a
 	rm -f libxmljs.node
 	ln -s libxmljs.a libxmljs.node
 
+libxmljs.a: src/libxmljs.o src/parser.o src/sax_parser.o Makefile
+	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} src/libxmljs.o src/parser.o src/sax_parser.o -o libxmljs.a
+
 src/natives.h: src/sax_parser.js Makefile
 	tools/build_natives.py src/sax_parser.js src/natives.h
 
@@ -20,12 +23,12 @@ src/parser.o: src/parser.cc Makefile
 src/sax_parser.o: src/sax_parser.cc Makefile
 	g++ ${CFLAGS} src/sax_parser.cc -c -o src/sax_parser.o
 
-libxmljs.a: src/libxmljs.o src/parser.o src/sax_parser.o Makefile
-	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} src/libxmljs.o src/parser.o src/sax_parser.o -o libxmljs.a
-
 clean:
 	rm -f src/*.{o,a}
 	rm -f src/natives.h
 	rm -f libxmljs.a libxmljs.node
+
+test: node
+	node spec/tacular.js
 
 .PHONY: clean

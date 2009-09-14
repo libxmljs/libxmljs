@@ -1,4 +1,4 @@
-exports.libxml = require('../src/libxmljs.node');
+exports.libxml = require('../libxmljs.node');
 
 exports.clone = function(obj) {
   if(obj == null || typeof(obj) != 'object')
