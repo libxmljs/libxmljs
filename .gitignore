@@ -1,4 +1,6 @@
 src/*.o
-src/*.a
 src/natives.h
+src/*.a
 src/*.node
+*.a
+*.node
