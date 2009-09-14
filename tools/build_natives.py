@@ -3,8 +3,4 @@
 import sys
 import js2c
 
-source = [
-  sys.argv[0],
-]
-
-js2c.JS2C(source, [sys.argv[1]])
+js2c.JS2C([sys.argv[1]], [sys.argv[2]])

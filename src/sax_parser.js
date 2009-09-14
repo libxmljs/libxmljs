@@ -1,8 +1,64 @@
-#ifndef __libxmljs_natives_h__
-#define __libxmljs_natives_h__
-namespace libxmljs {
+var LibXMLSaxCallbacks = function() {
+  var callbackList = {};
 
-  static const char native_build_natives[] = { 35, 33, 32, 47, 117, 115, 114, 47, 98, 105, 110, 47, 101, 110, 118, 32, 112, 121, 116, 104, 111, 110, 10, 10, 105, 109, 112, 111, 114, 116, 32, 115, 121, 115, 10, 105, 109, 112, 111, 114, 116, 32, 106, 115, 50, 99, 10, 10, 115, 111, 117, 114, 99, 101, 32, 61, 32, 91, 10, 32, 32, 115, 121, 115, 46, 97, 114, 103, 118, 91, 48, 93, 44, 10, 93, 10, 10, 106, 115, 50, 99, 46, 74, 83, 50, 67, 40, 115, 111, 117, 114, 99, 101, 44, 32, 91, 115, 121, 115, 46, 97, 114, 103, 118, 91, 49, 93, 93, 41, 10, 0 };
+  function addCallback(name, callback) {
+    if (!callbackList[name])
+      callbackList[name] = [callback];
+    else
+      callbackList[name].push(callback);
+  };
 
-}
-#endif
+  this.callback = function() {
+    var name = arguments[0];
+    if (!(callback = callbackList[name]))
+      return;
+
+    var args = [];
+    for (i = 1; i < arguments.length; i++)
+      args.push(arguments[i]);
+
+    for (i = 0; i < callback.length; i++)
+      callback[i].apply(callback, args);
+  };
+
+  this.onStartDocument = function(callback) {
+    addCallback('startDocument', callback);
+  };
+
+  this.onEndDocument = function(callback) {
+    addCallback('endDocument', callback);
+  };
+
+  this.onStartElementNS = function(callback) {
+    addCallback('startElementNS', callback);
+  };
+
+  this.onEndElementNS = function(callback) {
+    addCallback('endElementNS', callback);
+  };
+
+  this.onCharacters = function(callback) {
+    addCallback('characters', callback);
+  };
+
+  this.onCdata = function(callback) {
+    addCallback('cdata', callback);
+  };
+
+  this.onComment = function(callback) {
+    addCallback('comment', callback);
+  };
+
+  this.onWarning = function(callback) {
+    addCallback('warning', callback);
+  };
+
+  this.onError = function(callback) {
+    addCallback('error', callback);
+  };
+
+  return this;
+};
+
+if (typeof exports != 'undefined')
+  exports.LibXMLSaxCallbacks = LibXMLSaxCallbacks;
