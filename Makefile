@@ -6,7 +6,7 @@ all: libxmljs.a
 
 node: libxmljs.a
 	rm -f libxmljs.node
-	ln -s libxmljs.a libxmljs.node
+	cp libxmljs.a libxmljs.node
 
 libxmljs.a: src/libxmljs.o src/parser.o src/sax_parser.o Makefile
 	g++ -bundle -bundle_loader ${NODEJS} ${LIBS} src/libxmljs.o src/parser.o src/sax_parser.o -o libxmljs.a
