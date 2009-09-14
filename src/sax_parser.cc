@@ -169,6 +169,7 @@ SaxParser::ParseString(
   String::Utf8Value parsable(args[0]->ToString());
   parser->parse_string(*parsable, parsable.length());
 
+  // TODO: return based on the parser
   return Boolean::New(true);
 }
 
@@ -178,6 +179,31 @@ SaxParser::parse_string(
   unsigned int size)
 {
   context_ = xmlCreateMemoryParserCtxt(string, size);
+  parse();
+  xmlFreeParserCtxt(context_);
+}
+
+Handle<Value>
+SaxParser::ParseFile(
+ const Arguments& args)
+{
+  HandleScope scope;
+  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0], IsString, "Bad Argument: parseFile requires a filename");
+
+  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+
+  String::Utf8Value parsable(args[0]->ToString());
+  parser->parse_file(*parsable);
+
+  // TODO: return based on the parser
+  return Boolean::New(true);
+}
+
+void
+SaxParser::parse_file(
+  const char* filename)
+{
+  context_ = xmlCreateFileParserCtxt(filename);
   parse();
   xmlFreeParserCtxt(context_);
 }
@@ -472,6 +498,7 @@ SaxParser::Initialize (Handle<Object> target)
   Persistent<FunctionTemplate> sax_parser_template = Persistent<FunctionTemplate>::New(parser_t);
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
   LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseFile", SaxParser::ParseFile);
   target->Set(String::NewSymbol("createSAXParser"), sax_parser_template->GetFunction());
 
 

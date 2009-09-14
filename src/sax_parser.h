@@ -39,10 +39,12 @@ public:
   NewPushParser(
     const v8::Arguments& args);
 
-  // Coming Soon
-  // virtual void parseFile(const char* filename);
   static v8::Handle<v8::Value>
   ParseString(
+    const v8::Arguments& args);
+
+  static v8::Handle<v8::Value>
+  ParseFile(
     const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
@@ -67,6 +69,10 @@ public:
   parse_string(
     const char* string,
     unsigned int size);
+
+  void
+  parse_file(
+    const char* filename);
 
   void
   initialize_push_parser();
