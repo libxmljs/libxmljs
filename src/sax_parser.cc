@@ -242,7 +242,6 @@ SaxParser::start_element_ns(
   HandleScope scope;
 
   const int argc = 5;
-  const char *ns_pref, *ns_uri;
   const xmlChar *nsPref, *nsUri, *attrLocal, *attrPref, *attrUri, *attrVal;
   int i, j;
 
@@ -362,12 +361,12 @@ SaxParser::error(
 }
 
 
-void
-SaxParser::structured_error(
-  xmlErrorPtr xerror)
-{
-  //TODO
-}
+// TODO
+// void
+// SaxParser::structured_error(
+//   xmlErrorPtr xerror)
+// {
+// }
 
 
 void
@@ -482,13 +481,13 @@ SaxParserCallback::error(
   free(message);
 }
 
-void
-SaxParserCallback::structured_error(
-  void *ctx,
-  xmlErrorPtr xerror)
-{
-  // TODO
-}
+// TODO
+// void
+// SaxParserCallback::structured_error(
+//   void *ctx,
+//   xmlErrorPtr xerror)
+// {
+// }
 
 void
 SaxParser::Initialize (Handle<Object> target)

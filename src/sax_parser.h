@@ -18,11 +18,6 @@ namespace libxmljs {
     static_cast<SaxParser*>(the_context->_private); \
   })
 
-static v8::Handle<v8::Value>
-CreateSAXParser(
-  const v8::Arguments& args);
-
-
 class SaxParser : public Parser {
 public:
   SaxParser();
@@ -137,9 +132,10 @@ public:
   error(
     const char* message);
 
-  void
-  structured_error(
-    xmlErrorPtr xerror);
+  // TODO
+  // void
+  // structured_error(
+  //   xmlErrorPtr xerror);
 
 protected:
   v8::Persistent<v8::Object> callbacks_;
@@ -208,10 +204,11 @@ struct SaxParserCallback
     const char* fmt,
     ...);
 
-  static void
-  structured_error(
-    void *ctx,
-    xmlErrorPtr xerror);
+  // TODO
+  // static void
+  // structured_error(
+  //   void *ctx,
+  //   xmlErrorPtr xerror);
 };
 
 } // namespace libxmljs
