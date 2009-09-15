@@ -2,6 +2,7 @@
 #include "natives.h"
 
 #include "object_wrap.h"
+#include "document.h"
 #include "parser.h"
 #include "sax_parser.h"
 
@@ -114,6 +115,8 @@ InitializeLibXMLJS(
   v8::Handle<v8::Object> target)
 {
   HandleScope scope;
+
+  Document::Initialize(target);
 
   Parser::Initialize(target);
   SaxParser::Initialize(target);

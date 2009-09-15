@@ -20,6 +20,10 @@
   } while (0)
 
 
+#define LIBXMLJS_THROW_EXCEPTION(err)                               \
+  Local<Value> exception = Exception::TypeError(String::New(err));  \
+  ThrowException(exception);
+
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                  \
   if (!arg->type()) {                                                 \
     Local<Value> exception = Exception::TypeError(String::New(err));  \
