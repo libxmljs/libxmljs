@@ -4,3 +4,7 @@ src/*.a
 src/*.node
 *.a
 *.node
+.scon*
+config.log
+src/*.os
+libxmljs
