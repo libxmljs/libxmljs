@@ -1,5 +1,5 @@
 #include "document.h"
-#include <iostream>
+
 using namespace v8;
 using namespace libxmljs;
 
