@@ -184,5 +184,5 @@ Document::Initialize (Handle<Object> target)
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::SetRoot);
   doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, GetProperty, SetEncoding);
   doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, GetProperty);
-  target->Set(String::NewSymbol("newDocument"), doc_template->GetFunction());
+  target->Set(String::NewSymbol("Document"), doc_template->GetFunction());
 }

@@ -2,21 +2,21 @@ include('helpers.js');
 
 describe('A new document', function() {
   it('can be instantiated with nothing', function() {
-    var doc = new libxml.newDocument();
+    var doc = new libxml.Document();
     assert(doc);
     assertEqual('1.0', doc.version);
     assertEqual('', doc.encoding);
   });
 
   it('can be instantiated with a version', function() {
-    var doc = new libxml.newDocument('2.0');
+    var doc = new libxml.Document('2.0');
     assert(doc);
     assertEqual('2.0', doc.version);
     assertEqual('', doc.encoding);
   });
 
   it('can be instantiated with a version and encoding', function() {
-    var doc = new libxml.newDocument('2.0', 'UTF-8');
+    var doc = new libxml.Document('2.0', 'UTF-8');
     assert(doc);
     assertEqual('2.0', doc.version);
     assertEqual('UTF-8', doc.encoding);
@@ -24,7 +24,7 @@ describe('A new document', function() {
 
   it('can be instantiated with a callback', function() {
     var doc = null;
-    new libxml.newDocument(function(d) { doc = d; });
+    new libxml.Document(function(d) { doc = d; });
     assert(doc);
     assertEqual('1.0', doc.version);
     assertEqual('', doc.encoding);
@@ -32,7 +32,7 @@ describe('A new document', function() {
   
   it('can be instantiated with a version and a callback', function() {
     var doc = null;
-    new libxml.newDocument('2.0', function(d) { doc = d; });
+    new libxml.Document('2.0', function(d) { doc = d; });
     assert(doc);
     assertEqual('2.0', doc.version);
     assertEqual('', doc.encoding);
@@ -40,7 +40,7 @@ describe('A new document', function() {
   
   it('can be instantiated with a version, encoding and callback', function() {
     var doc = null;
-    new libxml.newDocument('2.0', 'UTF-8', function(d) { doc = d; });
+    new libxml.Document('2.0', 'UTF-8', function(d) { doc = d; });
     assert(doc);
     assertEqual('2.0', doc.version);
     assertEqual('UTF-8', doc.encoding);
@@ -48,7 +48,7 @@ describe('A new document', function() {
 });
 
 
-// var document = libxml.newDocument(function(doc) {                                        //  <?xml version="1.0" encoding="UTF-8"?>
+// var document = libxml.Document(function(doc) {                                        //  <?xml version="1.0" encoding="UTF-8"?>
 //   doc.root('stream', {to: 'example.com', version: '1.0'}, function(n) {                   //  <stream:stream to="example.com" version="1.0"
 //     n.ns(null, 'jabber:client');                                                          //  xmlns="jabber:client"
 //     n.setNS(n.ns('stream', 'http://etherx.jabber.org/streams'));                          //  xmlns:stream="http://etherx.jabber.org/streams">
@@ -68,12 +68,12 @@ describe('A new document', function() {
 // });
 // 
 // /* Document Manipulation */
-// libxml.newDocument();                                  // create using non-builder syntax
-// libxml.newDocument(function(doc) {});                  // create using builder syntax
-// libxml.newDocument('1.0');                             // create with a version
-// libxml.newDocument('1.0', function(doc) {});           // create with a version using builder syntax
-// libxml.newDocument('1.0', 'UTF-8');                    // create with a version and encoding
-// libxml.newDocument('1.0', 'UTF-8', function(doc) {});  // create with a version and encoding using builder syntax
+// libxml.Document();                                  // create using non-builder syntax
+// libxml.Document(function(doc) {});                  // create using builder syntax
+// libxml.Document('1.0');                             // create with a version
+// libxml.Document('1.0', function(doc) {});           // create with a version using builder syntax
+// libxml.Document('1.0', 'UTF-8');                    // create with a version and encoding
+// libxml.Document('1.0', 'UTF-8', function(doc) {});  // create with a version and encoding using builder syntax
 // doc.encoding();         // get encoding
 // doc.encoding('UTF-8');  // set encoding
 // 
@@ -97,7 +97,7 @@ describe('A new document', function() {
 // node = doc.root('name');          // create non-builder syntax
 // node.attr('foo', 'bar');          // *
 // node.remove();                    // remove
-// n = libxml.newNode('name');       // create standalone node
+// n = libxml.Node('name');       // create standalone node
 // node.node(n);                     //   then add it to the doc
 // 
 // /* Text Manipulation */
