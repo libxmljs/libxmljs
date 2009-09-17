@@ -129,6 +129,7 @@ InitializeLibXMLJS(
 
   ExecuteNativeJS("sax_parser.js", native_sax_parser);
   ExecuteNativeJS("document.js", native_document);
+  ExecuteNativeJS("element.js", native_element);
 }
 
 // used by node.js to initialize libraries

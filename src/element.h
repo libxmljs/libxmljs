@@ -8,6 +8,11 @@
 
 namespace libxmljs {
 
+#define UNWRAP_ELEMENT(from)                              \
+  Element *element = ObjectWrap::Unwrap<Element>(from);   \
+  assert(element);
+
+
 #define NAME_SYMBOL String::NewSymbol("name")
 
 class Element : public Node {
@@ -36,12 +41,29 @@ public:
     v8::Local<v8::Value> value,
     const v8::AccessorInfo& info);
 
+  static v8::Handle<v8::Value>
+  GetAttribute(
+    const v8::Arguments& args);
+
+  static v8::Handle<v8::Value>
+  SetAttribute(
+    const v8::Arguments& args);
+
   void
   set_name(
     const char * name);
 
   const char *
   get_name();
+
+  const char *
+  get_attr(
+    const char * name);
+
+  void
+  set_attr(
+    const char * name,
+    const char * value);
 
 };
 
