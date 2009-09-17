@@ -53,6 +53,10 @@ public:
   AddChild(
     const v8::Arguments& args);
 
+  static v8::Handle<v8::Value>
+  Element::Find(
+    const v8::Arguments& args);
+
   void
   set_name(
     const char * name);

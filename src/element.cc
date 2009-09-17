@@ -123,6 +123,13 @@ Element::AddChild(
   return args.This();
 }
 
+Handle<Value>
+Element::Find(
+  const Arguments& args)
+{
+  
+}
+
 Element::Element(
   xmlNode* node)
 : Node(node)
@@ -184,6 +191,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttribute", Element::GetAttribute);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "setAttribute", Element::SetAttribute);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);
   // LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttributes", GetAttributes);
 
   target->Set(String::NewSymbol("Element"), elem_template->GetFunction());

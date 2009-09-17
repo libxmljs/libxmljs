@@ -7,3 +7,7 @@ libxml.Document.prototype.node = function() {
   this.root = new libxml.Element(this, args[0], args[1], args[2], args[3]);
   return this.root;
 };
+
+libxml.Document.prototype.find = function() {
+  this.root.find.apply(this.root, arguments);
+};
