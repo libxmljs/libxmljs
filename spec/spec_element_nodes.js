@@ -6,12 +6,12 @@ describe('An element node', function() {
     doc = new libxml.Document();
   });
 
-  it('can be created', function() {    
+  it('can be created', function() {
     var elem = doc.node('name1');
     assertEqual('name1', elem.name);
   });
 
-  it('can be created with a callback', function() {    
+  it('can be created with a callback', function() {
     var elem = false;
     doc.node('name2', function(n) { elem = n; });
     assertEqual('name2', elem.name);
@@ -46,13 +46,13 @@ describe('A node attribute', function() {
     var elem = doc.node('name', {to: 'wongfoo'});
     assertEqual('wongfoo', elem.attr('to'));
   });
-  
+
   it('can be assigned with helpers', function() {
     elem = doc.node('name');
     elem.attr('to', 'wongfoo');
     assertEqual('wongfoo', elem.attr('to'));
   });
-  
+
   it('can be assigned with an object', function() {
     elem = doc.node('name');
     elem.attr({to: 'wongfoo'});
