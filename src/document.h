@@ -10,6 +10,7 @@ namespace libxmljs {
 
 #define ENCODING_SYMBOL String::NewSymbol("encoding")
 #define VERSION_SYMBOL  String::NewSymbol("version")
+#define DOCUMENT_SYMBOL String::NewSymbol("document")
 
 class Document : public ObjectWrap {
 public:
@@ -21,6 +22,10 @@ public:
   void
   init_document(
     const char * version);
+
+  _xmlDoc *
+  get_document()
+  { return doc_; }
 
   virtual ~Document();
 

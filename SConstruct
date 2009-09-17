@@ -39,7 +39,7 @@ if not env.GetOption('clean'):
   env = conf.Finish()
 
 # Build native js
-js2c.JS2C(['src/sax_parser.js'], ['src/natives.h'])
+js2c.JS2C(Glob('src/*.js'), ['src/natives.h'])
 
 libs = ['xml2', 'v8']
 cc_sources = Glob('src/*.cc')

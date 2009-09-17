@@ -45,6 +45,11 @@ describe('A new document', function() {
     assertEqual('2.0', doc.version);
     assertEqual('UTF-8', doc.encoding);
   });
+
+  it('returns itself when asked', function() {
+    var doc = new libxml.Document();
+    assertEqual(doc, doc.document);
+  });
 });
 
 

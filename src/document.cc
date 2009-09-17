@@ -1,4 +1,5 @@
 #include "document.h"
+#include "node.h"
 
 using namespace v8;
 using namespace libxmljs;
@@ -26,6 +27,9 @@ Document::GetProperty(
 
   } else if (property == ENCODING_SYMBOL) {
     value = document->get_encoding();
+
+  } else if (property == DOCUMENT_SYMBOL) {
+    return info.This();
 
   } else {
     assert("Should not get here!");
@@ -181,8 +185,12 @@ Document::Initialize (Handle<Object> target)
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
   Persistent<FunctionTemplate> doc_template = Persistent<FunctionTemplate>::New(t);
   doc_template->InstanceTemplate()->SetInternalFieldCount(1);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::SetRoot);
+
   doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, GetProperty, SetEncoding);
   doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, GetProperty);
+  doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, GetProperty);
+
   target->Set(String::NewSymbol("Document"), doc_template->GetFunction());
+
+  Node::Initialize(target);
 }

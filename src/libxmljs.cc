@@ -128,6 +128,7 @@ InitializeLibXMLJS(
   context->Global()->Set(String::NewSymbol("libxml"), target);
 
   ExecuteNativeJS("sax_parser.js", native_sax_parser);
+  ExecuteNativeJS("document.js", native_document);
 }
 
 // used by node.js to initialize libraries
