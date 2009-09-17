@@ -58,7 +58,7 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a regular string', function() {
-    parser = createParser('createSAXParser');
+    parser = createParser('SaxParser');
     parser.parseString(
       '<?xml-warning?>'+
       '<error>'+
@@ -78,7 +78,7 @@ describe("SAX Push Parser", function() {
   });
   
   it('will properly parse a string chunk by chunk', function() {
-    parser = createParser('createSAXPushParser');
+    parser = createParser('SaxPushParser');
     parser.push('<?xml-warning?>');
     parser.push('<error>');
     parser.push('<stream:stream xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="example.com" version="1.0">');
@@ -99,7 +99,7 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a file', function() {
-    parser = createParser('createSAXParser');
+    parser = createParser('SaxParser');
     parser.parseFile(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml');
 
     var control = clone(callbackControl);

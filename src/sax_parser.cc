@@ -52,8 +52,8 @@ SaxParser::NewParser(
   SaxParser *parser = new SaxParser();
   parser->Wrap(args.This());
 
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0], IsFunction, "Bad argument: createSAXParser takes a function");
-  parser->SetCallbacks(Local<Function>::Cast(args[0]));
+  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0], IsFunction, "Bad argument: function required");
+  parser->SetCallbacks(args.This(), Local<Function>::Cast(args[0]));
 
   return args.This();
 }
@@ -74,23 +74,15 @@ SaxParser::NewPushParser(
 
 void
 SaxParser::SetCallbacks(
+  Handle<Object> self,
   const Handle<Function> callbacks)
 {
   HandleScope scope;
 
-  Handle<Object> global = Context::GetCurrent()->Global();
-  Handle<Value> cb_obj = global->Get(String::NewSymbol("LibXMLSaxCallbacks"));
+  Handle<Function> set_callbacks = Handle<Function>::Cast(self->Get(String::NewSymbol("setCallbacks")));
 
-  if (!cb_obj->IsFunction()) {
-    Local<Value> exception = Exception::TypeError(String::New("LibXMLSaxCallbacks"));
-    ThrowException(exception);
-  }
-
-  Handle<Object> cb_fun = Handle<Function>::Cast(cb_obj)->NewInstance();
-  callbacks_ = Persistent<Object>::New(cb_fun);
-
-  Handle<Value> argv[1] = { callbacks_ };
-  callbacks->Call(global, 1, argv);
+  Handle<Value> argv[1] = { callbacks };
+  callbacks_ = Persistent<Object>::New(set_callbacks->Call(self, 1, argv)->ToObject());
 }
 
 void
@@ -493,17 +485,18 @@ void
 SaxParser::Initialize (Handle<Object> target)
 {
   HandleScope scope;
+
   Local<FunctionTemplate> parser_t = FunctionTemplate::New(NewParser);
   Persistent<FunctionTemplate> sax_parser_template = Persistent<FunctionTemplate>::New(parser_t);
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
   LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
   LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseFile", SaxParser::ParseFile);
-  target->Set(String::NewSymbol("createSAXParser"), sax_parser_template->GetFunction());
+  target->Set(String::NewSymbol("SaxParser"), sax_parser_template->GetFunction());
 
 
   Local<FunctionTemplate> push_parser_t = FunctionTemplate::New(NewPushParser);
   Persistent<FunctionTemplate> sax_push_parser_template = Persistent<FunctionTemplate>::New(push_parser_t);
   sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
   LIBXMLJS_SET_PROTOTYPE_METHOD(sax_push_parser_template, "push", SaxParser::Push);
-  target->Set(String::NewSymbol("createSAXPushParser"), sax_push_parser_template->GetFunction());
+  target->Set(String::NewSymbol("SaxPushParser"), sax_push_parser_template->GetFunction());
 }

@@ -48,6 +48,7 @@ public:
 
   void
   SetCallbacks(
+    const v8::Handle<v8::Object> context,
     const v8::Handle<v8::Function> callbacks);
 
   void

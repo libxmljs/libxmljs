@@ -1,4 +1,4 @@
-var LibXMLSaxCallbacks = function() {
+libxml.SaxCallbacks = function() {
   var callbackList = {};
 
   function addCallback(name, callback) {
@@ -60,5 +60,13 @@ var LibXMLSaxCallbacks = function() {
   return this;
 };
 
-if (typeof exports != 'undefined')
-  exports.LibXMLSaxCallbacks = LibXMLSaxCallbacks;
+(function() {
+  var setCallbacks = function(callback) {
+    var callbacks = new libxml.SaxCallbacks();
+    callback(callbacks);
+    return callbacks;
+  };
+
+  libxml.SaxParser.prototype.setCallbacks = setCallbacks;
+  libxml.SaxPushParser.prototype.setCallbacks = setCallbacks;
+})();

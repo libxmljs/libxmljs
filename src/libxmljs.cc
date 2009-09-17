@@ -121,6 +121,12 @@ InitializeLibXMLJS(
   Parser::Initialize(target);
   SaxParser::Initialize(target);
 
+  Handle<ObjectTemplate> global = ObjectTemplate::New();
+  Handle<Context> context = Context::New(NULL, global);
+
+  Context::Scope context_scope(context);
+  context->Global()->Set(String::NewSymbol("libxml"), target);
+
   ExecuteNativeJS("sax_parser.js", native_sax_parser);
 }
 
