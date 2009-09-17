@@ -6,9 +6,9 @@ using namespace libxmljs;
 
 Node::Node(
   xmlNode* node)
-: node_(node)
+: node(node)
 {
-  node_->_private = this;
+  node->_private = this;
 }
 
 Node::~Node()

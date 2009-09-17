@@ -49,6 +49,10 @@ public:
   SetAttribute(
     const v8::Arguments& args);
 
+  static v8::Handle<v8::Value>
+  AddChild(
+    const v8::Arguments& args);
+
   void
   set_name(
     const char * name);
@@ -64,6 +68,10 @@ public:
   set_attr(
     const char * name,
     const char * value);
+
+  void
+  add_child(
+    Element * child);
 
 };
 

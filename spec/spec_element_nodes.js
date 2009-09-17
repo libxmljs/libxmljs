@@ -21,6 +21,21 @@ describe('An element node', function() {
     var elem = doc.node('name');
     assertEqual(elem, doc.root);
   });
+
+  it('can be built by nesting', function() {
+    var levels = 0;
+    doc.node('root', function(n) {
+      levels++;
+      assertEqual('root', n.name);
+      n.node('child', function(n) {
+        levels++;
+        assertEqual('child', n.name);
+        var grandchild = n.node('grandchild', function() { levels++; });
+        assertEqual('grandchild', grandchild.name);
+      });
+    });
+    assertEqual(3, levels);
+  });
 });
 
 describe('A node attribute', function() {

@@ -19,7 +19,7 @@ public:
   Initialize(
     v8::Handle<v8::Object> target);
 
-  _xmlNode *node_;
+  _xmlNode *node;
 };
 
 } // namespace libxmljs

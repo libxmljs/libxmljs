@@ -35,7 +35,8 @@ Element::New(
       element->set_attr(*name, *value);
     }
   }
-  
+
+  args.This()->Set(DOCUMENT_SYMBOL, args[0]->ToObject());
 
   if (*callback && !callback->IsNull()) {
     Handle<Value> argv[1] = { args.This() };
@@ -106,6 +107,20 @@ Element::SetAttribute(
   return args.This();
 }
 
+Handle<Value>
+Element::AddChild(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  Element *child = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
+  assert(child);
+
+  element->add_child(child);
+  return args.This();
+}
+
 Element::Element(
   xmlNode* node)
 : Node(node)
@@ -118,13 +133,13 @@ void
 Element::set_name(
   const char * name)
 {
-  xmlNodeSetName(node_, (const xmlChar*)name);
+  xmlNodeSetName(node, (const xmlChar*)name);
 }
 
 const char *
 Element::get_name()
 {
-  return (const char*)node_->name;
+  return (const char*)node->name;
 }
 
 // TODO make these work with namespaces
@@ -132,9 +147,9 @@ const char *
 Element::get_attr(
   const char * name)
 {
-  xmlAttr* attr = xmlHasProp(node_, (const xmlChar*)name);
+  xmlAttr* attr = xmlHasProp(node, (const xmlChar*)name);
   if (attr)
-    return (const char*)xmlGetNsProp(node_, (const xmlChar*)name, NULL);
+    return (const char*)xmlGetNsProp(node, (const xmlChar*)name, NULL);
   else
     return NULL;
 }
@@ -145,7 +160,14 @@ Element::set_attr(
   const char * name,
   const char * value)
 {
-  xmlSetProp(node_, (const xmlChar*)name, (const xmlChar*)value);
+  xmlSetProp(node, (const xmlChar*)name, (const xmlChar*)value);
+}
+
+void
+Element::add_child(
+  Element * child)
+{
+  xmlAddChild(node, child->node);
 }
 
 void
@@ -159,6 +181,7 @@ Element::Initialize(
   elem_template->PrototypeTemplate()->SetAccessor(NAME_SYMBOL, GetProperty, SetProperty);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttribute", Element::GetAttribute);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "setAttribute", Element::SetAttribute);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
   // LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttributes", GetAttributes);
 
   target->Set(String::NewSymbol("Element"), elem_template->GetFunction());
