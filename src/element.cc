@@ -88,11 +88,7 @@ Element::GetAttribute(
   UNWRAP_ELEMENT(args.This());
 
   String::Utf8Value name(args[0]);
-  const char * value = element->get_attr(*name);
-  if (value)
-    return String::New(value);
-  else
-    return Null();
+  return element->get_attr(*name);
 }
 
 Handle<Value>
@@ -130,23 +126,8 @@ Element::Find(
   HandleScope scope;
   UNWRAP_ELEMENT(args.This());
 
-  Handle<Array> nodes;
-
   String::Utf8Value xpath(args[0]);
-  xmlXPathObject * result = element->find(*xpath);
-  if (result->nodesetval) {
-    nodes = Array::New(result->nodesetval->nodeNr);
-    for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
-      nodes->Set(Number::New(i), Persistent<Object>((Object*)result->nodesetval->nodeTab[i]->_private));
-    }
-
-  } else {
-    nodes = Array::New(0);
-
-  }
-
-  xmlXPathFreeObject(result);
-  return nodes;
+  return element->find(*xpath);
 }
 
 Handle<Value>
@@ -188,15 +169,19 @@ Element::get_name()
 }
 
 // TODO make these work with namespaces
-const char *
+Handle<Value>
 Element::get_attr(
   const char * name)
 {
   xmlAttr* attr = xmlHasProp(node, (const xmlChar*)name);
-  if (attr)
-    return (const char*)xmlGetNsProp(node, (const xmlChar*)name, NULL);
-  else
-    return NULL;
+  if (attr) {
+    xmlChar * attr = xmlGetNsProp(node, (const xmlChar*)name, NULL);
+    Handle<String> ret_attr = String::New((const char*)attr);
+    xmlFree(attr);
+    return ret_attr;
+  }
+
+  return Null();
 }
 
 // TODO make these work with namespaces
@@ -235,7 +220,7 @@ Element::get_content()
   return Null();
 }
 
-xmlXPathObject *
+Handle<Value>
 Element::find(
   const char * xpath)
 {
@@ -245,21 +230,23 @@ Element::find(
 
   if(!result) {
     xmlXPathFreeContext(ctxt);
-    return NULL;
+    return Array::New(0);
   }
 
   if(result->type != XPATH_NODESET) {
     xmlXPathFreeObject(result);
     xmlXPathFreeContext(ctxt);
-    return NULL;
+    return Array::New(0);
   }
 
-  // xmlNodeSet* nodeset = result->nodesetval;
-  // 
-  // xmlXPathFreeObject(result);
+  Handle<Array> nodes = Array::New(result->nodesetval->nodeNr);
+  for (int i = 0; i != result->nodesetval->nodeNr; ++i)
+    nodes->Set(Number::New(i), Persistent<Object>((Object*)result->nodesetval->nodeTab[i]->_private));
+
+  xmlXPathFreeObject(result);
   xmlXPathFreeContext(ctxt);
 
-  return result;
+  return nodes;
 }
 
 void

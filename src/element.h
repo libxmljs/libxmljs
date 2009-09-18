@@ -70,7 +70,7 @@ public:
   const char *
   get_name();
 
-  const char *
+  v8::Handle<v8::Value>
   get_attr(
     const char * name);
 
@@ -90,7 +90,7 @@ public:
   v8::Handle<v8::Value>
   get_content();
 
-  xmlXPathObject *
+  v8::Handle<v8::Value>
   find(
     const char * xpath);
 
