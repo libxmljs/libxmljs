@@ -60,3 +60,7 @@ libxml.Element.prototype.node = function() {
   this.addChild(elem);
   return elem;
 };
+
+libxml.Element.prototype.get = function() {
+  return this.find.apply(this, arguments)[0];
+};

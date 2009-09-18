@@ -4,6 +4,7 @@
 #include "libxmljs.h"
 #include "node.h"
 
+#include <libxml/xpath.h>
 #include <libxml/xmlstring.h>
 
 namespace libxmljs {
@@ -54,7 +55,7 @@ public:
     const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  Element::Find(
+  Find(
     const v8::Arguments& args);
 
   void
@@ -76,6 +77,10 @@ public:
   void
   add_child(
     Element * child);
+
+  xmlXPathObject *
+  find(
+    const char * xpath);
 
 };
 

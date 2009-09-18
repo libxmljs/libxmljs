@@ -9,5 +9,9 @@ libxml.Document.prototype.node = function() {
 };
 
 libxml.Document.prototype.find = function() {
-  this.root.find.apply(this.root, arguments);
+  return this.root.find.apply(this.root, arguments);
+};
+
+libxml.Document.prototype.get = function() {
+  return this.find.apply(this, arguments)[0];
 };

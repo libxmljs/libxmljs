@@ -72,31 +72,3 @@ describe('A node attribute', function() {
     assertEqual('wongfoo', elem.attr('to'));
   });
 });
-
-describe('Nested nodes', function() {
-  var doc = null;
-  beforEach(function() {
-    doc = new libxml.Document();
-  });
-
-  it('can be built', function() {
-    var levels = 0;
-    doc.node('root', function(n) {
-      levels++;
-      assertEqual('root', n.name);
-      n.node('child', function(n) {
-        levels++;
-        assertEqual('child', n.name);
-        var grandchild = n.node('grandchild', function() { levels++; });
-        assertEqual('grandchild', grandchild.name);
-      });
-    });
-    assertEqual(3, levels);
-  });
-
-  it('can be found', function() {
-    var child = null;
-    doc.node('root', function(n) { child = n.node('child'); });
-    assertEqual([child], doc.find('child'));
-  });
-});

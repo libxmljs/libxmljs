@@ -127,7 +127,26 @@ Handle<Value>
 Element::Find(
   const Arguments& args)
 {
-  
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  Handle<Array> nodes;
+
+  String::Utf8Value xpath(args[0]);
+  xmlXPathObject * result = element->find(*xpath);
+  if (result->nodesetval) {
+    nodes = Array::New(result->nodesetval->nodeNr);
+    for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
+      nodes->Set(Number::New(i), Persistent<Object>((Object*)result->nodesetval->nodeTab[i]->_private));
+    }
+
+  } else {
+    nodes = Array::New(0);
+
+  }
+
+  xmlXPathFreeObject(result);
+  return nodes;
 }
 
 Element::Element(
@@ -177,6 +196,33 @@ Element::add_child(
   Element * child)
 {
   xmlAddChild(node, child->node);
+}
+
+xmlXPathObject *
+Element::find(
+  const char * xpath)
+{
+  xmlXPathContext* ctxt = xmlXPathNewContext(node->doc);
+  ctxt->node = node;
+  xmlXPathObject* result = xmlXPathEval((const xmlChar*)xpath, ctxt);
+
+  if(!result) {
+    xmlXPathFreeContext(ctxt);
+    return NULL;
+  }
+
+  if(result->type != XPATH_NODESET) {
+    xmlXPathFreeObject(result);
+    xmlXPathFreeContext(ctxt);
+    return NULL;
+  }
+
+  // xmlNodeSet* nodeset = result->nodesetval;
+  // 
+  // xmlXPathFreeObject(result);
+  xmlXPathFreeContext(ctxt);
+
+  return result;
 }
 
 void
