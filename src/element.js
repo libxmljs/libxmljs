@@ -1,3 +1,35 @@
+// name, attrs, content, callback
+libxml.Element.Arguments = function(args) {
+  var ret_args = null;
+
+  switch (args.length) {
+    case 1:
+      ret_args = [args[0], null, null, null];
+      break;
+
+    case 2: // name, callback; name, attrs; name, content
+      if (typeof args[1] == 'function')
+        ret_args = [args[0], null, null, args[1]];
+      else if (typeof args[1] == 'string')
+        ret_args = [args[0], null, args[1], null];
+      else
+        ret_args = [args[0], args[1], null, null];
+      break;
+
+    case 3: // name, attrs, content; name, attrs, callback
+      if (typeof args[2] == 'function')
+        ret_args = [args[0], args[1], null, args[2]];
+      else
+        ret_args = [args[0], args[1], args[2], null];
+      break;
+
+    case 4: // name, attrs, content, callback
+      ret_args = [args[0], args[1], args[2], args[3]];
+  }
+  
+  return ret_args;
+};
+
 libxml.Element.prototype.attr = function() {
   var args = {};
   if (arguments.length == 0)
@@ -22,15 +54,9 @@ libxml.Element.prototype.getAttributes = function() {
 };
 
 libxml.Element.prototype.node = function() {
-  if (typeof arguments[1] == 'string')
-    arguments[2] = arguments[1];
-  else if (typeof arguments[1] == 'function')
-    arguments[3] = arguments[1];
+  var args = libxml.Element.Arguments(arguments);
 
-  if (typeof arguments[2] == 'function')
-    arguments[3] = arguments[2];
-
-  var elem = new libxml.Element(this.document, arguments[0], arguments[1], arguments[2], arguments[3]);
+  var elem = new libxml.Element(this.document, args[0], args[1], args[2], args[3]);
   this.addChild(elem);
   return elem;
 };

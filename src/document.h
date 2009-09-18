@@ -11,9 +11,12 @@ namespace libxmljs {
 #define ENCODING_SYMBOL String::NewSymbol("encoding")
 #define VERSION_SYMBOL  String::NewSymbol("version")
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
+#define ROOT_SYMBOL     String::NewSymbol("root")
 
 class Document : public ObjectWrap {
 public:
+  _xmlDoc* doc;
+
   Document();
 
   Document(
@@ -25,7 +28,7 @@ public:
 
   _xmlDoc *
   get_document()
-  { return doc_; }
+  { return doc; }
 
   virtual ~Document();
 
@@ -37,9 +40,16 @@ public:
   New(
     const v8::Arguments& args);
 
-  static v8::Handle<v8::Value>
+  static void
   SetRoot(
-    const v8::Arguments& args);
+    v8::Local<v8::String> property,
+    v8::Local<v8::Value> value,
+    const v8::AccessorInfo& info);
+
+  static v8::Handle<v8::Value>
+  GetRoot(
+    v8::Local<v8::String> property,
+    const v8::AccessorInfo& info);
 
   static v8::Handle<v8::Value>
   GetProperty(
@@ -52,6 +62,10 @@ public:
     v8::Local<v8::Value> value,
     const v8::AccessorInfo& info);
 
+  static v8::Handle<v8::Value>
+  ToString(
+    const v8::Arguments& args);
+
   void
   set_encoding(
     const char * encoding);
@@ -62,8 +76,17 @@ public:
   const char *
   get_version();
 
-private:
-  _xmlDoc* doc_;
+  void
+  to_string(
+    char ** str,
+    int * len);
+
+  xmlNodePtr
+  get_root();
+
+  void
+  set_root(
+    xmlNodePtr node);
 };
 
 } // namespace libxmljs

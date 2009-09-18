@@ -1,14 +1,45 @@
 #include "document.h"
 #include "node.h"
+#include "element.h"
+
+#include <cstring> // for memcpy
 
 using namespace v8;
 using namespace libxmljs;
 
-Handle<Value>
+void
 Document::SetRoot(
-  const Arguments& args)
+  Local<String> property,
+  Local<Value> value,
+  const AccessorInfo& info)
 {
-  return args.This();
+  HandleScope scope;
+  Document *document = ObjectWrap::Unwrap<Document>(info.This());
+  assert(document);
+  assert(property == ROOT_SYMBOL);
+
+  Element *element = ObjectWrap::Unwrap<Element>(value->ToObject());
+  assert(element);
+  assert(element->node);
+  document->set_root(element->node);
+}
+
+Handle<Value>
+Document::GetRoot(
+  Local<String> property,
+  const AccessorInfo& info)
+{
+  HandleScope scope;
+  Document *document = ObjectWrap::Unwrap<Document>(info.This());
+  assert(document);
+  assert(property == ROOT_SYMBOL);
+
+  xmlNodePtr root = document->get_root();
+  if (root) {
+    return Persistent<Object>((Object*)root->_private);
+  } else {
+    return Null();
+  }
 }
 
 Handle<Value>
@@ -110,6 +141,7 @@ Document::New(
   }
 
   Document *document = version ? new Document(**version) : new Document();
+  document->doc->_private = *args.This();
   document->Wrap(args.This());
 
   if (encoding)
@@ -121,6 +153,23 @@ Document::New(
   }
 
   return args.This();
+}
+
+Handle<Value>
+Document::ToString(
+  const Arguments& args)
+{
+  HandleScope scope;
+  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  assert(document);
+
+  char * str;
+  int length;
+  document->to_string(&str, &length);
+  Local<String> doc_str = String::New(str, length);
+  delete str;
+
+  return doc_str;
 }
 
 Document::Document()
@@ -136,32 +185,32 @@ Document::Document(
 
 Document::~Document()
 {
-  xmlFreeDoc(doc_);
+  xmlFreeDoc(doc);
 }
 
 void
 Document::init_document(
   const char * version)
 {
-  doc_ = xmlNewDoc((const xmlChar*)version);
-  doc_->_private = this;
+  doc = xmlNewDoc((const xmlChar*)version);
+  doc->_private = this;
 }
 
 void
 Document::set_encoding(
   const char * encoding)
 {
-  doc_->encoding = (const xmlChar*)encoding;
+  doc->encoding = (const xmlChar*)encoding;
 }
 
 const char *
 Document::get_encoding()
 {
-  assert(doc_);
+  assert(doc);
 
   const char * encoding = NULL;
-  if(doc_->encoding)
-    encoding = (const char*)doc_->encoding;
+  if(doc->encoding)
+    encoding = (const char*)doc->encoding;
     
   return encoding;
 }
@@ -169,13 +218,41 @@ Document::get_encoding()
 const char *
 Document::get_version()
 {
-  assert(doc_);
+  assert(doc);
 
   const char * version = NULL;
-  if(doc_->version)
-    version = (const char*)doc_->version;
+  if(doc->version)
+    version = (const char*)doc->version;
     
   return version;  
+}
+
+void
+Document::to_string(
+  char ** str,
+  int * length)
+{
+  xmlChar* buffer = 0;
+
+  xmlDocDumpFormatMemoryEnc(doc, &buffer, length, "UTF-8", 0);
+
+  *str = new char[*length+1];
+  memcpy(*str, (char *)buffer, *length);
+
+  xmlFree(buffer);
+}
+
+xmlNodePtr
+Document::get_root()
+{
+  return xmlDocGetRootElement(doc);
+}
+
+void
+Document::set_root(
+  xmlNodePtr node)
+{
+  xmlDocSetRootElement(doc, node);
 }
 
 void
@@ -186,9 +263,12 @@ Document::Initialize (Handle<Object> target)
   Persistent<FunctionTemplate> doc_template = Persistent<FunctionTemplate>::New(t);
   doc_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, GetProperty, SetEncoding);
-  doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, GetProperty);
-  doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, GetProperty);
+  doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, Document::GetProperty, Document::SetEncoding);
+  doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
+  doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
+  doc_template->PrototypeTemplate()->SetAccessor(ROOT_SYMBOL, Document::GetRoot, Document::SetRoot);
+
+  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "toString", Document::ToString);
 
   target->Set(String::NewSymbol("Document"), doc_template->GetFunction());
 

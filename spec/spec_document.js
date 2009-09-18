@@ -50,6 +50,29 @@ describe('A new document', function() {
     var doc = new libxml.Document();
     assertEqual(doc, doc.document);
   });
+
+  it('is created with a null root node', function() {
+    var doc = new libxml.Document();
+    assertEqual(null, doc.root);
+  });
+
+  it('can be output as a string', function() {
+    var control = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"><grandchild from="julie numar">with love</grandchild></child><sibling>with content!</sibling></root>',
+      ''
+    ].join("\n");
+
+    var doc = new libxml.Document(function(n) {
+      n.node('root', function(n) {
+        n.node('child', {to: 'wongfoo'}, function(n) {
+          n.node('grandchild', {from: 'julie numar'}, 'with love');
+        });
+        n.node('sibling', 'with content!');
+      });
+    });
+    assertEqual(control, doc.toString());
+  });
 });
 
 

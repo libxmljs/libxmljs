@@ -4,6 +4,7 @@
 using namespace v8;
 using namespace libxmljs;
 
+// doc, name, attrs, content, callback
 Handle<Value>
 Element::New(
   const Arguments& args)
@@ -17,19 +18,20 @@ Element::New(
   Handle<Function> callback;
 
   if (args[3]->IsString())
-    content = new String::Utf8Value(args[3]);
+    content = new String::Utf8Value(args[3]->ToString());
 
   if (args[4]->IsFunction())
     callback = Handle<Function>::Cast(args[4]);
 
-  xmlNode* elem = xmlNewDocNode(document->get_document(), NULL, (const xmlChar*)*name, (const xmlChar*)content);
+  xmlNode* elem = xmlNewDocNode(document->get_document(), NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
   Element *element = new Element(elem);
+  elem->_private = *Persistent<Object>::New(args.This());
   element->Wrap(args.This());
 
   if (args[2]->IsObject()) {
     Handle<Object> attributes = args[2]->ToObject();
     Handle<Array> props = attributes->GetPropertyNames();
-    for (int i = 0; i < props->Length(); i++) {
+    for (unsigned int i = 0; i < props->Length(); i++) {
       String::Utf8Value name(props->Get(Number::New(i)));
       String::Utf8Value value(attributes->Get(props->Get(Number::New(i))));
       element->set_attr(*name, *value);
