@@ -20,9 +20,6 @@ Document::GetProperty(
   if (property == VERSION_SYMBOL) {
     value = document->get_version();
 
-  } else if (property == ENCODING_SYMBOL) {
-    value = document->get_encoding();
-
   } else if (property == DOCUMENT_SYMBOL) {
     return info.This();
 
@@ -35,18 +32,19 @@ Document::GetProperty(
   return String::New(value, xmlStrlen((const xmlChar*)value));
 }
 
-void
-Document::SetEncoding(
-  Local<String> property,
-  Local<Value> value,
-  const AccessorInfo& info)
+Handle<Value>
+Document::Encoding(
+  const Arguments& args)
 {
   HandleScope scope;
-  UNWRAP_DOCUMENT(info.This());
-  assert(property == ENCODING_SYMBOL);
+  UNWRAP_DOCUMENT(args.This());
 
-  String::Utf8Value encoding(value->ToString());
+  if (args.Length() == 0)
+    return document->get_encoding();
+
+  String::Utf8Value encoding(args[0]->ToString());
   document->set_encoding(*encoding);
+  return args.This();
 }
 
 Handle<Value>
@@ -185,16 +183,13 @@ Document::set_encoding(
   doc->encoding = (const xmlChar*)encoding;
 }
 
-const char *
+Handle<Value>
 Document::get_encoding()
 {
-  assert(doc);
-
-  const char * encoding = NULL;
   if(doc->encoding)
-    encoding = (const char*)doc->encoding;
-    
-  return encoding;
+    return String::New((const char *)doc->encoding, xmlStrlen((const xmlChar*)doc->encoding));
+
+  return Null();
 }
 
 const char *
@@ -256,8 +251,8 @@ Document::Initialize (Handle<Object> target)
   doc_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::Root);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "encoding", Document::Encoding);
 
-  doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, Document::GetProperty, Document::SetEncoding);
   doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
   doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
 

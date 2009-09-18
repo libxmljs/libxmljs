@@ -93,7 +93,7 @@ Element::Attr(
   }
 
   Handle<Array> properties = attrs->GetPropertyNames();
-  for (int i = 0; i < properties->Length(); i++) {
+  for (unsigned int i = 0; i < properties->Length(); i++) {
     Local<String> prop_name = properties->Get(Number::New(i))->ToString();
     String::Utf8Value name(prop_name);
     String::Utf8Value value(attrs->Get(prop_name));

@@ -10,7 +10,6 @@ namespace libxmljs {
 
 #define VERSION_SYMBOL  String::NewSymbol("version")
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
-#define ENCODING_SYMBOL     String::NewSymbol("encoding")
 
 #define UNWRAP_DOCUMENT(from)                               \
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
@@ -48,6 +47,10 @@ public:
     const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
+  Encoding(
+    const v8::Arguments& args);
+
+  static v8::Handle<v8::Value>
   GetProperty(
     v8::Local<v8::String> property,
     const v8::AccessorInfo& info);
@@ -66,7 +69,7 @@ public:
   set_encoding(
     const char * encoding);
 
-  const char *
+  v8::Handle<v8::Value>
   get_encoding();
 
   const char *

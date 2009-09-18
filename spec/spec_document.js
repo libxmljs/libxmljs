@@ -5,21 +5,21 @@ describe('A new document', function() {
     var doc = new libxml.Document();
     assert(doc);
     assertEqual('1.0', doc.version);
-    assertEqual('', doc.encoding);
+    assertEqual(null, doc.encoding());
   });
 
   it('can be instantiated with a version', function() {
     var doc = new libxml.Document('2.0');
     assert(doc);
     assertEqual('2.0', doc.version);
-    assertEqual('', doc.encoding);
+    assertEqual(null, doc.encoding());
   });
 
   it('can be instantiated with a version and encoding', function() {
     var doc = new libxml.Document('2.0', 'UTF-8');
     assert(doc);
     assertEqual('2.0', doc.version);
-    assertEqual('UTF-8', doc.encoding);
+    assertEqual('UTF-8', doc.encoding());
   });
 
   it('can be instantiated with a callback', function() {
@@ -27,7 +27,7 @@ describe('A new document', function() {
     new libxml.Document(function(d) { doc = d; });
     assert(doc);
     assertEqual('1.0', doc.version);
-    assertEqual('', doc.encoding);
+    assertEqual(null, doc.encoding());
   });
   
   it('can be instantiated with a version and a callback', function() {
@@ -35,7 +35,7 @@ describe('A new document', function() {
     new libxml.Document('2.0', function(d) { doc = d; });
     assert(doc);
     assertEqual('2.0', doc.version);
-    assertEqual('', doc.encoding);
+    assertEqual(null, doc.encoding());
   });
   
   it('can be instantiated with a version, encoding and callback', function() {
@@ -43,7 +43,16 @@ describe('A new document', function() {
     new libxml.Document('2.0', 'UTF-8', function(d) { doc = d; });
     assert(doc);
     assertEqual('2.0', doc.version);
-    assertEqual('UTF-8', doc.encoding);
+    assertEqual('UTF-8', doc.encoding());
+  });
+
+  it('can under go an encoding change', function() {
+    var doc = new libxml.Document();
+    assert(doc);
+    assertEqual('1.0', doc.version);
+    assertEqual(null, doc.encoding());
+    doc.encoding('UTF-8');
+    assertEqual('UTF-8', doc.encoding());
   });
 
   it('returns itself when asked', function() {
