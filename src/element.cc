@@ -49,35 +49,18 @@ Element::New(
 }
 
 Handle<Value>
-Element::GetProperty(
-  Local<String> property,
-  const AccessorInfo& info)
+Element::Name(
+  const Arguments& args)
 {
   HandleScope scope;
-  UNWRAP_ELEMENT(info.This());
+  UNWRAP_ELEMENT(args.This());
 
-  const char * value = NULL;
+  if (args.Length() == 0)
+    return element->get_name();
 
-  if (property == NAME_SYMBOL) {
-    value = element->get_name();
-  }
-
-  return String::New(value, xmlStrlen((const xmlChar*)value));
-}
-
-void
-Element::SetProperty(
-  Local<String> property,
-  Local<Value> value,
-  const AccessorInfo& info)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(info.This());
-
-  if (property == NAME_SYMBOL) {
-    String::Utf8Value name(value);
-    element->set_name(*name);
-  }
+  String::Utf8Value name(args[0]->ToString());
+  element->set_name(*name);
+  return args.This();
 }
 
 Handle<Value>
@@ -177,10 +160,10 @@ Element::set_name(
   xmlNodeSetName(node, (const xmlChar*)name);
 }
 
-const char *
+Handle<Value>
 Element::get_name()
 {
-  return (const char*)node->name;
+  return String::New((const char*)node->name);
 }
 
 // TODO make these work with namespaces
@@ -272,7 +255,7 @@ Element::Initialize(
   Persistent<FunctionTemplate> elem_template = Persistent<FunctionTemplate>::New(t);
   elem_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  elem_template->PrototypeTemplate()->SetAccessor(NAME_SYMBOL, Element::GetProperty, Element::SetProperty);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "name", Element::Name);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "attr", Element::Attr);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);

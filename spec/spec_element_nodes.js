@@ -4,16 +4,16 @@ describe('An element node', function() {
   it('can be created', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name1');
-    assertEqual('name1', elem.name);
+    assertEqual('name1', elem.name());
   });
-  
+
   it('can be created with a callback', function() {
     var doc = new libxml.Document();
     var elem = false;
     doc.node('name2', function(n) { elem = n; });
-    assertEqual('name2', elem.name);
+    assertEqual('name2', elem.name());
   });
-  
+
   it('can be created as the document root', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name');
@@ -25,12 +25,12 @@ describe('An element node', function() {
     var levels = 0;
     doc.node('root', function(n) {
       levels++;
-      assertEqual('root', n.name);
+      assertEqual('root', n.name());
       n.node('child', function(n) {
         levels++;
-        assertEqual('child', n.name);
+        assertEqual('child', n.name());
         var grandchild = n.node('grandchild', function() { levels++; });
-        assertEqual('grandchild', grandchild.name);
+        assertEqual('grandchild', grandchild.name());
       });
     });
     assertEqual(3, levels);
@@ -42,6 +42,14 @@ describe('An element node', function() {
     assertEqual(null, elem.text());
     elem.text('content');
     assertEqual('content', elem.text());
+  });
+
+  it('can undergo a namechange after creation', function() {
+    var doc = new libxml.Document();
+    var elem = doc.node('name1');
+    assertEqual('name1', elem.name());
+    elem.name('newname');
+    assertEqual('newname', elem.name());
   });
 });
 

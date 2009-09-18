@@ -33,15 +33,8 @@ public:
     const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  GetProperty(
-    v8::Local<v8::String> property,
-    const v8::AccessorInfo& info);
-
-  static void
-  SetProperty(
-    v8::Local<v8::String> property,
-    v8::Local<v8::Value> value,
-    const v8::AccessorInfo& info);
+  Name(
+    const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
   Attr(
@@ -63,7 +56,7 @@ public:
   set_name(
     const char * name);
 
-  const char *
+  v8::Handle<v8::Value>
   get_name();
 
   v8::Handle<v8::Value>
