@@ -13,6 +13,8 @@ using namespace libxmljs;
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
   assert(document);
 
+Persistent<FunctionTemplate> Document::constructor_template;
+
 Handle<Value>
 Document::GetProperty(
   Local<String> property,
@@ -233,18 +235,18 @@ Document::Initialize (Handle<Object> target)
 {
   HandleScope scope;
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
-  Persistent<FunctionTemplate> doc_template = Persistent<FunctionTemplate>::New(t);
-  doc_template->InstanceTemplate()->SetInternalFieldCount(1);
+  constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::Root);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "encoding", Document::Encoding);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "root", Document::Root);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "encoding", Document::Encoding);
 
-  doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
-  doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
+  constructor_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
+  constructor_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "toString", Document::ToString);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "toString", Document::ToString);
 
-  target->Set(String::NewSymbol("Document"), doc_template->GetFunction());
+  target->Set(String::NewSymbol("Document"), constructor_template->GetFunction());
 
   Node::Initialize(target);
 }

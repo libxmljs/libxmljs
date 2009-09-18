@@ -2,7 +2,6 @@
 #include "document.h"
 
 #include <libxml/xpath.h>
-#include <libxml/xmlstring.h>
 
 using namespace v8;
 using namespace libxmljs;
@@ -11,9 +10,10 @@ using namespace libxmljs;
   Element *element = ObjectWrap::Unwrap<Element>(from);   \
   assert(element);
 
-
 #define NAME_SYMBOL     String::NewSymbol("name")
 #define CONTENT_SYMBOL  String::NewSymbol("content")
+
+Persistent<FunctionTemplate> Element::constructor_template;
 
 // doc, name, attrs, content, callback
 Handle<Value>
@@ -34,7 +34,7 @@ Element::New(
   if (args[4]->IsFunction())
     callback = Handle<Function>::Cast(args[4]);
 
-  xmlNode* elem = xmlNewDocNode(document->get_document(), NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
+  xmlNode* elem = xmlNewDocNode(document->doc, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
   Element *element = new Element(elem);
   elem->_private = *Persistent<Object>::New(args.This());
   element->Wrap(args.This());
@@ -156,14 +156,6 @@ Element::Text(
   return args.This();
 }
 
-Element::Element(
-  xmlNode* node)
-: Node(node)
-{}
-
-Element::~Element()
-{}
-
 void
 Element::set_name(
   const char * name)
@@ -263,16 +255,16 @@ Element::Initialize(
   Handle<Object> target)
 {
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
-  Persistent<FunctionTemplate> elem_template = Persistent<FunctionTemplate>::New(t);
-  elem_template->InstanceTemplate()->SetInternalFieldCount(1);
+  constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "name", Element::Name);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "attr", Element::Attr);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "text", Element::Text);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
-  target->Set(String::NewSymbol("Element"), elem_template->GetFunction());
+  target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());
   
 }
 
