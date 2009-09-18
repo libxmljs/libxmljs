@@ -149,6 +149,23 @@ Element::Find(
   return nodes;
 }
 
+Handle<Value>
+Element::Text(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  if (args.Length() == 0) {
+    return element->get_content();
+
+  } else {
+    element->set_content(*String::Utf8Value(args[0]));
+  }
+
+  return args.This();
+}
+
 Element::Element(
   xmlNode* node)
 : Node(node)
@@ -198,6 +215,26 @@ Element::add_child(
   xmlAddChild(node, child->node);
 }
 
+void
+Element::set_content(
+  const char * content)
+{
+  xmlNodeSetContent(node, (const xmlChar*)content);
+}
+
+Handle<Value>
+Element::get_content()
+{
+  xmlChar* content = xmlNodeGetContent(node);
+  if (*content != 0) {
+    Handle<String> ret_content = String::New((const char *)content);
+    xmlFree(content);
+    return ret_content;
+  }
+
+  return Null();
+}
+
 xmlXPathObject *
 Element::find(
   const char * xpath)
@@ -238,6 +275,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "setAttribute", Element::SetAttribute);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "text", Element::Text);
   // LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttributes", GetAttributes);
 
   target->Set(String::NewSymbol("Element"), elem_template->GetFunction());

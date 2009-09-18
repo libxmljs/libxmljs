@@ -35,6 +35,14 @@ describe('An element node', function() {
     });
     assertEqual(3, levels);
   });
+
+  it('can have content assigned after creation', function() {
+    var doc = new libxml.Document();
+    var elem = doc.node('name');
+    assertEqual(null, elem.text());
+    elem.text('content');
+    assertEqual('content', elem.text());
+  });
 });
 
 describe('A node attribute', function() {
@@ -70,5 +78,13 @@ describe('A node attribute', function() {
     elem = doc.node('name');
     elem.attr({to: 'wongfoo'});
     assertEqual('wongfoo', elem.attr('to'));
+  });
+
+  it('can be reassigned', function() {
+    var doc = new libxml.Document();
+    var elem = doc.node('name', {to: 'wongfoo'});
+    assertEqual('wongfoo', elem.attr('to'));
+    elem.attr('to', 'julie newmar');
+    assertEqual('julie newmar', elem.attr('to'));
   });
 });

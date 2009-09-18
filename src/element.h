@@ -14,7 +14,8 @@ namespace libxmljs {
   assert(element);
 
 
-#define NAME_SYMBOL String::NewSymbol("name")
+#define NAME_SYMBOL     String::NewSymbol("name")
+#define CONTENT_SYMBOL  String::NewSymbol("content")
 
 class Element : public Node {
 public:
@@ -58,6 +59,10 @@ public:
   Find(
     const v8::Arguments& args);
 
+  static v8::Handle<v8::Value>
+  Text(
+    const v8::Arguments& args);
+
   void
   set_name(
     const char * name);
@@ -77,6 +82,13 @@ public:
   void
   add_child(
     Element * child);
+
+  void
+  set_content(
+    const char * content);
+
+  v8::Handle<v8::Value>
+  get_content();
 
   xmlXPathObject *
   find(
