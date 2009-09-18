@@ -1,8 +1,19 @@
 #include "element.h"
 #include "document.h"
 
+#include <libxml/xpath.h>
+#include <libxml/xmlstring.h>
+
 using namespace v8;
 using namespace libxmljs;
+
+#define UNWRAP_ELEMENT(from)                              \
+  Element *element = ObjectWrap::Unwrap<Element>(from);   \
+  assert(element);
+
+
+#define NAME_SYMBOL     String::NewSymbol("name")
+#define CONTENT_SYMBOL  String::NewSymbol("content")
 
 // doc, name, attrs, content, callback
 Handle<Value>

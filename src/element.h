@@ -4,18 +4,7 @@
 #include "libxmljs.h"
 #include "node.h"
 
-#include <libxml/xpath.h>
-#include <libxml/xmlstring.h>
-
 namespace libxmljs {
-
-#define UNWRAP_ELEMENT(from)                              \
-  Element *element = ObjectWrap::Unwrap<Element>(from);   \
-  assert(element);
-
-
-#define NAME_SYMBOL     String::NewSymbol("name")
-#define CONTENT_SYMBOL  String::NewSymbol("content")
 
 class Element : public Node {
 public:

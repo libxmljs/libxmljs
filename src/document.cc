@@ -2,10 +2,16 @@
 #include "node.h"
 #include "element.h"
 
-#include <cstring> // for memcpy
+#include <libxml/xmlstring.h>
 
 using namespace v8;
 using namespace libxmljs;
+
+#define VERSION_SYMBOL  String::NewSymbol("version")
+
+#define UNWRAP_DOCUMENT(from)                               \
+  Document *document = ObjectWrap::Unwrap<Document>(from);  \
+  assert(document);
 
 Handle<Value>
 Document::GetProperty(

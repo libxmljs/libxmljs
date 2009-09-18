@@ -4,16 +4,9 @@
 #include "libxmljs.h"
 #include "object_wrap.h"
 
-#include <libxml/xmlstring.h>
-
 namespace libxmljs {
 
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
-#define VERSION_SYMBOL  String::NewSymbol("version")
-
-#define UNWRAP_DOCUMENT(from)                               \
-  Document *document = ObjectWrap::Unwrap<Document>(from);  \
-  assert(document);
 
 class Document : public ObjectWrap {
 public:
