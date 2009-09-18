@@ -8,8 +8,8 @@
 
 namespace libxmljs {
 
-#define VERSION_SYMBOL  String::NewSymbol("version")
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
+#define VERSION_SYMBOL  String::NewSymbol("version")
 
 #define UNWRAP_DOCUMENT(from)                               \
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
@@ -72,7 +72,7 @@ public:
   v8::Handle<v8::Value>
   get_encoding();
 
-  const char *
+  v8::Handle<v8::Value>
   get_version();
 
   void

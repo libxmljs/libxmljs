@@ -15,21 +15,13 @@ Document::GetProperty(
   HandleScope scope;
   UNWRAP_DOCUMENT(info.This());
   
-  const char * value = NULL;
+  if (property == VERSION_SYMBOL)
+    return document->get_version();
 
-  if (property == VERSION_SYMBOL) {
-    value = document->get_version();
-
-  } else if (property == DOCUMENT_SYMBOL) {
+  else if (property == DOCUMENT_SYMBOL)
     return info.This();
 
-  } else {
-    assert("Should not get here!");
-    return ThrowException(Exception::Error(String::New("Should not get here!")));
-
-  }
-
-  return String::New(value, xmlStrlen((const xmlChar*)value));
+  return Undefined();
 }
 
 Handle<Value>
@@ -192,16 +184,13 @@ Document::get_encoding()
   return Null();
 }
 
-const char *
+Handle<Value>
 Document::get_version()
 {
-  assert(doc);
-
-  const char * version = NULL;
   if(doc->version)
-    version = (const char*)doc->version;
-    
-  return version;  
+    return String::New((const char *)doc->version, xmlStrlen((const xmlChar*)doc->version));
+
+  return Null();
 }
 
 void
@@ -253,8 +242,8 @@ Document::Initialize (Handle<Object> target)
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::Root);
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "encoding", Document::Encoding);
 
-  doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
   doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
+  doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "toString", Document::ToString);
 

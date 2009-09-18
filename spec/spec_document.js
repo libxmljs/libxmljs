@@ -49,7 +49,6 @@ describe('A new document', function() {
   it('can under go an encoding change', function() {
     var doc = new libxml.Document();
     assert(doc);
-    assertEqual('1.0', doc.version);
     assertEqual(null, doc.encoding());
     doc.encoding('UTF-8');
     assertEqual('UTF-8', doc.encoding());
