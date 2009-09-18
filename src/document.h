@@ -75,10 +75,8 @@ public:
   v8::Handle<v8::Value>
   get_version();
 
-  void
-  to_string(
-    char ** str,
-    int * len);
+  v8::Handle<v8::Value>
+  to_string();
 
   v8::Handle<v8::Value>
   get_root();

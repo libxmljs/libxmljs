@@ -59,6 +59,16 @@ Document::Root(
 }
 
 Handle<Value>
+Document::ToString(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_DOCUMENT(args.This());
+  return document->to_string();
+}
+
+
+Handle<Value>
 Document::New(
  const Arguments& args)
 {
@@ -127,23 +137,6 @@ Document::New(
   return args.This();
 }
 
-Handle<Value>
-Document::ToString(
-  const Arguments& args)
-{
-  HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(args.This());
-  assert(document);
-
-  char * str;
-  int length;
-  document->to_string(&str, &length);
-  Local<String> doc_str = String::New(str, length);
-  delete str;
-
-  return doc_str;
-}
-
 Document::Document()
 {
   init_document("1.0");
@@ -193,19 +186,17 @@ Document::get_version()
   return Null();
 }
 
-void
-Document::to_string(
-  char ** str,
-  int * length)
+Handle<Value>
+Document::to_string()
 {
   xmlChar* buffer = 0;
+  int len = 0;
 
-  xmlDocDumpFormatMemoryEnc(doc, &buffer, length, "UTF-8", 0);
-
-  *str = new char[*length+1];
-  memcpy(*str, (char *)buffer, *length);
-
+  xmlDocDumpFormatMemoryEnc(doc, &buffer, &len, "UTF-8", 0);
+  Handle<String> str = String::New((const char*)buffer, len);
   xmlFree(buffer);
+
+  return str;
 }
 
 bool
