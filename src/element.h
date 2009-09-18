@@ -44,11 +44,7 @@ public:
     const v8::AccessorInfo& info);
 
   static v8::Handle<v8::Value>
-  GetAttribute(
-    const v8::Arguments& args);
-
-  static v8::Handle<v8::Value>
-  SetAttribute(
+  Attr(
     const v8::Arguments& args);
 
   static v8::Handle<v8::Value>

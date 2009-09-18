@@ -81,26 +81,41 @@ Element::SetProperty(
 }
 
 Handle<Value>
-Element::GetAttribute(
+Element::Attr(
   const Arguments& args)
 {
   HandleScope scope;
   UNWRAP_ELEMENT(args.This());
 
-  String::Utf8Value name(args[0]);
-  return element->get_attr(*name);
-}
+  Handle<Object> attrs;
 
-Handle<Value>
-Element::SetAttribute(
-  const Arguments& args)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  switch (args.Length()) {
+    case 0: // return all attributes
+      break;
 
-  String::Utf8Value name(args[0]);
-  String::Utf8Value value(args[1]);
-  element->set_attr(*name, *value);
+    case 1:
+      if (args[0]->IsString()) {
+        String::Utf8Value name(args[0]);
+        return element->get_attr(*name);
+
+      } else {
+        attrs = args[0]->ToObject();
+
+      }
+      break;
+
+    default:
+      attrs = Object::New();
+      attrs->Set(args[0]->ToString(), args[1]->ToString());
+  }
+
+  Handle<Array> properties = attrs->GetPropertyNames();
+  for (int i = 0; i < properties->Length(); i++) {
+    Local<String> prop_name = properties->Get(Number::New(i))->ToString();
+    String::Utf8Value name(prop_name);
+    String::Utf8Value value(attrs->Get(prop_name));
+    element->set_attr(*name, *value);
+  }
 
   return args.This();
 }
@@ -257,9 +272,8 @@ Element::Initialize(
   Persistent<FunctionTemplate> elem_template = Persistent<FunctionTemplate>::New(t);
   elem_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  elem_template->PrototypeTemplate()->SetAccessor(NAME_SYMBOL, GetProperty, SetProperty);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttribute", Element::GetAttribute);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "setAttribute", Element::SetAttribute);
+  elem_template->PrototypeTemplate()->SetAccessor(NAME_SYMBOL, Element::GetProperty, Element::SetProperty);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "attr", Element::Attr);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "text", Element::Text);
