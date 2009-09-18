@@ -53,7 +53,7 @@ describe('A new document', function() {
 
   it('is created with a null root node', function() {
     var doc = new libxml.Document();
-    assertEqual(null, doc.root);
+    assertEqual(null, doc.root());
   });
 
   it('can be output as a string', function() {

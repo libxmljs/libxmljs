@@ -7,49 +7,13 @@
 using namespace v8;
 using namespace libxmljs;
 
-void
-Document::SetRoot(
-  Local<String> property,
-  Local<Value> value,
-  const AccessorInfo& info)
-{
-  HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(info.This());
-  assert(document);
-  assert(property == ROOT_SYMBOL);
-
-  Element *element = ObjectWrap::Unwrap<Element>(value->ToObject());
-  assert(element);
-  assert(element->node);
-  document->set_root(element->node);
-}
-
-Handle<Value>
-Document::GetRoot(
-  Local<String> property,
-  const AccessorInfo& info)
-{
-  HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(info.This());
-  assert(document);
-  assert(property == ROOT_SYMBOL);
-
-  xmlNodePtr root = document->get_root();
-  if (root) {
-    return Persistent<Object>((Object*)root->_private);
-  } else {
-    return Null();
-  }
-}
-
 Handle<Value>
 Document::GetProperty(
   Local<String> property,
   const AccessorInfo& info)
 {
   HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(info.This());
-  assert(document);
+  UNWRAP_DOCUMENT(info.This());
   
   const char * value = NULL;
 
@@ -78,12 +42,30 @@ Document::SetEncoding(
   const AccessorInfo& info)
 {
   HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(info.This());
-  assert(document);
+  UNWRAP_DOCUMENT(info.This());
   assert(property == ENCODING_SYMBOL);
 
   String::Utf8Value encoding(value->ToString());
   document->set_encoding(*encoding);
+}
+
+Handle<Value>
+Document::Root(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_DOCUMENT(args.This());
+
+  if (args.Length() == 0)
+    return document->get_root();
+
+  if (document->has_root())
+    return ThrowException(Exception::Error(String::New("This document already has a root node")));
+
+  Element *element = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
+  assert(element);
+  document->set_root(element->node);
+  return args[0];
 }
 
 Handle<Value>
@@ -242,10 +224,20 @@ Document::to_string(
   xmlFree(buffer);
 }
 
-xmlNodePtr
+bool
+Document::has_root()
+{
+  return xmlDocGetRootElement(doc) != NULL;
+}
+
+Handle<Value>
 Document::get_root()
 {
-  return xmlDocGetRootElement(doc);
+  xmlNodePtr root = xmlDocGetRootElement(doc);
+  if (root)
+    return Persistent<Object>((Object*)root->_private);
+  else
+    return Null();
 }
 
 void
@@ -263,10 +255,11 @@ Document::Initialize (Handle<Object> target)
   Persistent<FunctionTemplate> doc_template = Persistent<FunctionTemplate>::New(t);
   doc_template->InstanceTemplate()->SetInternalFieldCount(1);
 
+  LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "root", Document::Root);
+
   doc_template->PrototypeTemplate()->SetAccessor(ENCODING_SYMBOL, Document::GetProperty, Document::SetEncoding);
   doc_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
   doc_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
-  doc_template->PrototypeTemplate()->SetAccessor(ROOT_SYMBOL, Document::GetRoot, Document::SetRoot);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(doc_template, "toString", Document::ToString);
 

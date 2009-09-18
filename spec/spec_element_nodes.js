@@ -17,7 +17,7 @@ describe('An element node', function() {
   it('can be created as the document root', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name');
-    assertEqual(elem, doc.root);
+    assertEqual(elem, doc.root());
   });
 
   it('can be built by nesting', function() {

@@ -8,10 +8,13 @@
 
 namespace libxmljs {
 
-#define ENCODING_SYMBOL String::NewSymbol("encoding")
 #define VERSION_SYMBOL  String::NewSymbol("version")
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
-#define ROOT_SYMBOL     String::NewSymbol("root")
+#define ENCODING_SYMBOL     String::NewSymbol("encoding")
+
+#define UNWRAP_DOCUMENT(from)                               \
+  Document *document = ObjectWrap::Unwrap<Document>(from);  \
+  assert(document);
 
 class Document : public ObjectWrap {
 public:
@@ -40,16 +43,9 @@ public:
   New(
     const v8::Arguments& args);
 
-  static void
-  SetRoot(
-    v8::Local<v8::String> property,
-    v8::Local<v8::Value> value,
-    const v8::AccessorInfo& info);
-
   static v8::Handle<v8::Value>
-  GetRoot(
-    v8::Local<v8::String> property,
-    const v8::AccessorInfo& info);
+  Root(
+    const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
   GetProperty(
@@ -81,12 +77,15 @@ public:
     char ** str,
     int * len);
 
-  xmlNodePtr
+  v8::Handle<v8::Value>
   get_root();
 
   void
   set_root(
     xmlNodePtr node);
+
+  bool
+  has_root();
 };
 
 } // namespace libxmljs

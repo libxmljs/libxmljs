@@ -260,7 +260,6 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "addChild", Element::AddChild);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "text", Element::Text);
-  // LIBXMLJS_SET_PROTOTYPE_METHOD(elem_template, "getAttributes", GetAttributes);
 
   target->Set(String::NewSymbol("Element"), elem_template->GetFunction());
   
