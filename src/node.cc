@@ -12,7 +12,9 @@ Node::Node(
 }
 
 Node::~Node()
-{}
+{
+  xmlFree(node);
+}
 
 void
 Node::Initialize(
