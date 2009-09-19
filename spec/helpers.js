@@ -73,6 +73,6 @@ exports.callbackControl = {
   ],
 
   error: [
-    ["Premature end of data in tag error line 1\n"]
+    ["Premature end of data in tag error line 2\n"]
   ]
 };

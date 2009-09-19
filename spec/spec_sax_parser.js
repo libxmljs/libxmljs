@@ -58,40 +58,17 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a regular string', function() {
+    var str = node.fs.cat(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml').wait();
     parser = createParser('SaxParser');
-    parser.parseString(
-      '<?xml-warning?>'+
-      '<error>'+
-      '<stream:stream xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="example.com" version="1.0">'+
-        '<!-- comment -->'+
-        '<message type="chat" to="n@d" from="n@d/r" id="id1">'+
-          '<![CDATA[ some cdata ]]>'+
-          '<body>exit</body>'+
-          '<html xmlns="http://jabber.org/protocol/xhtml-im">'+
-            '<body xmlns="http://www.w3.org/1999/xhtml">exit</body>'+
-          '</html>'+
-        '</message>'+
-        '<stream:prefixed />'+
-      '</stream:stream>'
-    );
+    parser.parseString(str);
     assertEqual(JSON.stringify(callbackControl), JSON.stringify(callbacks));
   });
 
   it('will properly parse a string chunk by chunk', function() {
+    var str_ary = node.fs.cat(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml').wait().split("\n");
     parser = createParser('SaxPushParser');
-    parser.push('<?xml-warning?>');
-    parser.push('<error>');
-    parser.push('<stream:stream xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="example.com" version="1.0">');
-    parser.push('<!-- comment -->');
-    parser.push('<message type="chat" to="n@d" from="n@d/r" id="id1">');
-    parser.push('<![CDATA[ some cdata ]]>');
-    parser.push('<body>exit</body>');
-    parser.push('<html xmlns="http://jabber.org/protocol/xhtml-im">');
-    parser.push('<body xmlns="http://www.w3.org/1999/xhtml">exit</body>');
-    parser.push('</html>');
-    parser.push('</message>');
-    parser.push('<stream:prefixed />');
-    parser.push('</stream:stream>', true);
+    for (i = 0; i < str_ary.length; i++)
+      parser.push(str_ary[i], (i+1 == str_ary.length));
 
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
@@ -103,7 +80,6 @@ describe("SAX Push Parser", function() {
     parser.parseFile(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml');
 
     var control = clone(callbackControl);
-    control.error = [["Premature end of data in tag error line 2\n"]];
     assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
   });
 });
