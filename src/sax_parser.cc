@@ -482,7 +482,8 @@ SaxParserCallback::error(
 // }
 
 void
-SaxParser::Initialize (Handle<Object> target)
+SaxParser::Initialize (
+  Handle<Object> target)
 {
   HandleScope scope;
 

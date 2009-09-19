@@ -7,9 +7,6 @@
 #include <v8.h>
 #include <memory>
 
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h> // for xmlCreateFileParserCtxt
-
 namespace libxmljs {
 
 #define LIBXML_JS_GET_PARSER_FROM_CONTEXT(context) \

@@ -19,6 +19,9 @@
                                     __callback##_TEM);                      \
   } while (0)
 
+#define LIBXMLJS_SET_METHOD(obj, name, callback)                \
+  obj->Set(v8::String::NewSymbol(name),                         \
+           v8::FunctionTemplate::New(callback)->GetFunction())
 
 #define LIBXMLJS_THROW_EXCEPTION(err)                               \
   Local<Value> exception = Exception::TypeError(String::New(err));  \

@@ -7,6 +7,9 @@
 #include <v8.h>
 #include <cassert> // for assert()
 
+#include <libxml/parser.h>
+#include <libxml/parserInternals.h> // for xmlCreateFileParserCtxt
+
 extern "C" {
   struct _xmlParserCtxt;
   struct _xmlSAXHandler;
@@ -17,15 +20,17 @@ namespace libxmljs {
 class Parser : public ObjectWrap {
 public:
   Parser() : context_(0) {};
-  virtual ~Parser();
-
   static void Initialize (v8::Handle<v8::Object> target);
 
-  // Coming Soon
-  // virtual void parseFile(const char* filename);
-  // virtual void parseString(const char* string, unsigned int size);
+  v8::Handle<v8::Value>
+  parse_string(
+    const char * str,
+    int len);
 
 protected:
+  v8::Handle<v8::Value>
+  parse_context();
+
   virtual void initializeContext();
   virtual void releaseContext();
 

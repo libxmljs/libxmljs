@@ -17,7 +17,8 @@ class Document : public ObjectWrap {
   };
 
 public:
-  _xmlDoc* doc;
+  xmlDoc * doc;
+  Document(xmlDoc* document) : doc(document) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
@@ -31,9 +32,7 @@ protected:
     v8::Local<v8::String> property,
     const v8::AccessorInfo& info);
 
-  Document();
-  Document(const char * version);
-  ~Document();
+  virtual ~Document();
 
   void init_document(const char * version);
   void set_encoding(const char * encoding);

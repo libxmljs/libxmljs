@@ -13,6 +13,15 @@ using namespace libxmljs;
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
   assert(document);
 
+#define BUILD_NODE(type, name, node)                            \
+{                                                               \
+  type *name = new type(node);                                  \
+  Persistent<Object> name##JS = Persistent<Object>::New(        \
+    type::constructor_template->GetFunction()->NewInstance());  \
+  node->_private = *name##JS;                                   \
+  name->Wrap(name##JS);                                         \
+}
+
 namespace
 {
 
@@ -22,12 +31,21 @@ namespace
 void on_libxml_construct(xmlNode* node)
 {
   switch (node->type) {
-    case XML_ELEMENT_NODE:
-      Element *element = new Element(node);
-      Persistent<Object> obj = Persistent<Object>::New(Element::constructor_template->GetFunction()->NewInstance());
-      node->_private = *obj;
-      element->Wrap(obj);
+    case XML_DOCUMENT_NODE:
+      {
+        Document *doc = new Document(node->doc);
+        Handle<Value> argv[1] = { Null() };
+        Persistent<Object> jsDocument = Persistent<Object>::New(
+          Document::constructor_template->GetFunction()->NewInstance(1, argv));
+        node->_private = *jsDocument;
+        doc->Wrap(jsDocument);
+      }
       break;
+      
+    case XML_ELEMENT_NODE:
+      BUILD_NODE(Element, elem, node);
+      break;
+
   }
 }
 
@@ -127,6 +145,9 @@ Document::New(
       break;
 
     case 1: // newDocument(version), newDocument(callback)
+      if (args[0]->IsNull())
+        return args.This();
+
       if (args[0]->IsString()) {
         version = new String::Utf8Value(args[0]->ToString());
 
@@ -167,43 +188,27 @@ Document::New(
       break;
   }
 
-  Document *document = version ? new Document(**version) : new Document();
-  document->doc->_private = *args.This();
-  document->Wrap(args.This());
+  if (!version)
+    version = new String::Utf8Value(String::New("1.0"));
+
+  xmlDoc * doc = xmlNewDoc((const xmlChar*)**version);
+  Persistent<Object> obj = Persistent<Object>((Object*)doc->_private);
+  Document *document = ObjectWrap::Unwrap<Document>(obj);
 
   if (encoding)
     document->set_encoding(**encoding);
 
   if (*callback && !callback->IsNull()) {
-    Handle<Value> argv[1] = { args.This() };
-    *callback->Call(args.This(), 1, argv);
+    Handle<Value> argv[1] = { obj };
+    *callback->Call(obj, 1, argv);
   }
 
-  return args.This();
-}
-
-Document::Document()
-{
-  init_document("1.0");
-}
-
-Document::Document(
-  const char * version)
-{
-  init_document(version);
+  return obj;
 }
 
 Document::~Document()
 {
   xmlFreeDoc(doc);
-}
-
-void
-Document::init_document(
-  const char * version)
-{
-  doc = xmlNewDoc((const xmlChar*)version);
-  doc->_private = this;
 }
 
 void
@@ -268,7 +273,8 @@ Document::set_root(
 }
 
 void
-Document::Initialize (Handle<Object> target)
+Document::Initialize (
+  Handle<Object> target)
 {
   HandleScope scope;
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
