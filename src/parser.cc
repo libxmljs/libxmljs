@@ -18,6 +18,20 @@ ParseString(
   return parser->parse_string(*str, str.length());
 }
 
+v8::Handle<v8::Value>
+ParseFile(
+  const v8::Arguments& args)
+{
+  HandleScope scope;
+
+  if (!args[0]->IsString())
+    return ThrowException(Exception::Error(String::New("Must supply parseFile with a filename")));
+
+  Parser * parser = new Parser();
+  String::Utf8Value str(args[0]->ToString());
+  return parser->parse_file(*str);
+}
+
 void
 Parser::initializeContext()
 {
@@ -37,6 +51,23 @@ Parser::releaseContext()
     xmlFreeParserCtxt(context_);
     context_ = 0;
   }
+}
+
+Handle<Value>
+Parser::parse_file(
+  const char * filename)
+{
+  releaseContext(); //Free any existing document.
+
+  //The following is based on the implementation of xmlParseFile(), in xmlSAXParseFileWithData():
+  context_ = xmlCreateFileParserCtxt(filename);
+
+  if(context_->directory == 0) {
+    char *directory = xmlParserGetDirectory(filename);
+    context_->directory = (char *)xmlStrdup((xmlChar*) directory);
+  }
+
+  return parse_context();
 }
 
 Handle<Value>
@@ -93,6 +124,7 @@ Parser::Initialize (
   HandleScope scope;
 
   LIBXMLJS_SET_METHOD(target, "parseString", ParseString);
+  LIBXMLJS_SET_METHOD(target, "parseFile", ParseFile);
 
   SaxParser::Initialize(target);
 }

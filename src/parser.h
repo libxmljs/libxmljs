@@ -27,6 +27,10 @@ public:
     const char * str,
     int len);
 
+  v8::Handle<v8::Value>
+  parse_file(
+    const char * filename);
+
 protected:
   v8::Handle<v8::Value>
   parse_context();
