@@ -7,12 +7,10 @@
 namespace libxmljs {
 
 class ObjectWrap {
- public:
-  ObjectWrap ( ) {
-    attached_ = 0;
-  }
-
-  virtual ~ObjectWrap ( ) {
+public:
+  virtual
+  ~ObjectWrap()
+  {
     if (!handle_.IsEmpty()) {
       assert(handle_.IsNearDeath());
       handle_->SetInternalField(0, v8::Undefined());
@@ -22,7 +20,9 @@ class ObjectWrap {
   }
 
   template <class T>
-  static inline T* Unwrap (v8::Handle<v8::Object> handle)
+  static inline T*
+  Unwrap(
+    v8::Handle<v8::Object> handle)
   {
     assert(!handle.IsEmpty());
     assert(handle->InternalFieldCount() > 0);
@@ -30,7 +30,9 @@ class ObjectWrap {
         handle->GetInternalField(0))->Value());
   }
 
-  inline void Wrap (v8::Handle<v8::Object> handle)
+  inline void
+  Wrap(
+    v8::Handle<v8::Object> handle)
   {
     assert(handle_.IsEmpty());
     assert(handle->InternalFieldCount() > 0);
@@ -39,51 +41,24 @@ class ObjectWrap {
     MakeWeak();
   }
 
-  inline void MakeWeak (void)
+  inline void
+  MakeWeak (
+    void)
   {
     handle_.MakeWeak(this, WeakCallback);
   }
 
-  /* Attach() marks the object as being attached to an event loop.
-   * Attached objects will not be garbage collected, even if
-   * all references are lost.
-   */
-  virtual void Attach() {
-    assert(!handle_.IsEmpty());
-    assert(handle_.IsWeak());
-    attached_++;
-  }
-
-  /* Detach() marks an object as detached from the event loop.  This is its
-   * default state.  When an object with a "weak" reference changes from
-   * attached to detached state it will be freed. Be careful not to access
-   * the object after making this call as it might be gone!
-   * (A "weak reference" is v8 terminology for an object that only has a
-   * persistant handle.)
-   *
-   * DO NOT CALL THIS FROM DESTRUCTOR
-   */
-  virtual void Detach() {
-    assert(!handle_.IsEmpty());
-    assert(handle_.IsWeak());
-    assert(attached_ > 0);
-    attached_--;
-    if (attached_ == 0 && handle_.IsNearDeath()) delete this;
-  }
-
   v8::Persistent<v8::Object> handle_; // ro
-  int attached_; // ro
 
- private:
-  static void WeakCallback (v8::Persistent<v8::Value> value, void *data)
+private:
+  static void
+  WeakCallback(
+    v8::Persistent<v8::Value> value,
+    void *data)
   {
     ObjectWrap *obj = static_cast<ObjectWrap*>(data);
     assert(value == obj->handle_);
-    if (obj->attached_ == 0) {
-      delete obj;
-    } else {
-      obj->MakeWeak();
-    }
+    obj->MakeWeak();
   }
 };
 
