@@ -8,12 +8,12 @@ namespace libxmljs {
 
 class Element : public Node {
 public:
+  Element(xmlNode* node) : Node(node) {}
+
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
 protected:
-  Element(xmlNode* node) : Node(node) {}
-
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Name(const v8::Arguments& args);
   static v8::Handle<v8::Value> Attr(const v8::Arguments& args);

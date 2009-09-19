@@ -13,6 +13,43 @@ using namespace libxmljs;
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
   assert(document);
 
+namespace
+{
+
+//Called by libxml whenever it constructs something,
+//such as a node or attribute.
+//This allows us to create a C++ instance for every C instance.
+void on_libxml_construct(xmlNode* node)
+{
+  switch (node->type) {
+    case XML_ELEMENT_NODE:
+      Element *element = new Element(node);
+      Persistent<Object> obj = Persistent<Object>::New(Element::constructor_template->GetFunction()->NewInstance());
+      node->_private = *obj;
+      element->Wrap(obj);
+      break;
+  }
+}
+
+} // namespace
+
+Document::Init::Init()
+{
+  xmlInitParser(); //Not always necessary, but necessary for thread safety.
+  xmlRegisterNodeDefault(on_libxml_construct);
+  // xmlDeregisterNodeDefault(on_libxml_destruct);
+  xmlThrDefRegisterNodeDefault(on_libxml_construct);
+  // xmlThrDefDeregisterNodeDefault(on_libxml_destruct);
+}
+
+Document::Init::~Init()
+{
+  xmlCleanupParser(); //As per xmlInitParser(), or memory leak will happen.
+}
+
+Document::Init Document::init_;
+
+
 Persistent<FunctionTemplate> Document::constructor_template;
 
 Handle<Value>
@@ -22,7 +59,7 @@ Document::GetProperty(
 {
   HandleScope scope;
   UNWRAP_DOCUMENT(info.This());
-  
+
   if (property == VERSION_SYMBOL)
     return document->get_version();
 

@@ -61,26 +61,26 @@ describe('A node attribute', function() {
     elem.attr('to', 'wongfoo');
     assertEqual('wongfoo', elem.attr('to'));
   });
-  
+
   it('will return null when an attr is not found', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');
     assertEqual(null, elem.attr('to'));
   });
-  
+
   it('can be assigned on creation', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name', {to: 'wongfoo'});
     assertEqual('wongfoo', elem.attr('to'));
   });
-  
+
   it('can be assigned with helpers', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');
     elem.attr('to', 'wongfoo');
     assertEqual('wongfoo', elem.attr('to'));
   });
-  
+
   it('can be assigned with an object', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');

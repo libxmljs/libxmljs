@@ -8,7 +8,7 @@ describe('Finding a node', function() {
     });
     assertEqual(child, doc.get('child'));
   });
-  
+
   it('can be done with #find', function() {
     var children = [];
     var doc = new libxml.Document();
@@ -20,7 +20,7 @@ describe('Finding a node', function() {
     assertEqual(2, children.length);
     assertEqual(2, results.length);
     for (child = 0; child < children.length; child++)
-      assertEqual(children[child], results[child]);      
+      assertEqual(children[child], results[child]);
   });
 
   it('can be nested', function() {

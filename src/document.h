@@ -9,6 +9,13 @@ namespace libxmljs {
 #define DOCUMENT_SYMBOL String::NewSymbol("document")
 
 class Document : public ObjectWrap {
+  //Ensure that libxml is properly initialised:
+  class Init {
+  public:
+    Init();
+    virtual ~Init();
+  };
+
 public:
   _xmlDoc* doc;
   static void Initialize(v8::Handle<v8::Object> target);
@@ -36,6 +43,10 @@ protected:
   v8::Handle<v8::Value> get_root();
   void set_root(xmlNodePtr node);
   bool has_root();
+
+private:
+  static Init init_;
+
 };
 
 } // namespace libxmljs

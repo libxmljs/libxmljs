@@ -21,7 +21,6 @@ class ObjectWrap {
     }
   }
 
- protected:
   template <class T>
   static inline T* Unwrap (v8::Handle<v8::Object> handle)
   {

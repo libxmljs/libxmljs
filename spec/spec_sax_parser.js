@@ -22,7 +22,7 @@ describe("SAX Push Parser", function() {
       });
 
       cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {
-        callbacks.startElementNS.push(argsToArray(arguments));    
+        callbacks.startElementNS.push(argsToArray(arguments));
       });
 
       cb.onEndElementNS(function(elem, prefix, uri) {
@@ -76,7 +76,7 @@ describe("SAX Push Parser", function() {
     );
     assertEqual(JSON.stringify(callbackControl), JSON.stringify(callbacks));
   });
-  
+
   it('will properly parse a string chunk by chunk', function() {
     parser = createParser('SaxPushParser');
     parser.push('<?xml-warning?>');
@@ -92,7 +92,7 @@ describe("SAX Push Parser", function() {
     parser.push('</message>');
     parser.push('<stream:prefixed />');
     parser.push('</stream:stream>', true);
-    
+
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
     assertEqual(JSON.stringify(control), JSON.stringify(callbacks));

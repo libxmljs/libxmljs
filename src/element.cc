@@ -21,6 +21,8 @@ Element::New(
   const Arguments& args)
 {
   HandleScope scope;
+  if (args.Length() == 0)
+    return args.This();
 
   Document *document = ObjectWrap::Unwrap<Document>(args[0]->ToObject());
   String::Utf8Value name(args[1]);
@@ -35,9 +37,8 @@ Element::New(
     callback = Handle<Function>::Cast(args[4]);
 
   xmlNode* elem = xmlNewDocNode(document->doc, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
-  Element *element = new Element(elem);
-  elem->_private = *Persistent<Object>::New(args.This());
-  element->Wrap(args.This());
+  Persistent<Object> obj = Persistent<Object>((Object*)elem->_private);
+  Element *element = ObjectWrap::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {
     Handle<Object> attributes = args[2]->ToObject();
@@ -49,14 +50,14 @@ Element::New(
     }
   }
 
-  args.This()->Set(DOCUMENT_SYMBOL, args[0]->ToObject());
+  obj->Set(DOCUMENT_SYMBOL, args[0]->ToObject());
 
   if (*callback && !callback->IsNull()) {
-    Handle<Value> argv[1] = { args.This() };
-    *callback->Call(args.This(), 1, argv);
+    Handle<Value> argv[1] = { obj };
+    *callback->Call(obj, 1, argv);
   }
 
-  return args.This();
+  return obj;
 }
 
 Handle<Value>

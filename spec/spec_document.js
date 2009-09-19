@@ -29,7 +29,7 @@ describe('A new document', function() {
     assertEqual('1.0', doc.version);
     assertEqual(null, doc.encoding());
   });
-  
+
   it('can be instantiated with a version and a callback', function() {
     var doc = null;
     new libxml.Document('2.0', function(d) { doc = d; });
@@ -37,7 +37,7 @@ describe('A new document', function() {
     assertEqual('2.0', doc.version);
     assertEqual(null, doc.encoding());
   });
-  
+
   it('can be instantiated with a version, encoding and callback', function() {
     var doc = null;
     new libxml.Document('2.0', 'UTF-8', function(d) { doc = d; });
@@ -102,7 +102,7 @@ describe('A new document', function() {
 //     });                                                                                   //    </message>
 //   });                                                                                     //  </stream:stream>
 // });
-// 
+//
 // /* Document Manipulation */
 // libxml.Document();                                  // create using non-builder syntax
 // libxml.Document(function(doc) {});                  // create using builder syntax
@@ -112,18 +112,18 @@ describe('A new document', function() {
 // libxml.Document('1.0', 'UTF-8', function(doc) {});  // create with a version and encoding using builder syntax
 // doc.encoding();         // get encoding
 // doc.encoding('UTF-8');  // set encoding
-// 
-// 
+//
+//
 // /* Attribute Manipulation */
 // node.attr('name');          // get
 // node.attr('name', 'tom');   // set
 // node.attr('name', null);    // remove
-// 
+//
 // /* Namespace Manipulation */
 // node.ns(null, 'uri');               // define and set default namespace
 // var ns = node.ns('prefix', 'uri');  // define namespace (do not set)
 // node.setNS(ns);                     // set pre-defined namespace
-// 
+//
 // /* Node Manipulation */
 // node.node('name');                // create (no attrs)
 // node.node('name', {foo: 'bar'});  // create with attributes
@@ -135,8 +135,8 @@ describe('A new document', function() {
 // node.remove();                    // remove
 // n = libxml.Node('name');       // create standalone node
 // node.node(n);                     //   then add it to the doc
-// 
+//
 // /* Text Manipulation */
 // node.text('some text'); // add
 // node.text(null);        // clear
-// 
+//
