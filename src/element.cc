@@ -36,7 +36,7 @@ Element::New(
   if (args[4]->IsFunction())
     callback = Handle<Function>::Cast(args[4]);
 
-  xmlNode* elem = xmlNewDocNode(document->doc, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
+  xmlNode* elem = xmlNewDocNode(document->xml_obj, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
   Persistent<Object> obj = Persistent<Object>((Object*)elem->_private);
   Element *element = ObjectWrap::Unwrap<Element>(obj);
 
@@ -161,13 +161,13 @@ void
 Element::set_name(
   const char * name)
 {
-  xmlNodeSetName(node, (const xmlChar*)name);
+  xmlNodeSetName(xml_obj, (const xmlChar*)name);
 }
 
 Handle<Value>
 Element::get_name()
 {
-  return String::New((const char*)node->name);
+  return String::New((const char*)xml_obj->name);
 }
 
 // TODO make these work with namespaces
@@ -175,9 +175,9 @@ Handle<Value>
 Element::get_attr(
   const char * name)
 {
-  xmlAttr* attr = xmlHasProp(node, (const xmlChar*)name);
+  xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr) {
-    xmlChar * attr = xmlGetNsProp(node, (const xmlChar*)name, NULL);
+    xmlChar * attr = xmlGetNsProp(xml_obj, (const xmlChar*)name, NULL);
     Handle<String> ret_attr = String::New((const char*)attr);
     xmlFree(attr);
     return ret_attr;
@@ -192,27 +192,27 @@ Element::set_attr(
   const char * name,
   const char * value)
 {
-  xmlSetProp(node, (const xmlChar*)name, (const xmlChar*)value);
+  xmlSetProp(xml_obj, (const xmlChar*)name, (const xmlChar*)value);
 }
 
 void
 Element::add_child(
   Element * child)
 {
-  xmlAddChild(node, child->node);
+  xmlAddChild(xml_obj, child->xml_obj);
 }
 
 void
 Element::set_content(
   const char * content)
 {
-  xmlNodeSetContent(node, (const xmlChar*)content);
+  xmlNodeSetContent(xml_obj, (const xmlChar*)content);
 }
 
 Handle<Value>
 Element::get_content()
 {
-  xmlChar* content = xmlNodeGetContent(node);
+  xmlChar* content = xmlNodeGetContent(xml_obj);
   if (*content != 0) {
     Handle<String> ret_content = String::New((const char *)content);
     xmlFree(content);
@@ -226,8 +226,8 @@ Handle<Value>
 Element::find(
   const char * xpath)
 {
-  xmlXPathContext* ctxt = xmlXPathNewContext(node->doc);
-  ctxt->node = node;
+  xmlXPathContext* ctxt = xmlXPathNewContext(xml_obj->doc);
+  ctxt->node = xml_obj;
   xmlXPathObject* result = xmlXPathEval((const xmlChar*)xpath, ctxt);
 
   if(!result) {

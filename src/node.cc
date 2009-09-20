@@ -6,14 +6,14 @@ using namespace libxmljs;
 
 Node::Node(
   xmlNode* node)
-: node(node)
+: xml_obj(node)
 {
-  node->_private = this;
+  xml_obj->_private = this;
 }
 
 Node::~Node()
 {
-  xmlFree(node);
+  xmlFree(xml_obj);
 }
 
 void

@@ -117,7 +117,7 @@ Document::Root(
 
   Element *element = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
   assert(element);
-  document->set_root(element->node);
+  document->set_root(element->xml_obj);
   return args[0];
 }
 
@@ -208,21 +208,21 @@ Document::New(
 
 Document::~Document()
 {
-  xmlFreeDoc(doc);
+  xmlFreeDoc(xml_obj);
 }
 
 void
 Document::set_encoding(
   const char * encoding)
 {
-  doc->encoding = (const xmlChar*)encoding;
+  xml_obj->encoding = (const xmlChar*)encoding;
 }
 
 Handle<Value>
 Document::get_encoding()
 {
-  if(doc->encoding)
-    return String::New((const char *)doc->encoding, xmlStrlen((const xmlChar*)doc->encoding));
+  if(xml_obj->encoding)
+    return String::New((const char *)xml_obj->encoding, xmlStrlen((const xmlChar*)xml_obj->encoding));
 
   return Null();
 }
@@ -230,8 +230,8 @@ Document::get_encoding()
 Handle<Value>
 Document::get_version()
 {
-  if(doc->version)
-    return String::New((const char *)doc->version, xmlStrlen((const xmlChar*)doc->version));
+  if(xml_obj->version)
+    return String::New((const char *)xml_obj->version, xmlStrlen((const xmlChar*)xml_obj->version));
 
   return Null();
 }
@@ -242,7 +242,7 @@ Document::to_string()
   xmlChar* buffer = 0;
   int len = 0;
 
-  xmlDocDumpFormatMemoryEnc(doc, &buffer, &len, "UTF-8", 0);
+  xmlDocDumpFormatMemoryEnc(xml_obj, &buffer, &len, "UTF-8", 0);
   Handle<String> str = String::New((const char*)buffer, len);
   xmlFree(buffer);
 
@@ -252,13 +252,13 @@ Document::to_string()
 bool
 Document::has_root()
 {
-  return xmlDocGetRootElement(doc) != NULL;
+  return xmlDocGetRootElement(xml_obj) != NULL;
 }
 
 Handle<Value>
 Document::get_root()
 {
-  xmlNodePtr root = xmlDocGetRootElement(doc);
+  xmlNodePtr root = xmlDocGetRootElement(xml_obj);
   if (root)
     return Persistent<Object>((Object*)root->_private);
   else
@@ -269,7 +269,7 @@ void
 Document::set_root(
   xmlNodePtr node)
 {
-  xmlDocSetRootElement(doc, node);
+  xmlDocSetRootElement(xml_obj, node);
 }
 
 void

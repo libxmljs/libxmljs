@@ -17,8 +17,8 @@ class Document : public ObjectWrap {
   };
 
 public:
-  xmlDoc * doc;
-  Document(xmlDoc* document) : doc(document) {}
+  xmlDoc * xml_obj;
+  Document(xmlDoc* document) : xml_obj(document) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 

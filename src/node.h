@@ -10,6 +10,8 @@ namespace libxmljs {
 
 class Node : public ObjectWrap {
 public:
+  _xmlNode *xml_obj;
+
   Node(
     xmlNode* node);
 
@@ -18,8 +20,6 @@ public:
   static void
   Initialize(
     v8::Handle<v8::Object> target);
-
-  _xmlNode *node;
 };
 
 } // namespace libxmljs
