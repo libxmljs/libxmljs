@@ -183,6 +183,7 @@
   for(i = 0; i < files.length; i++) {
     var file = files[i];
     if(file.match(/^spec/)) {
+      if (specVerbose) print(file+"\n");
       var content = node.fs.cat(specDirectory + "/" + file, "utf8").wait();
       eval(content);
     }
