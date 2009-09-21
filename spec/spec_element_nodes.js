@@ -51,6 +51,20 @@ describe('An element node', function() {
     elem.name('newname');
     assertEqual('newname', elem.name());
   });
+
+  it('can describe its path', function() {
+    var gchild = null, sibling = null;
+    var doc = new libxml.Document(function(n) {
+      n.node('root', function(n) {
+        n.node('child', function(n) {
+          gchild = n.node('grandchild');
+        });
+        sibling = n.node('child');
+      });
+    });
+    assertEqual('/root/child[1]/grandchild', gchild.path());
+    assertEqual('/root/child[2]', sibling.path());
+  });
 });
 
 describe('A node attribute', function() {

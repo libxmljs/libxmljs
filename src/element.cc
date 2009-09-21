@@ -229,6 +229,16 @@ Element::NextSibling(
   return element->get_next_sibling();
 }
 
+Handle<Value>
+Element::Path(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_path();
+}
+
 void
 Element::set_name(
   const char * name)
@@ -345,6 +355,16 @@ Element::get_next_sibling()
   return Null();
 }
 
+Handle<Value>
+Element::get_path()
+{
+  xmlChar* path = xmlGetNodePath(xml_obj);
+  const char * return_path = path ? (char*)path : "";
+  Handle<String> js_obj = String::New(return_path, xmlStrlen((const xmlChar*)return_path));
+  xmlFree(path);
+  return js_obj;
+}
+
 void
 Element::set_content(
   const char * content)
@@ -412,9 +432,8 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prev_sibling", Element::PrevSibling);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "next_sibling", Element::NextSibling);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "path", Element::Path);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
   target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());
-  
 }
-
