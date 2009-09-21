@@ -168,6 +168,16 @@ Element::Doc(
 }
 
 Handle<Value>
+Element::Parent(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_parent();
+}
+
+Handle<Value>
 Element::Child(
   const Arguments& args)
 {
@@ -236,6 +246,15 @@ Element::add_child(
 Handle<Value>
 Element::get_doc()
 {
+  return XmlObj::Unwrap(xml_obj->doc);
+}
+
+Handle<Value>
+Element::get_parent()
+{
+  if (xml_obj->parent)
+    return XmlObj::Unwrap(xml_obj->parent);
+
   return XmlObj::Unwrap(xml_obj->doc);
 }
 
@@ -319,6 +338,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Element::Doc);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Element::Parent);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 

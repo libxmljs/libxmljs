@@ -37,4 +37,17 @@ describe('Document traversal', function() {
     });
     assertEqual(sibling, doc.child(2));
   });
+
+  it('can travel up the tree', function() {
+    var gchild = null, child = null;
+    var doc = new libxml.Document(function(n) {
+      n.node('root', function(n) {
+        child = n.node('child', function(n) {
+          gchild = n.node('grandchild');
+        });
+      });
+    });
+    assertEqual(doc, doc.root().parent());
+    assertEqual(child, gchild.parent());
+  });
 });

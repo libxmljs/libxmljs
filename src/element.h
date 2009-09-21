@@ -20,6 +20,7 @@ protected:
   static v8::Handle<v8::Value> Find(const v8::Arguments& args);
   static v8::Handle<v8::Value> Text(const v8::Arguments& args);
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Parent(const v8::Arguments& args);
   static v8::Handle<v8::Value> Child(const v8::Arguments& args);
   static v8::Handle<v8::Value> AddChild(const v8::Arguments& args);
 
@@ -27,6 +28,7 @@ protected:
 
   v8::Handle<v8::Value> get_name();
   v8::Handle<v8::Value> get_doc();
+  v8::Handle<v8::Value> get_parent();
   v8::Handle<v8::Value> get_child(double idx);
   v8::Handle<v8::Value> get_attr(const char * name);
   void set_attr(const char * name, const char * value);
