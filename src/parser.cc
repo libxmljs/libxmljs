@@ -104,7 +104,7 @@ Parser::parse_context()
     return Null();
   }
 
-  Persistent<Object> doc = Persistent<Object>((Object*)context_->myDoc->_private);
+  Persistent<Object> doc = XmlObj::Unwrap(context_->myDoc);
 
   // This is to indicate to release_underlying that we took the
   // ownership on the doc.

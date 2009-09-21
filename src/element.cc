@@ -37,7 +37,7 @@ Element::New(
     callback = Handle<Function>::Cast(args[4]);
 
   xmlNode* elem = xmlNewDocNode(document->xml_obj, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
-  Persistent<Object> obj = Persistent<Object>((Object*)elem->_private);
+  Persistent<Object> obj = XmlObj::Unwrap(elem);
   Element *element = ObjectWrap::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {
@@ -243,7 +243,7 @@ Element::find(
 
   Handle<Array> nodes = Array::New(result->nodesetval->nodeNr);
   for (int i = 0; i != result->nodesetval->nodeNr; ++i)
-    nodes->Set(Number::New(i), Persistent<Object>((Object*)result->nodesetval->nodeTab[i]->_private));
+    nodes->Set(Number::New(i), XmlObj::Unwrap(result->nodesetval->nodeTab[i]));
 
   xmlXPathFreeObject(result);
   xmlXPathFreeContext(ctxt);

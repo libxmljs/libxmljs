@@ -188,7 +188,7 @@ Document::New(
     version = new String::Utf8Value(String::New("1.0"));
 
   xmlDoc * doc = xmlNewDoc((const xmlChar*)**version);
-  Persistent<Object> obj = Persistent<Object>((Object*)doc->_private);
+  Persistent<Object> obj = XmlObj::Unwrap(doc);
   Document *document = ObjectWrap::Unwrap<Document>(obj);
 
   if (encoding)
@@ -256,7 +256,7 @@ Document::get_root()
 {
   xmlNodePtr root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return Persistent<Object>((Object*)root->_private);
+    return XmlObj::Unwrap(root);
   else
     return Null();
 }

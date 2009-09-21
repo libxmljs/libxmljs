@@ -43,5 +43,45 @@ public:
   v8::Persistent<v8::Object> handle_; // ro
 };
 
-} // namespace node
+class XmlObj {
+public:
+  static inline void
+  Wrap(
+    void * xml_obj,
+    v8::Handle<v8::Object> jsObject)
+  {
+    xmlNode * node = (xmlNode*)xml_obj;
+    node->_private = new XmlObj(jsObject);
+  }
+
+  static inline v8::Persistent<v8::Object>
+  Unwrap(
+    void * xml_obj)
+  {
+    xmlNode * node = (xmlNode*)xml_obj;
+    assert(node->_private);
+    XmlObj * xmlobj = (XmlObj*)node->_private;
+    return xmlobj->_handle;
+  }
+
+  XmlObj(
+    v8::Handle<v8::Object> jsObject)
+  {
+    _handle = v8::Persistent<v8::Object>::New(jsObject);
+  }
+
+  ~XmlObj()
+  {
+    if (!_handle.IsEmpty()) {
+      assert(_handle.IsNearDeath());
+      _handle.Dispose();
+      _handle.Clear();
+    }
+  }
+
+  v8::Persistent<v8::Object> _handle;
+
+};
+
+} // namespace libxmljs
 #endif // object_wrap_h
