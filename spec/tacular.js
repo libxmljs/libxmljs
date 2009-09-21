@@ -73,9 +73,13 @@
 
   var inspectObject = function(obj) {
     if(obj === null) return "null";
-    var elements = [];
+    var elements = [], orderedProperties = [], i;
     for(property in obj) {
-      elements.push([property, inspect(obj[property])].join(":"));
+      orderedProperties.push(property);
+    }
+    orderedProperties = orderedProperties.sort();
+    for(i = 0; i < orderedProperties.length; i++) {
+      elements.push([orderedProperties[i], inspect(obj[orderedProperties[i]])].join(":"));
     }
     return "{" + elements.join(",") + "}";
   };
@@ -125,7 +129,11 @@
       return inspectBoolean(element);
       break;
     default:
-      return "undefined";
+      if(element === undefined) {
+        return "undefined";
+      } else {
+        return element.toString();
+      }
     }
   };
 
@@ -134,11 +142,13 @@
   };
 
   var assertEqual = function(a, b) {
-    a == b ? specPass() : specFail("Expected:\n" + inspect(a) + "\n\n" + "Found:\n" + inspect(b));
+    var debugA = inspect(a), debugB = inspect(b);
+    debugA == debugB ? specPass() : specFail("Expected:\n" + debugA + "\n\n" + "Found:\n" + debugB);
   };
 
   var assertNotEqual = function(a, b) {
-    a != b ? specPass() : specFail("Expected:\n" + inspect(a) + "\n\nto not equal:\n" + inspect(b));
+    var debugA = inspect(a), debugB = inspect(b);
+    debugA != debugB ? specPass() : specFail("Expected:\n" + debugA + "\n\nto not equal:\n" + debugB);
   };
 
   var beforeEach = function(func) {
