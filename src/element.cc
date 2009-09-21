@@ -209,6 +209,26 @@ Element::Children(
   return element->get_children();
 }
 
+Handle<Value>
+Element::PrevSibling(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_prev_sibling();
+}
+
+Handle<Value>
+Element::NextSibling(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_next_sibling();
+}
+
 void
 Element::set_name(
   const char * name)
@@ -307,6 +327,24 @@ Element::get_children()
   return children;
 }
 
+Handle<Value>
+Element::get_prev_sibling()
+{
+  if (xml_obj->prev)
+    return XmlObj::Unwrap(xml_obj->prev);
+
+  return Null();
+}
+
+Handle<Value>
+Element::get_next_sibling()
+{
+  if (xml_obj->next)
+    return XmlObj::Unwrap(xml_obj->next);
+
+  return Null();
+}
+
 void
 Element::set_content(
   const char * content)
@@ -372,6 +410,8 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Element::Parent);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prev_sibling", Element::PrevSibling);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "next_sibling", Element::NextSibling);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
   target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());

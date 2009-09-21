@@ -53,7 +53,7 @@ describe('Document traversal', function() {
 
   it('will list children', function() {
     var children = [];
-    doc = new libxml.Document(function(n) {
+    var doc = new libxml.Document(function(n) {
       n.node('root', function(n) {
         children.push(n.node('child'));
         children.push(n.node('sibling1'));
@@ -64,5 +64,20 @@ describe('Document traversal', function() {
     assertEqual(children.length, doc.children().length);
     for (i = 0; i < children.length; i++)
       assertEqual(children[i], doc.children()[i]);
+  });
+
+  it('can traverse siblings', function() {
+    var children = [];
+    var doc = new libxml.Document(function(n) {
+      n.node('root', function(n) {
+        children.push(n.node('prev_sibling'));
+        children.push(n.node('child'));
+        children.push(n.node('next_sibling'));
+      });
+    });
+    assertEqual(children[0], children[1].prev_sibling());
+    assertEqual(children[2], children[1].next_sibling());
+    assertEqual(null, children[0].prev_sibling());
+    assertEqual(null, children[2].next_sibling());
   });
 });
