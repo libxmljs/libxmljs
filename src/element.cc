@@ -157,6 +157,16 @@ Element::Text(
   return args.This();
 }
 
+Handle<Value>
+Element::Doc(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_doc();
+}
+
 void
 Element::set_name(
   const char * name)
@@ -200,6 +210,12 @@ Element::add_child(
   Element * child)
 {
   xmlAddChild(xml_obj, child->xml_obj);
+}
+
+Handle<Value>
+Element::get_doc()
+{
+  return XmlObj::Unwrap(xml_obj->doc);
 }
 
 void
@@ -263,6 +279,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Element::Doc);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
   target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());
