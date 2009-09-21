@@ -167,6 +167,27 @@ Element::Doc(
   return element->get_doc();
 }
 
+Handle<Value>
+Element::Child(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  double idx = 1;
+
+  if (args.Length() > 0) {
+    if (!args[0]->IsNumber()) {
+      LIBXMLJS_THROW_EXCEPTION("Bad argument: must provide #child() with a number");
+
+    } else {
+      idx = args[0]->ToNumber()->Value();
+    }
+  }
+
+  return element->get_child(idx);
+}
+
 void
 Element::set_name(
   const char * name)
@@ -216,6 +237,24 @@ Handle<Value>
 Element::get_doc()
 {
   return XmlObj::Unwrap(xml_obj->doc);
+}
+
+Handle<Value>
+Element::get_child(
+  double idx)
+{
+  double i = 1;
+  xmlNode * child = xml_obj->children;
+
+  while (child && i < idx) {
+    child = child->next;
+    i++;
+  }
+
+  if (!child)
+    return Null();
+  
+  return XmlObj::Unwrap(child);
 }
 
 void
@@ -280,6 +319,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Element::Doc);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
   target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());

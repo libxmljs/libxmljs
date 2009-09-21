@@ -10,3 +10,7 @@ libxml.Document.prototype.find = function() {
 libxml.Document.prototype.get = function() {
   return this.find.apply(this, arguments)[0];
 };
+
+libxml.Document.prototype.child = function() {
+  return this.root().child.apply(this.root(), arguments);
+};
