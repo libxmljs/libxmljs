@@ -198,6 +198,16 @@ Element::Child(
   return element->get_child(idx);
 }
 
+Handle<Value>
+Element::Children(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_children();
+}
+
 void
 Element::set_name(
   const char * name)
@@ -276,6 +286,21 @@ Element::get_child(
   return XmlObj::Unwrap(child);
 }
 
+Handle<Value>
+Element::get_children()
+{
+  int i = 0;
+  xmlNode * child = xml_obj->children;
+  Handle<Object> children = Object::New();
+
+  do {
+    if (child)
+      children->Set(Number::New(i++), XmlObj::Unwrap(child));
+  } while(child = child->next);
+
+  return Handle<Array>::Cast(children);
+}
+
 void
 Element::set_content(
   const char * content)
@@ -340,6 +365,7 @@ Element::Initialize(
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Element::Doc);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Element::Parent);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 
   target->Set(String::NewSymbol("Element"), constructor_template->GetFunction());

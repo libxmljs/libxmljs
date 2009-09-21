@@ -14,3 +14,7 @@ libxml.Document.prototype.get = function() {
 libxml.Document.prototype.child = function() {
   return this.root().child.apply(this.root(), arguments);
 };
+
+libxml.Document.prototype.children = function() {
+  return this.root().children();
+};
