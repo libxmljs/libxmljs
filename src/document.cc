@@ -13,13 +13,14 @@ using namespace libxmljs;
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
   assert(document);
 
-#define BUILD_NODE(type, name, node)                            \
-{                                                               \
-  type *name = new type(node);                                  \
-  Persistent<Object> name##JS = Persistent<Object>::New(        \
-    type::constructor_template->GetFunction()->NewInstance());  \
-  node->_private = *name##JS;                                   \
-  name->Wrap(name##JS);                                         \
+#define BUILD_NODE(type, name, node)                                    \
+{                                                                       \
+  type *name = new type(node);                                          \
+  Handle<Value> argv[1] = { Null() };                                   \
+  Persistent<Object> name##JS = Persistent<Object>::New(                \
+    type::constructor_template->GetFunction()->NewInstance(1, argv));   \
+  XmlObj::Wrap(node, name##JS);                                         \
+  name->Wrap(name##JS);                                                 \
 }
 
 namespace
@@ -32,20 +33,15 @@ void on_libxml_construct(xmlNode* node)
 {
   switch (node->type) {
     case XML_DOCUMENT_NODE:
-      {
-        Document *doc = new Document(node->doc);
-        Handle<Value> argv[1] = { Null() };
-        Persistent<Object> jsDocument = Persistent<Object>::New(
-          Document::constructor_template->GetFunction()->NewInstance(1, argv));
-        node->_private = *jsDocument;
-        doc->Wrap(jsDocument);
-      }
+      BUILD_NODE(Document, doc, node->doc);
       break;
       
     case XML_ELEMENT_NODE:
       BUILD_NODE(Element, elem, node);
       break;
 
+    default:
+      NULL; // nothing. just silence the compiler warnings
   }
 }
 
@@ -145,7 +141,7 @@ Document::New(
       break;
 
     case 1: // newDocument(version), newDocument(callback)
-      if (args[0]->IsNull())
+      if (args[0]->IsNull()) // was created by the libxml callback
         return args.This();
 
       if (args[0]->IsString()) {

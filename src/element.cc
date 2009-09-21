@@ -21,7 +21,7 @@ Element::New(
   const Arguments& args)
 {
   HandleScope scope;
-  if (args.Length() == 0)
+  if (args.Length() == 0 || args[0]->IsNull()) // was created by the libxml callback
     return args.This();
 
   Document *document = ObjectWrap::Unwrap<Document>(args[0]->ToObject());
