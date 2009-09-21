@@ -67,6 +67,7 @@ describe("SAX Push Parser", function() {
   it('will properly parse a string chunk by chunk', function() {
     var str_ary = node.fs.cat(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml').wait().split("\n");
     parser = createParser('SaxPushParser');
+    var i;
     for (i = 0; i < str_ary.length; i++)
       parser.push(str_ary[i], (i+1 == str_ary.length));
 
