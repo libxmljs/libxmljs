@@ -1,5 +1,6 @@
 #include "element.h"
 #include "document.h"
+#include "attribute.h"
 
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
@@ -258,12 +259,8 @@ Element::get_attr(
   const char * name)
 {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
-  if (attr) {
-    xmlChar * attr = xmlGetNsProp(xml_obj, (const xmlChar*)name, NULL);
-    Handle<String> ret_attr = String::New((const char*)attr);
-    xmlFree(attr);
-    return ret_attr;
-  }
+  if (attr)
+    return XmlObj::Unwrap(attr);
 
   return Null();
 }
@@ -274,7 +271,9 @@ Element::set_attr(
   const char * name,
   const char * value)
 {
-  xmlSetProp(xml_obj, (const xmlChar*)name, (const xmlChar*)value);
+  HandleScope scope;
+  Handle<Value> argv[3] = { XmlObj::Unwrap(xml_obj), String::New(name), String::New(value) };
+  Persistent<Object>::New(Attribute::constructor_template->GetFunction()->NewInstance(3, argv));
 }
 
 void

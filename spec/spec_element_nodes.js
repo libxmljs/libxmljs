@@ -73,7 +73,7 @@ describe('A node attribute', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');
     elem.attr('to', 'wongfoo');
-    assertEqual('wongfoo', elem.attr('to'));
+    assertEqual('wongfoo', elem.attr('to').value());
   });
 
   it('will return null when an attr is not found', function() {
@@ -85,28 +85,28 @@ describe('A node attribute', function() {
   it('can be assigned on creation', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name', {to: 'wongfoo'});
-    assertEqual('wongfoo', elem.attr('to'));
+    assertEqual('wongfoo', elem.attr('to').value());
   });
 
   it('can be assigned with helpers', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');
     elem.attr('to', 'wongfoo');
-    assertEqual('wongfoo', elem.attr('to'));
+    assertEqual('wongfoo', elem.attr('to').value());
   });
 
   it('can be assigned with an object', function() {
     var doc = new libxml.Document();
     elem = doc.node('name');
     elem.attr({to: 'wongfoo'});
-    assertEqual('wongfoo', elem.attr('to'));
+    assertEqual('wongfoo', elem.attr('to').value());
   });
 
   it('can be reassigned', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name', {to: 'wongfoo'});
-    assertEqual('wongfoo', elem.attr('to'));
+    assertEqual('wongfoo', elem.attr('to').value());
     elem.attr('to', 'julie newmar');
-    assertEqual('julie newmar', elem.attr('to'));
+    assertEqual('julie newmar', elem.attr('to').value());
   });
 });

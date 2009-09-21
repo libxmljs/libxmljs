@@ -26,6 +26,7 @@ protected:
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Root(const v8::Arguments& args);
   static v8::Handle<v8::Value> Encoding(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
 
   static v8::Handle<v8::Value> GetProperty(

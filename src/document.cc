@@ -1,6 +1,7 @@
 #include "document.h"
 #include "node.h"
 #include "element.h"
+#include "attribute.h"
 
 #include <libxml/xmlstring.h>
 
@@ -32,6 +33,10 @@ namespace
 void on_libxml_construct(xmlNode* node)
 {
   switch (node->type) {
+    case XML_ATTRIBUTE_NODE:
+      BUILD_NODE(Attribute, attr, node);
+      break;
+
     case XML_DOCUMENT_NODE:
       BUILD_NODE(Document, doc, node->doc);
       break;
@@ -77,10 +82,14 @@ Document::GetProperty(
   if (property == VERSION_SYMBOL)
     return document->get_version();
 
-  else if (property == DOCUMENT_SYMBOL)
-    return info.This();
-
   return Undefined();
+}
+
+Handle<Value>
+Document::Doc(
+  const Arguments& args)
+{
+  return args.This();
 }
 
 Handle<Value>
@@ -279,8 +288,8 @@ Document::Initialize (
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "root", Document::Root);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "encoding", Document::Encoding);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "document", Document::Doc);
 
-  constructor_template->PrototypeTemplate()->SetAccessor(DOCUMENT_SYMBOL, Document::GetProperty);
   constructor_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL, Document::GetProperty);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "toString", Document::ToString);

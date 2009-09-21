@@ -56,7 +56,7 @@ describe('A new document', function() {
 
   it('returns itself when asked', function() {
     var doc = new libxml.Document();
-    assertEqual(doc, doc.document);
+    assertEqual(doc, doc.document());
   });
 
   it('is created with a null root node', function() {

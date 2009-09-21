@@ -1,5 +1,6 @@
 #include "node.h"
 #include "element.h"
+#include "attribute.h"
 
 using namespace v8;
 using namespace libxmljs;
@@ -21,4 +22,5 @@ Node::Initialize(
   Handle<Object> target)
 {
   Element::Initialize(target);
+  Attribute::Initialize(target);
 }
