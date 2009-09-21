@@ -60,7 +60,9 @@ describe('Document traversal', function() {
         children.push(n.node('sibling2'));
       });
     });
-    doc.children();
-    // assertEqual(children, doc.children());
+    var i;
+    assertEqual(children.length, doc.children().length);
+    for (i = 0; i < children.length; i++)
+      assertEqual(children[i], doc.children()[i]);
   });
 });

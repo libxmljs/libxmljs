@@ -2,6 +2,7 @@
 #include "document.h"
 
 #include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 using namespace v8;
 using namespace libxmljs;
@@ -289,16 +290,21 @@ Element::get_child(
 Handle<Value>
 Element::get_children()
 {
-  int i = 0;
   xmlNode * child = xml_obj->children;
-  Handle<Object> children = Object::New();
+  xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
+
+  if(!child)
+    return Array::New();
 
   do {
-    if (child)
-      children->Set(Number::New(i++), XmlObj::Unwrap(child));
-  } while(child = child->next);
+    xmlXPathNodeSetAdd(set, child);
+  } while((child = child->next));
 
-  return Handle<Array>::Cast(children);
+  Handle<Array> children = Array::New(set->nodeNr);
+  for (int i = 0; i < set->nodeNr; ++i)
+    children->Set(Number::New(i), XmlObj::Unwrap(set->nodeTab[i]));
+
+  return children;
 }
 
 void
