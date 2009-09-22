@@ -160,26 +160,6 @@ Element::Text(
 }
 
 Handle<Value>
-Element::Doc(
-  const Arguments& args)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
-
-  return element->get_doc();
-}
-
-Handle<Value>
-Element::Parent(
-  const Arguments& args)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
-
-  return element->get_parent();
-}
-
-Handle<Value>
 Element::Child(
   const Arguments& args)
 {
@@ -208,26 +188,6 @@ Element::Children(
   UNWRAP_ELEMENT(args.This());
 
   return element->get_children();
-}
-
-Handle<Value>
-Element::PrevSibling(
-  const Arguments& args)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
-
-  return element->get_prev_sibling();
-}
-
-Handle<Value>
-Element::NextSibling(
-  const Arguments& args)
-{
-  HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
-
-  return element->get_next_sibling();
 }
 
 Handle<Value>
@@ -284,21 +244,6 @@ Element::add_child(
 }
 
 Handle<Value>
-Element::get_doc()
-{
-  return XmlObj::Unwrap(xml_obj->doc);
-}
-
-Handle<Value>
-Element::get_parent()
-{
-  if (xml_obj->parent)
-    return XmlObj::Unwrap(xml_obj->parent);
-
-  return XmlObj::Unwrap(xml_obj->doc);
-}
-
-Handle<Value>
 Element::get_child(
   double idx)
 {
@@ -334,24 +279,6 @@ Element::get_children()
     children->Set(Number::New(i), XmlObj::Unwrap(set->nodeTab[i]));
 
   return children;
-}
-
-Handle<Value>
-Element::get_prev_sibling()
-{
-  if (xml_obj->prev)
-    return XmlObj::Unwrap(xml_obj->prev);
-
-  return Null();
-}
-
-Handle<Value>
-Element::get_next_sibling()
-{
-  if (xml_obj->next)
-    return XmlObj::Unwrap(xml_obj->next);
-
-  return Null();
 }
 
 Handle<Value>
@@ -419,18 +346,15 @@ Element::Initialize(
 {
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
   constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->Inherit(Node::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Element::Doc);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Element::Parent);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prev_sibling", Element::PrevSibling);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "next_sibling", Element::NextSibling);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "path", Element::Path);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
 

@@ -76,6 +76,7 @@ Attribute::Initialize(
 {
   Local<FunctionTemplate> t = FunctionTemplate::New(Attribute::New);
   constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->Inherit(Node::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Attribute::Name);
