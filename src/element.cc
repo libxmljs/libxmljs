@@ -118,6 +118,16 @@ Element::Attr(
 }
 
 Handle<Value>
+Element::Attrs(
+  const Arguments& args)
+{
+  HandleScope scope;
+  UNWRAP_ELEMENT(args.This());
+
+  return element->get_attrs();
+}
+
+Handle<Value>
 Element::AddChild(
   const Arguments& args)
 {
@@ -236,6 +246,26 @@ Element::set_attr(
   Persistent<Object>::New(Attribute::constructor_template->GetFunction()->NewInstance(3, argv));
 }
 
+Handle<Value>
+Element::get_attrs()
+{
+  HandleScope scope;
+  xmlAttr * attr = xml_obj->properties;
+
+  if(!attr)
+    return Array::New();
+
+  Handle<Array> attributes = Array::New();
+  Handle<Function> push = Handle<Function>::Cast(attributes->Get(String::NewSymbol("push")));
+  Handle<Value> argv[1];
+  do {
+    argv[0] = XmlObj::Unwrap(attr);
+    push->Call(attributes, 1, argv);
+  } while((attr = attr->next));
+
+  return attributes;
+}
+
 void
 Element::add_child(
   Element * child)
@@ -264,6 +294,7 @@ Element::get_child(
 Handle<Value>
 Element::get_children()
 {
+  HandleScope scope;
   xmlNode * child = xml_obj->children;
   xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
 
@@ -351,6 +382,7 @@ Element::Initialize(
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attrs", Element::Attrs);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);

@@ -17,6 +17,7 @@ protected:
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Name(const v8::Arguments& args);
   static v8::Handle<v8::Value> Attr(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Attrs(const v8::Arguments& args);
   static v8::Handle<v8::Value> Find(const v8::Arguments& args);
   static v8::Handle<v8::Value> Text(const v8::Arguments& args);
   static v8::Handle<v8::Value> Path(const v8::Arguments& args);
@@ -31,6 +32,7 @@ protected:
   v8::Handle<v8::Value> get_children();
   v8::Handle<v8::Value> get_path();
   v8::Handle<v8::Value> get_attr(const char * name);
+  v8::Handle<v8::Value> get_attrs();
   void set_attr(const char * name, const char * value);
   void add_child(Element * child);
   void set_content(const char * content);
