@@ -20,11 +20,14 @@ public:
 
 protected:
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Namespace(const v8::Arguments& args);
   static v8::Handle<v8::Value> Parent(const v8::Arguments& args);
   static v8::Handle<v8::Value> NextSibling(const v8::Arguments& args);
   static v8::Handle<v8::Value> PrevSibling(const v8::Arguments& args);
 
   v8::Handle<v8::Value> get_doc();
+  v8::Handle<v8::Value> get_namespace();
+  void set_namespace(xmlNs * ns);
   v8::Handle<v8::Value> get_parent();
   v8::Handle<v8::Value> get_prev_sibling();
   v8::Handle<v8::Value> get_next_sibling();

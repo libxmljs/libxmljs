@@ -25,7 +25,7 @@ Attribute::New(
 
   xmlAttr* elem = xmlSetProp(element->xml_obj, (const xmlChar*)*name, (const xmlChar*)*value);
 
-  return XmlObj::Unwrap(elem);
+  return XmlObj::Unwrap<xmlAttr>(elem);
 }
 
 Handle<Value>
@@ -52,7 +52,7 @@ Handle<Value>
 Attribute::get_name()
 {
   if (xml_obj->name)
-    return String::New((const char*)xml_obj->name);
+    return String::New((const char*)xml_obj->name, xmlStrlen(xml_obj->name));
 
   return Null();
 }
@@ -62,7 +62,7 @@ Attribute::get_value()
 {
   xmlChar* value = xmlNodeGetContent(xml_obj);
   if (value != NULL) {
-    Handle<String> ret_value = String::New((const char*)value);
+    Handle<String> ret_value = String::New((const char*)value, xmlStrlen(value));
     xmlFree(value);
     return ret_value;
   }

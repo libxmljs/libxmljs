@@ -9,15 +9,15 @@
   obj->Set(v8::String::NewSymbol(name),                               \
            v8::FunctionTemplate::New(callback)->GetFunction())
 
-#define LIBXMLJS_SET_PROTOTYPE_METHOD(templ, name, callback)                \
-  do {                                                                      \
-    v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);  \
-    v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \
-      FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
-                            __callback##_SIG);                              \
-    templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
-                                    __callback##_TEM);                      \
-  } while (0)
+#define LIBXMLJS_SET_PROTOTYPE_METHOD(templ, name, callback)              \
+{                                                                         \
+  v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);  \
+  v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \
+    FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
+                          __callback##_SIG);                              \
+  templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
+                                  __callback##_TEM);                      \
+}
 
 #define LIBXMLJS_SET_METHOD(obj, name, callback)                \
   obj->Set(v8::String::NewSymbol(name),                         \
@@ -32,6 +32,16 @@
     Local<Value> exception = Exception::TypeError(String::New(err));  \
     return ThrowException(exception);                                 \
   }
+
+#define BUILD_NODE(klass, type, name, node)                             \
+{                                                                       \
+  klass *name = new klass(node);                                        \
+  Handle<Value> argv[1] = { Null() };                                   \
+  Persistent<Object> name##JS = Persistent<Object>::New(                \
+    klass::constructor_template->GetFunction()->NewInstance(1, argv));  \
+  XmlObj::Wrap<type>(node, name##JS);                                   \
+  name->Wrap(name##JS);                                                 \
+}
 
 
 #include <v8.h>

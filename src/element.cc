@@ -39,7 +39,7 @@ Element::New(
     callback = Handle<Function>::Cast(args[4]);
 
   xmlNode* elem = xmlNewDocNode(document->xml_obj, NULL, (const xmlChar*)*name, content?(const xmlChar*)**content:NULL);
-  Persistent<Object> obj = XmlObj::Unwrap(elem);
+  Persistent<Object> obj = XmlObj::Unwrap<xmlNode>(elem);
   Element *element = ObjectWrap::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {

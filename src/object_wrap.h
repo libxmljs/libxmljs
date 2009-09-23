@@ -45,22 +45,22 @@ public:
 
 class XmlObj {
 public:
+  template <class T>
   static inline void
   Wrap(
-    void * xml_obj,
+    T * xml_obj,
     v8::Handle<v8::Object> jsObject)
   {
-    xmlNode * node = (xmlNode*)xml_obj;
-    node->_private = new XmlObj(jsObject);
+    xml_obj->_private = new XmlObj(jsObject);
   }
 
+  template <class T>
   static inline v8::Persistent<v8::Object>
   Unwrap(
-    void * xml_obj)
+    T * xml_obj)
   {
-    xmlNode * node = (xmlNode*)xml_obj;
-    assert(node->_private);
-    XmlObj * xmlobj = (XmlObj*)node->_private;
+    assert(xml_obj->_private);
+    XmlObj * xmlobj = (XmlObj*)xml_obj->_private;
     return xmlobj->_handle;
   }
 

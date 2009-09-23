@@ -41,3 +41,8 @@ libxml.Element.prototype.node = function() {
 libxml.Element.prototype.get = function() {
   return this.find.apply(this, arguments)[0];
 };
+
+libxml.Element.prototype.define_namespace = function() {
+  var args = arguments.length == 1 ? [null, arguments[0]] : [arguments[0], arguments[1]];
+  return new libxml.Namespace(this, args[0], args[1]);
+};

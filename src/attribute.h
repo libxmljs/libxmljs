@@ -8,7 +8,7 @@ namespace libxmljs {
 
 class Attribute : public Node {
 public:
-  Attribute(xmlNode* node) : Node(node) {}
+  Attribute(xmlNode* node) : Node((xmlNode*)node) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

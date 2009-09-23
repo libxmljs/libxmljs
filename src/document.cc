@@ -2,6 +2,7 @@
 #include "node.h"
 #include "element.h"
 #include "attribute.h"
+#include "namespace.h"
 
 #include <libxml/xmlstring.h>
 
@@ -14,16 +15,6 @@ using namespace libxmljs;
   Document *document = ObjectWrap::Unwrap<Document>(from);  \
   assert(document);
 
-#define BUILD_NODE(type, name, node)                                    \
-{                                                                       \
-  type *name = new type(node);                                          \
-  Handle<Value> argv[1] = { Null() };                                   \
-  Persistent<Object> name##JS = Persistent<Object>::New(                \
-    type::constructor_template->GetFunction()->NewInstance(1, argv));   \
-  XmlObj::Wrap(node, name##JS);                                         \
-  name->Wrap(name##JS);                                                 \
-}
-
 namespace
 {
 
@@ -34,15 +25,15 @@ void on_libxml_construct(xmlNode* node)
 {
   switch (node->type) {
     case XML_ATTRIBUTE_NODE:
-      BUILD_NODE(Attribute, attr, node);
+      BUILD_NODE(Attribute, xmlNode, attr, node);
       break;
 
     case XML_DOCUMENT_NODE:
-      BUILD_NODE(Document, doc, node->doc);
+      BUILD_NODE(Document, xmlDoc, doc, node->doc);
       break;
       
     case XML_ELEMENT_NODE:
-      BUILD_NODE(Element, elem, node);
+      BUILD_NODE(Element, xmlNode, elem, node);
       break;
 
     default:
@@ -197,7 +188,7 @@ Document::New(
     version = new String::Utf8Value(String::New("1.0"));
 
   xmlDoc * doc = xmlNewDoc((const xmlChar*)**version);
-  Persistent<Object> obj = XmlObj::Unwrap(doc);
+  Persistent<Object> obj = XmlObj::Unwrap<xmlDoc>(doc);
   Document *document = ObjectWrap::Unwrap<Document>(obj);
 
   if (encoding)
@@ -297,4 +288,5 @@ Document::Initialize (
   target->Set(String::NewSymbol("Document"), constructor_template->GetFunction());
 
   Node::Initialize(target);
+  Namespace::Initialize(target);
 }
