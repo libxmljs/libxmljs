@@ -27,7 +27,8 @@ Using
 node.js
 -------
 Move libxmljs.node to your project's directory and throw this into your script:
-var libxml = require('libxmljs.node');
+
+    var libxml = require('libxmljs.node');
 
 
 API
