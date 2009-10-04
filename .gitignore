@@ -8,3 +8,4 @@ src/*.node
 config.log
 src/*.os
 libxmljs
+tools/*.pyc
