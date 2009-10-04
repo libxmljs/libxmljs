@@ -29,10 +29,11 @@
     v8::String::New(err));                                    \
   ThrowException(exception);
 
-#define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                  \
-  if (!arg->type()) {                                                 \
-    Local<Value> exception = Exception::TypeError(String::New(err));  \
-    return ThrowException(exception);                                 \
+#define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)            \
+  if (!arg->type()) {                                           \
+    v8::Local<v8::Value> exception = v8::Exception::TypeError(  \
+      v8::String::New(err));                                    \
+    return v8::ThrowException(exception);                       \
   }
 
 #define BUILD_NODE(klass, type, name, node)                               \

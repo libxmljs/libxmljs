@@ -1,11 +1,14 @@
-#ifndef __sax_parser_h__
-#define __sax_parser_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_SAX_PARSER_H_
+#define SRC_SAX_PARSER_H_
+
+#include <v8.h>
+
+#include <memory>
 
 #include "libxmljs.h"
 #include "parser.h"
 
-#include <v8.h>
-#include <memory>
 
 namespace libxmljs {
 
@@ -16,65 +19,54 @@ namespace libxmljs {
   })
 
 class SaxParser : public Parser {
-public:
+  public:
+
   SaxParser();
 
   static void
-  Initialize (
-    v8::Handle<v8::Object> target);
+  Initialize(v8::Handle<v8::Object> target);
 
   static v8::Handle<v8::Value>
-  NewParser(
-    const v8::Arguments& args);
+  NewParser(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  NewPushParser(
-    const v8::Arguments& args);
+  NewPushParser(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  ParseString(
-    const v8::Arguments& args);
+  ParseString(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  ParseFile(
-    const v8::Arguments& args);
+  ParseFile(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  Push(
-    const v8::Arguments& args);
+  Push(const v8::Arguments& args);
 
   void
-  SetCallbacks(
-    const v8::Handle<v8::Object> context,
-    const v8::Handle<v8::Function> callbacks);
+  SetCallbacks(const v8::Handle<v8::Object> context,
+               const v8::Handle<v8::Function> callbacks);
 
   void
-  Callback(
-    const char * what);
+  Callback(const char * what);
 
   void
-  Callback(
-    const char * what,
-    int argc,
-    v8::Handle<v8::Value> argv[]);
+  Callback(const char * what,
+           int argc,
+           v8::Handle<v8::Value> argv[]);
 
   void
-  parse_string(
-    const char* string,
-    unsigned int size);
+  parse_string(const char* str,
+               unsigned int size);
 
   void
-  parse_file(
-    const char* filename);
+  parse_file(const char* filename);
 
   void
   initialize_push_parser();
 
   void
-  push(
-    const char* string,
-    unsigned int size,
-    bool terminate);
+  push(const char* str,
+       unsigned int size,
+       bool terminate);
 
   void
   start_document();
@@ -83,132 +75,114 @@ public:
   end_document();
 
   void
-  start_element(
-    const xmlChar* name,
-    const xmlChar** p);
+  start_element(const xmlChar* name,
+                const xmlChar** p);
 
   void
-  end_element(
-    const xmlChar* name);
+  end_element(const xmlChar* name);
 
   void
-  start_element_ns(
-    const xmlChar * localname,
-    const xmlChar * prefix,
-    const xmlChar * uri,
-    int nb_namespaces,
-    const xmlChar ** namespaces,
-    int nb_attributes,
-    int nb_defaulted,
-    const xmlChar ** attributes);
+  start_element_ns(const xmlChar* localname,
+                   const xmlChar* prefix,
+                   const xmlChar* uri,
+                   int nb_namespaces,
+                   const xmlChar** namespaces,
+                   int nb_attributes,
+                   int nb_defaulted,
+                   const xmlChar** attributes);
 
   void
-  end_element_ns (
-    const xmlChar * localname,
-    const xmlChar * prefix,
-    const xmlChar * uri);
+  end_element_ns(const xmlChar* localname,
+                 const xmlChar* prefix,
+                 const xmlChar* uri);
 
   void
-  characters(
-    const xmlChar* ch,
-    int len);
+  characters(const xmlChar* ch,
+             int len);
 
   void
-  comment(
-    const xmlChar* value);
+  comment(const xmlChar* value);
 
   void
-  cdata_block(
-    const xmlChar* value,
-    int len);
+  cdata_block(const xmlChar* value,
+              int len);
 
   void
-  warning(
-    const char* message);
+  warning(const char* message);
 
   void
-  error(
-    const char* message);
+  error(const char* message);
 
-  // TODO
+  // TODO(sprsquish)
   // void
   // structured_error(
   //   xmlErrorPtr xerror);
 
-protected:
+  protected:
+
   v8::Persistent<v8::Object> callbacks_;
   _xmlSAXHandler * sax_handler_;
 
-private:
+  private:
+
   friend struct SaxParserCallback;
   void parse();
 };
 
-struct SaxParserCallback
-{
+struct SaxParserCallback {
   static void
-  start_document(
-    void* context);
+  start_document(void* context);
 
   static void
-  end_document(
-    void* context);
+  end_document(void* context);
 
   static void
-  start_element_ns(
-    void * context,
-    const xmlChar * localname,
-    const xmlChar * prefix,
-    const xmlChar * uri,
-    int nb_namespaces,
-    const xmlChar ** namespaces,
-    int nb_attributes,
-    int nb_defaulted,
-    const xmlChar ** attributes);
+  start_element_ns(void* context,
+                   const xmlChar* localname,
+                   const xmlChar* prefix,
+                   const xmlChar* uri,
+                   int nb_namespaces,
+                   const xmlChar** namespaces,
+                   int nb_attributes,
+                   int nb_defaulted,
+                   const xmlChar** attributes);
 
   static void
-  end_element_ns (
-    void * context,
-    const xmlChar * localname,
-    const xmlChar * prefix,
-    const xmlChar * uri);
+  end_element_ns(void* context,
+                 const xmlChar* localname,
+                 const xmlChar* prefix,
+                 const xmlChar* uri);
 
   static void
-  characters(
-    void* context,
-    const xmlChar* ch,
-    int len);
+  characters(void* context,
+             const xmlChar* ch,
+             int len);
 
   static void
-  comment(
-    void* context,
-    const xmlChar* value);
+  comment(void* context,
+          const xmlChar* value);
 
   static void
-  cdata_block(
-    void* context,
-    const xmlChar* value,
-    int len);
+  cdata_block(void* context,
+              const xmlChar* value,
+              int len);
 
   static void
-  warning(
-    void* context,
-    const char* fmt,
-    ...);
+  warning(void* context,
+          const char* fmt,
+          ...);
 
   static void
-  error(
-    void* context,
-    const char* fmt,
-    ...);
+  error(void* context,
+        const char* fmt,
+        ...);
 
-  // TODO
+  // TODO(sprsquish)
   // static void
   // structured_error(
   //   void *ctx,
   //   xmlErrorPtr xerror);
 };
+}  // namespace libxmljs
 
-} // namespace libxmljs
-
-#endif //__sax_parser_h__
+#endif  // SRC_SAX_PARSER_H_
