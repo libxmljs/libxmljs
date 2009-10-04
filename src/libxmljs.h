@@ -1,5 +1,6 @@
-#ifndef __libxmljs_h__
-#define __libxmljs_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_LIBXMLJS_H_
+#define SRC_LIBXMLJS_H_
 
 #define LIBXMLJS_VERSION '0.0.1'
 
@@ -51,6 +52,6 @@
 namespace libxmljs {
 
 
-} //namespace libxmljs
+}  // namespace libxmljs
 
-#endif //__libxmljs_h__
+#endif  // SRC_LIBXMLJS_H_
