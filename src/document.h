@@ -6,7 +6,7 @@
 
 namespace libxmljs {
 
-#define DOCUMENT_SYMBOL String::NewSymbol("document")
+#define DOCUMENT_SYMBOL v8::String::NewSymbol("document")
 
 class Document : public ObjectWrap {
   //Ensure that libxml is properly initialised:

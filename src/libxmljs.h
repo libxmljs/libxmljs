@@ -13,7 +13,7 @@
 {                                                                         \
   v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);  \
   v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \
-    FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
+    v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(),          \
                           __callback##_SIG);                              \
   templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
                                   __callback##_TEM);                      \
@@ -23,8 +23,9 @@
   obj->Set(v8::String::NewSymbol(name),                         \
            v8::FunctionTemplate::New(callback)->GetFunction())
 
-#define LIBXMLJS_THROW_EXCEPTION(err)                               \
-  Local<Value> exception = Exception::TypeError(String::New(err));  \
+#define LIBXMLJS_THROW_EXCEPTION(err)                         \
+  v8::Local<v8::Value> exception = v8::Exception::TypeError(  \
+    v8::String::New(err));                                    \
   ThrowException(exception);
 
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                  \

@@ -1,5 +1,6 @@
-#ifndef __element_h__
-#define __element_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_ELEMENT_H_
+#define SRC_ELEMENT_H_
 
 #include "libxmljs.h"
 #include "node.h"
@@ -7,13 +8,15 @@
 namespace libxmljs {
 
 class Element : public Node {
-public:
-  Element(xmlNode* node) : Node(node) {}
+  public:
+
+  explicit Element(xmlNode* node) : Node(node) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-protected:
+  protected:
+
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Name(const v8::Arguments& args);
   static v8::Handle<v8::Value> Attr(const v8::Arguments& args);
@@ -38,9 +41,8 @@ protected:
   void set_content(const char * content);
   v8::Handle<v8::Value> get_content();
   v8::Handle<v8::Value> find(const char * xpath);
-
 };
 
-} // namespace libxmljs
+}  // namespace libxmljs
 
-#endif // __element_h__
+#endif  // SRC_ELEMENT_H_
