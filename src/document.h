@@ -1,5 +1,6 @@
-#ifndef __document_h__
-#define __document_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_DOCUMENT_H_
+#define SRC_DOCUMENT_H_
 
 #include "libxmljs.h"
 #include "object_wrap.h"
@@ -9,20 +10,23 @@ namespace libxmljs {
 #define DOCUMENT_SYMBOL v8::String::NewSymbol("document")
 
 class Document : public ObjectWrap {
-  //Ensure that libxml is properly initialised:
+  // Ensure that libxml is properly initialised:
   class Init {
-  public:
+    public:
+
     Init();
     virtual ~Init();
   };
 
-public:
+  public:
+
   xmlDoc * xml_obj;
-  Document(xmlDoc* document) : xml_obj(document) {}
+  explicit Document(xmlDoc* document) : xml_obj(document) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-protected:
+  protected:
+
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Root(const v8::Arguments& args);
   static v8::Handle<v8::Value> Encoding(const v8::Arguments& args);
@@ -44,11 +48,11 @@ protected:
   void set_root(xmlNodePtr node);
   bool has_root();
 
-private:
-  static Init init_;
+  private:
 
+  static Init init_;
 };
 
-} // namespace libxmljs
+}  // namespace libxmljs
 
-#endif //__document_h__
+#endif  // SRC_DOCUMENT_H_

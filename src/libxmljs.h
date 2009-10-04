@@ -34,14 +34,14 @@
     return ThrowException(exception);                                 \
   }
 
-#define BUILD_NODE(klass, type, name, node)                             \
-{                                                                       \
-  klass *name = new klass(node);                                        \
-  Handle<Value> argv[1] = { Null() };                                   \
-  Persistent<Object> name##JS = Persistent<Object>::New(                \
-    klass::constructor_template->GetFunction()->NewInstance(1, argv));  \
-  XmlObj::Wrap<type>(node, name##JS);                                   \
-  name->Wrap(name##JS);                                                 \
+#define BUILD_NODE(klass, type, name, node)                               \
+{                                                                         \
+  klass *name = new klass(node);                                          \
+  v8::Handle<v8::Value> argv[1] = { v8::Null() };                         \
+  v8::Persistent<v8::Object> name##JS = v8::Persistent<v8::Object>::New(  \
+    klass::constructor_template->GetFunction()->NewInstance(1, argv));    \
+  XmlObj::Wrap<type>(node, name##JS);                                     \
+  name->Wrap(name##JS);                                                   \
 }
 
 
