@@ -1,5 +1,6 @@
-#ifndef __namespace_h__
-#define __namespace_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_NAMESPACE_H_
+#define SRC_NAMESPACE_H_
 
 #include "libxmljs.h"
 #include "object_wrap.h"
@@ -7,17 +8,19 @@
 namespace libxmljs {
 
 class Namespace : public ObjectWrap {
-public:
+  public:
+
   xmlNs * xml_obj;
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  Namespace(xmlNs * ns) : xml_obj(ns) {}
+  explicit Namespace(xmlNs * ns) : xml_obj(ns) {}
   Namespace(xmlNode * node, const char * prefix, const char * href);
 
   static v8::Handle<v8::Value> New(xmlNs * ns);
 
-protected:
+  protected:
+
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Node(const v8::Arguments& args);
   static v8::Handle<v8::Value> Href(const v8::Arguments& args);
@@ -26,10 +29,9 @@ protected:
   v8::Handle<v8::Value> get_node();
   v8::Handle<v8::Value> get_href();
   v8::Handle<v8::Value> get_prefix();
-
 };
 
 
-} // namespace libxmljs
+}  // namespace libxmljs
 
-#endif //__namespace_h__
+#endif  // SRC_NAMESPACE_H_
