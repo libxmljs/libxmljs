@@ -1,24 +1,28 @@
-#ifndef __node_h__
-#define __node_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_NODE_H_
+#define SRC_NODE_H_
+
+#include <libxml/xmlstring.h>
 
 #include "libxmljs.h"
 #include "object_wrap.h"
 
-#include <libxml/xmlstring.h>
 
 namespace libxmljs {
 
 class Node : public ObjectWrap {
-public:
+  public:
+
   _xmlNode *xml_obj;
 
-  Node(xmlNode* node);
+  explicit Node(xmlNode* node);
   virtual ~Node();
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-protected:
+  protected:
+
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
   static v8::Handle<v8::Value> Namespace(const v8::Arguments& args);
   static v8::Handle<v8::Value> Parent(const v8::Arguments& args);
@@ -31,9 +35,8 @@ protected:
   v8::Handle<v8::Value> get_parent();
   v8::Handle<v8::Value> get_prev_sibling();
   v8::Handle<v8::Value> get_next_sibling();
-
 };
 
-} // namespace libxmljs
+}  // namespace libxmljs
 
-#endif // __node_h__
+#endif  // SRC_NODE_H_
