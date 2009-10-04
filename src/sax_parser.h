@@ -46,10 +46,10 @@ class SaxParser : public Parser {
                const v8::Handle<v8::Function> callbacks);
 
   void
-  Callback(const char * what);
+  Callback(const char* what);
 
   void
-  Callback(const char * what,
+  Callback(const char* what,
            int argc,
            v8::Handle<v8::Value> argv[]);
 
@@ -121,7 +121,7 @@ class SaxParser : public Parser {
   protected:
 
   v8::Persistent<v8::Object> callbacks_;
-  _xmlSAXHandler * sax_handler_;
+  _xmlSAXHandler* sax_handler_;
 
   private:
 

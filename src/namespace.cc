@@ -15,7 +15,7 @@ namespace libxmljs {
 v8::Persistent<v8::FunctionTemplate> Namespace::constructor_template;
 
 v8::Handle<v8::Value>
-Namespace::New(xmlNs * ns) {
+Namespace::New(xmlNs* ns) {
   BUILD_NODE(Namespace, xmlNs, name_space, ns);
   return XmlObj::Unwrap<xmlNs>(ns);
 }
@@ -50,9 +50,9 @@ Namespace::New(const v8::Arguments& args) {
   return obj;
 }
 
-Namespace::Namespace(xmlNode * node,
-                     const char * prefix,
-                     const char * href) {
+Namespace::Namespace(xmlNode* node,
+                     const char* prefix,
+                     const char* href) {
   xml_obj = xmlNewNs(node, (const xmlChar*)href, (const xmlChar*)prefix);
 }
 

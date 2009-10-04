@@ -199,7 +199,7 @@ Element::Path(const v8::Arguments& args) {
 }
 
 void
-Element::set_name(const char * name) {
+Element::set_name(const char* name) {
   xmlNodeSetName(xml_obj, (const xmlChar*)name);
 }
 
@@ -210,7 +210,7 @@ Element::get_name() {
 
 // TODO(sprsquish) make these work with namespaces
 v8::Handle<v8::Value>
-Element::get_attr(const char * name) {
+Element::get_attr(const char* name) {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr)
     return XmlObj::Unwrap(attr);
@@ -220,7 +220,8 @@ Element::get_attr(const char * name) {
 
 // TODO(sprsquish) make these work with namespaces
 void
-Element::set_attr(const char * name, const char * value) {
+Element::set_attr(const char* name,
+                  const char* value) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[3] = { XmlObj::Unwrap(xml_obj),
                                     v8::String::New(name),
@@ -232,7 +233,7 @@ Element::set_attr(const char * name, const char * value) {
 v8::Handle<v8::Value>
 Element::get_attrs() {
   v8::HandleScope scope;
-  xmlAttr * attr = xml_obj->properties;
+  xmlAttr* attr = xml_obj->properties;
 
   if (!attr)
     return v8::Array::New();
@@ -250,14 +251,14 @@ Element::get_attrs() {
 }
 
 void
-Element::add_child(Element * child) {
+Element::add_child(Element* child) {
   xmlAddChild(xml_obj, child->xml_obj);
 }
 
 v8::Handle<v8::Value>
 Element::get_child(double idx) {
   double i = 1;
-  xmlNode * child = xml_obj->children;
+  xmlNode* child = xml_obj->children;
 
   while (child && i < idx) {
     child = child->next;
@@ -273,7 +274,7 @@ Element::get_child(double idx) {
 v8::Handle<v8::Value>
 Element::get_children() {
   v8::HandleScope scope;
-  xmlNode * child = xml_obj->children;
+  xmlNode* child = xml_obj->children;
   xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
 
   if (!child)
@@ -293,7 +294,7 @@ Element::get_children() {
 v8::Handle<v8::Value>
 Element::get_path() {
   xmlChar* path = xmlGetNodePath(xml_obj);
-  const char * return_path = path ? reinterpret_cast<char*>(path) : "";
+  const char* return_path = path ? reinterpret_cast<char*>(path) : "";
   int str_len = xmlStrlen((const xmlChar*)return_path);
   v8::Handle<v8::String> js_obj = v8::String::New(return_path, str_len);
   xmlFree(path);
@@ -301,7 +302,7 @@ Element::get_path() {
 }
 
 void
-Element::set_content(const char * content) {
+Element::set_content(const char* content) {
   xmlNodeSetContent(xml_obj, (const xmlChar*)content);
 }
 
@@ -318,7 +319,7 @@ Element::get_content() {
 }
 
 v8::Handle<v8::Value>
-Element::find(const char * xpath) {
+Element::find(const char* xpath) {
   xmlXPathContext* ctxt = xmlXPathNewContext(xml_obj->doc);
   ctxt->node = xml_obj;
   xmlXPathObject* result = xmlXPathEval((const xmlChar*)xpath, ctxt);

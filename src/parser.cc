@@ -13,7 +13,7 @@ ParseString(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseString with a string")));
 
-  Parser * parser = new Parser();
+  Parser* parser = new Parser();
   v8::String::Utf8Value str(args[0]->ToString());
   return parser->parse_string(*str, str.length());
 }
@@ -26,7 +26,7 @@ ParseFile(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseFile with a filename")));
 
-  Parser * parser = new Parser();
+  Parser* parser = new Parser();
   v8::String::Utf8Value str(args[0]->ToString());
   return parser->parse_file(*str);
 }
@@ -51,7 +51,7 @@ Parser::releaseContext() {
 }
 
 v8::Handle<v8::Value>
-Parser::parse_file(const char * filename) {
+Parser::parse_file(const char* filename) {
   releaseContext();  // Free any existing document.
 
   // The following is based on the implementation of
@@ -67,7 +67,8 @@ Parser::parse_file(const char * filename) {
 }
 
 v8::Handle<v8::Value>
-Parser::parse_string(const char * str, int len) {
+Parser::parse_string(const char* str,
+                     int len) {
   releaseContext();  // Free any existing document.
 
   // The following is based on the implementation of

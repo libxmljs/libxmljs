@@ -82,14 +82,14 @@ SaxParser::SetCallbacks(v8::Handle<v8::Object> self,
 }
 
 void
-SaxParser::Callback(const char * what) {
+SaxParser::Callback(const char* what) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[0];
   Callback(what, 0, argv);
 }
 
 void
-SaxParser::Callback(const char * what,
+SaxParser::Callback(const char* what,
                     int argc,
                     v8::Handle<v8::Value> argv[]) {
   v8::HandleScope scope;
@@ -413,7 +413,7 @@ SaxParserCallback::warning(void* context,
                            ...) {
   SaxParser* parser = LIBXML_JS_GET_PARSER_FROM_CONTEXT(context);
 
-  char * message;
+  char* message;
 
   va_list args;
   va_start(args, msg);

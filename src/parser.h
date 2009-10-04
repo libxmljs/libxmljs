@@ -20,8 +20,8 @@ class Parser : public ObjectWrap {
   Parser() : context_(0) {}
   static void Initialize(v8::Handle<v8::Object> target);
 
-  v8::Handle<v8::Value> parse_string(const char * str, int len);
-  v8::Handle<v8::Value> parse_file(const char * filename);
+  v8::Handle<v8::Value> parse_string(const char* str, int len);
+  v8::Handle<v8::Value> parse_file(const char* filename);
 
   protected:
 

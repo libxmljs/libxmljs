@@ -13,7 +13,8 @@
 namespace libxmljs {
 
 static void
-OnFatalError(const char* location, const char* message) {
+OnFatalError(const char* location,
+             const char* message) {
 #define FATAL_ERROR "\033[1;31mV8 FATAL ERROR.\033[m"
   if (location)
     fprintf(stderr, FATAL_ERROR " %s %s\n", location, message);
@@ -30,7 +31,7 @@ ToCString(const v8::String::Utf8Value& value) {
 }
 
 static void
-ReportException(v8::TryCatch *try_catch) {
+ReportException(v8::TryCatch* try_catch) {
   v8::Handle<v8::Message> message = try_catch->Message();
   if (message.IsEmpty()) {
     fprintf(stderr, "Error: (no message)\n");
@@ -100,8 +101,8 @@ ExecuteString(v8::Handle<v8::String> source,
 }
 
 static void
-ExecuteNativeJS(const char *filename,
-                const char *data) {
+ExecuteNativeJS(const char* filename,
+                const char* data) {
   v8::HandleScope scope;
   v8::TryCatch try_catch;
   ExecuteString(v8::String::New(data), v8::String::New(filename));

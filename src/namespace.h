@@ -10,14 +10,14 @@ namespace libxmljs {
 class Namespace : public ObjectWrap {
   public:
 
-  xmlNs * xml_obj;
+  xmlNs* xml_obj;
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  explicit Namespace(xmlNs * ns) : xml_obj(ns) {}
-  Namespace(xmlNode * node, const char * prefix, const char * href);
+  explicit Namespace(xmlNs* ns) : xml_obj(ns) {}
+  Namespace(xmlNode* node, const char* prefix, const char* href);
 
-  static v8::Handle<v8::Value> New(xmlNs * ns);
+  static v8::Handle<v8::Value> New(xmlNs* ns);
 
   protected:
 

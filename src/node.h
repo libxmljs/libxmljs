@@ -31,7 +31,7 @@ class Node : public ObjectWrap {
 
   v8::Handle<v8::Value> get_doc();
   v8::Handle<v8::Value> get_namespace();
-  void set_namespace(xmlNs * ns);
+  void set_namespace(xmlNs* ns);
   v8::Handle<v8::Value> get_parent();
   v8::Handle<v8::Value> get_prev_sibling();
   v8::Handle<v8::Value> get_next_sibling();

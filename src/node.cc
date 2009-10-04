@@ -84,7 +84,7 @@ Node::get_namespace() {
 }
 
 void
-Node::set_namespace(xmlNs * ns) {
+Node::set_namespace(xmlNs* ns) {
   xmlSetNs(xml_obj, ns);
 }
 

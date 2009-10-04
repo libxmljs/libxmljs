@@ -173,7 +173,7 @@ Document::New(const v8::Arguments& args) {
   if (!version)
     version = new v8::String::Utf8Value(v8::String::New("1.0"));
 
-  xmlDoc * doc = xmlNewDoc((const xmlChar*)**version);
+  xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
   v8::Persistent<v8::Object> obj = XmlObj::Unwrap<xmlDoc>(doc);
   Document *document = ObjectWrap::Unwrap<Document>(obj);
 
@@ -193,7 +193,7 @@ Document::~Document() {
 }
 
 void
-Document::set_encoding(const char * encoding) {
+Document::set_encoding(const char* encoding) {
   xml_obj->encoding = (const xmlChar*)encoding;
 }
 
