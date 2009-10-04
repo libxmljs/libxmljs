@@ -193,14 +193,16 @@ def ReadMacros(lines):
 
 
 HEADER_TEMPLATE = """\
-#ifndef __libxmljs_natives_h__
-#define __libxmljs_natives_h__
+// Copyright 2009, Squish Tech, LLC.
+#ifndef SRC_NATIVES_H_
+#define SRC_NATIVES_H_
 namespace libxmljs {
 
 %(source_lines)s\
 
-}
-#endif
+}  // namespace libxmljs
+
+#endif  // SRC_NATIVES_H_
 """
 
 
