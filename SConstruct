@@ -21,26 +21,22 @@ def CheckForNodeJS(context):
   context.Result(result)
   return result
 
+using_node_js = (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS))
+
 libs = ['xml2', 'v8']
-libpath = ' '.join([
+libpath = [
   '/opt/local/lib',
   '/usr/local/lib',
   '/usr/lib'
-])
-cflags = ' '.join([
-  '-I/opt/local/include',
-  '-I/opt/local/include/libxml2',
-  '-I/usr/local/include',
-  '-I/usr/local/include/libxml2',
-  '-I/usr/include',
-  '-I/usr/include/libxml2'
-])
+]
+cflags = ''
+if using_node_js:
+  cflags += shellOut([node_exe, '--cflags'])
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
 env = Environment(BUILDERS = {'Test' : testBuilder})
 env.Append(
-  LIBS = libs,
   LIBPATH = libpath,
   CCFLAGS = cflags
 )
@@ -54,7 +50,7 @@ if not env.GetOption('clean'):
   if not conf.CheckLib('v8', header = '#include <v8.h>', language = 'c++'):
     print 'Did not find libv8, exiting!'
     Exit(1)
-  if (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS)) and not conf.CheckForNodeJS():
+  if using_node_js and not conf.CheckForNodeJS():
     print 'Did not find node.js exiting!'
     Exit(1)
   env = conf.Finish()
@@ -80,7 +76,7 @@ if env['PLATFORM'] == 'darwin':
 node = env.LoadableModule(
   target = 'libxmljs.node',
   source = cc_sources,
-  CCFLAGS = shellOut([node_exe, '--cflags']) + ' ' + cflags,
+  CCFLAGS = cflags,
   LIBS = libs,
   LIBPATH = libpath
 )
