@@ -39,7 +39,7 @@ cflags = ' '.join([
 ])
 
 if using_node_js:
-  cflags += shellOut([node_exe, '--cflags'])
+  cflags += ' ' + shellOut([node_exe, '--cflags'])
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
