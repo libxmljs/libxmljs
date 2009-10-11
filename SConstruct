@@ -31,11 +31,11 @@ libpath = [
 ]
 cflags = ' '.join([
   '-I/opt/local/include',
-  '-I/opt/local/include/libxml',
+  '-I/opt/local/include/libxml2',
   '-I/usr/local/include',
-  '-I/usr/local/include/libxml',
+  '-I/usr/local/include/libxml2',
   '-I/usr/include',
-  '-I/usr/include/libxml'
+  '-I/usr/include/libxml2'
 ])
 
 if using_node_js:
