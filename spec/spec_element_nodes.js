@@ -1,4 +1,4 @@
-include('helpers.js');
+node.mixin(process, require('helpers.js'));
 
 describe('An element node', function() {
   it('can be created', function() {

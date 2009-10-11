@@ -1,4 +1,4 @@
-include('helpers.js');
+node.mixin(process, require('helpers.js'));
 
 describe('Finding a node', function() {
   it('can be done with #get', function() {

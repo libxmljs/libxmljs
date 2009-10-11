@@ -32,6 +32,8 @@
  *
  */
 (function() {
+  node.mixin(process, require('/utils.js'));
+
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];

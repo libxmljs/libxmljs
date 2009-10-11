@@ -1,4 +1,4 @@
-include('helpers.js');
+node.mixin(process, require('helpers.js'));
 
 describe('A namespace', function() {
   it('can be created and not set', function() {

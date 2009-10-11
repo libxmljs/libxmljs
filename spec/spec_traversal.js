@@ -1,4 +1,4 @@
-include('helpers.js');
+node.mixin(process, require('helpers.js'));
 
 describe('Document traversal', function() {
   it('can get to the document from any node', function() {

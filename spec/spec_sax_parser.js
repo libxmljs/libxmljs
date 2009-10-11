@@ -1,4 +1,4 @@
-include('helpers.js');
+node.mixin(process, require('helpers.js'));
 
 describe("SAX Push Parser", function() {
   var callbacks = {};
