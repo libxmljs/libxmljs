@@ -29,7 +29,15 @@ libpath = [
   '/usr/local/lib',
   '/usr/lib'
 ]
-cflags = ''
+cflags = ' '.join([
+  '-I/opt/local/include',
+  '-I/opt/local/include/libxml',
+  '-I/usr/local/include',
+  '-I/usr/local/include/libxml',
+  '-I/usr/include',
+  '-I/usr/include/libxml'
+])
+
 if using_node_js:
   cflags += shellOut([node_exe, '--cflags'])
 
