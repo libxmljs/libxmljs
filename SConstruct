@@ -23,7 +23,7 @@ def CheckForNodeJS(context):
 
 using_node_js = (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS))
 
-libs = ['xml2', 'v8']
+libs = ['xml2']
 libpath = [
   '/opt/local/lib',
   '/usr/local/lib',
@@ -47,7 +47,7 @@ if not env.GetOption('clean'):
   if not conf.CheckLib('xml2', header = '#include <libxml/parser.h>', language = 'c++'):
     print 'Did not find libxml2, exiting!'
     Exit(1)
-  if not conf.CheckLib('v8', header = '#include <v8.h>', language = 'c++'):
+  if not using_node_js and not conf.CheckLib('v8', header = '#include <v8.h>', language = 'c++'):
     print 'Did not find libv8, exiting!'
     Exit(1)
   if using_node_js and not conf.CheckForNodeJS():
@@ -65,7 +65,7 @@ libxmljs = env.Program(
   target = 'libxmljs',
   source = cc_sources,
   CCFLAGS = cflags,
-  LIBS = libs,
+  LIBS = libs + ['v8'],
   LIBPATH = libpath
 )
 
