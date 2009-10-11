@@ -75,7 +75,7 @@ SAX Parsing
 Callbacks for SAX are created during the instantiation of the parser object.
 You can omit any callback you're not interested in. Below is just a list of callbacks currently supported with the arguments they'll be sent.
 
-    var parser = new libxml.SAXParser(function(cb) {
+    var parser = new libxml.SaxParser(function(cb) {
       cb.onStartDocument(function() {});
       cb.onEndDocument(function() {});
       cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {});
@@ -97,7 +97,7 @@ SAX Push Parsing
 ----------------
 Push parsers are created the same way DOM parsers are, but take input a chunk at a time:
 
-    var parser = new libxml.SAXPushParser(function(cb) {
+    var parser = new libxml.SaxPushParser(function(cb) {
       cb.onStartDocument(function() {});
       cb.onEndDocument(function() {});
       cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {});
