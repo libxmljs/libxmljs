@@ -22,7 +22,7 @@ Node::Doc(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-Node::NS(const v8::Arguments& args) {
+Node::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
   UNWRAP_NODE(args.This());
 
@@ -33,12 +33,12 @@ Node::NS(const v8::Arguments& args) {
   if (args[0]->IsNull())
     return node->remove_namespace();
 
-  Namespace *ns = NULL;
+  libxmljs::Namespace *ns = NULL;
 
   // #namespace(ns) libxml.Namespace object was provided
   // TODO (sprsquish): check that it was actually given a namespace obj
   if (args[0]->IsObject())
-    ns = ObjectWrap::Unwrap<Namespace>(args[0]->ToObject());
+    ns = ObjectWrap::Unwrap<libxmljs::Namespace>(args[0]->ToObject());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
@@ -46,7 +46,8 @@ Node::NS(const v8::Arguments& args) {
     v8::String::Utf8Value ns_to_find(args[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns)
-      ns = ObjectWrap::Unwrap<Namespace>(XmlObj::Unwrap<xmlNs>(found_ns));
+      ns = ObjectWrap::Unwrap<libxmljs::Namespace>(
+        XmlObj::Unwrap<xmlNs>(found_ns));
   }
 
   // Namespace does not seem to exist, so create it.
@@ -69,7 +70,7 @@ Node::NS(const v8::Arguments& args) {
 
     v8::Persistent<v8::Object> new_ns = v8::Persistent<v8::Object>::New(
       define_namespace->Call(args.This(), argc, argv)->ToObject());
-    ns = ObjectWrap::Unwrap<Namespace>(new_ns);
+    ns = ObjectWrap::Unwrap<libxmljs::Namespace>(new_ns);
   }
 
   node->set_namespace(ns->xml_obj);
@@ -181,7 +182,7 @@ Node::Initialize(v8::Handle<v8::Object> target) {
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Node::Doc);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Node::Parent);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "namespace", Node::NS);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "namespace", Node::Namespace);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prev_sibling", Node::PrevSibling);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "next_sibling", Node::NextSibling);
 

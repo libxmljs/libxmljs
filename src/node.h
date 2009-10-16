@@ -24,7 +24,7 @@ class Node : public ObjectWrap {
   protected:
 
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
-  static v8::Handle<v8::Value> NS(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Namespace(const v8::Arguments& args);
   static v8::Handle<v8::Value> Parent(const v8::Arguments& args);
   static v8::Handle<v8::Value> NextSibling(const v8::Arguments& args);
   static v8::Handle<v8::Value> PrevSibling(const v8::Arguments& args);
