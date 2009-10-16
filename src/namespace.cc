@@ -26,6 +26,7 @@ Namespace::New(const v8::Arguments& args) {
   if (args[0]->IsNull())
     return args.This();
 
+  // TODO(sprsquish): ensure this is an actual Node object
   if (!args[0]->IsObject())
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("You must provide a node to attach this namespace to")));
@@ -39,11 +40,13 @@ Namespace::New(const v8::Arguments& args) {
 
   href = new v8::String::Utf8Value(args[2]->ToString());
 
-  Namespace *ns = new Namespace(node->xml_obj, prefix?**prefix:NULL, **href);
+  Namespace *ns = new Namespace(node->xml_obj,
+                                prefix ? **prefix : NULL,
+                                **href);
+  assert(ns->xml_obj);
   BUILD_NODE(Namespace, xmlNs, name_space, ns->xml_obj);
   v8::Persistent<v8::Object> obj = XmlObj::Unwrap<xmlNs>(ns->xml_obj);
 
-  delete ns;
   delete prefix;
   delete href;
 

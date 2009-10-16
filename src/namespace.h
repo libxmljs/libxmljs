@@ -3,6 +3,7 @@
 #define SRC_NAMESPACE_H_
 
 #include "libxmljs.h"
+#include "node.h"
 #include "object_wrap.h"
 
 namespace libxmljs {
@@ -29,6 +30,8 @@ class Namespace : public ObjectWrap {
   v8::Handle<v8::Value> get_node();
   v8::Handle<v8::Value> get_href();
   v8::Handle<v8::Value> get_prefix();
+
+  friend class Node;
 };
 
 
