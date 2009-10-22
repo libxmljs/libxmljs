@@ -88,22 +88,27 @@ Element::Attr(const v8::Arguments& args) {
   v8::Handle<v8::Object> attrs;
 
   switch (args.Length()) {
-    case 0:  // return all attributes
-      break;
-
     case 1:
+      // return the named attribute
       if (args[0]->IsString()) {
         v8::String::Utf8Value name(args[0]);
         return element->get_attr(*name);
 
+      // create a new attribute from a hash
       } else {
         attrs = args[0]->ToObject();
       }
       break;
 
-    default:
+    // create a new attribute from
+    case 2:
       attrs = v8::Object::New();
       attrs->Set(args[0]->ToString(), args[1]->ToString());
+
+    // 1 or 2 arguments only dude
+    default:
+      LIBXMLJS_THROW_EXCEPTION(
+        "Bad argument(s): #attr(name) or #attr({name => value}) or #attr(name, value)");
   }
 
   v8::Handle<v8::Array> properties = attrs->GetPropertyNames();
@@ -353,15 +358,15 @@ Element::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->Inherit(Node::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attrs", Element::Attrs);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "path", Element::Path);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
 
   target->Set(v8::String::NewSymbol("Element"), constructor_template->GetFunction());
 }
