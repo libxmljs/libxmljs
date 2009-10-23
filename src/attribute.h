@@ -10,7 +10,7 @@ namespace libxmljs {
 class Attribute : public Node {
   public:
 
-  explicit Attribute(xmlNode* node) : Node(node) {}
+  explicit Attribute(xmlNode* node) : libxmljs::Node(node) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
@@ -20,9 +20,12 @@ class Attribute : public Node {
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Name(const v8::Arguments& args);
   static v8::Handle<v8::Value> Value(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Node(const v8::Arguments& args);
 
   v8::Handle<v8::Value> get_name();
   v8::Handle<v8::Value> get_value();
+  void set_value(const char* value);
+  v8::Handle<v8::Value> get_element();
 };
 
 }  // namespace libxmljs
