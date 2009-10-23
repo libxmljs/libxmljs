@@ -40,8 +40,8 @@
 {                                                                         \
   klass *name = new klass(node);                                          \
   v8::Handle<v8::Value> argv[1] = { v8::Null() };                         \
-  v8::Persistent<v8::Object> name##JS = v8::Persistent<v8::Object>::New(  \
-    klass::constructor_template->GetFunction()->NewInstance(1, argv));    \
+  v8::Handle<v8::Object> name##JS = klass::constructor_template->         \
+                                    GetFunction()->NewInstance(1, argv);  \
   XmlObj::Wrap<type>(node, name##JS);                                     \
   name->Wrap(name##JS);                                                   \
 }

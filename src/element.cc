@@ -9,10 +9,6 @@
 
 namespace libxmljs {
 
-#define UNWRAP_ELEMENT(from)                              \
-  Element *element = ObjectWrap::Unwrap<Element>(from);   \
-  assert(element);
-
 #define NAME_SYMBOL     v8::String::NewSymbol("name")
 #define CONTENT_SYMBOL  v8::String::NewSymbol("content")
 
@@ -70,7 +66,8 @@ Element::New(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   if (args.Length() == 0)
     return element->get_name();
@@ -83,7 +80,8 @@ Element::Name(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Attr(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   v8::Handle<v8::Object> attrs;
 
@@ -100,15 +98,10 @@ Element::Attr(const v8::Arguments& args) {
       }
       break;
 
-    // create a new attribute from
-    case 2:
-      attrs = v8::Object::New();
-      attrs->Set(args[0]->ToString(), args[1]->ToString());
-
     // 1 or 2 arguments only dude
     default:
       LIBXMLJS_THROW_EXCEPTION(
-        "Bad argument(s): #attr(name) or #attr({name => value}) or #attr(name, value)");
+        "Bad argument(s): #attr(name) or #attr({name: value})");
   }
 
   v8::Handle<v8::Array> properties = attrs->GetPropertyNames();
@@ -126,7 +119,8 @@ Element::Attr(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Attrs(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   return element->get_attrs();
 }
@@ -134,7 +128,8 @@ Element::Attrs(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::AddChild(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   Element *child = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
   assert(child);
@@ -146,7 +141,8 @@ Element::AddChild(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Find(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   v8::String::Utf8Value xpath(args[0]);
   return element->find(*xpath);
@@ -155,7 +151,8 @@ Element::Find(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Text(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   if (args.Length() == 0) {
     return element->get_content();
@@ -170,7 +167,8 @@ Element::Text(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Child(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   double idx = 1;
 
@@ -190,7 +188,8 @@ Element::Child(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Children(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   return element->get_children();
 }
@@ -198,7 +197,8 @@ Element::Children(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Path(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_ELEMENT(args.This());
+  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  assert(element);
 
   return element->get_path();
 }
@@ -231,8 +231,8 @@ Element::set_attr(const char* name,
   v8::Handle<v8::Value> argv[3] = { XmlObj::Unwrap(xml_obj),
                                     v8::String::New(name),
                                     v8::String::New(value) };
-  v8::Handle<v8::Function> attr = Attribute::constructor_template->GetFunction();
-  v8::Persistent<v8::Object>::New(attr->NewInstance(3, argv));
+  v8::Persistent<v8::Object>::New(
+    Attribute::constructor_template->GetFunction()->NewInstance(3, argv));
 }
 
 v8::Handle<v8::Value>

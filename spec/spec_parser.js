@@ -5,7 +5,7 @@ describe('Parsing', function() {
     var str = node.fs.cat(node.path.dirname(__filename)+'/fixtures/parser_test.xml').wait();
 
     var doc = libxml.parseString(str);
-    assertEqual('1.0', doc.version);
+    assertEqual('1.0', doc.version());
     assertEqual('UTF-8', doc.encoding());
     assertEqual('root', doc.root().name());
     assertEqual('child', doc.get('child').name());
@@ -18,7 +18,7 @@ describe('Parsing', function() {
 
   it('can be done by file', function() {
     var doc = libxml.parseFile(node.path.dirname(__filename)+'/fixtures/parser_test.xml');
-    assertEqual('1.0', doc.version);
+    assertEqual('1.0', doc.version());
     assertEqual('UTF-8', doc.encoding());
     assertEqual('root', doc.root().name());
     assertEqual('child', doc.get('child').name());
