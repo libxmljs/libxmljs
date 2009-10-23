@@ -57,7 +57,7 @@ Element::New(const v8::Arguments& args) {
     }
   }
 
-  obj->Set(DOCUMENT_SYMBOL, args[0]->ToObject());
+  obj->Set(v8::String::NewSymbol("document"), args[0]->ToObject());
 
   if (*callback && !callback->IsNull()) {
     v8::Handle<v8::Value> argv[1] = { obj };

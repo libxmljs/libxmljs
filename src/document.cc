@@ -11,12 +11,6 @@
 
 namespace libxmljs {
 
-#define VERSION_SYMBOL  v8::String::NewSymbol("version")
-
-#define UNWRAP_DOCUMENT(from)                               \
-  Document *document = ObjectWrap::Unwrap<Document>(from);  \
-  assert(document);
-
 namespace {
 
 // Called by libxml whenever it constructs something,
@@ -60,18 +54,6 @@ Document::Init Document::init_;
 v8::Persistent<v8::FunctionTemplate> Document::constructor_template;
 
 v8::Handle<v8::Value>
-Document::GetProperty(v8::Local<v8::String> property,
-                      const v8::AccessorInfo& info) {
-  v8::HandleScope scope;
-  UNWRAP_DOCUMENT(info.This());
-
-  if (property == VERSION_SYMBOL)
-    return document->get_version();
-
-  return v8::Undefined();
-}
-
-v8::Handle<v8::Value>
 Document::Doc(const v8::Arguments& args) {
   return args.This();
 }
@@ -79,7 +61,8 @@ Document::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::Encoding(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_DOCUMENT(args.This());
+  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  assert(document);
 
   if (args.Length() == 0)
     return document->get_encoding();
@@ -90,9 +73,19 @@ Document::Encoding(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+Document::Version(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  assert(document);
+
+  return document->get_version();
+}
+
+v8::Handle<v8::Value>
 Document::Root(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_DOCUMENT(args.This());
+  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  assert(document);
 
   if (args.Length() == 0)
     return document->get_root();
@@ -110,7 +103,8 @@ Document::Root(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_DOCUMENT(args.This());
+  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  assert(document);
   return document->to_string();
 }
 
@@ -254,11 +248,9 @@ Document::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "root", Document::Root);
+  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "version", Document::Version);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "encoding", Document::Encoding);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "document", Document::Doc);
-
-  constructor_template->PrototypeTemplate()->SetAccessor(VERSION_SYMBOL,
-                                                         Document::GetProperty);
 
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template,
                                 "toString",

@@ -7,8 +7,6 @@
 
 namespace libxmljs {
 
-#define DOCUMENT_SYMBOL v8::String::NewSymbol("document")
-
 class Document : public ObjectWrap {
   // Ensure that libxml is properly initialised:
   class Init {
@@ -30,12 +28,9 @@ class Document : public ObjectWrap {
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Root(const v8::Arguments& args);
   static v8::Handle<v8::Value> Encoding(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Version(const v8::Arguments& args);
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
-
-  static v8::Handle<v8::Value> GetProperty(
-    v8::Local<v8::String> property,
-    const v8::AccessorInfo& info);
 
   virtual ~Document();
 
