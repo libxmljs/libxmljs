@@ -33,7 +33,7 @@ libxml.Element.Arguments = function(args) {
 libxml.Element.prototype.node = function() {
   var args = libxml.Element.Arguments(arguments);
 
-  var elem = new libxml.Element(this.document, args[0], args[1], args[2], args[3]);
+  var elem = new libxml.Element(this.doc(), args[0], args[1], args[2], args[3]);
   this.addChild(elem);
   return elem;
 };
