@@ -60,13 +60,6 @@ Namespace::Namespace(xmlNode* node,
 }
 
 v8::Handle<v8::Value>
-Namespace::Node(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  UNWRAP_NAMESPACE(args.This());
-  return ns->get_node();
-}
-
-v8::Handle<v8::Value>
 Namespace::Href(const v8::Arguments& args) {
   v8::HandleScope scope;
   UNWRAP_NAMESPACE(args.This());
@@ -78,11 +71,6 @@ Namespace::Prefix(const v8::Arguments& args) {
   v8::HandleScope scope;
   UNWRAP_NAMESPACE(args.This());
   return ns->get_prefix();
-}
-
-v8::Handle<v8::Value>
-Namespace::get_node() {
-  return v8::Null();
 }
 
 v8::Handle<v8::Value>
@@ -110,7 +98,6 @@ Namespace::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "node", Namespace::Node);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "href", Namespace::Href);
   LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prefix", Namespace::Prefix);
 

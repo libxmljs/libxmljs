@@ -23,11 +23,9 @@ class Namespace : public ObjectWrap {
   protected:
 
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Node(const v8::Arguments& args);
   static v8::Handle<v8::Value> Href(const v8::Arguments& args);
   static v8::Handle<v8::Value> Prefix(const v8::Arguments& args);
 
-  v8::Handle<v8::Value> get_node();
   v8::Handle<v8::Value> get_href();
   v8::Handle<v8::Value> get_prefix();
 
