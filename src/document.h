@@ -8,14 +8,6 @@
 namespace libxmljs {
 
 class Document : public ObjectWrap {
-  // Ensure that libxml is properly initialised:
-  class Init {
-    public:
-
-    Init();
-    virtual ~Init();
-  };
-
   public:
 
   xmlDoc* xml_obj;
@@ -42,10 +34,6 @@ class Document : public ObjectWrap {
   v8::Handle<v8::Value> get_root();
   void set_root(xmlNodePtr node);
   bool has_root();
-
-  private:
-
-  static Init init_;
 };
 
 }  // namespace libxmljs

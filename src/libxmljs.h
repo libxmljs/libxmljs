@@ -52,6 +52,17 @@
 
 namespace libxmljs {
 
+// Ensure that libxml is properly initialised:
+class LibXMLJS {
+  public:
+
+  LibXMLJS();
+  virtual ~LibXMLJS();
+
+  private:
+
+  static LibXMLJS init_;
+};
 
 }  // namespace libxmljs
 
