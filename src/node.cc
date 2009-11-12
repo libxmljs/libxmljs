@@ -180,11 +180,11 @@ Node::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "doc", Node::Doc);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "parent", Node::Parent);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "namespace", Node::Namespace);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prev_sibling", Node::PrevSibling);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "next_sibling", Node::NextSibling);
+  LXJS_SET_PROTO_METHOD(constructor_template, "doc", Node::Doc);
+  LXJS_SET_PROTO_METHOD(constructor_template, "parent", Node::Parent);
+  LXJS_SET_PROTO_METHOD(constructor_template, "namespace", Node::Namespace);
+  LXJS_SET_PROTO_METHOD(constructor_template, "prev_sibling", Node::PrevSibling);
+  LXJS_SET_PROTO_METHOD(constructor_template, "next_sibling", Node::NextSibling);
 
   Element::Initialize(target);
   Attribute::Initialize(target);

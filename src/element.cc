@@ -358,17 +358,18 @@ Element::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->Inherit(Node::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "addChild", Element::AddChild);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attr", Element::Attr);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "attrs", Element::Attrs);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "child", Element::Child);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "children", Element::Children);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "find", Element::Find);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Element::Name);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "path", Element::Path);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "text", Element::Text);
+  LXJS_SET_PROTO_METHOD(constructor_template, "addChild", Element::AddChild);
+  LXJS_SET_PROTO_METHOD(constructor_template, "attr", Element::Attr);
+  LXJS_SET_PROTO_METHOD(constructor_template, "attrs", Element::Attrs);
+  LXJS_SET_PROTO_METHOD(constructor_template, "child", Element::Child);
+  LXJS_SET_PROTO_METHOD(constructor_template, "children", Element::Children);
+  LXJS_SET_PROTO_METHOD(constructor_template, "find", Element::Find);
+  LXJS_SET_PROTO_METHOD(constructor_template, "name", Element::Name);
+  LXJS_SET_PROTO_METHOD(constructor_template, "path", Element::Path);
+  LXJS_SET_PROTO_METHOD(constructor_template, "text", Element::Text);
 
-  target->Set(v8::String::NewSymbol("Element"), constructor_template->GetFunction());
+  target->Set(v8::String::NewSymbol("Element"),
+              constructor_template->GetFunction());
 }
 
 }  // namespace libxmljs

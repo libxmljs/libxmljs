@@ -133,9 +133,9 @@ Attribute::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->Inherit(Node::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "name", Attribute::Name);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "value", Attribute::Value);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "node", Attribute::Node);
+  LXJS_SET_PROTO_METHOD(constructor_template, "name", Attribute::Name);
+  LXJS_SET_PROTO_METHOD(constructor_template, "value", Attribute::Value);
+  LXJS_SET_PROTO_METHOD(constructor_template, "node", Attribute::Node);
 
   target->Set(v8::String::NewSymbol("Attribute"),
               constructor_template->GetFunction());

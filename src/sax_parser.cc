@@ -460,15 +460,15 @@ SaxParser::Initialize(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> parser_t = v8::FunctionTemplate::New(NewParser);
   v8::Persistent<v8::FunctionTemplate> sax_parser_template = v8::Persistent<v8::FunctionTemplate>::New(parser_t);
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_parser_template, "parseFile", SaxParser::ParseFile);
+  LXJS_SET_PROTO_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
+  LXJS_SET_PROTO_METHOD(sax_parser_template, "parseFile", SaxParser::ParseFile);
   target->Set(v8::String::NewSymbol("SaxParser"), sax_parser_template->GetFunction());
 
 
   v8::Local<v8::FunctionTemplate> push_parser_t = v8::FunctionTemplate::New(NewPushParser);
   v8::Persistent<v8::FunctionTemplate> sax_push_parser_template = v8::Persistent<v8::FunctionTemplate>::New(push_parser_t);
   sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(sax_push_parser_template, "push", SaxParser::Push);
+  LXJS_SET_PROTO_METHOD(sax_push_parser_template, "push", SaxParser::Push);
   target->Set(v8::String::NewSymbol("SaxPushParser"), sax_push_parser_template->GetFunction());
 }
 }  // namespace libxmljs

@@ -98,8 +98,8 @@ Namespace::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "href", Namespace::Href);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "prefix", Namespace::Prefix);
+  LXJS_SET_PROTO_METHOD(constructor_template, "href", Namespace::Href);
+  LXJS_SET_PROTO_METHOD(constructor_template, "prefix", Namespace::Prefix);
 
   target->Set(v8::String::NewSymbol("Namespace"),
               constructor_template->GetFunction());

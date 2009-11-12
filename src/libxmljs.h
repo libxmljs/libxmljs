@@ -10,7 +10,7 @@
   obj->Set(v8::String::NewSymbol(name),                               \
            v8::FunctionTemplate::New(callback)->GetFunction())
 
-#define LIBXMLJS_SET_PROTOTYPE_METHOD(templ, name, callback)              \
+#define LXJS_SET_PROTO_METHOD(templ, name, callback)              \
 {                                                                         \
   v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);  \
   v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \

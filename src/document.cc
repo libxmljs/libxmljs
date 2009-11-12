@@ -206,12 +206,12 @@ Document::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "root", Document::Root);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "version", Document::Version);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "encoding", Document::Encoding);
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template, "document", Document::Doc);
+  LXJS_SET_PROTO_METHOD(constructor_template, "root", Document::Root);
+  LXJS_SET_PROTO_METHOD(constructor_template, "version", Document::Version);
+  LXJS_SET_PROTO_METHOD(constructor_template, "encoding", Document::Encoding);
+  LXJS_SET_PROTO_METHOD(constructor_template, "document", Document::Doc);
 
-  LIBXMLJS_SET_PROTOTYPE_METHOD(constructor_template,
+  LXJS_SET_PROTO_METHOD(constructor_template,
                                 "toString",
                                 Document::ToString);
 
