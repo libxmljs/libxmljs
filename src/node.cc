@@ -7,16 +7,13 @@
 
 namespace libxmljs {
 
-#define UNWRAP_NODE(from)                                                       \
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(from);                             \
-  assert(node);
-
 v8::Persistent<v8::FunctionTemplate> Node::constructor_template;
 
 v8::Handle<v8::Value>
 Node::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NODE(args.This());
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  assert(node);
 
   return node->get_doc();
 }
@@ -24,7 +21,8 @@ Node::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NODE(args.This());
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  assert(node);
 
   // #namespace() Get the node's namespace
   if (args.Length() == 0)
@@ -81,7 +79,8 @@ Node::Namespace(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NODE(args.This());
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  assert(node);
 
   return node->get_parent();
 }
@@ -89,7 +88,8 @@ Node::Parent(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::PrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NODE(args.This());
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  assert(node);
 
   return node->get_prev_sibling();
 }
@@ -97,7 +97,8 @@ Node::PrevSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::NextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NODE(args.This());
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  assert(node);
 
   return node->get_next_sibling();
 }

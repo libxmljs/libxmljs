@@ -95,7 +95,8 @@ Attribute::get_value() {
 
 void
 Attribute::set_value(const char* value) {
-  if(xml_obj->children) xmlFreeNodeList(xml_obj->children);
+  if(xml_obj->children)
+    xmlFreeNodeList(xml_obj->children);
 
   xml_obj->children = xml_obj->last = NULL;
 

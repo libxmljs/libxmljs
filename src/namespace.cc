@@ -8,10 +8,6 @@
 
 namespace libxmljs {
 
-#define UNWRAP_NAMESPACE(from)                                                  \
-  Namespace *ns = LibXmlObj::Unwrap<Namespace>(from);                               \
-  assert(ns);
-
 v8::Persistent<v8::FunctionTemplate> Namespace::constructor_template;
 
 v8::Handle<v8::Value>
@@ -62,14 +58,16 @@ Namespace::Namespace(xmlNode* node,
 v8::Handle<v8::Value>
 Namespace::Href(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NAMESPACE(args.This());
+  Namespace *ns = LibXmlObj::Unwrap<Namespace>(args.This());
+  assert(ns);
   return ns->get_href();
 }
 
 v8::Handle<v8::Value>
 Namespace::Prefix(const v8::Arguments& args) {
   v8::HandleScope scope;
-  UNWRAP_NAMESPACE(args.This());
+  Namespace *ns = LibXmlObj::Unwrap<Namespace>(args.This());
+  assert(ns);
   return ns->get_prefix();
 }
 
