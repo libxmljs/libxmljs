@@ -14,32 +14,33 @@ Attribute::New(const v8::Arguments& args) {
   if (args.Length() == 1 && args[0]->IsNull())
     return args.This();
 
-  Element *element = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
+  Element *element = LibXmlObj::Unwrap<Element>(args[0]->ToObject());
 
   v8::String::Utf8Value name(args[1]->ToString());
   v8::String::Utf8Value value(args[2]->ToString());
 
-  xmlAttr* elem = xmlSetProp(element->xml_obj,
+  xmlAttr *elem = xmlSetProp(element->xml_obj,
                              (const xmlChar*)*name,
                              (const xmlChar*)*value);
 
   // namespace passed in
   if (args.Length() == 4 && args[3]->IsObject()) {
-    libxmljs::Namespace *ns = ObjectWrap::Unwrap<libxmljs::Namespace>(
+    libxmljs::Namespace *ns = LibXmlObj::Unwrap<libxmljs::Namespace>(
                                 args[3]->ToObject());
     assert(ns);
 
-    ObjectWrap::Unwrap<Attribute>(
-      XmlObj::Unwrap<xmlAttr>(elem))->set_namespace(ns->xml_obj);
+    v8::Persistent<v8::Object> js_attr = JsObj::Unwrap<xmlAttr>(elem);
+    Attribute *attr = LibXmlObj::Unwrap<Attribute>(js_attr);
+    attr->set_namespace(ns->xml_obj);
   }
 
-  return XmlObj::Unwrap<xmlAttr>(elem);
+  return JsObj::Unwrap<xmlAttr>(elem);
 }
 
 v8::Handle<v8::Value>
 Attribute::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Attribute *attr = ObjectWrap::Unwrap<Attribute>(args.This());
+  Attribute *attr = LibXmlObj::Unwrap<Attribute>(args.This());
   assert(attr);
 
   return attr->get_name();
@@ -48,7 +49,7 @@ Attribute::Name(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Attribute::Value(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Attribute *attr = ObjectWrap::Unwrap<Attribute>(args.This());
+  Attribute *attr = LibXmlObj::Unwrap<Attribute>(args.This());
   assert(attr);
 
   // attr.value('new value');
@@ -64,7 +65,7 @@ Attribute::Value(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Attribute::Node(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Attribute *attr = ObjectWrap::Unwrap<Attribute>(args.This());
+  Attribute *attr = LibXmlObj::Unwrap<Attribute>(args.This());
   assert(attr);
 
   return attr->get_element();
@@ -123,7 +124,7 @@ Attribute::set_value(const char* value) {
 
 v8::Handle<v8::Value>
 Attribute::get_element() {
-  return XmlObj::Unwrap<xmlNode>(xml_obj->parent);
+  return JsObj::Unwrap<xmlNode>(xml_obj->parent);
 }
 
 void

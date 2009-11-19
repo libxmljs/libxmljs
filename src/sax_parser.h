@@ -12,10 +12,10 @@
 
 namespace libxmljs {
 
-#define LIBXML_JS_GET_PARSER_FROM_CONTEXT(context) \
-  ({ \
-    _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context); \
-    static_cast<SaxParser*>(the_context->_private); \
+#define LIBXML_JS_GET_PARSER_FROM_CONTEXT(context)                              \
+  ({                                                                            \
+    _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
+    static_cast<SaxParser*>(the_context->_private);                             \
   })
 
 class SaxParser : public Parser {

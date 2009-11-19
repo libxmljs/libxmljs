@@ -14,7 +14,7 @@
 
 namespace libxmljs {
 
-class Parser : public ObjectWrap {
+class Parser : public LibXmlObj {
   public:
 
   Parser() : context_(0) {}

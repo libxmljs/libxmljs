@@ -10,7 +10,7 @@
 
 namespace libxmljs {
 
-class Node : public ObjectWrap {
+class Node : public LibXmlObj {
   public:
 
   _xmlNode *xml_obj;

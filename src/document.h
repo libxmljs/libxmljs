@@ -7,7 +7,7 @@
 
 namespace libxmljs {
 
-class Document : public ObjectWrap {
+class Document : public LibXmlObj {
   public:
 
   xmlDoc* xml_obj;

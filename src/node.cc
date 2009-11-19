@@ -7,8 +7,8 @@
 
 namespace libxmljs {
 
-#define UNWRAP_NODE(from)                                 \
-  Node *node = ObjectWrap::Unwrap<libxmljs::Node>(from);  \
+#define UNWRAP_NODE(from)                                                       \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(from);                             \
   assert(node);
 
 v8::Persistent<v8::FunctionTemplate> Node::constructor_template;
@@ -38,7 +38,7 @@ Node::Namespace(const v8::Arguments& args) {
   // #namespace(ns) libxml.Namespace object was provided
   // TODO (sprsquish): check that it was actually given a namespace obj
   if (args[0]->IsObject())
-    ns = ObjectWrap::Unwrap<libxmljs::Namespace>(args[0]->ToObject());
+    ns = LibXmlObj::Unwrap<libxmljs::Namespace>(args[0]->ToObject());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
@@ -46,8 +46,8 @@ Node::Namespace(const v8::Arguments& args) {
     v8::String::Utf8Value ns_to_find(args[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns)
-      ns = ObjectWrap::Unwrap<libxmljs::Namespace>(
-        XmlObj::Unwrap<xmlNs>(found_ns));
+      ns = LibXmlObj::Unwrap<libxmljs::Namespace>(
+        JsObj::Unwrap<xmlNs>(found_ns));
   }
 
   // Namespace does not seem to exist, so create it.
@@ -70,7 +70,7 @@ Node::Namespace(const v8::Arguments& args) {
 
     v8::Persistent<v8::Object> new_ns = v8::Persistent<v8::Object>::New(
       define_namespace->Call(args.This(), argc, argv)->ToObject());
-    ns = ObjectWrap::Unwrap<libxmljs::Namespace>(new_ns);
+    ns = LibXmlObj::Unwrap<libxmljs::Namespace>(new_ns);
   }
 
   node->set_namespace(ns->xml_obj);
@@ -112,7 +112,7 @@ Node::~Node() {
 
 v8::Handle<v8::Value>
 Node::get_doc() {
-  return XmlObj::Unwrap<xmlDoc>(xml_obj->doc);
+  return JsObj::Unwrap<xmlDoc>(xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
@@ -129,7 +129,7 @@ Node::get_namespace() {
   if (!xml_obj->ns->_private)
     return Namespace::New(xml_obj->ns);
 
-  return XmlObj::Unwrap<xmlNs>(xml_obj->ns);
+  return JsObj::Unwrap<xmlNs>(xml_obj->ns);
 }
 
 void
@@ -154,15 +154,15 @@ Node::find_namespace(const char* search_str) {
 v8::Handle<v8::Value>
 Node::get_parent() {
   if (xml_obj->parent)
-    return XmlObj::Unwrap<xmlNode>(xml_obj->parent);
+    return JsObj::Unwrap<xmlNode>(xml_obj->parent);
 
-  return XmlObj::Unwrap<xmlDoc>(xml_obj->doc);
+  return JsObj::Unwrap<xmlDoc>(xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
 Node::get_prev_sibling() {
   if (xml_obj->prev)
-    return XmlObj::Unwrap<xmlNode>(xml_obj->prev);
+    return JsObj::Unwrap<xmlNode>(xml_obj->prev);
 
   return v8::Null();
 }
@@ -170,14 +170,15 @@ Node::get_prev_sibling() {
 v8::Handle<v8::Value>
 Node::get_next_sibling() {
   if (xml_obj->next)
-    return XmlObj::Unwrap<xmlNode>(xml_obj->next);
+    return JsObj::Unwrap<xmlNode>(xml_obj->next);
 
   return v8::Null();
 }
 
 void
 Node::Initialize(v8::Handle<v8::Object> target) {
-  constructor_template = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
+  constructor_template =
+    v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LXJS_SET_PROTO_METHOD(constructor_template, "doc", Node::Doc);

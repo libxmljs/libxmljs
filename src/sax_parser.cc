@@ -62,7 +62,7 @@ SaxParser::NewPushParser(const v8::Arguments& args) {
 
   v8::Handle<v8::Value> return_val = NewParser(args);
 
-  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+  SaxParser *parser = LibXmlObj::Unwrap<SaxParser>(args.Holder());
   parser->initialize_push_parser();
 
   return return_val;
@@ -115,7 +115,7 @@ SaxParser::Push(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+  SaxParser *parser = LibXmlObj::Unwrap<SaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
 
@@ -146,7 +146,7 @@ SaxParser::ParseString(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+  SaxParser *parser = LibXmlObj::Unwrap<SaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_string(*parsable, parsable.length());
@@ -170,7 +170,7 @@ SaxParser::ParseFile(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseFile requires a filename");
 
-  SaxParser *parser = ObjectWrap::Unwrap<SaxParser>(args.Holder());
+  SaxParser *parser = LibXmlObj::Unwrap<SaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_file(*parsable);
@@ -457,18 +457,41 @@ void
 SaxParser::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
-  v8::Local<v8::FunctionTemplate> parser_t = v8::FunctionTemplate::New(NewParser);
-  v8::Persistent<v8::FunctionTemplate> sax_parser_template = v8::Persistent<v8::FunctionTemplate>::New(parser_t);
+  // SAX Parser
+  v8::Local<v8::FunctionTemplate> parser_t =
+    v8::FunctionTemplate::New(NewParser);
+
+  v8::Persistent<v8::FunctionTemplate> sax_parser_template =
+    v8::Persistent<v8::FunctionTemplate>::New(parser_t);
+
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
-  LXJS_SET_PROTO_METHOD(sax_parser_template, "parseString", SaxParser::ParseString);
-  LXJS_SET_PROTO_METHOD(sax_parser_template, "parseFile", SaxParser::ParseFile);
-  target->Set(v8::String::NewSymbol("SaxParser"), sax_parser_template->GetFunction());
+
+  LXJS_SET_PROTO_METHOD(sax_parser_template,
+                        "parseString",
+                        SaxParser::ParseString);
+
+  LXJS_SET_PROTO_METHOD(sax_parser_template,
+                        "parseFile",
+                        SaxParser::ParseFile);
+
+  target->Set(v8::String::NewSymbol("SaxParser"),
+              sax_parser_template->GetFunction());
 
 
-  v8::Local<v8::FunctionTemplate> push_parser_t = v8::FunctionTemplate::New(NewPushParser);
-  v8::Persistent<v8::FunctionTemplate> sax_push_parser_template = v8::Persistent<v8::FunctionTemplate>::New(push_parser_t);
+  v8::Local<v8::FunctionTemplate> push_parser_t =
+    v8::FunctionTemplate::New(NewPushParser);
+
+  // Push Parser
+  v8::Persistent<v8::FunctionTemplate> sax_push_parser_template =
+    v8::Persistent<v8::FunctionTemplate>::New(push_parser_t);
+
   sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
-  LXJS_SET_PROTO_METHOD(sax_push_parser_template, "push", SaxParser::Push);
-  target->Set(v8::String::NewSymbol("SaxPushParser"), sax_push_parser_template->GetFunction());
+
+  LXJS_SET_PROTO_METHOD(sax_push_parser_template,
+                        "push",
+                        SaxParser::Push);
+
+  target->Set(v8::String::NewSymbol("SaxPushParser"),
+              sax_push_parser_template->GetFunction());
 }
 }  // namespace libxmljs

@@ -100,7 +100,7 @@ Parser::parse_context() {
     return v8::Null();
   }
 
-  v8::Persistent<v8::Object> doc = XmlObj::Unwrap(context_->myDoc);
+  v8::Persistent<v8::Object> doc = JsObj::Unwrap(context_->myDoc);
 
   // This is to indicate to release_underlying that we took the
   // ownership on the doc.

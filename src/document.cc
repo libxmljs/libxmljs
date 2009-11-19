@@ -20,7 +20,7 @@ Document::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::Encoding(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  Document *document = LibXmlObj::Unwrap<Document>(args.This());
   assert(document);
 
   if (args.Length() == 0)
@@ -34,7 +34,7 @@ Document::Encoding(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::Version(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  Document *document = LibXmlObj::Unwrap<Document>(args.This());
   assert(document);
 
   return document->get_version();
@@ -43,7 +43,7 @@ Document::Version(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::Root(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  Document *document = LibXmlObj::Unwrap<Document>(args.This());
   assert(document);
 
   if (args.Length() == 0)
@@ -53,7 +53,7 @@ Document::Root(const v8::Arguments& args) {
     return ThrowException(v8::Exception::Error(
       v8::String::New("This document already has a root node")));
 
-  Element *element = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
+  Element *element = LibXmlObj::Unwrap<Element>(args[0]->ToObject());
   assert(element);
   document->set_root(element->xml_obj);
   return args[0];
@@ -62,7 +62,7 @@ Document::Root(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Document::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = ObjectWrap::Unwrap<Document>(args.This());
+  Document *document = LibXmlObj::Unwrap<Document>(args.This());
   assert(document);
   return document->to_string();
 }
@@ -127,8 +127,8 @@ Document::New(const v8::Arguments& args) {
     version = new v8::String::Utf8Value(v8::String::New("1.0"));
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
-  v8::Persistent<v8::Object> obj = XmlObj::Unwrap<xmlDoc>(doc);
-  Document *document = ObjectWrap::Unwrap<Document>(obj);
+  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlDoc>(doc);
+  Document *document = LibXmlObj::Unwrap<Document>(obj);
 
   if (encoding)
     document->set_encoding(**encoding);
@@ -189,7 +189,7 @@ v8::Handle<v8::Value>
 Document::get_root() {
   xmlNodePtr root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return XmlObj::Unwrap(root);
+    return JsObj::Unwrap(root);
   else
     return v8::Null();
 }
@@ -212,8 +212,8 @@ Document::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template, "document", Document::Doc);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                                "toString",
-                                Document::ToString);
+                        "toString",
+                        Document::ToString);
 
   target->Set(v8::String::NewSymbol("Document"),
               constructor_template->GetFunction());

@@ -7,10 +7,10 @@
 
 namespace libxmljs {
 
-class ObjectWrap {
+class LibXmlObj {
   public:
 
-  virtual ~ObjectWrap() {
+  virtual ~LibXmlObj() {
     if (!handle_.IsEmpty()) {
       assert(handle_.IsNearDeath());
       handle_->SetInternalField(0, v8::Undefined());
@@ -39,28 +39,30 @@ class ObjectWrap {
   v8::Persistent<v8::Object> handle_;  // ro
 };
 
-class XmlObj {
+// Wraps/Unwraps a JS object so it can be set on the XML object's _private
+// field
+class JsObj {
   public:
 
   template <class T>
   static inline void
   Wrap(T* xml_obj, v8::Handle<v8::Object> jsObject) {
-    xml_obj->_private = new XmlObj(jsObject);
+    xml_obj->_private = new JsObj(jsObject);
   }
 
   template <class T>
   static inline v8::Persistent<v8::Object>
   Unwrap(T* xml_obj) {
     assert(xml_obj->_private);
-    XmlObj* xmlobj = static_cast<XmlObj*>(xml_obj->_private);
+    JsObj* xmlobj = static_cast<JsObj*>(xml_obj->_private);
     return xmlobj->_handle;
   }
 
-  explicit XmlObj(v8::Handle<v8::Object> jsObject) {
+  explicit JsObj(v8::Handle<v8::Object> jsObject) {
     _handle = v8::Persistent<v8::Object>::New(jsObject);
   }
 
-  ~XmlObj() {
+  ~JsObj() {
     if (!_handle.IsEmpty()) {
       assert(_handle.IsNearDeath());
       _handle.Dispose();

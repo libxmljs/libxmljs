@@ -22,7 +22,7 @@ Element::New(const v8::Arguments& args) {
   if (args.Length() == 0 || args[0]->IsNull())
     return args.This();
 
-  Document *document = ObjectWrap::Unwrap<Document>(args[0]->ToObject());
+  Document *document = LibXmlObj::Unwrap<Document>(args[0]->ToObject());
   v8::String::Utf8Value name(args[1]);
 
   v8::String::Utf8Value *content = NULL;
@@ -38,8 +38,8 @@ Element::New(const v8::Arguments& args) {
                                 NULL,
                                 (const xmlChar*)*name,
                                 content ? (const xmlChar*)**content : NULL);
-  v8::Persistent<v8::Object> obj = XmlObj::Unwrap<xmlNode>(elem);
-  Element *element = ObjectWrap::Unwrap<Element>(obj);
+  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlNode>(elem);
+  Element *element = LibXmlObj::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {
     v8::Handle<v8::Object> attributes = args[2]->ToObject();
@@ -66,7 +66,7 @@ Element::New(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   if (args.Length() == 0)
@@ -80,7 +80,7 @@ Element::Name(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Attr(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   v8::Handle<v8::Object> attrs;
@@ -119,7 +119,7 @@ Element::Attr(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Attrs(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   return element->get_attrs();
@@ -128,10 +128,10 @@ Element::Attrs(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::AddChild(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
-  Element *child = ObjectWrap::Unwrap<Element>(args[0]->ToObject());
+  Element *child = LibXmlObj::Unwrap<Element>(args[0]->ToObject());
   assert(child);
 
   element->add_child(child);
@@ -141,7 +141,7 @@ Element::AddChild(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Find(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   v8::String::Utf8Value xpath(args[0]);
@@ -151,7 +151,7 @@ Element::Find(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Text(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   if (args.Length() == 0) {
@@ -167,7 +167,7 @@ Element::Text(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Child(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   double idx = 1;
@@ -188,7 +188,7 @@ Element::Child(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Children(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   return element->get_children();
@@ -197,7 +197,7 @@ Element::Children(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Element::Path(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Element *element = ObjectWrap::Unwrap<Element>(args.This());
+  Element *element = LibXmlObj::Unwrap<Element>(args.This());
   assert(element);
 
   return element->get_path();
@@ -218,7 +218,7 @@ v8::Handle<v8::Value>
 Element::get_attr(const char* name) {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr)
-    return XmlObj::Unwrap(attr);
+    return JsObj::Unwrap(attr);
 
   return v8::Null();
 }
@@ -228,7 +228,7 @@ void
 Element::set_attr(const char* name,
                   const char* value) {
   v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[3] = { XmlObj::Unwrap(xml_obj),
+  v8::Handle<v8::Value> argv[3] = { JsObj::Unwrap(xml_obj),
                                     v8::String::New(name),
                                     v8::String::New(value) };
   v8::Persistent<v8::Object>::New(
@@ -248,7 +248,7 @@ Element::get_attrs() {
     attributes->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1];
   do {
-    argv[0] = XmlObj::Unwrap(attr);
+    argv[0] = JsObj::Unwrap(attr);
     push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
@@ -273,7 +273,7 @@ Element::get_child(double idx) {
   if (!child)
     return v8::Null();
 
-  return XmlObj::Unwrap(child);
+  return JsObj::Unwrap(child);
 }
 
 v8::Handle<v8::Value>
@@ -291,7 +291,7 @@ Element::get_children() {
 
   v8::Handle<v8::Array> children = v8::Array::New(set->nodeNr);
   for (int i = 0; i < set->nodeNr; ++i)
-    children->Set(v8::Number::New(i), XmlObj::Unwrap(set->nodeTab[i]));
+    children->Set(v8::Number::New(i), JsObj::Unwrap(set->nodeTab[i]));
 
   return children;
 }
@@ -343,7 +343,7 @@ Element::find(const char* xpath) {
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
   for (int i = 0; i != result->nodesetval->nodeNr; ++i)
     nodes->Set(v8::Number::New(i),
-               XmlObj::Unwrap(result->nodesetval->nodeTab[i]));
+               JsObj::Unwrap(result->nodesetval->nodeTab[i]));
 
   xmlXPathFreeObject(result);
   xmlXPathFreeContext(ctxt);

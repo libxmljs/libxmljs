@@ -8,8 +8,8 @@
 
 namespace libxmljs {
 
-#define UNWRAP_NAMESPACE(from)                          \
-  Namespace *ns = ObjectWrap::Unwrap<Namespace>(from);  \
+#define UNWRAP_NAMESPACE(from)                                                  \
+  Namespace *ns = LibXmlObj::Unwrap<Namespace>(from);                               \
   assert(ns);
 
 v8::Persistent<v8::FunctionTemplate> Namespace::constructor_template;
@@ -17,7 +17,7 @@ v8::Persistent<v8::FunctionTemplate> Namespace::constructor_template;
 v8::Handle<v8::Value>
 Namespace::New(xmlNs* ns) {
   BUILD_NODE(Namespace, xmlNs, name_space, ns);
-  return XmlObj::Unwrap<xmlNs>(ns);
+  return JsObj::Unwrap<xmlNs>(ns);
 }
 
 v8::Handle<v8::Value>
@@ -31,7 +31,7 @@ Namespace::New(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("You must provide a node to attach this namespace to")));
 
-  libxmljs::Node *node = ObjectWrap::Unwrap<libxmljs::Node>(args[0]->ToObject());
+  libxmljs::Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args[0]->ToObject());
 
   v8::String::Utf8Value *prefix = NULL, *href = NULL;
 
@@ -45,7 +45,7 @@ Namespace::New(const v8::Arguments& args) {
                                 **href);
   assert(ns->xml_obj);
   BUILD_NODE(Namespace, xmlNs, name_space, ns->xml_obj);
-  v8::Persistent<v8::Object> obj = XmlObj::Unwrap<xmlNs>(ns->xml_obj);
+  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlNs>(ns->xml_obj);
 
   delete prefix;
   delete href;

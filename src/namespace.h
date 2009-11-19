@@ -8,7 +8,7 @@
 
 namespace libxmljs {
 
-class Namespace : public ObjectWrap {
+class Namespace : public LibXmlObj {
   public:
 
   xmlNs* xml_obj;
