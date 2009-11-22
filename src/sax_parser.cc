@@ -159,6 +159,7 @@ void
 SaxParser::parse_string(const char* str, unsigned int size) {
   context_ = xmlCreateMemoryParserCtxt(str, size);
   parse();
+  context_->sax = NULL;
   xmlFreeParserCtxt(context_);
 }
 
@@ -182,6 +183,7 @@ void
 SaxParser::parse_file(const char* filename) {
   context_ = xmlCreateFileParserCtxt(filename);
   parse();
+  context_->sax = NULL;
   xmlFreeParserCtxt(context_);
 }
 
