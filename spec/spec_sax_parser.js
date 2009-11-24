@@ -2,6 +2,7 @@ node.mixin(process, require('helpers.js'));
 
 describe("SAX Push Parser", function() {
   var callbacks = {};
+  var filename = node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml';
 
   function createParser(parserType) {
     parser = new libxml[parserType](function(cb) {
@@ -58,15 +59,15 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a regular string', function() {
-    var str = node.fs.cat(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml').wait();
-    parser = createParser('SaxParser');
+    var str = node.fs.cat(filename).wait();
+    var parser = createParser('SaxParser');
     parser.parseString(str);
     assertEqual(JSON.stringify(callbackControl), JSON.stringify(callbacks));
   });
 
   it('will properly parse a string chunk by chunk', function() {
-    var str_ary = node.fs.cat(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml').wait().split("\n");
-    parser = createParser('SaxPushParser');
+    var str_ary = node.fs.cat(filename).wait().split("\n");
+    var parser = createParser('SaxPushParser');
     var i;
     for (i = 0; i < str_ary.length; i++)
       parser.push(str_ary[i], (i+1 == str_ary.length));
@@ -77,10 +78,27 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a file', function() {
-    parser = createParser('SaxParser');
-    parser.parseFile(node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml');
+    var parser = createParser('SaxParser');
+    parser.parseFile(filename);
 
     var control = clone(callbackControl);
     assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
+  });
+
+  it('can can be reused as a string parser', function() {
+    var str = node.fs.cat(filename).wait();
+    var parser = createParser('SaxParser');
+    
+    for (var i=0; i<10; i++)
+      parser.parseString(str);
+
+  });
+
+  it('can can be reused as a string parser', function() {
+    var parser = createParser('SaxParser');
+    
+    for (var i=0; i<10; i++)
+      parser.parseFile(filename);
+
   });
 });
