@@ -22,17 +22,17 @@ namespace {
 // This allows us to create a C++ instance for every C instance.
 void on_libxml_construct(xmlNode* node) {
   switch (node->type) {
-    case XML_ATTRIBUTE_NODE:
-      BUILD_NODE(Attribute, xmlNode, attr, node);
-      break;
+    // case XML_ATTRIBUTE_NODE:
+    //   BUILD_NODE(Attribute, xmlNode, attr, node);
+    //   break;
 
     case XML_DOCUMENT_NODE:
       BUILD_NODE(Document, xmlDoc, doc, node->doc);
       break;
 
-    case XML_ELEMENT_NODE:
-      BUILD_NODE(Element, xmlNode, elem, node);
-      break;
+    // case XML_ELEMENT_NODE:
+    //   BUILD_NODE(Element, xmlNode, elem, node);
+    //   break;
 
     default:
       NULL;  // nothing. just silence the compiler warnings
