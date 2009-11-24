@@ -120,6 +120,11 @@ class SaxParser : public Parser {
 
   protected:
 
+  void initializeContext();
+  void releaseContext();
+
+  _xmlParserCtxt* context_;
+
   v8::Persistent<v8::Object> callbacks_;
   _xmlSAXHandler* sax_handler_;
 

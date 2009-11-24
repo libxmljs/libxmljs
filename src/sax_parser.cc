@@ -41,6 +41,26 @@ SaxParser::SaxParser() : sax_handler_(new _xmlSAXHandler) {
   *sax_handler_ = tmp;
 }
 
+void
+SaxParser::initializeContext() {
+  assert(context_);
+  context_->validate = 0;
+  context_->_private = this;
+}
+
+void
+SaxParser::releaseContext() {
+  if (context_) {
+    context_->_private = 0;
+    if (context_->myDoc != NULL)
+      xmlFreeDoc(context_->myDoc);
+
+    xmlFreeParserCtxt(context_);
+    context_ = 0;
+  }
+}
+
+
 v8::Handle<v8::Value>
 SaxParser::NewParser(const v8::Arguments& args) {
   v8::HandleScope scope;
