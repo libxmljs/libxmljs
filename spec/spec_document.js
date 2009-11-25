@@ -51,6 +51,12 @@ describe('A new document', function() {
     assertEqual(null, doc.root());
   });
 
+  it('can have a root node attached to it', function() {
+    var doc = new libxml.Document();
+    var root = doc.node('root');
+    assertEqual(root, doc.root());
+  });
+
   it('can return an arbitrary child of the root node', function() {
     var doc = new libxml.Document();
     doc.node('root').node('child-one').parent().node('child-two');
@@ -95,7 +101,7 @@ describe('A new document', function() {
     var doc = new libxml.Document();
     doc.node('root').node('child').parent().node('child');
     assertEqual(doc.root().name(), doc.get('/root').name());
-  })
+  });
 
   it('can be output as a string', function() {
     var control = [

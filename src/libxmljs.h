@@ -39,13 +39,19 @@
 #define BUILD_NODE(klass, type, name, node)                                     \
 {                                                                               \
   klass *name = new klass(node);                                                \
-  v8::Handle<v8::Value> argv[1] = { v8::Null() };                               \
-  v8::Handle<v8::Object> name##JS = klass::constructor_template->               \
-                                    GetFunction()->NewInstance(1, argv);        \
-  JsObj::Wrap<type>(node, name##JS);                                           \
-  name->Wrap(name##JS);                                                         \
+  v8::Handle<v8::Value> __name##_ARG[1] = { v8::Null() };                       \
+  v8::Handle<v8::Object> __name##_JS = klass::constructor_template->            \
+                                    GetFunction()->NewInstance(1, __name##_ARG);\
+  JsObj::Wrap<type>(node, __name##_JS);                                         \
+  name->Wrap(__name##_JS);                                                      \
 }
 
+#define LIBXMLJS_GET_MAYBE_BUILD(klass, type, node)                             \
+  ({                                                                            \
+    if (!node->_private)                                                        \
+      BUILD_NODE(klass, type, newObj, node);                                    \
+    JsObj::Unwrap<type>(node);                                                  \
+  })
 
 #include <v8.h>
 #include <libxml/parser.h>

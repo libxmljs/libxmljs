@@ -29,12 +29,13 @@ Attribute::New(const v8::Arguments& args) {
                                 args[3]->ToObject());
     assert(ns);
 
-    v8::Persistent<v8::Object> js_attr = JsObj::Unwrap<xmlAttr>(elem);
+    v8::Persistent<v8::Object> js_attr =
+      LIBXMLJS_GET_MAYBE_BUILD(Attribute, xmlAttr, elem);
     Attribute *attr = LibXmlObj::Unwrap<Attribute>(js_attr);
     attr->set_namespace(ns->xml_obj);
   }
 
-  return JsObj::Unwrap<xmlAttr>(elem);
+  return LIBXMLJS_GET_MAYBE_BUILD(Attribute, xmlAttr, elem);
 }
 
 v8::Handle<v8::Value>

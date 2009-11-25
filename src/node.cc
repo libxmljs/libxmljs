@@ -1,6 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "node.h"
 
+#include "document.h"
 #include "element.h"
 #include "attribute.h"
 #include "namespace.h"
@@ -155,15 +156,15 @@ Node::find_namespace(const char* search_str) {
 v8::Handle<v8::Value>
 Node::get_parent() {
   if (xml_obj->parent)
-    return JsObj::Unwrap<xmlNode>(xml_obj->parent);
+    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->parent);
 
-  return JsObj::Unwrap<xmlDoc>(xml_obj->doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
 Node::get_prev_sibling() {
   if (xml_obj->prev)
-    return JsObj::Unwrap<xmlNode>(xml_obj->prev);
+    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->prev);
 
   return v8::Null();
 }
@@ -171,7 +172,7 @@ Node::get_prev_sibling() {
 v8::Handle<v8::Value>
 Node::get_next_sibling() {
   if (xml_obj->next)
-    return JsObj::Unwrap<xmlNode>(xml_obj->next);
+    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->next);
 
   return v8::Null();
 }

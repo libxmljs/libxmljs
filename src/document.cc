@@ -127,7 +127,8 @@ Document::New(const v8::Arguments& args) {
     version = new v8::String::Utf8Value(v8::String::New("1.0"));
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
-  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlDoc>(doc);
+  v8::Persistent<v8::Object> obj =
+    LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
   Document *document = LibXmlObj::Unwrap<Document>(obj);
 
   if (encoding)
@@ -142,6 +143,7 @@ Document::New(const v8::Arguments& args) {
 }
 
 Document::~Document() {
+  assert(false);
   xmlFreeDoc(xml_obj);
 }
 
@@ -187,9 +189,9 @@ Document::has_root() {
 
 v8::Handle<v8::Value>
 Document::get_root() {
-  xmlNodePtr root = xmlDocGetRootElement(xml_obj);
+  xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return JsObj::Unwrap(root);
+    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, root);
   else
     return v8::Null();
 }

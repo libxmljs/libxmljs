@@ -17,25 +17,14 @@ namespace libxmljs {
 
 namespace {
 
-// Called by libxml whenever it constructs something,
-// such as a node or attribute.
-// This allows us to create a C++ instance for every C instance.
-void on_libxml_construct(xmlNode* node) {
+void on_libxml_destruct(xmlNode* node) {
   switch (node->type) {
-    // case XML_ATTRIBUTE_NODE:
-    //   BUILD_NODE(Attribute, xmlNode, attr, node);
-    //   break;
-
     case XML_DOCUMENT_NODE:
-      BUILD_NODE(Document, xmlDoc, doc, node->doc);
+      delete static_cast<JsObj*>(node->doc->_private);
       break;
 
-    // case XML_ELEMENT_NODE:
-    //   BUILD_NODE(Element, xmlNode, elem, node);
-    //   break;
-
     default:
-      NULL;  // nothing. just silence the compiler warnings
+      delete static_cast<JsObj*>(node->_private);
   }
 }
 
@@ -43,10 +32,10 @@ void on_libxml_construct(xmlNode* node) {
 
 LibXMLJS::LibXMLJS() {
   xmlInitParser();  // Not always necessary, but necessary for thread safety.
-  xmlRegisterNodeDefault(on_libxml_construct);
-  // xmlDeregisterNodeDefault(on_libxml_destruct);
-  xmlThrDefRegisterNodeDefault(on_libxml_construct);
-  // xmlThrDefDeregisterNodeDefault(on_libxml_destruct);
+  // xmlRegisterNodeDefault(on_libxml_construct);
+  xmlDeregisterNodeDefault(on_libxml_destruct);
+  // xmlThrDefRegisterNodeDefault(on_libxml_construct);
+  xmlThrDefDeregisterNodeDefault(on_libxml_destruct);
 }
 
 LibXMLJS::~LibXMLJS() {

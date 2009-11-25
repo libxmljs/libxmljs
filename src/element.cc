@@ -38,7 +38,8 @@ Element::New(const v8::Arguments& args) {
                                 NULL,
                                 (const xmlChar*)*name,
                                 content ? (const xmlChar*)**content : NULL);
-  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlNode>(elem);
+
+  v8::Persistent<v8::Object> obj = LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, elem);
   Element *element = LibXmlObj::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {
@@ -218,7 +219,7 @@ v8::Handle<v8::Value>
 Element::get_attr(const char* name) {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr)
-    return JsObj::Unwrap(attr);
+    return LIBXMLJS_GET_MAYBE_BUILD(Attribute, xmlAttr, attr);
 
   return v8::Null();
 }
@@ -248,7 +249,7 @@ Element::get_attrs() {
     attributes->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1];
   do {
-    argv[0] = JsObj::Unwrap(attr);
+    argv[0] = LIBXMLJS_GET_MAYBE_BUILD(Attribute, xmlAttr, attr);
     push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
@@ -290,8 +291,11 @@ Element::get_children() {
   } while ((child = child->next));
 
   v8::Handle<v8::Array> children = v8::Array::New(set->nodeNr);
-  for (int i = 0; i < set->nodeNr; ++i)
-    children->Set(v8::Number::New(i), JsObj::Unwrap(set->nodeTab[i]));
+  for (int i = 0; i < set->nodeNr; ++i) {
+    xmlNode *node = set->nodeTab[i];
+    children->Set(v8::Number::New(i),
+                  LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, node));
+  }
 
   return children;
 }
@@ -341,9 +345,11 @@ Element::find(const char* xpath) {
   }
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
-  for (int i = 0; i != result->nodesetval->nodeNr; ++i)
+  for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
+    xmlNode *node = result->nodesetval->nodeTab[i];
     nodes->Set(v8::Number::New(i),
-               JsObj::Unwrap(result->nodesetval->nodeTab[i]));
+               LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, node));
+  }
 
   xmlXPathFreeObject(result);
   xmlXPathFreeContext(ctxt);
