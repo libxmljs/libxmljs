@@ -1,10 +1,10 @@
-node.mixin(process, require('helpers.js'));
+process.mixin(require('./helpers'));
 
 describe('Parsing', function() {
-  var filename = node.path.dirname(__filename)+'/fixtures/parser_test.xml';
+  var filename = path.dirname(__filename)+'/fixtures/parser_test.xml';
 
   it('can be done by string', function() {
-    var str = node.fs.cat(filename).wait();
+    var str = posix.cat(filename).wait();
 
     var doc = libxml.parseString(str);
     assertEqual('1.0', doc.version());

@@ -1,4 +1,4 @@
-node.mixin(process, require('helpers.js'));
+process.mixin(require('./helpers'));
 
 describe('An element node', function() {
   var doc = null;

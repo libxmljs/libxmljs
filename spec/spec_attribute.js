@@ -1,4 +1,4 @@
-node.mixin(process, require('helpers.js'));
+process.mixin(require('./helpers'));
 
 describe('Attribute', function() {
   var doc = null;
@@ -12,14 +12,12 @@ describe('Attribute', function() {
   });
 
   it('can be created without a namespace', function() {
-    var node = doc.get('node');
     var attr = new libxml.Attribute(node, 'new-attr-key', 'new-attr-value');
     assert(attr);
     assertEqual(attr.value(), node.attr('new-attr-key').value());
   });
 
   it('can be created with a namespace', function() {
-    var node = doc.get('node');
     var ns = new libxml.Namespace(node, 'ns-prefix', 'ns-uri');
     var attr = new libxml.Attribute(node, 'new-attr-key', 'new-attr-value', ns);
     assert(attr);

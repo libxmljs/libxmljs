@@ -1,8 +1,8 @@
-node.mixin(process, require('helpers.js'));
+process.mixin(require('./helpers'));
 
 describe("SAX Push Parser", function() {
   var callbacks = {};
-  var filename = node.path.dirname(__filename)+'/fixtures/sax_parser_test.xml';
+  var filename = path.dirname(__filename)+'/fixtures/sax_parser_test.xml';
 
   function createParser(parserType) {
     parser = new libxml[parserType](function(cb) {
@@ -59,14 +59,14 @@ describe("SAX Push Parser", function() {
   });
 
   it('will properly parse a regular string', function() {
-    var str = node.fs.cat(filename).wait();
+    var str = posix.cat(filename).wait();
     var parser = createParser('SaxParser');
     parser.parseString(str);
     assertEqual(JSON.stringify(callbackControl), JSON.stringify(callbacks));
   });
 
   it('will properly parse a string chunk by chunk', function() {
-    var str_ary = node.fs.cat(filename).wait().split("\n");
+    var str_ary = posix.cat(filename).wait().split("\n");
     var parser = createParser('SaxPushParser');
     var i;
     for (i = 0; i < str_ary.length; i++)
@@ -86,7 +86,7 @@ describe("SAX Push Parser", function() {
   });
 
   it('can can be reused as a string parser', function() {
-    var str = node.fs.cat(filename).wait();
+    var str = posix.cat(filename).wait();
     var parser = createParser('SaxParser');
     
     for (var i=0; i<10; i++)

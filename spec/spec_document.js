@@ -1,4 +1,4 @@
-node.mixin(process, require('helpers.js'));
+process.mixin(require('./helpers'));
 
 describe('A new document', function() {
   it('can be instantiated with nothing', function() {

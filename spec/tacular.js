@@ -8,9 +8,13 @@
  * 1. Place this file in your project's spec directory.
  * 2. Run with "node spec/tacular.js" to test all files beginning with the word "spec".
  *
+ * Options:
+ *
+ * "=verbose": Use verbose mode showing description, tests, and status for each spec.
+ *
  * Synopsis:
  *
- * var foo = require("../lib/foo.js"); // the file you are specing
+ * var foo = require("./../lib/foo"); // the file you are specing
  *
  * describe("A foo", function() {
  *   beforeEach(function() {
@@ -31,13 +35,15 @@
  * Copyright 2009, Jon Crosby, MIT Licensed
  *
  */
-(function() {
-  node.mixin(process, require('/utils.js'));
+process.mixin(require('sys'));
 
+(function() {
+  var path = require('path');
+  var posix = require('posix');
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];
-  var specVerbose  = ARGV.join(";").match(/;=verbose/);
+  var specVerbose  = process.ARGV.join(";").match(/;=verbose/);
 
   var describe = function(name, func) {
     specStack.push(name);
@@ -88,6 +94,7 @@
 
   var inspectArray = function(arr) {
     var elements = [];
+    if(arr.length == 0) return "[]";
     for(i = 0; i < arr.length; i++) {
       elements.push(inspect(arr[i]));
     }
@@ -189,17 +196,19 @@
     puts(summary());
   };
 
-  var specDirectory = node.path.dirname(__filename);
-  var files = node.fs.readdir(specDirectory).wait();
+  var specDirectory = path.dirname(__filename);
+  var files = posix.readdir(specDirectory).wait();
   var i;
   for(i = 0; i < files.length; i++) {
     var file = files[i];
     if(file.match(/^spec/)) {
       if (specVerbose) print(file+"\n");
-      var content = node.fs.cat(specDirectory + "/" + file, "utf8").wait();
+      var content = posix.cat(specDirectory + "/" + file, "utf8").wait();
       eval(content);
     }
   }
   puts("\n");
-  summarize();
+  process.addListener("exit", function () {
+    summarize();
+  });
 })();
