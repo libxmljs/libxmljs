@@ -34,9 +34,24 @@ class LibXmlObj {
     assert(handle->InternalFieldCount() > 0);
     handle_ = v8::Persistent<v8::Object>::New(handle);
     handle_->SetInternalField(0, v8::External::New(this));
+    MakeWeak();
+  }
+
+  inline void
+  MakeWeak(void) {
+    handle_.MakeWeak(this, WeakCallback);
   }
 
   v8::Persistent<v8::Object> handle_;  // ro
+
+  private:
+
+  static void
+  WeakCallback(v8::Persistent<v8::Value> value, void *data) {
+    LibXmlObj *obj = static_cast<LibXmlObj*>(data);
+    assert(value == obj->handle_);
+    delete obj;
+  }
 };
 
 // Wraps/Unwraps a JS object so it can be set on the XML object's _private
@@ -46,8 +61,8 @@ class JsObj {
 
   template <class T>
   static inline void
-  Wrap(T* xml_obj, v8::Handle<v8::Object> jsObject) {
-    xml_obj->_private = new JsObj(jsObject);
+  Wrap(T *xml_obj, v8::Handle<v8::Object> js_obj) {
+    xml_obj->_private = new JsObj(js_obj);
   }
 
   template <class T>
@@ -60,6 +75,7 @@ class JsObj {
 
   explicit JsObj(v8::Handle<v8::Object> jsObject) {
     _handle = v8::Persistent<v8::Object>::New(jsObject);
+    MakeWeak();
   }
 
   ~JsObj() {
@@ -70,7 +86,21 @@ class JsObj {
     }
   }
 
+  inline void
+  MakeWeak(void) {
+    _handle.MakeWeak(this, WeakCallback);
+  }
+
   v8::Persistent<v8::Object> _handle;
+
+  private:
+
+  static void
+  WeakCallback(v8::Persistent<v8::Value> value, void *data) {
+    JsObj *obj = static_cast<JsObj*>(data);
+    assert(value == obj->_handle);
+    delete obj;
+  }
 };
 
 }  // namespace libxmljs
