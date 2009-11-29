@@ -11,14 +11,14 @@
            v8::FunctionTemplate::New(callback)->GetFunction())
 
 #define LXJS_SET_PROTO_METHOD(templ, name, callback)                            \
-{                                                                               \
+do {                                                                            \
   v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);        \
   v8::Local<v8::FunctionTemplate> __callback##_TEM =                            \
     v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(),                \
-                          __callback##_SIG);                                    \
+                              __callback##_SIG);                                \
   templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),                  \
                                   __callback##_TEM);                            \
-}
+} while(0)
 
 #define LIBXMLJS_SET_METHOD(obj, name, callback)                                \
   obj->Set(v8::String::NewSymbol(name),                                         \
@@ -36,20 +36,20 @@
     return v8::ThrowException(exception);                                       \
   }
 
-#define BUILD_NODE(klass, type, name, node)                                     \
-{                                                                               \
-  klass *name = new klass(node);                                                \
+#define BUILD_NODE(klass, type, node)                                           \
+do {                                                                            \
+  klass *__klass##_OBJ = new klass(node);                                       \
   v8::Handle<v8::Value> __name##_ARG[1] = { v8::Null() };                       \
   v8::Handle<v8::Object> __name##_JS = klass::constructor_template->            \
                                     GetFunction()->NewInstance(1, __name##_ARG);\
   JsObj::Wrap<type>(node, __name##_JS);                                         \
-  name->Wrap(__name##_JS);                                                      \
-}
+  __klass##_OBJ->Wrap(__name##_JS);                                                      \
+} while(0)
 
 #define LIBXMLJS_GET_MAYBE_BUILD(klass, type, node)                             \
   ({                                                                            \
     if (!node->_private)                                                        \
-      BUILD_NODE(klass, type, newObj, node);                                    \
+      BUILD_NODE(klass, type, node);                                            \
     JsObj::Unwrap<type>(node);                                                  \
   })
 

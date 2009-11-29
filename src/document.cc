@@ -143,7 +143,6 @@ Document::New(const v8::Arguments& args) {
 }
 
 Document::~Document() {
-  assert(false);
   xmlFreeDoc(xml_obj);
 }
 

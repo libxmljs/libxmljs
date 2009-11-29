@@ -12,7 +12,7 @@ v8::Persistent<v8::FunctionTemplate> Namespace::constructor_template;
 
 v8::Handle<v8::Value>
 Namespace::New(xmlNs* ns) {
-  BUILD_NODE(Namespace, xmlNs, name_space, ns);
+  BUILD_NODE(Namespace, xmlNs, ns);
   return JsObj::Unwrap<xmlNs>(ns);
 }
 
@@ -40,7 +40,7 @@ Namespace::New(const v8::Arguments& args) {
                                 prefix ? **prefix : NULL,
                                 **href);
   assert(ns->xml_obj);
-  BUILD_NODE(Namespace, xmlNs, name_space, ns->xml_obj);
+  BUILD_NODE(Namespace, xmlNs, ns->xml_obj);
   v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlNs>(ns->xml_obj);
 
   delete prefix;
