@@ -10,8 +10,8 @@ v8::Persistent<v8::FunctionTemplate> Attribute::constructor_template;
 v8::Handle<v8::Value>
 Attribute::New(const v8::Arguments& args) {
   v8::HandleScope scope;
-  // was created by the libxml callback
-  if (args.Length() == 1 && args[0]->IsNull())
+  // was created by BUILD_NODE
+  if (args.Length() == 1 && args[0]->StrictEquals(v8::Null()))
     return args.This();
 
   Element *element = LibXmlObj::Unwrap<Element>(args[0]->ToObject());

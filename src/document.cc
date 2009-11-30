@@ -80,7 +80,8 @@ Document::New(const v8::Arguments& args) {
       break;
 
     case 1:  // newDocument(version), newDocument(callback)
-      if (args[0]->IsNull())  // was created by the libxml callback
+      // was created by BUILD_NODE
+      if (args[0]->StrictEquals(v8::Null()))
         return args.This();
 
       if (args[0]->IsString()) {

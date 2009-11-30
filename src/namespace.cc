@@ -19,7 +19,7 @@ Namespace::New(xmlNs* ns) {
 v8::Handle<v8::Value>
 Namespace::New(const v8::Arguments& args) {
   v8::HandleScope scope;
-  if (args[0]->IsNull())
+  if (args[0]->StrictEquals(v8::Null()))
     return args.This();
 
   // TODO(sprsquish): ensure this is an actual Node object

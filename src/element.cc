@@ -18,8 +18,8 @@ v8::Persistent<v8::FunctionTemplate> Element::constructor_template;
 v8::Handle<v8::Value>
 Element::New(const v8::Arguments& args) {
   v8::HandleScope scope;
-  // was created by the libxml callback
-  if (args.Length() == 0 || args[0]->IsNull())
+  // was created by BUILD_NODE
+  if (args.Length() == 0 || args[0]->StrictEquals(v8::Null()))
     return args.This();
 
   Document *document = LibXmlObj::Unwrap<Document>(args[0]->ToObject());
