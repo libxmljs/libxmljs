@@ -39,7 +39,8 @@ Element::New(const v8::Arguments& args) {
                                 (const xmlChar*)*name,
                                 content ? (const xmlChar*)**content : NULL);
 
-  v8::Persistent<v8::Object> obj = LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, elem);
+  v8::Persistent<v8::Object> obj =
+    LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, elem);
   Element *element = LibXmlObj::Unwrap<Element>(obj);
 
   if (args[2]->IsObject()) {
