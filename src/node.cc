@@ -13,7 +13,7 @@ v8::Persistent<v8::FunctionTemplate> Node::constructor_template;
 v8::Handle<v8::Value>
 Node::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
   assert(node);
 
   return node->get_doc();
@@ -22,7 +22,7 @@ Node::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
   assert(node);
 
   // #namespace() Get the node's namespace
@@ -35,7 +35,7 @@ Node::Namespace(const v8::Arguments& args) {
   libxmljs::Namespace *ns = NULL;
 
   // #namespace(ns) libxml.Namespace object was provided
-  // TODO (sprsquish): check that it was actually given a namespace obj
+  // TODO(sprsquish): check that it was actually given a namespace obj
   if (args[0]->IsObject())
     ns = LibXmlObj::Unwrap<libxmljs::Namespace>(args[0]->ToObject());
 
@@ -58,8 +58,7 @@ Node::Namespace(const v8::Arguments& args) {
     if (args.Length() == 1) {
       argv[1] = v8::Null();
       argv[2] = args[0];
-    }
-    else {
+    } else {
       argv[1] = args[0];
       argv[2] = args[1];
     }
@@ -80,7 +79,7 @@ Node::Namespace(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
   assert(node);
 
   return node->get_parent();
@@ -89,7 +88,7 @@ Node::Parent(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::PrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
   assert(node);
 
   return node->get_prev_sibling();
@@ -98,7 +97,7 @@ Node::PrevSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 Node::NextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                             \
+  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
   assert(node);
 
   return node->get_next_sibling();
@@ -184,11 +183,25 @@ Node::Initialize(v8::Handle<v8::Object> target) {
     v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template, "doc", Node::Doc);
-  LXJS_SET_PROTO_METHOD(constructor_template, "parent", Node::Parent);
-  LXJS_SET_PROTO_METHOD(constructor_template, "namespace", Node::Namespace);
-  LXJS_SET_PROTO_METHOD(constructor_template, "prev_sibling", Node::PrevSibling);
-  LXJS_SET_PROTO_METHOD(constructor_template, "next_sibling", Node::NextSibling);
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "doc",
+                        Node::Doc);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "parent",
+                        Node::Parent);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "namespace",
+                        Node::Namespace);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "prev_sibling",
+                        Node::PrevSibling);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "next_sibling",
+                        Node::NextSibling);
 
   Element::Initialize(target);
   Attribute::Initialize(target);
