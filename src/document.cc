@@ -14,6 +14,7 @@ v8::Persistent<v8::FunctionTemplate> Document::constructor_template;
 
 v8::Handle<v8::Value>
 Document::Doc(const v8::Arguments& args) {
+  v8::HandleScope scope;
   return args.This();
 }
 
@@ -154,6 +155,7 @@ Document::set_encoding(const char* encoding) {
 
 v8::Handle<v8::Value>
 Document::get_encoding() {
+  v8::HandleScope scope;
   if (xml_obj->encoding)
     return v8::String::New((const char *)xml_obj->encoding,
                            xmlStrlen((const xmlChar*)xml_obj->encoding));
@@ -163,6 +165,7 @@ Document::get_encoding() {
 
 v8::Handle<v8::Value>
 Document::get_version() {
+  v8::HandleScope scope;
   if (xml_obj->version)
     return v8::String::New((const char *)xml_obj->version,
                            xmlStrlen((const xmlChar*)xml_obj->version));
@@ -172,11 +175,12 @@ Document::get_version() {
 
 v8::Handle<v8::Value>
 Document::to_string() {
-  xmlChar* buffer = 0;
+  v8::HandleScope scope;
+  xmlChar* buffer = NULL;
   int len = 0;
 
   xmlDocDumpFormatMemoryEnc(xml_obj, &buffer, &len, "UTF-8", 0);
-  v8::Handle<v8::String> str = v8::String::New((const char*)buffer, len);
+  v8::Local<v8::String> str = v8::String::New((const char*)buffer, len);
   xmlFree(buffer);
 
   return str;
@@ -189,6 +193,7 @@ Document::has_root() {
 
 v8::Handle<v8::Value>
 Document::get_root() {
+  v8::HandleScope scope;
   xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
     return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, root);

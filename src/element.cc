@@ -359,6 +359,7 @@ Element::find(const char* xpath) {
 
 void
 Element::Initialize(v8::Handle<v8::Object> target) {
+  v8::HandleScope scope;
   v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(New);
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->Inherit(Node::constructor_template);

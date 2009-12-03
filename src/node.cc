@@ -179,6 +179,7 @@ Node::get_next_sibling() {
 
 void
 Node::Initialize(v8::Handle<v8::Object> target) {
+  v8::HandleScope scope;
   constructor_template =
     v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);

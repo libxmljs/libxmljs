@@ -17,6 +17,10 @@ ParseString(const v8::Arguments& args) {
   v8::String::Utf8Value str(args[0]->ToString());
   xmlResetLastError();
   xmlDoc *doc = xmlReadMemory(*str, str.length(), NULL, NULL, 0);
+  if (doc == NULL) {
+    xmlFreeDoc(doc);
+    return v8::Null();
+  }
 
   return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
 }
@@ -32,6 +36,10 @@ ParseFile(const v8::Arguments& args) {
   v8::String::Utf8Value str(args[0]->ToString());
   xmlResetLastError();
   xmlDoc *doc = xmlReadFile(*str, NULL, 0);
+  if (doc == NULL) {
+    xmlFreeDoc(doc);
+    return v8::Null();
+  }
 
   return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
 }
