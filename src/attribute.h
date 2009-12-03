@@ -10,7 +10,8 @@ namespace libxmljs {
 class Attribute : public Node {
   public:
 
-  explicit Attribute(xmlAttr* node) : libxmljs::Node(reinterpret_cast<xmlNode*>(node)) {}
+  explicit Attribute(xmlAttr* node) :
+    libxmljs::Node(reinterpret_cast<xmlNode*>(node)) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

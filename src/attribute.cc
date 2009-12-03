@@ -96,7 +96,7 @@ Attribute::get_value() {
 
 void
 Attribute::set_value(const char* value) {
-  if(xml_obj->children)
+  if (xml_obj->children)
     xmlFreeNodeList(xml_obj->children);
 
   xml_obj->children = xml_obj->last = NULL;
@@ -113,10 +113,10 @@ Attribute::set_value(const char* value) {
     tmp = xml_obj->children;
 
     // Loop through the children
-    for(tmp = xml_obj->children; tmp; tmp = tmp->next) {
-      tmp->parent = (xmlNode *)xml_obj;
+    for (tmp = xml_obj->children; tmp; tmp = tmp->next) {
+      tmp->parent = reinterpret_cast<xmlNode *>(xml_obj);
       tmp->doc = xml_obj->doc;
-      if(tmp->next == NULL) xml_obj->last = tmp;
+      if (tmp->next == NULL) xml_obj->last = tmp;
     }
 
     // Free up memory
