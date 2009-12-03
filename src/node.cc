@@ -1,10 +1,10 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "node.h"
+#include "./node.h"
 
-#include "document.h"
-#include "element.h"
-#include "attribute.h"
-#include "namespace.h"
+#include "./document.h"
+#include "./element.h"
+#include "./attribute.h"
+#include "./namespace.h"
 
 namespace libxmljs {
 

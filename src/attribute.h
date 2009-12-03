@@ -2,8 +2,8 @@
 #ifndef SRC_ATTRIBUTE_H_
 #define SRC_ATTRIBUTE_H_
 
-#include "libxmljs.h"
-#include "node.h"
+#include "./libxmljs.h"
+#include "./node.h"
 
 namespace libxmljs {
 

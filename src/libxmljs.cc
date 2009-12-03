@@ -1,17 +1,17 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "libxmljs.h"
+#include "./libxmljs.h"
 
 #include <v8.h>
 #include <string>
 
-#include "natives.h"
-#include "object_wrap.h"
-#include "document.h"
-#include "element.h"
-#include "attribute.h"
-#include "namespace.h"
-#include "parser.h"
-#include "sax_parser.h"
+#include "./natives.h"
+#include "./object_wrap.h"
+#include "./document.h"
+#include "./element.h"
+#include "./attribute.h"
+#include "./namespace.h"
+#include "./parser.h"
+#include "./sax_parser.h"
 
 namespace libxmljs {
 

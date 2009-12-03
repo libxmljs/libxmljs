@@ -4,8 +4,8 @@
 
 #include <libxml/xmlstring.h>
 
-#include "libxmljs.h"
-#include "object_wrap.h"
+#include "./libxmljs.h"
+#include "./object_wrap.h"
 
 
 namespace libxmljs {

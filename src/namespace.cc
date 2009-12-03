@@ -1,9 +1,9 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "namespace.h"
+#include "./namespace.h"
 
 #include <libxml/xmlstring.h>
 
-#include "node.h"
+#include "./node.h"
 
 
 namespace libxmljs {

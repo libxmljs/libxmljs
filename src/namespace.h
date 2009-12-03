@@ -2,9 +2,9 @@
 #ifndef SRC_NAMESPACE_H_
 #define SRC_NAMESPACE_H_
 
-#include "libxmljs.h"
-#include "node.h"
-#include "object_wrap.h"
+#include "./libxmljs.h"
+#include "./node.h"
+#include "./object_wrap.h"
 
 namespace libxmljs {
 

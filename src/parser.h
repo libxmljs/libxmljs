@@ -9,8 +9,8 @@
 
 #include <cassert>  // for assert()
 
-#include "libxmljs.h"
-#include "object_wrap.h"
+#include "./libxmljs.h"
+#include "./object_wrap.h"
 
 namespace libxmljs {
 

@@ -2,8 +2,8 @@
 #ifndef SRC_DOCUMENT_H_
 #define SRC_DOCUMENT_H_
 
-#include "libxmljs.h"
-#include "object_wrap.h"
+#include "./libxmljs.h"
+#include "./object_wrap.h"
 
 namespace libxmljs {
 
