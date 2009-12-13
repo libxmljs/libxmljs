@@ -72,10 +72,10 @@ XmlDocument::New(const v8::Arguments& args) {
   v8::String::Utf8Value *version = NULL, *encoding = NULL;
 
   switch (args.Length()) {
-    case 0:  // newXmlDocument()
+    case 0:  // newDocument()
       break;
 
-    case 1:  // newXmlDocument(version), newXmlDocument(callback)
+    case 1:  // newDocument(version), newDocument(callback)
       // was created by BUILD_NODE
       if (args[0]->StrictEquals(v8::Null()))
         return args.This();
@@ -88,11 +88,11 @@ XmlDocument::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newXmlDocument([version]) or newXmlDocument([callback])");
+          "Bad argument: newDocument([version]) or newDocument([callback])");
       }
       break;
 
-    case 2:  // newXmlDocument(version, encoding), newXmlDocument(version, callback)
+    case 2:  // newDocument(version, encoding), newDocument(version, callback)
       if (args[0]->IsString() && args[1]->IsString()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
         encoding = new v8::String::Utf8Value(args[1]->ToString());
@@ -107,8 +107,10 @@ XmlDocument::New(const v8::Arguments& args) {
       }
       break;
 
-    default:  // newXmlDocument(version, encoding, callback)
-      if (args[0]->IsString() && args[1]->IsString() && args[2]->IsFunction()) {
+    default:  // newDocument(version, encoding, callback)
+      if (args[0]->IsString() &&
+          args[1]->IsString() &&
+          args[2]->IsFunction()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
         encoding = new v8::String::Utf8Value(args[1]->ToString());
         callback = v8::Handle<v8::Function>::Cast(args[2]);

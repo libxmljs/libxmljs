@@ -364,7 +364,7 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "addChild", 
+                        "addChild",
                         XmlElement::AddChild);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
@@ -384,19 +384,19 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
                         XmlElement::Children);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "find", 
+                        "find",
                         XmlElement::Find);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "name", 
+                        "name",
                         XmlElement::Name);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "path", 
+                        "path",
                         XmlElement::Path);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "text", 
+                        "text",
                         XmlElement::Text);
 
   target->Set(v8::String::NewSymbol("Element"),
