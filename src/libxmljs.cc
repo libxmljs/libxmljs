@@ -6,12 +6,12 @@
 
 #include "./natives.h"
 #include "./object_wrap.h"
-#include "./document.h"
-#include "./element.h"
-#include "./attribute.h"
-#include "./namespace.h"
-#include "./parser.h"
-#include "./sax_parser.h"
+#include "./xml_document.h"
+#include "./xml_element.h"
+#include "./xml_attribute.h"
+#include "./xml_namespace.h"
+#include "./xml_parser.h"
+#include "./xml_sax_parser.h"
 
 namespace libxmljs {
 
@@ -163,9 +163,9 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::Context::Scope context_scope(context);
   context->Global()->Set(v8::String::NewSymbol("libxml"), target);
 
-  ExecuteNativeJS("sax_parser.js", native_sax_parser);
-  ExecuteNativeJS("document.js", native_document);
-  ExecuteNativeJS("element.js", native_element);
+  ExecuteNativeJS("xml_sax_parser.js", native_xml_sax_parser);
+  ExecuteNativeJS("xml_document.js", native_xml_document);
+  ExecuteNativeJS("xml_element.js", native_xml_element);
 }
 
 // used by node.js to initialize libraries

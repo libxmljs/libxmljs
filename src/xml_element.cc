@@ -1,11 +1,11 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./element.h"
+#include "./xml_element.h"
 
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
-#include "./document.h"
-#include "./attribute.h"
+#include "./xml_document.h"
+#include "./xml_attribute.h"
 
 namespace libxmljs {
 

@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "./libxmljs.h"
-#include "./parser.h"
+#include "./xml_parser.h"
 
 
 namespace libxmljs {

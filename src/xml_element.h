@@ -3,7 +3,7 @@
 #define SRC_ELEMENT_H_
 
 #include "./libxmljs.h"
-#include "./node.h"
+#include "./xml_node.h"
 
 namespace libxmljs {
 

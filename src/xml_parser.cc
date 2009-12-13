@@ -1,8 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./parser.h"
+#include "./xml_parser.h"
 
-#include "./document.h"
-#include "./sax_parser.h"
+#include "./xml_document.h"
+#include "./xml_sax_parser.h"
 
 namespace libxmljs {
 

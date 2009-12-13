@@ -3,7 +3,7 @@
 #define SRC_NAMESPACE_H_
 
 #include "./libxmljs.h"
-#include "./node.h"
+#include "./xml_node.h"
 #include "./object_wrap.h"
 
 namespace libxmljs {
