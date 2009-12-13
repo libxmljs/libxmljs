@@ -26,6 +26,25 @@ ParseString(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+ParseHTML(const v8::Arguments& args) {
+  v8::HandleScope scope;
+
+  if (!args[0]->IsString())
+    return v8::ThrowException(v8::Exception::Error(
+      v8::String::New("Must supply parseHTML with a string")));
+
+  v8::String::Utf8Value str(args[0]->ToString());
+  xmlResetLastError();
+  xmlDoc *doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
+  if (doc == NULL) {
+    xmlFreeDoc(doc);
+    return v8::Null();
+  }
+
+  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
+}
+
+v8::Handle<v8::Value>
 ParseFile(const v8::Arguments& args) {
   v8::HandleScope scope;
 
@@ -48,6 +67,7 @@ void
 Parser::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
+  LIBXMLJS_SET_METHOD(target, "parseHTML", ParseHTML);
   LIBXMLJS_SET_METHOD(target, "parseString", ParseString);
   LIBXMLJS_SET_METHOD(target, "parseFile", ParseFile);
 
