@@ -276,7 +276,6 @@ Element::get_child(double idx) {
     return v8::Null();
 
   return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, child);
-  // return JsObj::Unwrap(child);
 }
 
 v8::Handle<v8::Value>
