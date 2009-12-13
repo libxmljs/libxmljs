@@ -7,10 +7,10 @@
 
 namespace libxmljs {
 
-class Element : public Node {
+class XmlElement : public XmlNode {
   public:
 
-  explicit Element(xmlNode* node) : Node(node) {}
+  explicit XmlElement(xmlNode* node) : XmlNode(node) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
@@ -37,7 +37,7 @@ class Element : public Node {
   v8::Handle<v8::Value> get_attr(const char* name);
   v8::Handle<v8::Value> get_attrs();
   void set_attr(const char* name, const char* value);
-  void add_child(Element* child);
+  void add_child(XmlElement* child);
   void set_content(const char* content);
   v8::Handle<v8::Value> get_content();
   v8::Handle<v8::Value> find(const char* xpath);

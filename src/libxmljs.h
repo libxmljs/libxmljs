@@ -2,6 +2,20 @@
 #ifndef SRC_LIBXMLJS_H_
 #define SRC_LIBXMLJS_H_
 
+#include <v8.h>
+
+#include <libxml/parser.h>
+#include <libxml/parserInternals.h>
+#include <libxml/xmlstring.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+#include <libxml/HTMLparser.h>
+#include <libxml/HTMLtree.h>
+
+#include <memory>
+#include <string>
+#include <cassert>  // for assert()
+
 #define LIBXMLJS_VERSION '0.0.1'
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
@@ -54,9 +68,6 @@ do {                                                                          \
     JsObj::Unwrap<type>(node);                                                \
   })
 
-#include <v8.h>
-#include <libxml/parser.h>
-
 namespace libxmljs {
 
 // Ensure that libxml is properly initialised:
@@ -72,5 +83,8 @@ class LibXMLJS {
 };
 
 }  // namespace libxmljs
+
+#include "./natives.h"
+#include "./object_wrap.h"
 
 #endif  // SRC_LIBXMLJS_H_

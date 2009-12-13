@@ -3,20 +3,18 @@
 #define SRC_XML_NAMESPACE_H_
 
 #include "./libxmljs.h"
-#include "./xml_node.h"
-#include "./object_wrap.h"
 
 namespace libxmljs {
 
-class Namespace : public LibXmlObj {
+class XmlNamespace : public LibXmlObj {
   public:
 
   xmlNs* xml_obj;
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  explicit Namespace(xmlNs* ns) : xml_obj(ns) {}
-  Namespace(xmlNode* node, const char* prefix, const char* href);
+  explicit XmlNamespace(xmlNs* ns) : xml_obj(ns) {}
+  XmlNamespace(xmlNode* node, const char* prefix, const char* href);
 
   static v8::Handle<v8::Value> New(xmlNs* ns);
 

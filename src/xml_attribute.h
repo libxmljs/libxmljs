@@ -3,15 +3,16 @@
 #define SRC_XML_ATTRIBUTE_H_
 
 #include "./libxmljs.h"
-#include "./xml_node.h"
+#include "./xml_element.h"
+#include "./xml_namespace.h"
 
 namespace libxmljs {
 
-class Attribute : public Node {
+class XmlAttribute : public XmlNode {
   public:
 
-  explicit Attribute(xmlAttr* node) :
-    libxmljs::Node(reinterpret_cast<xmlNode*>(node)) {}
+  explicit XmlAttribute(xmlAttr* node) :
+    XmlNode(reinterpret_cast<xmlNode*>(node)) {}
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

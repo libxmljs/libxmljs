@@ -1,15 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "./libxmljs.h"
-
-#include <v8.h>
-#include <string>
-
-#include "./natives.h"
-#include "./object_wrap.h"
 #include "./xml_document.h"
-#include "./xml_element.h"
-#include "./xml_attribute.h"
-#include "./xml_namespace.h"
 #include "./xml_parser.h"
 #include "./xml_sax_parser.h"
 
@@ -152,10 +143,10 @@ void
 InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
-  Document::Initialize(target);
+  XmlDocument::Initialize(target);
 
-  Parser::Initialize(target);
-  SaxParser::Initialize(target);
+  XmlParser::Initialize(target);
+  XmlSaxParser::Initialize(target);
 
   v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
   v8::Handle<v8::Context> context = v8::Context::New(NULL, global);

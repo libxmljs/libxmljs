@@ -2,21 +2,17 @@
 #ifndef SRC_XML_NODE_H_
 #define SRC_XML_NODE_H_
 
-#include <libxml/xmlstring.h>
-
 #include "./libxmljs.h"
-#include "./object_wrap.h"
-
 
 namespace libxmljs {
 
-class Node : public LibXmlObj {
+class XmlNode : public LibXmlObj {
   public:
 
   _xmlNode *xml_obj;
 
-  explicit Node(xmlNode* node);
-  virtual ~Node();
+  explicit XmlNode(xmlNode* node);
+  virtual ~XmlNode();
 
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

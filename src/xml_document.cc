@@ -1,27 +1,22 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "./xml_document.h"
-
-#include <libxml/xmlstring.h>
-
-#include "./xml_node.h"
 #include "./xml_element.h"
 #include "./xml_namespace.h"
 
-
 namespace libxmljs {
 
-v8::Persistent<v8::FunctionTemplate> Document::constructor_template;
+v8::Persistent<v8::FunctionTemplate> XmlDocument::constructor_template;
 
 v8::Handle<v8::Value>
-Document::Doc(const v8::Arguments& args) {
+XmlDocument::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
   return args.This();
 }
 
 v8::Handle<v8::Value>
-Document::Encoding(const v8::Arguments& args) {
+XmlDocument::Encoding(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = LibXmlObj::Unwrap<Document>(args.This());
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
 
   if (args.Length() == 0)
@@ -33,18 +28,18 @@ Document::Encoding(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-Document::Version(const v8::Arguments& args) {
+XmlDocument::Version(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = LibXmlObj::Unwrap<Document>(args.This());
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
 
   return document->get_version();
 }
 
 v8::Handle<v8::Value>
-Document::Root(const v8::Arguments& args) {
+XmlDocument::Root(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = LibXmlObj::Unwrap<Document>(args.This());
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
 
   if (args.Length() == 0)
@@ -54,33 +49,33 @@ Document::Root(const v8::Arguments& args) {
     return ThrowException(v8::Exception::Error(
       v8::String::New("This document already has a root node")));
 
-  Element *element = LibXmlObj::Unwrap<Element>(args[0]->ToObject());
+  XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
   assert(element);
   document->set_root(element->xml_obj);
   return args[0];
 }
 
 v8::Handle<v8::Value>
-Document::ToString(const v8::Arguments& args) {
+XmlDocument::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Document *document = LibXmlObj::Unwrap<Document>(args.This());
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
   return document->to_string();
 }
 
 
 v8::Handle<v8::Value>
-Document::New(const v8::Arguments& args) {
+XmlDocument::New(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   v8::Handle<v8::Function> callback;
   v8::String::Utf8Value *version = NULL, *encoding = NULL;
 
   switch (args.Length()) {
-    case 0:  // newDocument()
+    case 0:  // newXmlDocument()
       break;
 
-    case 1:  // newDocument(version), newDocument(callback)
+    case 1:  // newXmlDocument(version), newXmlDocument(callback)
       // was created by BUILD_NODE
       if (args[0]->StrictEquals(v8::Null()))
         return args.This();
@@ -93,11 +88,11 @@ Document::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newDocument([version]) or newDocument([callback])");
+          "Bad argument: newXmlDocument([version]) or newXmlDocument([callback])");
       }
       break;
 
-    case 2:  // newDocument(version, encoding), newDocument(version, callback)
+    case 2:  // newXmlDocument(version, encoding), newXmlDocument(version, callback)
       if (args[0]->IsString() && args[1]->IsString()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
         encoding = new v8::String::Utf8Value(args[1]->ToString());
@@ -108,11 +103,11 @@ Document::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newDocument([version], [encoding|callback])");
+          "Bad argument: newXmlDocument([version], [encoding|callback])");
       }
       break;
 
-    default:  // newDocument(version, encoding, callback)
+    default:  // newXmlDocument(version, encoding, callback)
       if (args[0]->IsString() && args[1]->IsString() && args[2]->IsFunction()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
         encoding = new v8::String::Utf8Value(args[1]->ToString());
@@ -120,7 +115,7 @@ Document::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newDocument([version], [encoding], [callback])");
+          "Bad argument: newXmlDocument([version], [encoding], [callback])");
       }
       break;
   }
@@ -130,8 +125,8 @@ Document::New(const v8::Arguments& args) {
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
   v8::Persistent<v8::Object> obj =
-    LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
-  Document *document = LibXmlObj::Unwrap<Document>(obj);
+    LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
 
   if (encoding)
     document->set_encoding(**encoding);
@@ -144,17 +139,17 @@ Document::New(const v8::Arguments& args) {
   return obj;
 }
 
-Document::~Document() {
+XmlDocument::~XmlDocument() {
   xmlFreeDoc(xml_obj);
 }
 
 void
-Document::set_encoding(const char* encoding) {
+XmlDocument::set_encoding(const char* encoding) {
   xml_obj->encoding = (const xmlChar*)encoding;
 }
 
 v8::Handle<v8::Value>
-Document::get_encoding() {
+XmlDocument::get_encoding() {
   v8::HandleScope scope;
   if (xml_obj->encoding)
     return v8::String::New((const char *)xml_obj->encoding,
@@ -164,7 +159,7 @@ Document::get_encoding() {
 }
 
 v8::Handle<v8::Value>
-Document::get_version() {
+XmlDocument::get_version() {
   v8::HandleScope scope;
   if (xml_obj->version)
     return v8::String::New((const char *)xml_obj->version,
@@ -174,7 +169,7 @@ Document::get_version() {
 }
 
 v8::Handle<v8::Value>
-Document::to_string() {
+XmlDocument::to_string() {
   v8::HandleScope scope;
   xmlChar* buffer = NULL;
   int len = 0;
@@ -187,45 +182,56 @@ Document::to_string() {
 }
 
 bool
-Document::has_root() {
+XmlDocument::has_root() {
   return xmlDocGetRootElement(xml_obj) != NULL;
 }
 
 v8::Handle<v8::Value>
-Document::get_root() {
+XmlDocument::get_root() {
   v8::HandleScope scope;
   xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, root);
+    return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, root);
   else
     return v8::Null();
 }
 
 void
-Document::set_root(xmlNodePtr node) {
+XmlDocument::set_root(xmlNodePtr node) {
   xmlDocSetRootElement(xml_obj, node);
 }
 
 void
-Document::Initialize(v8::Handle<v8::Object> target) {
+XmlDocument::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
   v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(New);
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template, "root", Document::Root);
-  LXJS_SET_PROTO_METHOD(constructor_template, "version", Document::Version);
-  LXJS_SET_PROTO_METHOD(constructor_template, "encoding", Document::Encoding);
-  LXJS_SET_PROTO_METHOD(constructor_template, "document", Document::Doc);
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "root",
+                        XmlDocument::Root);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "version",
+                        XmlDocument::Version);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "encoding",
+                        XmlDocument::Encoding);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "document",
+                        XmlDocument::Doc);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "toString",
-                        Document::ToString);
+                        XmlDocument::ToString);
 
   target->Set(v8::String::NewSymbol("Document"),
               constructor_template->GetFunction());
 
-  Node::Initialize(target);
-  Namespace::Initialize(target);
+  XmlNode::Initialize(target);
+  XmlNamespace::Initialize(target);
 }
 }  // namespcae libxmljs

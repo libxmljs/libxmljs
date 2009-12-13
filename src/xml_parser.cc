@@ -1,8 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "./xml_parser.h"
-
-#include "./xml_document.h"
 #include "./xml_sax_parser.h"
+#include "./xml_document.h"
 
 namespace libxmljs {
 
@@ -22,7 +21,7 @@ ParseString(const v8::Arguments& args) {
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
 }
 
 v8::Handle<v8::Value>
@@ -41,7 +40,7 @@ ParseHTML(const v8::Arguments& args) {
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
 }
 
 v8::Handle<v8::Value>
@@ -60,17 +59,25 @@ ParseFile(const v8::Arguments& args) {
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
 }
 
 void
-Parser::Initialize(v8::Handle<v8::Object> target) {
+XmlParser::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
-  LIBXMLJS_SET_METHOD(target, "parseHTML", ParseHTML);
-  LIBXMLJS_SET_METHOD(target, "parseString", ParseString);
-  LIBXMLJS_SET_METHOD(target, "parseFile", ParseFile);
+  LIBXMLJS_SET_METHOD(target,
+                      "parseHTML",
+                      ParseHTML);
 
-  SaxParser::Initialize(target);
+  LIBXMLJS_SET_METHOD(target,
+                      "parseString",
+                      ParseString);
+
+  LIBXMLJS_SET_METHOD(target,
+                      "parseFile",
+                      ParseFile);
+
+  XmlSaxParser::Initialize(target);
 }
 }  // namespace libxmljs

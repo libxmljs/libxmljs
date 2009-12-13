@@ -2,19 +2,11 @@
 #ifndef SRC_XML_PARSER_H_
 #define SRC_XML_PARSER_H_
 
-#include <v8.h>
-
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h>  // for xmlCreateFileParserCtxt
-
-#include <cassert>  // for assert()
-
 #include "./libxmljs.h"
-#include "./object_wrap.h"
 
 namespace libxmljs {
 
-class Parser : public LibXmlObj {
+class XmlParser : public LibXmlObj {
   public:
 
   static void Initialize(v8::Handle<v8::Object> target);

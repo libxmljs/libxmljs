@@ -2,26 +2,21 @@
 #ifndef SRC_XML_SAX_PARSER_H_
 #define SRC_XML_SAX_PARSER_H_
 
-#include <v8.h>
-
-#include <memory>
-
 #include "./libxmljs.h"
 #include "./xml_parser.h"
 
-
 namespace libxmljs {
 
-#define LIBXML_JS_GET_PARSER_FROM_CONTEXT(context)                            \
+#define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
 ({                                                                            \
   _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
-  static_cast<SaxParser*>(the_context->_private);                             \
+  static_cast<XmlSaxParser*>(the_context->_private);                          \
 })
 
-class SaxParser : public Parser {
+class XmlSaxParser : public XmlParser {
   public:
 
-  SaxParser();
+  XmlSaxParser();
 
   static void
   Initialize(v8::Handle<v8::Object> target);

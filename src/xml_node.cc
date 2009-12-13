@@ -1,28 +1,27 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "./xml_node.h"
-
 #include "./xml_document.h"
+#include "./xml_namespace.h"
 #include "./xml_element.h"
 #include "./xml_attribute.h"
-#include "./xml_namespace.h"
 
 namespace libxmljs {
 
-v8::Persistent<v8::FunctionTemplate> Node::constructor_template;
+v8::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
 
 v8::Handle<v8::Value>
-Node::Doc(const v8::Arguments& args) {
+XmlNode::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
   return node->get_doc();
 }
 
 v8::Handle<v8::Value>
-Node::Namespace(const v8::Arguments& args) {
+XmlNode::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
   // #namespace() Get the node's namespace
@@ -32,12 +31,12 @@ Node::Namespace(const v8::Arguments& args) {
   if (args[0]->IsNull())
     return node->remove_namespace();
 
-  libxmljs::Namespace *ns = NULL;
+  XmlNamespace *ns = NULL;
 
   // #namespace(ns) libxml.Namespace object was provided
   // TODO(sprsquish): check that it was actually given a namespace obj
   if (args[0]->IsObject())
-    ns = LibXmlObj::Unwrap<libxmljs::Namespace>(args[0]->ToObject());
+    ns = LibXmlObj::Unwrap<XmlNamespace>(args[0]->ToObject());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
@@ -45,7 +44,7 @@ Node::Namespace(const v8::Arguments& args) {
     v8::String::Utf8Value ns_to_find(args[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns)
-      ns = LibXmlObj::Unwrap<libxmljs::Namespace>(
+      ns = LibXmlObj::Unwrap<XmlNamespace>(
         JsObj::Unwrap<xmlNs>(found_ns));
   }
 
@@ -64,11 +63,11 @@ Node::Namespace(const v8::Arguments& args) {
     }
 
     v8::Handle<v8::Function> define_namespace =
-      Namespace::constructor_template->GetFunction();
+      XmlNamespace::constructor_template->GetFunction();
 
     v8::Persistent<v8::Object> new_ns = v8::Persistent<v8::Object>::New(
       define_namespace->Call(args.This(), argc, argv)->ToObject());
-    ns = LibXmlObj::Unwrap<libxmljs::Namespace>(new_ns);
+    ns = LibXmlObj::Unwrap<XmlNamespace>(new_ns);
   }
 
   node->set_namespace(ns->xml_obj);
@@ -77,69 +76,69 @@ Node::Namespace(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-Node::Parent(const v8::Arguments& args) {
+XmlNode::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
   return node->get_parent();
 }
 
 v8::Handle<v8::Value>
-Node::PrevSibling(const v8::Arguments& args) {
+XmlNode::PrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
   return node->get_prev_sibling();
 }
 
 v8::Handle<v8::Value>
-Node::NextSibling(const v8::Arguments& args) {
+XmlNode::NextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  Node *node = LibXmlObj::Unwrap<libxmljs::Node>(args.This());                \
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
   return node->get_next_sibling();
 }
 
-Node::Node(xmlNode* node) : xml_obj(node) {
+XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
   xml_obj->_private = this;
 }
 
-Node::~Node() {
+XmlNode::~XmlNode() {
   xmlFree(xml_obj);
 }
 
 v8::Handle<v8::Value>
-Node::get_doc() {
+XmlNode::get_doc() {
   return JsObj::Unwrap<xmlDoc>(xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
-Node::remove_namespace() {
+XmlNode::remove_namespace() {
   xml_obj->ns = NULL;
   return v8::Null();
 }
 
 v8::Handle<v8::Value>
-Node::get_namespace() {
+XmlNode::get_namespace() {
   if (!xml_obj->ns)
     return v8::Null();
 
   if (!xml_obj->ns->_private)
-    return Namespace::New(xml_obj->ns);
+    return XmlNamespace::New(xml_obj->ns);
 
   return JsObj::Unwrap<xmlNs>(xml_obj->ns);
 }
 
 void
-Node::set_namespace(xmlNs* ns) {
+XmlNode::set_namespace(xmlNs* ns) {
   xmlSetNs(xml_obj, ns);
 }
 
 xmlNs*
-Node::find_namespace(const char* search_str) {
+XmlNode::find_namespace(const char* search_str) {
   xmlNs* ns = NULL;
 
   // Find by prefix first
@@ -153,31 +152,31 @@ Node::find_namespace(const char* search_str) {
 }
 
 v8::Handle<v8::Value>
-Node::get_parent() {
+XmlNode::get_parent() {
   if (xml_obj->parent)
-    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->parent);
+    return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->parent);
 
-  return LIBXMLJS_GET_MAYBE_BUILD(Document, xmlDoc, xml_obj->doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
-Node::get_prev_sibling() {
+XmlNode::get_prev_sibling() {
   if (xml_obj->prev)
-    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->prev);
+    return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->prev);
 
   return v8::Null();
 }
 
 v8::Handle<v8::Value>
-Node::get_next_sibling() {
+XmlNode::get_next_sibling() {
   if (xml_obj->next)
-    return LIBXMLJS_GET_MAYBE_BUILD(Element, xmlNode, xml_obj->next);
+    return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->next);
 
   return v8::Null();
 }
 
 void
-Node::Initialize(v8::Handle<v8::Object> target) {
+XmlNode::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
   constructor_template =
     v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
@@ -185,25 +184,25 @@ Node::Initialize(v8::Handle<v8::Object> target) {
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "doc",
-                        Node::Doc);
+                        XmlNode::Doc);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "parent",
-                        Node::Parent);
+                        XmlNode::Parent);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "namespace",
-                        Node::Namespace);
+                        XmlNode::Namespace);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "prev_sibling",
-                        Node::PrevSibling);
+                        XmlNode::PrevSibling);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "next_sibling",
-                        Node::NextSibling);
+                        XmlNode::NextSibling);
 
-  Element::Initialize(target);
-  Attribute::Initialize(target);
+  XmlElement::Initialize(target);
+  XmlAttribute::Initialize(target);
 }
 }  // namespace libxmljs
