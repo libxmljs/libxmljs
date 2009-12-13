@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_DOCUMENT_H_
-#define SRC_DOCUMENT_H_
+#ifndef SRC_XML_DOCUMENT_H_
+#define SRC_XML_DOCUMENT_H_
 
 #include "./libxmljs.h"
 #include "./object_wrap.h"
@@ -38,4 +38,4 @@ class Document : public LibXmlObj {
 
 }  // namespace libxmljs
 
-#endif  // SRC_DOCUMENT_H_
+#endif  // SRC_XML_DOCUMENT_H_

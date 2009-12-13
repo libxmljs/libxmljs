@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_NODE_H_
-#define SRC_NODE_H_
+#ifndef SRC_XML_NODE_H_
+#define SRC_XML_NODE_H_
 
 #include <libxml/xmlstring.h>
 
@@ -41,4 +41,4 @@ class Node : public LibXmlObj {
 
 }  // namespace libxmljs
 
-#endif  // SRC_NODE_H_
+#endif  // SRC_XML_NODE_H_

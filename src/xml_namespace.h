@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_NAMESPACE_H_
-#define SRC_NAMESPACE_H_
+#ifndef SRC_XML_NAMESPACE_H_
+#define SRC_XML_NAMESPACE_H_
 
 #include "./libxmljs.h"
 #include "./xml_node.h"
@@ -35,4 +35,4 @@ class Namespace : public LibXmlObj {
 
 }  // namespace libxmljs
 
-#endif  // SRC_NAMESPACE_H_
+#endif  // SRC_XML_NAMESPACE_H_

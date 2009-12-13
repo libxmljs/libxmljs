@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_ELEMENT_H_
-#define SRC_ELEMENT_H_
+#ifndef SRC_XML_ELEMENT_H_
+#define SRC_XML_ELEMENT_H_
 
 #include "./libxmljs.h"
 #include "./xml_node.h"
@@ -45,4 +45,4 @@ class Element : public Node {
 
 }  // namespace libxmljs
 
-#endif  // SRC_ELEMENT_H_
+#endif  // SRC_XML_ELEMENT_H_

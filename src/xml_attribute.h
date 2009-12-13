@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_ATTRIBUTE_H_
-#define SRC_ATTRIBUTE_H_
+#ifndef SRC_XML_ATTRIBUTE_H_
+#define SRC_XML_ATTRIBUTE_H_
 
 #include "./libxmljs.h"
 #include "./xml_node.h"
@@ -31,4 +31,4 @@ class Attribute : public Node {
 
 }  // namespace libxmljs
 
-#endif  // SRC_ATTRIBUTE_H_
+#endif  // SRC_XML_ATTRIBUTE_H_

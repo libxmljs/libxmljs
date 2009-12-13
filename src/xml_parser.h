@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_PARSER_H_
-#define SRC_PARSER_H_
+#ifndef SRC_XML_PARSER_H_
+#define SRC_XML_PARSER_H_
 
 #include <v8.h>
 
@@ -22,4 +22,4 @@ class Parser : public LibXmlObj {
 
 }  // namespace libxmljs
 
-#endif  // SRC_PARSER_H_
+#endif  // SRC_XML_PARSER_H_

@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#ifndef SRC_SAX_PARSER_H_
-#define SRC_SAX_PARSER_H_
+#ifndef SRC_XML_SAX_PARSER_H_
+#define SRC_XML_SAX_PARSER_H_
 
 #include <v8.h>
 
@@ -190,4 +190,4 @@ struct SaxParserCallback {
 };
 }  // namespace libxmljs
 
-#endif  // SRC_SAX_PARSER_H_
+#endif  // SRC_XML_SAX_PARSER_H_
