@@ -1,12 +1,11 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_parser.h"
-#include "./xml_sax_parser.h"
-#include "./xml_document.h"
+#include "./html_parser.h"
+#include "./html_document.h"
 
 namespace libxmljs {
 
 v8::Handle<v8::Value>
-ParseXmlString(const v8::Arguments& args) {
+ParseHtmlString(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   if (!args[0]->IsString())
@@ -15,17 +14,17 @@ ParseXmlString(const v8::Arguments& args) {
 
   v8::String::Utf8Value str(args[0]->ToString());
   xmlResetLastError();
-  xmlDoc *doc = xmlReadMemory(*str, str.length(), NULL, NULL, 0);
+  htmlDocPtr doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
   if (doc == NULL) {
     xmlFreeDoc(doc);
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+  return LIBXMLJS_GET_MAYBE_BUILD(HtmlDocument, xmlDoc, doc);
 }
 
 v8::Handle<v8::Value>
-ParseXmlFile(const v8::Arguments& args) {
+ParseHtmlFile(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   if (!args[0]->IsString())
@@ -34,7 +33,7 @@ ParseXmlFile(const v8::Arguments& args) {
 
   v8::String::Utf8Value str(args[0]->ToString());
   xmlResetLastError();
-  xmlDoc *doc = xmlReadFile(*str, NULL, 0);
+  htmlDocPtr doc = htmlReadFile(*str, NULL, 0);
   if (doc == NULL) {
     xmlFreeDoc(doc);
     return v8::Null();
@@ -44,17 +43,15 @@ ParseXmlFile(const v8::Arguments& args) {
 }
 
 void
-XmlParser::Initialize(v8::Handle<v8::Object> target) {
+HtmlParser::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
   LIBXMLJS_SET_METHOD(target,
-                      "parseXmlString",
-                      ParseXmlString);
+                      "parseHtmlString",
+                      ParseHtmlString);
 
   LIBXMLJS_SET_METHOD(target,
-                      "parseXmlFile",
-                      ParseXmlFile);
-
-  XmlSaxParser::Initialize(target);
+                      "parseHtmlFile",
+                      ParseHtmlFile);
 }
 }  // namespace libxmljs

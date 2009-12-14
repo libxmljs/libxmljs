@@ -38,7 +38,7 @@ describe('A namespace', function() {
   });
 
   it('without a prefix can be applied through parsing', function() {
-    var doc = libxml.parseString('<?xml version="1.0" encoding="UTF-8"?>\
+    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\
     <name1 xmlns="http://my-namespace.com"/>');
     var elem = doc.root();
     assert(elem.namespace());
@@ -47,14 +47,14 @@ describe('A namespace', function() {
   });
 
   it('with a prefix wont be applied through parsing', function() {
-    var doc = libxml.parseString('<?xml version="1.0" encoding="UTF-8"?>\
+    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\
     <name1 xmlns:pref="http://my-namespace.com"/>');
     var elem = doc.root();
     assert(!elem.namespace());
   });
 
   it('with a prefix can be applied through parsing', function() {
-    var doc = libxml.parseString('<?xml version="1.0" encoding="UTF-8"?>\
+    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\
     <pref:name1 xmlns:pref="http://my-namespace.com"/>');
     var elem = doc.root();
     assert(elem.namespace());

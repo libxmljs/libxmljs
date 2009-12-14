@@ -2,7 +2,7 @@
 #include "./libxmljs.h"
 #include "./xml_document.h"
 #include "./xml_parser.h"
-#include "./xml_sax_parser.h"
+#include "./html_parser.h"
 
 namespace libxmljs {
 
@@ -144,9 +144,8 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
   XmlDocument::Initialize(target);
-
   XmlParser::Initialize(target);
-  XmlSaxParser::Initialize(target);
+  HtmlParser::Initialize(target);
 
   v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
   v8::Handle<v8::Context> context = v8::Context::New(NULL, global);

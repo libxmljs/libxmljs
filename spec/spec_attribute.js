@@ -4,7 +4,7 @@ describe('Attribute', function() {
   var doc = null;
   var node = null;
   beforeEach(function() {
-    doc = new libxml.parseString(
+    doc = new libxml.parseXmlString(
       "<?xml version='1.0' encoding='UTF-8'?>\n"+
       "<root><node attr-one-key='attr-one-value' attr-two-key='attr-two-value' attr-three-key='attr-three-value' /></root>"
     );

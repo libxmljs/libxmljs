@@ -84,7 +84,7 @@ describe('Document traversal on a built document', function() {
 
 describe('Document traversal on a parsed document', function() {
   it('can get to the document from any node', function() {
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><child><grandchild /></child></root>\
     ');
@@ -92,7 +92,7 @@ describe('Document traversal on a parsed document', function() {
   });
 
   it('can travel down the tree', function() {
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><child><grandchild /></child></root>\
     ');
@@ -101,7 +101,7 @@ describe('Document traversal on a parsed document', function() {
   });
 
   it('can travel across siblings', function() {
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><child /><sibling /></root>\
     ');
@@ -110,7 +110,7 @@ describe('Document traversal on a parsed document', function() {
 
   it('can travel up the tree', function() {
     var gchild = null, child = null;
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><child><grandchild /></child></root>\
     ');
@@ -119,7 +119,7 @@ describe('Document traversal on a parsed document', function() {
   });
 
   it('will list children', function() {
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><child /><sibling1 /><sibling2 /></root>\
     ');
@@ -131,7 +131,7 @@ describe('Document traversal on a parsed document', function() {
   });
 
   it('can traverse siblings', function() {
-    var doc = libxml.parseString(
+    var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
       <root><prev_sibling /><child /><next_sibling /></root>\
     ');

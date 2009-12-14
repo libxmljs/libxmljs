@@ -10,7 +10,7 @@ class XmlDocument : public LibXmlObj {
   public:
 
   xmlDoc* xml_obj;
-  explicit XmlDocument(xmlDoc* document) : xml_obj(document) {}
+  explicit XmlDocument(xmlDoc* doc) : xml_obj(doc) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
