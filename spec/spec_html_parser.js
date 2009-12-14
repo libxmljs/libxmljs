@@ -1,7 +1,7 @@
 process.mixin(require('./helpers'));
 
 describe('Parsing HTML', function() {
-  var filename = path.dirname(__filename)+'/fixtures/html_parser_test.html';
+  var filename = path.dirname(__filename)+'/fixtures/parser_test.html';
 
   it('can be done by string', function() {
     var str = posix.cat(filename).wait();
