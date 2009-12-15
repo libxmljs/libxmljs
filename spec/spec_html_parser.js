@@ -19,3 +19,11 @@ describe('Parsing HTML', function() {
     assertEqual('HTML content!', doc.get('body/span').text());
   });
 });
+
+// describe('Parsing bad HTML', function() {
+//   var filename = path.dirname(__filename)+'/fixtures/bad_markup.html';
+//
+//   it('will throw warnings when using the default settings', function() {
+//     var doc = libxml.parseHtmlFile(filename);
+//   });
+// });
