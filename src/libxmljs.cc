@@ -1,5 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "./libxmljs.h"
+#include "./xml_syntax_error.h"
 #include "./xml_document.h"
 #include "./xml_parser.h"
 #include "./html_parser.h"
@@ -143,6 +144,7 @@ void
 InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
+  XmlSyntaxError::Initialize(target);
   XmlDocument::Initialize(target);
   XmlParser::Initialize(target);
   HtmlParser::Initialize(target);
