@@ -1,4 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
+#include "./xml_syntax_error.h"
 #include "./html_parser.h"
 #include "./html_document.h"
 
@@ -10,17 +11,30 @@ ParseHtmlString(const v8::Arguments& args) {
 
   if (!args[0]->IsString())
     return v8::ThrowException(v8::Exception::Error(
-      v8::String::New("Must supply parseString with a string")));
+      v8::String::New("Must supply parseHtmlString with a string")));
+
+  xmlResetLastError();
+  // xmlSetStructuredErrorFunc((void *)errors, XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
-  xmlResetLastError();
   htmlDocPtr doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
+
+  xmlSetStructuredErrorFunc(NULL, NULL);
+
   if (doc == NULL) {
     xmlFreeDoc(doc);
+    xmlError *error = xmlGetLastError();
+    if (error) {
+      return THROW_SYNTAX_ERROR(error);
+
+    } else {
+      return v8::ThrowException(v8::Exception::Error(
+        v8::String::New("Could not parse HTML string")));
+    }
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(HtmlDocument, xmlDoc, doc);
+  return LXJS_GET_MAYBE_BUILD(HtmlDocument, xmlDoc, doc);
 }
 
 v8::Handle<v8::Value>
@@ -29,17 +43,30 @@ ParseHtmlFile(const v8::Arguments& args) {
 
   if (!args[0]->IsString())
     return v8::ThrowException(v8::Exception::Error(
-      v8::String::New("Must supply parseFile with a filename")));
+      v8::String::New("Must supply parseHtmlFile with a filename")));
+
+  xmlResetLastError();
+  // xmlSetStructuredErrorFunc((void *)errors, XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
-  xmlResetLastError();
   htmlDocPtr doc = htmlReadFile(*str, NULL, 0);
+
+  xmlSetStructuredErrorFunc(NULL, NULL);
+
   if (doc == NULL) {
     xmlFreeDoc(doc);
+    xmlError *error = xmlGetLastError();
+    if (error) {
+      return THROW_SYNTAX_ERROR(error);
+
+    } else {
+      return v8::ThrowException(v8::Exception::Error(
+        v8::String::New("Could not parse HTML file")));
+    }
     return v8::Null();
   }
 
-  return LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+  return LXJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
 }
 
 void

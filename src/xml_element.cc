@@ -36,7 +36,7 @@ XmlElement::New(const v8::Arguments& args) {
                                 content ? (const xmlChar*)**content : NULL);
 
   v8::Persistent<v8::Object> obj =
-    LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, elem);
+    LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, elem);
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(obj);
 
   if (args[2]->IsObject()) {
@@ -216,7 +216,7 @@ v8::Handle<v8::Value>
 XmlElement::get_attr(const char* name) {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr)
-    return LIBXMLJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
+    return LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
 
   return v8::Null();
 }
@@ -246,7 +246,7 @@ XmlElement::get_attrs() {
     attributes->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1];
   do {
-    argv[0] = LIBXMLJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
+    argv[0] = LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
     push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
@@ -271,7 +271,7 @@ XmlElement::get_child(double idx) {
   if (!child)
     return v8::Null();
 
-  return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, child);
+  return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, child);
 }
 
 v8::Handle<v8::Value>
@@ -291,7 +291,7 @@ XmlElement::get_children() {
   for (int i = 0; i < set->nodeNr; ++i) {
     xmlNode *node = set->nodeTab[i];
     children->Set(v8::Number::New(i),
-                  LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
+                  LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
   }
 
   return children;
@@ -346,7 +346,7 @@ XmlElement::find(const char* xpath) {
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
     xmlNode *node = result->nodesetval->nodeTab[i];
     nodes->Set(v8::Number::New(i),
-               LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
+               LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
   }
 
   xmlXPathFreeObject(result);

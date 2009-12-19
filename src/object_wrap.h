@@ -68,8 +68,16 @@ class JsObj {
   static inline v8::Persistent<v8::Object>
   Unwrap(T* xml_obj) {
     assert(xml_obj->_private);
-    JsObj* xmlobj = static_cast<JsObj*>(xml_obj->_private);
-    return xmlobj->_handle;
+    JsObj* jsobj = static_cast<JsObj*>(xml_obj->_private);
+    return jsobj->_handle;
+  }
+
+  template <class T>
+  static inline v8::Persistent<v8::Object>
+  UnwrapNonXmlObj(T* obj) {
+    assert(obj);
+    JsObj* jsobj = static_cast<JsObj*>(obj);
+    return jsobj->_handle;
   }
 
   explicit JsObj(v8::Handle<v8::Object> jsObject) {

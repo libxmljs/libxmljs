@@ -14,6 +14,15 @@ XmlDocument::Doc(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+XmlDocument::Errors(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
+  assert(document);
+
+  return document->errors;
+}
+
+v8::Handle<v8::Value>
 XmlDocument::Encoding(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
@@ -127,7 +136,7 @@ XmlDocument::New(const v8::Arguments& args) {
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
   v8::Persistent<v8::Object> obj =
-    LIBXMLJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+    LXJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
 
   if (encoding)
@@ -193,7 +202,7 @@ XmlDocument::get_root() {
   v8::HandleScope scope;
   xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return LIBXMLJS_GET_MAYBE_BUILD(XmlElement, xmlNode, root);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, root);
   else
     return v8::Null();
 }
@@ -225,6 +234,10 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "document",
                         XmlDocument::Doc);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "errors",
+                        XmlDocument::Errors);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "toString",

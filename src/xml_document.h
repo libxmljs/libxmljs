@@ -10,6 +10,7 @@ class XmlDocument : public LibXmlObj {
   public:
 
   xmlDoc* xml_obj;
+  v8::Persistent<v8::Array> errors;
   explicit XmlDocument(xmlDoc* doc) : xml_obj(doc) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
@@ -21,6 +22,7 @@ class XmlDocument : public LibXmlObj {
   static v8::Handle<v8::Value> Encoding(const v8::Arguments& args);
   static v8::Handle<v8::Value> Version(const v8::Arguments& args);
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Errors(const v8::Arguments& args);
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
 
   virtual ~XmlDocument();

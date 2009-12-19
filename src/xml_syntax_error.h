@@ -36,7 +36,7 @@ namespace libxmljs {
   return v8::Null();                                                          \
 })
 
-#define THROW_SYNTAX_ERROR(error)                                             \
+#define BUILD_SYNTAX_ERROR(error)                                             \
 ({                                                                            \
   XmlSyntaxError *syntax_error = new XmlSyntaxError(error);                   \
   v8::Handle<v8::Value> args[1] = { v8::Null() };                             \
@@ -45,8 +45,11 @@ namespace libxmljs {
     GetFunction()->                                                           \
     NewInstance(1, args);                                                     \
   syntax_error->Wrap(js_error_obj);                                           \
-  v8::ThrowException(js_error_obj);                                           \
+  js_error_obj;                                                               \
 })
+
+#define THROW_SYNTAX_ERROR(error)                                             \
+  v8::ThrowException(BUILD_SYNTAX_ERROR(error));
 
   class XmlSyntaxError : public LibXmlObj {
     public:

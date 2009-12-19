@@ -92,13 +92,15 @@ describe("SAX Push Parser", function() {
     for (var i=0; i<10; i++)
       parser.parseString(str);
 
+    assert(true);
   });
 
-  it('can can be reused as a string parser', function() {
+  it('can can be reused as a file parser', function() {
     var parser = createParser('SaxParser');
     
     for (var i=0; i<10; i++)
       parser.parseFile(filename);
 
+    assert(true);
   });
 });

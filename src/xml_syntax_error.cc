@@ -6,10 +6,15 @@ namespace libxmljs {
 v8::Persistent<v8::FunctionTemplate> XmlSyntaxError::constructor_template;
 
 void
-XmlSyntaxError::PushToArray(void *ctx, xmlError *error) {
+XmlSyntaxError::PushToArray(void *errs, xmlError *error) {
   v8::HandleScope scope;
-  //
-  // v8::Handle<v8::Object> err = XmlSyntaxError::constructor_template;
+
+  v8::Persistent<v8::Object> errors = static_cast<JsObj*>(errs)->_handle;
+  v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
+    errors->Get(v8::String::NewSymbol("push")));
+  v8::Handle<v8::Value> argv[1] =
+    { BUILD_SYNTAX_ERROR(error) };
+  push->Call(errors, 1, argv);
 }
 
 v8::Handle<v8::Value>

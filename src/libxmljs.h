@@ -52,21 +52,21 @@ do {                                                                          \
   }
 
 #define BUILD_NODE(klass, type, node)                                         \
-do {                                                                          \
+({                                                                            \
   klass *__klass##_OBJ = new klass(node);                                     \
   v8::Handle<v8::Value> __jsobj_ARG[1] = { v8::Null() };                      \
   v8::Handle<v8::Object> __jsobj_JS =                                         \
     klass::constructor_template->GetFunction()->NewInstance(1, __jsobj_ARG);  \
   JsObj::Wrap<type>(node, __jsobj_JS);                                        \
   __klass##_OBJ->Wrap(__jsobj_JS);                                            \
-} while (0)
+})
 
-#define LIBXMLJS_GET_MAYBE_BUILD(klass, type, node)                           \
-  ({                                                                          \
-    if (!node->_private)                                                      \
-      BUILD_NODE(klass, type, node);                                          \
-    JsObj::Unwrap<type>(node);                                                \
-  })
+#define LXJS_GET_MAYBE_BUILD(klass, type, node)                               \
+({                                                                            \
+  if (!node->_private)                                                        \
+    BUILD_NODE(klass, type, node);                                            \
+  JsObj::Unwrap<type>(node);                                                  \
+})
 
 namespace libxmljs {
 
