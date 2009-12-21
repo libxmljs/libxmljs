@@ -2,7 +2,7 @@ process.mixin(require('./helpers'));
 
 describe("SAX Push Parser", function() {
   var callbacks = {};
-  var filename = path.dirname(__filename)+'/fixtures/sax_parser_test.xml';
+  var filename = path.dirname(__filename)+'/fixtures/sax_parser.xml';
 
   function createParser(parserType) {
     parser = new libxml[parserType](function(cb) {

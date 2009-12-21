@@ -9,7 +9,7 @@ void
 XmlSyntaxError::PushToArray(void *errs, xmlError *error) {
   v8::HandleScope scope;
 
-  v8::Persistent<v8::Object> errors = static_cast<JsObj*>(errs)->_handle;
+  v8::Persistent<v8::Object> errors = JsObj::UnwrapNonXmlObj(errs);
   v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
     errors->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1] =
@@ -28,60 +28,45 @@ XmlSyntaxError::New(const v8::Arguments& args) {
   return args.This();
 }
 
+#define STRING_OR_NULL(error, field)                                          \
+({                                                                            \
+  if (error != NULL && error->field) {                                        \
+    field = v8::Persistent<v8::String>::New(v8::String::New(                  \
+      (const char *)error->field, strlen(error->field)));                     \
+  } else {                                                                    \
+    field = v8::Persistent<v8::Value>::New(v8::Null());                       \
+  }                                                                           \
+})
+
+#define NUMBER_OR_NULL(error, field)                                          \
+({                                                                            \
+  if (error != NULL && error->field) {                                          \
+    field = v8::Persistent<v8::Number>::New(v8::Number::New(                  \
+      static_cast<double>(error->field)));                                    \
+  } else {                                                                    \
+    field = v8::Persistent<v8::Value>::New(v8::Null());                       \
+  }                                                                           \
+})
+
+XmlSyntaxError::XmlSyntaxError(xmlError *error) {
+  v8::HandleScope scope;
+
+  NUMBER_OR_NULL(error, domain);
+  NUMBER_OR_NULL(error, code);
+  STRING_OR_NULL(error, message);
+  NUMBER_OR_NULL(error, level);
+  STRING_OR_NULL(error, file);
+  NUMBER_OR_NULL(error, line);
+  STRING_OR_NULL(error, str1);
+  STRING_OR_NULL(error, str2);
+  STRING_OR_NULL(error, str3);
+  NUMBER_OR_NULL(error, int1);
+  NUMBER_OR_NULL(error, int2);
+}
+
 XmlSyntaxError::~XmlSyntaxError() {
-  xmlFree(xml_obj);
+  // xmlFree(xml_obj);
 }
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_domain() {
-  ERR_RETURN_NUM_OR_NULL(domain);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_code() {
-  ERR_RETURN_NUM_OR_NULL(code);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_level() {
-  ERR_RETURN_NUM_OR_NULL(level);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_file() {
-  ERR_RETURN_STR_OR_NULL(file);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_line() {
-  ERR_RETURN_NUM_OR_NULL(line);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_str1() {
-  ERR_RETURN_STR_OR_NULL(str1);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_str2() {
-  ERR_RETURN_STR_OR_NULL(str2);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_str3() {
-  ERR_RETURN_STR_OR_NULL(str3);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_int1() {
-  ERR_RETURN_NUM_OR_NULL(int1);
-}
-
-v8::Handle<v8::Value>
-XmlSyntaxError::get_column() {
-  ERR_RETURN_NUM_OR_NULL(int2);
-}
-
 
 v8::Handle<v8::Value>
 XmlSyntaxError::Getter(v8::Local<v8::String> property,
@@ -91,25 +76,27 @@ XmlSyntaxError::Getter(v8::Local<v8::String> property,
   assert(error);
 
   if (property == DOMAIN_SYMBOL)
-    return error->get_domain();
+    return error->domain;
   else if (property == CODE_SYMBOL)
-    return error->get_code();
+    return error->code;
+  else if (property == MESSAGE_SYMBOL)
+    return error->message;
   else if (property == LEVEL_SYMBOL)
-    return error->get_level();
+    return error->level;
   else if (property == FILE_SYMBOL)
-    return error->get_file();
+    return error->file;
   else if (property == LINE_SYMBOL)
-    return error->get_line();
+    return error->line;
   else if (property == STR1_SYMBOL)
-    return error->get_str1();
+    return error->str1;
   else if (property == STR2_SYMBOL)
-    return error->get_str2();
+    return error->str2;
   else if (property == STR3_SYMBOL)
-    return error->get_str3();
+    return error->str3;
   else if (property == INT1_SYMBOL)
-    return error->get_int1();
+    return error->int1;
   else if (property == COLUMN_SYMBOL)
-    return error->get_column();
+    return error->int2;
 
   assert(0 && "This shouldnt happen");
   return v8::ThrowException(v8::Exception::Error(
@@ -132,6 +119,10 @@ XmlSyntaxError::Initialize(v8::Handle<v8::Object> target) {
 
   constructor_template->InstanceTemplate()->SetAccessor(
     CODE_SYMBOL,
+    XmlSyntaxError::Getter);
+
+  constructor_template->InstanceTemplate()->SetAccessor(
+    MESSAGE_SYMBOL,
     XmlSyntaxError::Getter);
 
   constructor_template->InstanceTemplate()->SetAccessor(
