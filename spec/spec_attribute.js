@@ -57,4 +57,8 @@ describe('Attribute', function() {
     assertEqual(ns.prefix(), attr.namespace().prefix());
     assertEqual(ns.href(), attr.namespace().href());
   });
+
+  it('knows that its type is "attribute"', function() {
+    assert('attribute', node.attr('attr-two-key').type());
+  });  
 });

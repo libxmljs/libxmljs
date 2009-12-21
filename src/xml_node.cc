@@ -102,6 +102,15 @@ XmlNode::NextSibling(const v8::Arguments& args) {
   return node->get_next_sibling();
 }
 
+v8::Handle<v8::Value>
+XmlNode::Type(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  assert(node);
+
+  return node->get_type();
+}
+
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
   xml_obj->_private = this;
 }
@@ -175,6 +184,54 @@ XmlNode::get_next_sibling() {
   return v8::Null();
 }
 
+v8::Handle<v8::Value>
+XmlNode::get_type() {
+  switch (xml_obj->type) {
+  case  XML_ELEMENT_NODE:
+    return v8::String::NewSymbol("element");
+  case XML_ATTRIBUTE_NODE:
+    return v8::String::NewSymbol("attribute");
+  case XML_TEXT_NODE:
+    return v8::String::NewSymbol("text");
+  case XML_CDATA_SECTION_NODE:
+    return v8::String::NewSymbol("cdata");
+  case XML_ENTITY_REF_NODE:
+    return v8::String::NewSymbol("entity_ref");
+  case XML_ENTITY_NODE:
+    return v8::String::NewSymbol("entity");
+  case XML_PI_NODE:
+    return v8::String::NewSymbol("pi");
+  case XML_COMMENT_NODE:
+    return v8::String::NewSymbol("comment");
+  case XML_DOCUMENT_NODE:
+    return v8::String::NewSymbol("document");
+  case XML_DOCUMENT_TYPE_NODE:
+    return v8::String::NewSymbol("document_type");
+  case XML_DOCUMENT_FRAG_NODE:
+    return v8::String::NewSymbol("document_frag");
+  case XML_NOTATION_NODE:
+    return v8::String::NewSymbol("notation");
+  case XML_HTML_DOCUMENT_NODE:
+    return v8::String::NewSymbol("html_document");
+  case XML_DTD_NODE:
+    return v8::String::NewSymbol("dtd");
+  case XML_ELEMENT_DECL:
+    return v8::String::NewSymbol("element_decl");
+  case XML_ATTRIBUTE_DECL:
+    return v8::String::NewSymbol("attribute_decl");
+  case XML_ENTITY_DECL:
+    return v8::String::NewSymbol("entity_decl");
+  case XML_NAMESPACE_DECL:
+    return v8::String::NewSymbol("namespace_decl");
+  case XML_XINCLUDE_START:
+    return v8::String::NewSymbol("xinclude_start");
+  case XML_XINCLUDE_END:
+    return v8::String::NewSymbol("xinclude_end");
+  case XML_DOCB_DOCUMENT_NODE:
+    return v8::String::NewSymbol("docb_document");
+  }
+}
+
 void
 XmlNode::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
@@ -201,6 +258,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "next_sibling",
                         XmlNode::NextSibling);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "type",
+                        XmlNode::Type);
 
   XmlElement::Initialize(target);
   XmlAttribute::Initialize(target);

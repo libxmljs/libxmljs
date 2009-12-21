@@ -71,4 +71,8 @@ describe('An element node', function() {
     assertEqual('/root/child[1]/grandchild', gchild.path());
     assertEqual('/root/child[2]', sibling.path());
   });
+
+  it('knows that its type is "element"', function() {
+    assert('element', elem.type());
+  });
 });
