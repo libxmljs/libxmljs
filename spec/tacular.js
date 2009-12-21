@@ -95,7 +95,7 @@ process.mixin(require('sys'));
   var inspectArray = function(arr) {
     var elements = [];
     if(arr.length == 0) return "[]";
-    for(i = 0; i < arr.length; i++) {
+    for(var i = 0; i < arr.length; i++) {
       elements.push(inspect(arr[i]));
     }
     return "[" + elements.join(",") + "]";
