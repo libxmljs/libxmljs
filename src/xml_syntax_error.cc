@@ -32,7 +32,7 @@ XmlSyntaxError::New(const v8::Arguments& args) {
 ({                                                                            \
   if (error != NULL && error->field) {                                        \
     field = v8::Persistent<v8::String>::New(v8::String::New(                  \
-      (const char *)error->field, strlen(error->field)));                     \
+      (const char *)error->field, xmlStrlen((const xmlChar*)error->field)));  \
   } else {                                                                    \
     field = v8::Persistent<v8::Value>::New(v8::Null());                       \
   }                                                                           \
@@ -40,7 +40,7 @@ XmlSyntaxError::New(const v8::Arguments& args) {
 
 #define NUMBER_OR_NULL(error, field)                                          \
 ({                                                                            \
-  if (error != NULL && error->field) {                                          \
+  if (error != NULL && error->field) {                                        \
     field = v8::Persistent<v8::Number>::New(v8::Number::New(                  \
       static_cast<double>(error->field)));                                    \
   } else {                                                                    \
