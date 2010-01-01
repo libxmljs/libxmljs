@@ -40,7 +40,6 @@ class XmlElement : public XmlNode {
   void add_child(XmlElement* child);
   void set_content(const char* content);
   v8::Handle<v8::Value> get_content();
-  v8::Handle<v8::Value> find(const char* xpath);
 };
 
 }  // namespace libxmljs

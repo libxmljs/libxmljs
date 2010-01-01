@@ -2,6 +2,7 @@
 #include "./xml_element.h"
 #include "./xml_document.h"
 #include "./xml_attribute.h"
+#include "./xml_xpath_context.h"
 
 namespace libxmljs {
 
@@ -143,7 +144,29 @@ XmlElement::Find(const v8::Arguments& args) {
   assert(element);
 
   v8::String::Utf8Value xpath(args[0]);
-  return element->find(*xpath);
+
+  XmlXpathContext ctxt(element->xml_obj);
+
+  if (args.Length() == 2) {
+    if (args[1]->IsString()) {
+      v8::String::Utf8Value uri(args[1]);
+      ctxt.register_ns((const xmlChar*)"xmlns", (const xmlChar*)*uri);
+
+    } else if (args[1]->IsObject()) {
+      v8::Handle<v8::Object> namespaces = args[1]->ToObject();
+      v8::Handle<v8::Array> properties = namespaces->GetPropertyNames();
+      for (unsigned int i = 0; i < properties->Length(); i++) {
+        v8::Local<v8::String> prop_name = properties->Get(
+          v8::Number::New(i))->ToString();
+        v8::String::Utf8Value prefix(prop_name);
+        v8::String::Utf8Value uri(namespaces->Get(prop_name));
+        ctxt.register_ns((const xmlChar*)*prefix, (const xmlChar*)*uri);
+      }
+
+    }
+  }
+
+  return ctxt.evaluate((const xmlChar*)*xpath);
 }
 
 v8::Handle<v8::Value>
@@ -224,7 +247,7 @@ XmlElement::get_attr(const char* name) {
 // TODO(sprsquish) make these work with namespaces
 void
 XmlElement::set_attr(const char* name,
-                  const char* value) {
+                     const char* value) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[3] = { JsObj::Unwrap(xml_obj),
                                     v8::String::New(name),
@@ -323,36 +346,6 @@ XmlElement::get_content() {
   }
 
   return v8::Null();
-}
-
-v8::Handle<v8::Value>
-XmlElement::find(const char* xpath) {
-  xmlXPathContext* ctxt = xmlXPathNewContext(xml_obj->doc);
-  ctxt->node = xml_obj;
-  xmlXPathObject* result = xmlXPathEval((const xmlChar*)xpath, ctxt);
-
-  if (!result) {
-    xmlXPathFreeContext(ctxt);
-    return v8::Array::New(0);
-  }
-
-  if (result->type != XPATH_NODESET) {
-    xmlXPathFreeObject(result);
-    xmlXPathFreeContext(ctxt);
-    return v8::Array::New(0);
-  }
-
-  v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
-  for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
-    xmlNode *node = result->nodesetval->nodeTab[i];
-    nodes->Set(v8::Number::New(i),
-               LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
-  }
-
-  xmlXPathFreeObject(result);
-  xmlXPathFreeContext(ctxt);
-
-  return nodes;
 }
 
 void
