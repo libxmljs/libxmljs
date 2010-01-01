@@ -149,6 +149,15 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   XmlParser::Initialize(target);
   HtmlParser::Initialize(target);
 
+  target->Set(v8::String::NewSymbol("version"),
+              v8::String::New(LIBXMLJS_VERSION));
+
+  target->Set(v8::String::NewSymbol("libxml_version"),
+              v8::String::New(LIBXML_DOTTED_VERSION));
+
+  target->Set(v8::String::NewSymbol("libxml_parser_version"),
+              v8::String::New(xmlParserVersion));
+
   v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
   v8::Handle<v8::Context> context = v8::Context::New(NULL, global);
 
