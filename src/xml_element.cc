@@ -162,7 +162,6 @@ XmlElement::Find(const v8::Arguments& args) {
         v8::String::Utf8Value uri(namespaces->Get(prop_name));
         ctxt.register_ns((const xmlChar*)*prefix, (const xmlChar*)*uri);
       }
-
     }
   }
 

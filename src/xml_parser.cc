@@ -40,7 +40,8 @@ ParseXmlString(const v8::Arguments& args) {
   v8::Local<v8::Array> jsErrArray = v8::Array::New();
   JsObj *errArray = JsObj::WrapNonXmlObj(jsErrArray);
   xmlResetLastError();
-  xmlSetStructuredErrorFunc((void *)errArray, XmlSyntaxError::PushToArray);
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errArray),
+                            XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
   xmlDoc *doc = xmlReadMemory(*str, str.length(), NULL, "UTF-8", 0);
@@ -61,7 +62,8 @@ ParseXmlFile(const v8::Arguments& args) {
   v8::Local<v8::Array> jsErrArray = v8::Array::New();
   JsObj *errArray = JsObj::WrapNonXmlObj(jsErrArray);
   xmlResetLastError();
-  xmlSetStructuredErrorFunc((void *)errArray, XmlSyntaxError::PushToArray);
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errArray),
+                            XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
   xmlDoc *doc = xmlReadFile(*str, "UTF-8", 0);

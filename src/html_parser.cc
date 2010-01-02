@@ -38,7 +38,8 @@ ParseHtmlString(const v8::Arguments& args) {
   v8::Local<v8::Array> errors = v8::Array::New();
   void *errs = new JsObj(errors);
   xmlResetLastError();
-  xmlSetStructuredErrorFunc((void *)errs, XmlSyntaxError::PushToArray);
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errs),
+                            XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
   htmlDocPtr doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
@@ -59,7 +60,8 @@ ParseHtmlFile(const v8::Arguments& args) {
   v8::Local<v8::Array> errors = v8::Array::New();
   void *errs = new JsObj(errors);
   xmlResetLastError();
-  xmlSetStructuredErrorFunc((void *)errs, XmlSyntaxError::PushToArray);
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errs),
+                            XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
   htmlDocPtr doc = htmlReadFile(*str, NULL, 0);

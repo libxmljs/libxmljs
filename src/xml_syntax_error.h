@@ -3,7 +3,7 @@
 #define SRC_XML_SYNTAX_ERROR_H_
 
 #include "./libxmljs.h"
-#include <iostream>
+
 namespace libxmljs {
 
 #define DOMAIN_SYMBOL   v8::String::NewSymbol("domain")
@@ -65,4 +65,4 @@ namespace libxmljs {
 
 }  // namespace libxmljs
 
-#endif SRC_XML_SYNTAX_ERROR_H_
+#endif  // SRC_XML_SYNTAX_ERROR_H_

@@ -9,7 +9,7 @@ namespace libxmljs {
 class XmlXpathContext {
   public:
 
-  XmlXpathContext(xmlNode* node);
+  explicit XmlXpathContext(xmlNode* node);
   ~XmlXpathContext();
 
   void register_ns(const xmlChar* prefix, const xmlChar* uri);
