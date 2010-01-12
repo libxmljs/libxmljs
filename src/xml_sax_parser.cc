@@ -154,8 +154,8 @@ XmlSaxParser::initialize_push_parser() {
 
 void
 XmlSaxParser::push(const char* str,
-                unsigned int size,
-                bool terminate = false) {
+                   unsigned int size,
+                   bool terminate = false) {
   xmlParseChunk(context_, str, size, terminate);
 }
 
@@ -176,7 +176,8 @@ XmlSaxParser::ParseString(const v8::Arguments& args) {
 }
 
 void
-XmlSaxParser::parse_string(const char* str, unsigned int size) {
+XmlSaxParser::parse_string(const char* str,
+                           unsigned int size) {
   context_ = xmlCreateMemoryParserCtxt(str, size);
   parse();
   context_->sax = NULL;
@@ -226,13 +227,13 @@ XmlSaxParser::end_document() {
 
 void
 XmlSaxParser::start_element_ns(const xmlChar* localname,
-                            const xmlChar* prefix,
-                            const xmlChar* uri,
-                            int nb_namespaces,
-                            const xmlChar** namespaces,
-                            int nb_attributes,
-                            int nb_defaulted,
-                            const xmlChar** attributes) {
+                               const xmlChar* prefix,
+                               const xmlChar* uri,
+                               int nb_namespaces,
+                               const xmlChar** namespaces,
+                               int nb_attributes,
+                               int nb_defaulted,
+                               const xmlChar** attributes) {
   v8::HandleScope scope;
 
   const int argc = 5;
@@ -304,8 +305,8 @@ XmlSaxParser::start_element_ns(const xmlChar* localname,
 
 void
 XmlSaxParser::end_element_ns(const xmlChar* localname,
-                          const xmlChar* prefix,
-                          const xmlChar* uri) {
+                             const xmlChar* prefix,
+                             const xmlChar* uri) {
   v8::HandleScope scope;
 
   v8::Handle<v8::Value> argv[3] = {
@@ -319,7 +320,7 @@ XmlSaxParser::end_element_ns(const xmlChar* localname,
 
 void
 XmlSaxParser::characters(const xmlChar* ch,
-                      int len) {
+                         int len) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)ch, len) };
   Callback("characters", 1, argv);
@@ -334,7 +335,7 @@ XmlSaxParser::comment(const xmlChar* value) {
 
 void
 XmlSaxParser::cdata_block(const xmlChar* value,
-                       int len) {
+                          int len) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)value, len) };
   Callback("cdata", 1, argv);
