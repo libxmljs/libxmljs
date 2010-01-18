@@ -111,6 +111,15 @@ XmlNode::Type(const v8::Arguments& args) {
   return node->get_type();
 }
 
+v8::Handle<v8::Value>
+XmlNode::ToString(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  assert(node);
+
+  return node->to_string();
+}
+
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
   xml_obj->_private = this;
 }
@@ -182,6 +191,21 @@ XmlNode::get_next_sibling() {
     return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->next);
 
   return v8::Null();
+}
+
+v8::Handle<v8::Value>
+XmlNode::to_string() {
+  v8::HandleScope scope;
+  xmlBuffer* buf = xmlBufferCreate();
+
+  xmlNodeDump(buf, xml_obj->doc, xml_obj, 0, 0);
+  v8::Local<v8::String> str = v8::String::New((const char*)xmlBufferContent(buf),
+                                              xmlBufferLength(buf));
+  xmlBufferFree(buf);
+
+  return str;
+
+
 }
 
 v8::Handle<v8::Value>
@@ -262,6 +286,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "type",
                         XmlNode::Type);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "toString",
+                        XmlNode::ToString);
 
   XmlElement::Initialize(target);
   XmlAttribute::Initialize(target);

@@ -75,4 +75,10 @@ describe('An element node', function() {
   it('knows that its type is "element"', function() {
     assert('element', elem.type());
   });
+
+  it('can print itself using #toString', function() {
+    assertEqual('<name1/>', elem.toString());
+    elem.node('child');
+    assertEqual('<name1><child/></name1>', elem.toString());
+  });
 });
