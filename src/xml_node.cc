@@ -120,6 +120,17 @@ XmlNode::ToString(const v8::Arguments& args) {
   return node->to_string();
 }
 
+v8::Handle<v8::Value>
+XmlNode::Remove(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  assert(node);
+
+  node->remove();
+
+  return args.This();
+}
+
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
   xml_obj->_private = this;
 }
@@ -204,8 +215,11 @@ XmlNode::to_string() {
   xmlBufferFree(buf);
 
   return str;
+}
 
-
+void
+XmlNode::remove() {
+  xmlUnlinkNode(xml_obj);
 }
 
 v8::Handle<v8::Value>
@@ -286,6 +300,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "type",
                         XmlNode::Type);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "remove",
+                        XmlNode::Remove);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "toString",

@@ -81,4 +81,12 @@ describe('An element node', function() {
     elem.node('child');
     assertEqual('<name1><child/></name1>', elem.toString());
   });
+
+  it('can remove itself from the document', function() {
+    var child = elem.node('child');
+    assert(doc.get('/name1/child'));
+
+    child.remove();
+    assert(!doc.get('/name1/child'));
+  });
 });
