@@ -61,4 +61,11 @@ describe('Attribute', function() {
   it('knows that its type is "attribute"', function() {
     assert('attribute', node.attr('attr-two-key').type());
   });  
+
+  it('can remove itself', function() {
+    var attr = node.attr('attr-one-key');
+    assert(node.attr('attr-one-key'));
+    attr.remove();
+    assert(!node.attr('attr-one-key'));
+  });
 });
