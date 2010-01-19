@@ -89,4 +89,15 @@ describe('An element node', function() {
     child.remove();
     assert(!doc.get('/name1/child'));
   });
+
+  it('can be moved from one place to another', function() {
+    var child = elem.node('child');
+    assert(doc.get('/name1/child'));
+
+    child.remove();
+    var name2 = elem.node('name2');
+    name2.node(child);
+    assert(!doc.get('/name1/child'));
+    assert(doc.get('/name1/name2/child'));
+  });
 });
