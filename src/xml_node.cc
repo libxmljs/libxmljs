@@ -210,8 +210,8 @@ XmlNode::to_string() {
   xmlBuffer* buf = xmlBufferCreate();
 
   xmlNodeDump(buf, xml_obj->doc, xml_obj, 0, 0);
-  v8::Local<v8::String> str = v8::String::New((const char*)xmlBufferContent(buf),
-                                              xmlBufferLength(buf));
+  v8::Local<v8::String> str =
+    v8::String::New((const char*)xmlBufferContent(buf), xmlBufferLength(buf));
   xmlBufferFree(buf);
 
   return str;

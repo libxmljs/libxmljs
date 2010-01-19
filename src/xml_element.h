@@ -27,6 +27,8 @@ class XmlElement : public XmlNode {
   static v8::Handle<v8::Value> Child(const v8::Arguments& args);
   static v8::Handle<v8::Value> Children(const v8::Arguments& args);
   static v8::Handle<v8::Value> AddChild(const v8::Arguments& args);
+  static v8::Handle<v8::Value> NextElement(const v8::Arguments& args);
+  static v8::Handle<v8::Value> PrevElement(const v8::Arguments& args);
 
   void set_name(const char* name);
 
@@ -40,6 +42,8 @@ class XmlElement : public XmlNode {
   void add_child(XmlElement* child);
   void set_content(const char* content);
   v8::Handle<v8::Value> get_content();
+  v8::Handle<v8::Value> get_next_element();
+  v8::Handle<v8::Value> get_prev_element();
 };
 
 }  // namespace libxmljs

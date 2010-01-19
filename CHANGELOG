@@ -1,5 +1,6 @@
 v0.2.0
   api change: camel case everything (nextSibling, prevSibling, defineNamespace)
+  feature: traverse elements using #(prev,next)Element()
   feature: can add a node object as the child of a node
   feature: add #toString() to nodes
   feature: add #remove() to nodes

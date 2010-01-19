@@ -169,6 +169,24 @@ XmlElement::Find(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+XmlElement::NextElement(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
+  assert(element);
+
+  return element->get_next_element();
+}
+
+v8::Handle<v8::Value>
+XmlElement::PrevElement(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
+  assert(element);
+
+  return element->get_prev_element();
+}
+
+v8::Handle<v8::Value>
 XmlElement::Text(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
@@ -347,6 +365,40 @@ XmlElement::get_content() {
   return v8::Null();
 }
 
+v8::Handle<v8::Value>
+XmlElement::get_next_element() {
+  xmlNode *sibling;
+
+  sibling = xml_obj->next;
+  if (!sibling)
+    return v8::Null();
+
+  while (sibling && sibling->type != XML_ELEMENT_NODE)
+    sibling = sibling->next;
+
+  if (sibling)
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, sibling);
+
+  return v8::Null();
+}
+
+v8::Handle<v8::Value>
+XmlElement::get_prev_element() {
+  xmlNode *sibling;
+
+  sibling = xml_obj->prev;
+  if (!sibling)
+    return v8::Null();
+
+  while (sibling && sibling->type != XML_ELEMENT_NODE)
+    sibling = sibling->prev;
+
+  if (sibling)
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, sibling);
+
+  return v8::Null();
+}
+
 void
 XmlElement::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
@@ -378,6 +430,14 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "find",
                         XmlElement::Find);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "nextElement",
+                        XmlElement::NextElement);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "prevElement",
+                        XmlElement::PrevElement);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "name",

@@ -144,4 +144,23 @@ describe('Document traversal on a parsed document', function() {
     assertEqual(null, child.prevSibling().prevSibling());
     assertEqual(null, child.nextSibling().nextSibling());
   });
+
+  it('can traverse sibling elements', function() {
+    var doc = libxml.parseXmlString(
+      '<?xml version="1.0"?>\
+      <root>\
+        <prevSibling />\
+        <child />\
+        <nextSibling />\
+      </root>\
+    ');
+
+    var children = ['prevSibling', 'child', 'nextSibling'];
+    var child = doc.child(4);
+    assertEqual('child', child.name());
+    assertEqual(children[0], child.prevElement().name());
+    assertEqual(children[2], child.nextElement().name());
+    assertEqual(null, child.prevElement().prevElement());
+    assertEqual(null, child.nextElement().nextElement());
+  });
 });
