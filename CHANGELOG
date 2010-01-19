@@ -1,0 +1,7 @@
+v0.1.1
+  feature: add #toString() to nodes
+  feature: add #remove() to nodes
+  housekeeping: update spectacular
+
+v0.1.0
+  birth
