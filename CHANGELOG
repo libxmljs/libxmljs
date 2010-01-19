@@ -1,4 +1,4 @@
-v0.1.1
+v0.2.0
   api change: camel case everything (nextSibling, prevSibling, defineNamespace)
   feature: can add a node object as the child of a node
   feature: add #toString() to nodes
