@@ -55,10 +55,10 @@ describe('A node attribute', function() {
                     .attr({foo: 'bar'})
                     .attr({bar: 'baz'})
                     .attr({baz: 'foo'});
-    assertEqual(elem.attr('baz'), elem.attr('bar').next_sibling());
-    assertEqual(elem.attr('foo'), elem.attr('bar').prev_sibling());
-    assertEqual(null, elem.attr('foo').prev_sibling());
-    assertEqual(null, elem.attr('baz').next_sibling());
+    assertEqual(elem.attr('baz'), elem.attr('bar').nextSibling());
+    assertEqual(elem.attr('foo'), elem.attr('bar').prevSibling());
+    assertEqual(null, elem.attr('foo').prevSibling());
+    assertEqual(null, elem.attr('baz').nextSibling());
   });
   
   it('can get back to its node', function() {

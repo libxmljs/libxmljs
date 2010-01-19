@@ -290,11 +290,11 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
                         XmlNode::Namespace);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "prev_sibling",
+                        "prevSibling",
                         XmlNode::PrevSibling);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "next_sibling",
+                        "nextSibling",
                         XmlNode::NextSibling);
 
   LXJS_SET_PROTO_METHOD(constructor_template,

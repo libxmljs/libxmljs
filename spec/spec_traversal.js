@@ -70,15 +70,15 @@ describe('Document traversal on a built document', function() {
     var children = [];
     var doc = new libxml.Document(function(n) {
       n.node('root', function(n) {
-        children.push(n.node('prev_sibling'));
+        children.push(n.node('prevSibling'));
         children.push(n.node('child'));
-        children.push(n.node('next_sibling'));
+        children.push(n.node('nextSibling'));
       });
     });
-    assertEqual(children[0], children[1].prev_sibling());
-    assertEqual(children[2], children[1].next_sibling());
-    assertEqual(null, children[0].prev_sibling());
-    assertEqual(null, children[2].next_sibling());
+    assertEqual(children[0], children[1].prevSibling());
+    assertEqual(children[2], children[1].nextSibling());
+    assertEqual(null, children[0].prevSibling());
+    assertEqual(null, children[2].nextSibling());
   });
 });
 
@@ -133,15 +133,15 @@ describe('Document traversal on a parsed document', function() {
   it('can traverse siblings', function() {
     var doc = libxml.parseXmlString(
       '<?xml version="1.0"?>\
-      <root><prev_sibling /><child /><next_sibling /></root>\
+      <root><prevSibling /><child /><nextSibling /></root>\
     ');
 
-    var children = ['prev_sibling', 'child', 'next_sibling'];
+    var children = ['prevSibling', 'child', 'nextSibling'];
     var child = doc.child(2);
     assertEqual('child', child.name());
-    assertEqual(children[0], child.prev_sibling().name());
-    assertEqual(children[2], child.next_sibling().name());
-    assertEqual(null, child.prev_sibling().prev_sibling());
-    assertEqual(null, child.next_sibling().next_sibling());
+    assertEqual(children[0], child.prevSibling().name());
+    assertEqual(children[2], child.nextSibling().name());
+    assertEqual(null, child.prevSibling().prevSibling());
+    assertEqual(null, child.nextSibling().nextSibling());
   });
 });

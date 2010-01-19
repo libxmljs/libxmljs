@@ -43,11 +43,11 @@ describe('Attribute', function() {
   });
 
   it('knows its previous sibling', function() {
-    assertEqual('attr-one-key', node.attr('attr-two-key').prev_sibling().name());
+    assertEqual('attr-one-key', node.attr('attr-two-key').prevSibling().name());
   });
 
   it('knows its next sibling', function() {
-    assertEqual('attr-three-key', node.attr('attr-two-key').next_sibling().name());
+    assertEqual('attr-three-key', node.attr('attr-two-key').nextSibling().name());
   });
 
   it('can set and retrieve its namespace', function() {

@@ -4,7 +4,7 @@ describe('A namespace', function() {
   it('can be created and not set', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name1');
-    var ns = elem.define_namespace('http://my-namespace.com');
+    var ns = elem.defineNamespace('http://my-namespace.com');
     assertEqual(null, elem.namespace());
     assertEqual(null, ns.prefix());
     assertEqual('http://my-namespace.com', ns.href());
@@ -13,7 +13,7 @@ describe('A namespace', function() {
   it('can be created with a prefix and not set', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name1');
-    var ns = elem.define_namespace('pref', 'http://my-namespace.com');
+    var ns = elem.defineNamespace('pref', 'http://my-namespace.com');
     assertEqual(null, elem.namespace());
     assertEqual('pref', ns.prefix());
     assertEqual('http://my-namespace.com', ns.href());
@@ -65,7 +65,7 @@ describe('A namespace', function() {
   it('will use an existing namespace with only a url', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name1');
-    var ns = elem.define_namespace('http://my-namespace.com');
+    var ns = elem.defineNamespace('http://my-namespace.com');
     elem.namespace('http://my-namespace.com');
     assert(ns == elem.namespace());
   });
@@ -73,7 +73,7 @@ describe('A namespace', function() {
   it('will use an existing namespace with a prefix', function() {
     var doc = new libxml.Document();
     var elem = doc.node('name1');
-    var ns = elem.define_namespace('pref', 'http://my-namespace.com');
+    var ns = elem.defineNamespace('pref', 'http://my-namespace.com');
     elem.namespace('pref', 'http://my-namespace.com');
     assert(ns == elem.namespace());
   });
