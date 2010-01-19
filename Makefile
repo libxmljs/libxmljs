@@ -9,3 +9,6 @@ node-debug:
 clean:
 	@$(SCONS) -c
 	@$(SCONS) -c libxmljs.node
+
+test:
+	node spec/tacular.js
