@@ -149,6 +149,7 @@ XmlSaxParser::Push(const v8::Arguments& args) {
 void
 XmlSaxParser::initialize_push_parser() {
   context_ = xmlCreatePushParserCtxt(sax_handler_, NULL, NULL, 0, "");
+  context_->replaceEntities = 1;
   initializeContext();
 }
 
@@ -211,6 +212,7 @@ XmlSaxParser::parse_file(const char* filename) {
 void
 XmlSaxParser::parse() {
   initializeContext();
+  context_->replaceEntities = 1;
   context_->sax = sax_handler_;
   xmlParseDocument(context_);
 }

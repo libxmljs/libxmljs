@@ -40,6 +40,7 @@ exports.callbackControl = {
     ['error', [], null, null, []],
     ['stream', [['to', '', '', 'example.com'], ['version', '', '', '1.0']], 'stream', 'http://etherx.jabber.org/streams', [[null, 'jabber:client'], ['stream', 'http://etherx.jabber.org/streams']]],
     ['message', [['type', '', '', 'chat'], ['to', '', '', 'n@d'], ['from', '', '', 'n@d/r'], ['id', '', '', 'id1']], null, 'jabber:client', []],
+    ['x', [['name', '', '', 'abc & xyz']], null, 'jabber:client', []],
     ['body', [], null, 'jabber:client', []],
     ['html', [], null, 'http://jabber.org/protocol/xhtml-im', [[null, 'http://jabber.org/protocol/xhtml-im']]],
     ['body', [], null, 'http://www.w3.org/1999/xhtml', [[null, 'http://www.w3.org/1999/xhtml']]],
@@ -47,6 +48,7 @@ exports.callbackControl = {
   ],
 
   endElementNS: [
+    ['x', null, 'jabber:client'],
     ['body', null, 'jabber:client'],
     ['body', null, 'http://www.w3.org/1999/xhtml'],
     ['html', null, 'http://jabber.org/protocol/xhtml-im'],
@@ -56,8 +58,7 @@ exports.callbackControl = {
   ],
 
   characters: [
-    ['exit'],
-    ['exit']
+    ['ABC '], ['&'], ['&'], [' XYZ'], ['exit'], ['exit']
   ],
 
   cdata: [

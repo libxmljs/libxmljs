@@ -4,6 +4,7 @@
   <!-- comment -->
   <message type="chat" to="n@d" from="n@d/r" id="id1">
     <![CDATA[ some cdata ]]>
+    <x name="abc &amp; xyz">ABC &amp; &#38; XYZ</x>
     <body>exit</body>
     <html xmlns="http://jabber.org/protocol/xhtml-im">
       <body xmlns="http://www.w3.org/1999/xhtml">exit</body>

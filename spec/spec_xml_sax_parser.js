@@ -23,6 +23,7 @@ describe("SAX Push Parser", function() {
       });
 
       cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {
+        // p({e: elem, a: attrs, p: prefix, u: uri, n: namespaces});
         callbacks.startElementNS.push(argsToArray(arguments));
       });
 
@@ -31,7 +32,7 @@ describe("SAX Push Parser", function() {
       });
 
       cb.onCharacters(function(chars) {
-        if (chars[0] && !chars[0].match(/^[\s\n\r]+$/))
+        if (!chars.match(/^[\s\n\r]+$/))
           callbacks.characters.push(argsToArray(arguments));
       });
 
@@ -62,7 +63,9 @@ describe("SAX Push Parser", function() {
     var str = posix.cat(filename).wait();
     var parser = createParser('SaxParser');
     parser.parseString(str);
-    assertEqual(JSON.stringify(callbackControl), JSON.stringify(callbacks));
+    var control = JSON.stringify(callbackControl);
+    var test = JSON.stringify(callbacks);
+    assertEqual(control, test);
   });
 
   it('will properly parse a string chunk by chunk', function() {
@@ -88,7 +91,7 @@ describe("SAX Push Parser", function() {
   it('can can be reused as a string parser', function() {
     var str = posix.cat(filename).wait();
     var parser = createParser('SaxParser');
-    
+
     for (var i=0; i<10; i++)
       parser.parseString(str);
 
@@ -97,7 +100,7 @@ describe("SAX Push Parser", function() {
 
   it('can can be reused as a file parser', function() {
     var parser = createParser('SaxParser');
-    
+
     for (var i=0; i<10; i++)
       parser.parseFile(filename);
 
