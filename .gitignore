@@ -9,3 +9,7 @@ config.log
 src/*.os
 libxmljs
 tools/*.pyc
+benchmarks
+experiments
+notes
+TODO
