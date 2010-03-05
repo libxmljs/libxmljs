@@ -84,7 +84,7 @@ XmlDocument::New(const v8::Arguments& args) {
     case 0:  // newDocument()
       break;
 
-    case 1:  // newDocument(version), newDocument(callback)
+    case 1:  // newDocument(version|callback)
       // was created by BUILD_NODE
       if (args[0]->StrictEquals(v8::Null()))
         return args.This();
@@ -97,11 +97,11 @@ XmlDocument::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newDocument([version]) or newDocument([callback])");
+          "Bad argument: newDocument(version|callback)");
       }
       break;
 
-    case 2:  // newDocument(version, encoding), newDocument(version, callback)
+    case 2:  // newDocument(version, encoding|callback)
       if (args[0]->IsString() && args[1]->IsString()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
         encoding = new v8::String::Utf8Value(args[1]->ToString());
@@ -112,7 +112,7 @@ XmlDocument::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newXmlDocument([version], [encoding|callback])");
+          "Bad argument: newXmlDocument(version, encoding|callback)");
       }
       break;
 
@@ -126,7 +126,7 @@ XmlDocument::New(const v8::Arguments& args) {
 
       } else {
         LIBXMLJS_THROW_EXCEPTION(
-          "Bad argument: newXmlDocument([version], [encoding], [callback])");
+          "Bad argument: newXmlDocument(version, encoding, callback)");
       }
       break;
   }

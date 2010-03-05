@@ -224,12 +224,15 @@ XmlElement::Child(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-XmlElement::Children(const v8::Arguments& args) {
+XmlElement::ChildNodes(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
   assert(element);
 
-  return element->get_children();
+  if (args[0]->IsNumber())
+    return element->get_child(args[0]->ToNumber()->Value());
+
+  return element->get_child_nodes();
 }
 
 v8::Handle<v8::Value>
@@ -315,7 +318,7 @@ XmlElement::get_child(double idx) {
 }
 
 v8::Handle<v8::Value>
-XmlElement::get_children() {
+XmlElement::get_child_nodes() {
   v8::HandleScope scope;
   xmlNode* child = xml_obj->children;
   xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
@@ -424,8 +427,8 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
                         XmlElement::Child);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
-                        "children",
-                        XmlElement::Children);
+                        "childNodes",
+                        XmlElement::ChildNodes);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "find",

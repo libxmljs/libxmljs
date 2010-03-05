@@ -25,7 +25,7 @@ class XmlElement : public XmlNode {
   static v8::Handle<v8::Value> Text(const v8::Arguments& args);
   static v8::Handle<v8::Value> Path(const v8::Arguments& args);
   static v8::Handle<v8::Value> Child(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Children(const v8::Arguments& args);
+  static v8::Handle<v8::Value> ChildNodes(const v8::Arguments& args);
   static v8::Handle<v8::Value> AddChild(const v8::Arguments& args);
   static v8::Handle<v8::Value> NextElement(const v8::Arguments& args);
   static v8::Handle<v8::Value> PrevElement(const v8::Arguments& args);
@@ -34,7 +34,7 @@ class XmlElement : public XmlNode {
 
   v8::Handle<v8::Value> get_name();
   v8::Handle<v8::Value> get_child(double idx);
-  v8::Handle<v8::Value> get_children();
+  v8::Handle<v8::Value> get_child_nodes();
   v8::Handle<v8::Value> get_path();
   v8::Handle<v8::Value> get_attr(const char* name);
   v8::Handle<v8::Value> get_attrs();

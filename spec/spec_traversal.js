@@ -61,9 +61,9 @@ describe('Document traversal on a built document', function() {
       });
     });
     var i;
-    assertEqual(children.length, doc.children().length);
+    assertEqual(children.length, doc.childNodes().length);
     for (i = 0; i < children.length; i++)
-      assertEqual(children[i], doc.children()[i]);
+      assertEqual(children[i], doc.child(i+1));
   });
 
   it('can traverse siblings', function() {
@@ -125,9 +125,9 @@ describe('Document traversal on a parsed document', function() {
     ');
     var children = ['child', 'sibling1', 'sibling2'];
     var i;
-    assertEqual(3, doc.children().length);
+    assertEqual(3, doc.childNodes().length);
     for (i = 0; i < children.length; i++)
-      assertEqual(children[i], doc.children()[i].name());
+      assertEqual(children[i], doc.child(i+1).name());
   });
 
   it('can traverse siblings', function() {

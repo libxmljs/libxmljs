@@ -67,8 +67,8 @@ describe('A new document', function() {
   it('can return an array of children of the root node', function() {
     var doc = new libxml.Document();
     doc.node('root').node('child-one').parent().node('child-two');
-    assertEqual('child-one', doc.children()[0].name());
-    assertEqual('child-two', doc.children()[1].name());
+    assertEqual('child-one', doc.childNodes()[0].name());
+    assertEqual('child-two', doc.childNodes()[1].name());
   });
 
   it('returns itself when asked', function() {

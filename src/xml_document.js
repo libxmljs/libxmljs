@@ -15,6 +15,6 @@ libxml.Document.prototype.child = function() {
   return this.root().child.apply(this.root(), arguments);
 };
 
-libxml.Document.prototype.children = function() {
-  return this.root().children();
+libxml.Document.prototype.childNodes = function() {
+  return this.root().childNodes();
 };
