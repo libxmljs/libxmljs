@@ -10,11 +10,11 @@ class LibXmlObj {
   public:
 
   virtual ~LibXmlObj() {
-    if (!handle_.IsEmpty()) {
-      assert(handle_.IsNearDeath());
-      handle_->SetInternalField(0, v8::Undefined());
-      handle_.Dispose();
-      handle_.Clear();
+    if (!_handle.IsEmpty()) {
+      assert(_handle.IsNearDeath());
+      _handle->SetInternalField(0, v8::Undefined());
+      _handle.Dispose();
+      _handle.Clear();
     }
   }
 
@@ -29,26 +29,26 @@ class LibXmlObj {
 
   inline void
   Wrap(v8::Handle<v8::Object> handle) {
-    assert(handle_.IsEmpty());
+    assert(_handle.IsEmpty());
     assert(handle->InternalFieldCount() > 0);
-    handle_ = v8::Persistent<v8::Object>::New(handle);
-    handle_->SetInternalField(0, v8::External::New(this));
+    _handle = v8::Persistent<v8::Object>::New(handle);
+    _handle->SetInternalField(0, v8::External::New(this));
     MakeWeak();
   }
 
   inline void
   MakeWeak(void) {
-    handle_.MakeWeak(this, WeakCallback);
+    _handle.MakeWeak(this, WeakCallback);
   }
 
-  v8::Persistent<v8::Object> handle_;  // ro
+  v8::Persistent<v8::Object> _handle;  // ro
 
   private:
 
   static void
   WeakCallback(v8::Persistent<v8::Value> value, void *data) {
     LibXmlObj *obj = static_cast<LibXmlObj*>(data);
-    assert(value == obj->handle_);
+    assert(value == obj->_handle);
     delete obj;
   }
 };
