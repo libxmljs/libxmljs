@@ -4,7 +4,7 @@ describe('Parsing XML', function() {
   var filename = path.dirname(__filename)+'/fixtures/parser.xml';
 
   it('can be done by string', function() {
-    var str = posix.cat(filename).wait();
+    var str = fs.readFileSync(filename);
 
     var doc = libxml.parseXmlString(str);
     assertEqual('1.0', doc.version());
@@ -82,7 +82,7 @@ describe('A recoverable parse error when parsing an XML file', function() {
 
 describe('A fatal parse error when parsing an XML string', function() {
   var filename = path.dirname(__filename)+'/fixtures/errors/comment.xml';
-  var str = posix.cat(filename).wait();
+  var str = fs.readFileSync(filename);
   var err = null;
 
   it('will throw an exception', function() {
@@ -109,7 +109,7 @@ describe('A fatal parse error when parsing an XML string', function() {
 
 describe('A recoverable parse error when parsing an XML string', function() {
   var filename = path.dirname(__filename)+'/fixtures/warnings/ent9.xml';
-  var str = posix.cat(filename).wait();
+  var str = fs.readFileSync(filename);
 
   it('will attach the errors to the document', function() {
     var doc = libxml.parseXmlString(str);

@@ -90,7 +90,7 @@ XmlSaxParser::NewPushParser(const v8::Arguments& args) {
 
 void
 XmlSaxParser::SetCallbacks(v8::Handle<v8::Object> self,
-                        const v8::Handle<v8::Function> callbacks) {
+                           const v8::Handle<v8::Function> callbacks) {
   v8::HandleScope scope;
 
   v8::Handle<v8::Function> set_callbacks = v8::Handle<v8::Function>::Cast(
@@ -110,8 +110,8 @@ XmlSaxParser::Callback(const char* what) {
 
 void
 XmlSaxParser::Callback(const char* what,
-                    int argc,
-                    v8::Handle<v8::Value> argv[]) {
+                       int argc,
+                       v8::Handle<v8::Value> argv[]) {
   v8::HandleScope scope;
 
   v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(

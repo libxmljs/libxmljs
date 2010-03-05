@@ -49,7 +49,7 @@ process.mixin(require('sys'));
 
 (function() {
   var path = require('path');
-  var posix = require('posix');
+  var fs = require('fs');
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];
@@ -216,13 +216,13 @@ process.mixin(require('sys'));
   };
 
   var specDirectory = path.dirname(__filename);
-  var files = posix.readdir(specDirectory).wait();
+  var files = fs.readdirSync(specDirectory);
   var i;
   for(i = 0; i < files.length; i++) {
     var file = files[i];
     if(file.match(/^spec/)) {
       if (specVerbose) print(file+"\n");
-      var content = posix.cat(specDirectory + "/" + file, "utf8").wait();
+      var content = fs.readFileSync(specDirectory + "/" + file, "utf8");
       eval(content);
     }
   }
