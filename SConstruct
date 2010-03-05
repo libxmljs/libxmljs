@@ -4,7 +4,8 @@ import subprocess
 from os.path import join, dirname, abspath
 from types import DictType, StringTypes
 root_dir = dirname(File('SConstruct').rfile().abspath)
-sys.path.append(join(root_dir, 'tools'))
+# prefer these tools to anything living in the system already.
+sys.path.insert(0, join(root_dir, 'tools'))
 import js2c
 
 if ARGUMENTS.get('debug', 0):
