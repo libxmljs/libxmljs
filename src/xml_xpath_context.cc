@@ -21,6 +21,7 @@ XmlXpathContext::register_ns(const xmlChar* prefix,
 
 v8::Handle<v8::Array>
 XmlXpathContext::evaluate(const xmlChar* xpath) {
+  v8::HandleScope scope;
   xmlXPathObject* result = xmlXPathEval(xpath, ctxt);
 
   if (!result) {
@@ -33,10 +34,13 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   }
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
+  v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
+    nodes->Get(v8::String::NewSymbol("push")));
+  v8::Handle<v8::Value> argv[1];
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
     xmlNode *node = result->nodesetval->nodeTab[i];
-    nodes->Set(v8::Number::New(i),
-               LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
+    argv[0] = LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node);
+    push->Call(nodes, 1, argv);
   }
 
   xmlXPathFreeObject(result);
