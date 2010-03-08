@@ -156,7 +156,7 @@ XmlDocument::~XmlDocument() {
 
 void
 XmlDocument::set_encoding(const char* encoding) {
-  xml_obj->encoding = (const xmlChar*)encoding;
+  xml_obj->encoding = xmlStrdup((const xmlChar*)encoding);
 }
 
 v8::Handle<v8::Value>
