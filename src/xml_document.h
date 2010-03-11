@@ -9,6 +9,8 @@ namespace libxmljs {
 class XmlDocument : public LibXmlObj {
   public:
 
+  virtual ~XmlDocument();
+
   xmlDoc* xml_obj;
   v8::Persistent<v8::Array> errors;
   explicit XmlDocument(xmlDoc* doc) : xml_obj(doc) {}
@@ -24,8 +26,6 @@ class XmlDocument : public LibXmlObj {
   static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
   static v8::Handle<v8::Value> Errors(const v8::Arguments& args);
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
-
-  virtual ~XmlDocument();
 
   void init_document(const char* version);
   void set_encoding(const char* encoding);

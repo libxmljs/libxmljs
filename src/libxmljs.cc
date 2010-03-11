@@ -2,6 +2,7 @@
 #include "./libxmljs.h"
 #include "./xml_syntax_error.h"
 #include "./xml_document.h"
+#include "./xml_node.h"
 #include "./xml_parser.h"
 #include "./html_parser.h"
 
@@ -12,13 +13,12 @@ namespace {
 void on_libxml_destruct(xmlNode* node) {
   switch (node->type) {
     case XML_DOCUMENT_NODE:
-      delete static_cast<JsObj*>(node->doc->_private);
-      node->doc->_private = NULL;
       break;
 
-    default:
-      delete static_cast<JsObj*>(node->_private);
-      node->_private = NULL;
+    // default:
+    //   if (node->_private != NULL)
+    //     delete static_cast<XmlNode *>(node->_private);
+    //   node->_private = NULL;
   }
 }
 

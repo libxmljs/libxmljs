@@ -39,7 +39,7 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   v8::Handle<v8::Value> argv[1];
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
     xmlNode *node = result->nodesetval->nodeTab[i];
-    argv[0] = LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node);
+    argv[0] = LXJS_GET_MAYBE_BUILD(XmlElement, node);
     push->Call(nodes, 1, argv);
   }
 

@@ -27,12 +27,12 @@ XmlAttribute::New(const v8::Arguments& args) {
     assert(ns);
 
     v8::Persistent<v8::Object> js_attr =
-      LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, elem);
+      LXJS_GET_MAYBE_BUILD(XmlAttribute, elem);
     XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(js_attr);
     attr->set_namespace(ns->xml_obj);
   }
 
-  return LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, elem);
+  return LXJS_GET_MAYBE_BUILD(XmlAttribute, elem);
 }
 
 v8::Handle<v8::Value>
@@ -123,7 +123,7 @@ XmlAttribute::set_value(const char* value) {
 
 v8::Handle<v8::Value>
 XmlAttribute::get_element() {
-  return JsObj::Unwrap<xmlNode>(xml_obj->parent);
+  return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->parent);
 }
 
 void

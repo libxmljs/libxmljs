@@ -45,7 +45,7 @@ XmlNode::Namespace(const v8::Arguments& args) {
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns)
       ns = LibXmlObj::Unwrap<XmlNamespace>(
-        JsObj::Unwrap<xmlNs>(found_ns));
+        LXJS_GET_MAYBE_BUILD(XmlNamespace, found_ns));
   }
 
   // Namespace does not seem to exist, so create it.
@@ -141,7 +141,7 @@ XmlNode::~XmlNode() {
 
 v8::Handle<v8::Value>
 XmlNode::get_doc() {
-  return JsObj::Unwrap<xmlDoc>(xml_obj->doc);
+  return LXJS_GET_MAYBE_BUILD(XmlDocument, xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
@@ -158,7 +158,7 @@ XmlNode::get_namespace() {
   if (!xml_obj->ns->_private)
     return XmlNamespace::New(xml_obj->ns);
 
-  return JsObj::Unwrap<xmlNs>(xml_obj->ns);
+  return LXJS_GET_MAYBE_BUILD(XmlNamespace, xml_obj->ns);
 }
 
 void
@@ -183,15 +183,15 @@ XmlNode::find_namespace(const char* search_str) {
 v8::Handle<v8::Value>
 XmlNode::get_parent() {
   if (xml_obj->parent)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->parent);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->parent);
 
-  return LXJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, xml_obj->doc);
+  return LXJS_GET_MAYBE_BUILD(XmlDocument, xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
 XmlNode::get_prev_sibling() {
   if (xml_obj->prev)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->prev);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->prev);
 
   return v8::Null();
 }
@@ -199,7 +199,7 @@ XmlNode::get_prev_sibling() {
 v8::Handle<v8::Value>
 XmlNode::get_next_sibling() {
   if (xml_obj->next)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, xml_obj->next);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->next);
 
   return v8::Null();
 }

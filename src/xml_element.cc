@@ -37,7 +37,7 @@ XmlElement::New(const v8::Arguments& args) {
                                 content ? (const xmlChar*)**content : NULL);
 
   v8::Persistent<v8::Object> obj =
-    LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, elem);
+    LXJS_GET_MAYBE_BUILD(XmlElement, elem);
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(obj);
 
   if (args[2]->IsObject()) {
@@ -259,7 +259,7 @@ v8::Handle<v8::Value>
 XmlElement::get_attr(const char* name) {
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
   if (attr)
-    return LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
+    return LXJS_GET_MAYBE_BUILD(XmlAttribute, attr);
 
   return v8::Null();
 }
@@ -269,9 +269,11 @@ void
 XmlElement::set_attr(const char* name,
                      const char* value) {
   v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[3] = { JsObj::Unwrap(xml_obj),
-                                    v8::String::New(name),
-                                    v8::String::New(value) };
+  v8::Handle<v8::Value> argv[3] = {
+    LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj),
+    v8::String::New(name),
+    v8::String::New(value)
+  };
   v8::Persistent<v8::Object>::New(
     XmlAttribute::constructor_template->GetFunction()->NewInstance(3, argv));
 }
@@ -289,7 +291,7 @@ XmlElement::get_attrs() {
     attributes->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1];
   do {
-    argv[0] = LXJS_GET_MAYBE_BUILD(XmlAttribute, xmlAttr, attr);
+    argv[0] = LXJS_GET_MAYBE_BUILD(XmlAttribute, attr);
     push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
@@ -314,7 +316,7 @@ XmlElement::get_child(double idx) {
   if (!child)
     return v8::Null();
 
-  return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, child);
+  return LXJS_GET_MAYBE_BUILD(XmlElement, child);
 }
 
 v8::Handle<v8::Value>
@@ -334,7 +336,7 @@ XmlElement::get_child_nodes() {
   for (int i = 0; i < set->nodeNr; ++i) {
     xmlNode *node = set->nodeTab[i];
     children->Set(v8::Number::New(i),
-                  LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, node));
+                  LXJS_GET_MAYBE_BUILD(XmlElement, node));
   }
 
   return children;
@@ -380,7 +382,7 @@ XmlElement::get_next_element() {
     sibling = sibling->next;
 
   if (sibling)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, sibling);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, sibling);
 
   return v8::Null();
 }
@@ -397,7 +399,7 @@ XmlElement::get_prev_element() {
     sibling = sibling->prev;
 
   if (sibling)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, sibling);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, sibling);
 
   return v8::Null();
 }

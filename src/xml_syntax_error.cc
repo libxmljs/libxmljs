@@ -9,7 +9,8 @@ void
 XmlSyntaxError::PushToArray(void *errs, xmlError *error) {
   v8::HandleScope scope;
 
-  v8::Persistent<v8::Object> errors = JsObj::UnwrapNonXmlObj(errs);
+  v8::Persistent<v8::Object> errors =
+    reinterpret_cast<v8::Object*>(errs);
   v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
     errors->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1] =

@@ -7,7 +7,7 @@
 namespace libxmljs {
 
 inline v8::Handle<v8::Value>
-BuildDoc(xmlDoc *doc, JsObj *errors) {
+BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
   if (doc == NULL) {
     xmlFreeDoc(doc);
     xmlError *error = xmlGetLastError();
@@ -22,10 +22,9 @@ BuildDoc(xmlDoc *doc, JsObj *errors) {
   }
 
   v8::Handle<v8::Object> jsDoc =
-    LXJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+    LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(jsDoc);
-  document->errors = v8::Persistent<v8::Array>::Cast(
-    JsObj::UnwrapNonXmlObj(errors));
+  document->errors = jsErrArray;
   return jsDoc;
 }
 
@@ -37,10 +36,10 @@ ParseXmlString(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseXmlString with a string")));
 
-  v8::Local<v8::Array> jsErrArray = v8::Array::New();
-  JsObj *errArray = JsObj::WrapNonXmlObj(jsErrArray);
+  v8::Persistent<v8::Array> errors = v8::Persistent<v8::Array>::New(
+      v8::Array::New());
   xmlResetLastError();
-  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errArray),
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
                             XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
@@ -48,7 +47,7 @@ ParseXmlString(const v8::Arguments& args) {
 
   xmlSetStructuredErrorFunc(NULL, NULL);
 
-  return BuildDoc(doc, errArray);
+  return BuildDoc(doc, errors);
 }
 
 v8::Handle<v8::Value>
@@ -59,10 +58,10 @@ ParseXmlFile(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseXmlFile with a filename")));
 
-  v8::Local<v8::Array> jsErrArray = v8::Array::New();
-  JsObj *errArray = JsObj::WrapNonXmlObj(jsErrArray);
+  v8::Persistent<v8::Array> errors = v8::Persistent<v8::Array>::New(
+      v8::Array::New());
   xmlResetLastError();
-  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errArray),
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
                             XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
@@ -70,7 +69,7 @@ ParseXmlFile(const v8::Arguments& args) {
 
   xmlSetStructuredErrorFunc(NULL, NULL);
 
-  return BuildDoc(doc, errArray);
+  return BuildDoc(doc, errors);
 }
 
 void

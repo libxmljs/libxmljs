@@ -51,21 +51,21 @@ do {                                                                          \
     return v8::ThrowException(exception);                                     \
   }
 
-#define BUILD_NODE(klass, type, node)                                         \
+#define BUILD_NODE(klass, node)                                               \
 ({                                                                            \
   klass *__klass##_OBJ = new klass(node);                                     \
+  node->_private = static_cast<void *>(__klass##_OBJ);                        \
   v8::Handle<v8::Value> __jsobj_ARG[1] = { v8::Null() };                      \
   v8::Handle<v8::Object> __jsobj_JS =                                         \
     klass::constructor_template->GetFunction()->NewInstance(1, __jsobj_ARG);  \
-  JsObj::Wrap<type>(node, __jsobj_JS);                                        \
   __klass##_OBJ->Wrap(__jsobj_JS);                                            \
 })
 
-#define LXJS_GET_MAYBE_BUILD(klass, type, node)                               \
+#define LXJS_GET_MAYBE_BUILD(klass, node)                                     \
 ({                                                                            \
   if (!node->_private)                                                        \
-    BUILD_NODE(klass, type, node);                                            \
-  JsObj::Unwrap<type>(node);                                                  \
+    BUILD_NODE(klass, node);                                                  \
+  static_cast<klass *>(node->_private)->_handle;                                \
 })
 
 namespace libxmljs {

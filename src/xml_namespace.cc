@@ -8,8 +8,7 @@ v8::Persistent<v8::FunctionTemplate> XmlNamespace::constructor_template;
 
 v8::Handle<v8::Value>
 XmlNamespace::New(xmlNs* ns) {
-  BUILD_NODE(XmlNamespace, xmlNs, ns);
-  return JsObj::Unwrap<xmlNs>(ns);
+  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns);
 }
 
 v8::Handle<v8::Value>
@@ -35,14 +34,10 @@ XmlNamespace::New(const v8::Arguments& args) {
   XmlNamespace *ns = new XmlNamespace(node->xml_obj,
                                 prefix ? **prefix : NULL,
                                 **href);
-  assert(ns->xml_obj);
-  BUILD_NODE(XmlNamespace, xmlNs, ns->xml_obj);
-  v8::Persistent<v8::Object> obj = JsObj::Unwrap<xmlNs>(ns->xml_obj);
-
   delete prefix;
   delete href;
 
-  return obj;
+  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns->xml_obj);
 }
 
 XmlNamespace::XmlNamespace(xmlNode* node,

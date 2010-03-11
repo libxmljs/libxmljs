@@ -136,7 +136,7 @@ XmlDocument::New(const v8::Arguments& args) {
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
   v8::Persistent<v8::Object> obj =
-    LXJS_GET_MAYBE_BUILD(XmlDocument, xmlDoc, doc);
+    LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
 
   if (encoding)
@@ -202,7 +202,7 @@ XmlDocument::get_root() {
   v8::HandleScope scope;
   xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xmlNode, root);
+    return LXJS_GET_MAYBE_BUILD(XmlElement, root);
   else
     return v8::Null();
 }

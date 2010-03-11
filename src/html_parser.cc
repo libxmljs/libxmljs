@@ -21,7 +21,7 @@ BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
   }
 
   v8::Handle<v8::Object> jsDoc =
-    LXJS_GET_MAYBE_BUILD(HtmlDocument, xmlDoc, doc);
+    LXJS_GET_MAYBE_BUILD(HtmlDocument, doc);
   HtmlDocument *document = LibXmlObj::Unwrap<HtmlDocument>(jsDoc);
   document->errors = v8::Persistent<v8::Array>::New(errors);
   return jsDoc;
@@ -35,10 +35,10 @@ ParseHtmlString(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseHtmlString with a string")));
 
-  v8::Local<v8::Array> errors = v8::Array::New();
-  void *errs = new JsObj(errors);
+  v8::Persistent<v8::Array> errors = v8::Persistent<v8::Array>::New(
+      v8::Array::New());
   xmlResetLastError();
-  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errs),
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
                             XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
@@ -57,10 +57,10 @@ ParseHtmlFile(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseHtmlFile with a filename")));
 
-  v8::Local<v8::Array> errors = v8::Array::New();
-  void *errs = new JsObj(errors);
+  v8::Persistent<v8::Array> errors = v8::Persistent<v8::Array>::New(
+      v8::Array::New());
   xmlResetLastError();
-  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(errs),
+  xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
                             XmlSyntaxError::PushToArray);
 
   v8::String::Utf8Value str(args[0]->ToString());
