@@ -33,8 +33,8 @@ XmlElement::New(const v8::Arguments& args) {
 
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
-                                xmlStrdup((const xmlChar*)*name),
-                                content ? xmlStrdup((const xmlChar*)**content)
+                                (const xmlChar*)*name,
+                                content ? (const xmlChar*)**content
                                         : NULL);
 
   v8::Persistent<v8::Object> obj =
@@ -247,7 +247,7 @@ XmlElement::Path(const v8::Arguments& args) {
 
 void
 XmlElement::set_name(const char* name) {
-  xmlNodeSetName(xml_obj, xmlStrdup((const xmlChar*)name));
+  xmlNodeSetName(xml_obj, (const xmlChar*)name);
 }
 
 v8::Handle<v8::Value>

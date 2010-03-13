@@ -44,8 +44,8 @@ XmlNamespace::XmlNamespace(xmlNode* node,
                      const char* prefix,
                      const char* href) {
   xml_obj = xmlNewNs(node,
-                     xmlStrdup((const xmlChar*)href),
-                     xmlStrdup((const xmlChar*)prefix));
+                     (const xmlChar*)href,
+                     (const xmlChar*)prefix);
 }
 
 v8::Handle<v8::Value>
