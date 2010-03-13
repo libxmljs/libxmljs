@@ -18,8 +18,8 @@ XmlAttribute::New(const v8::Arguments& args) {
   v8::String::Utf8Value value(args[2]->ToString());
 
   xmlAttr *elem = xmlSetProp(element->xml_obj,
-                             (const xmlChar*)*name,
-                             (const xmlChar*)*value);
+                             xmlStrdup((const xmlChar*)*name),
+                             xmlStrdup((const xmlChar*)*value));
 
   // namespace passed in
   if (args.Length() == 4 && args[3]->IsObject()) {

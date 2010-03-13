@@ -136,7 +136,7 @@ XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
 }
 
 XmlNode::~XmlNode() {
-  xmlFree(xml_obj);
+  // xmlFree(xml_obj);
 }
 
 v8::Handle<v8::Value>

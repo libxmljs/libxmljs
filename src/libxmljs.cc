@@ -11,15 +11,6 @@ namespace libxmljs {
 namespace {
 
 void on_libxml_destruct(xmlNode* node) {
-  switch (node->type) {
-    case XML_DOCUMENT_NODE:
-      break;
-
-    // default:
-    //   if (node->_private != NULL)
-    //     delete static_cast<XmlNode *>(node->_private);
-    //   node->_private = NULL;
-  }
 }
 
 }  // namespace
