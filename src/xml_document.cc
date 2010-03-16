@@ -147,6 +147,10 @@ XmlDocument::New(const v8::Arguments& args) {
     *callback->Call(obj, 1, argv);
   }
 
+  delete version;
+  if (encoding)
+    delete encoding;
+
   return obj;
 }
 

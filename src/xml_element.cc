@@ -36,6 +36,8 @@ XmlElement::New(const v8::Arguments& args) {
                                 (const xmlChar*)*name,
                                 content ? (const xmlChar*)**content
                                         : NULL);
+  if (content)
+    delete content;
 
   v8::Persistent<v8::Object> obj =
     LXJS_GET_MAYBE_BUILD(XmlElement, elem);
