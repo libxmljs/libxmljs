@@ -155,9 +155,6 @@ XmlNode::get_namespace() {
   if (!xml_obj->ns)
     return v8::Null();
 
-  if (!xml_obj->ns->_private)
-    return XmlNamespace::New(xml_obj->ns);
-
   return LXJS_GET_MAYBE_BUILD(XmlNamespace, xml_obj->ns);
 }
 
