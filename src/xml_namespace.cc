@@ -7,11 +7,6 @@ namespace libxmljs {
 v8::Persistent<v8::FunctionTemplate> XmlNamespace::constructor_template;
 
 v8::Handle<v8::Value>
-XmlNamespace::New(xmlNs* ns) {
-  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns);
-}
-
-v8::Handle<v8::Value>
 XmlNamespace::New(const v8::Arguments& args) {
   v8::HandleScope scope;
   if (args[0]->StrictEquals(v8::Null()))
@@ -31,21 +26,15 @@ XmlNamespace::New(const v8::Arguments& args) {
 
   href = new v8::String::Utf8Value(args[2]->ToString());
 
-  XmlNamespace *ns = new XmlNamespace(node->xml_obj,
-                                prefix ? **prefix : NULL,
-                                **href);
-  delete prefix;
+  xmlNs* ns = xmlNewNs(node->xml_obj,
+                       (const xmlChar*)**href,
+                       prefix ? (const xmlChar*)**prefix : NULL);
+
+  if (prefix)
+    delete prefix;
   delete href;
 
-  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns->xml_obj);
-}
-
-XmlNamespace::XmlNamespace(xmlNode* node,
-                     const char* prefix,
-                     const char* href) {
-  xml_obj = xmlNewNs(node,
-                     (const xmlChar*)href,
-                     (const xmlChar*)prefix);
+  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns);
 }
 
 v8::Handle<v8::Value>
