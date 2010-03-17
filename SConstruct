@@ -42,14 +42,7 @@ cflags = ' '.join([
 
 if using_node_js:
   node_flags = shellOut([node_exe, '--vars'])
-
-  node_flags = re.findall(r'\W-I[^\s]+', node_flags)
-
-  if node_flags:
-    print 'Adding node include paths to build parameters'
-    print '\n'.join(node_flags)
-
-    cflags += ' ' + ' '.join(node_flags)
+  cflags += ' ' + re.sub('NODE_CFLAGS:', '', node_flags.split("\n")[1])
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
