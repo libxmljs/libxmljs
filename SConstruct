@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import subprocess
 from os.path import join, dirname, abspath
 from types import DictType, StringTypes
@@ -36,11 +37,19 @@ cflags = ' '.join([
   '-I/usr/local/include',
   '-I/usr/local/include/libxml2',
   '-I/usr/include',
-  '-I/usr/include/libxml2'
+  '-I/usr/include/libxml2',
 ])
 
 if using_node_js:
-  cflags += ' ' + shellOut([node_exe, '--cflags'])
+  node_flags = shellOut([node_exe, '--vars'])
+
+  node_flags = re.findall(r'\W-I[^\s]+', node_flags)
+
+  if node_flags:
+    print 'Adding node include paths to build parameters'
+    print '\n'.join(node_flags)
+
+    cflags += ' ' + ' '.join(node_flags)
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
