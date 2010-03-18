@@ -42,7 +42,10 @@ cflags = ' '.join([
 
 if using_node_js:
   node_flags = shellOut([node_exe, '--vars'])
-  cflags += ' ' + re.sub('NODE_CFLAGS:', '', node_flags.split("\n")[1])
+  node_flags = re.search(r'^NODE_CFLAGS:\s*(.*)$', node_flags, re.MULTILINE)
+
+  if node_flags:
+    cflags += ' ' + node_flags.group(1)
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
