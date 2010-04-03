@@ -245,6 +245,34 @@ XmlElement::Path(const v8::Arguments& args) {
   return element->get_path();
 }
 
+v8::Handle<v8::Value>
+XmlElement::AddPrevSibling(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlElement* element = LibXmlObj::Unwrap<XmlElement>(args.This());
+  assert(element);
+
+  XmlElement* new_sibling = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
+  assert(new_sibling);
+
+  element->add_prev_sibling(new_sibling);
+
+  return args[0];
+}
+
+v8::Handle<v8::Value>
+XmlElement::AddNextSibling(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlElement* element = LibXmlObj::Unwrap<XmlElement>(args.This());
+  assert(element);
+
+  XmlElement* new_sibling = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
+  assert(new_sibling);
+
+  element->add_next_sibling(new_sibling);
+
+  return args[0];
+}
+
 void
 XmlElement::set_name(const char* name) {
   xmlNodeSetName(xml_obj, (const xmlChar*)name);
@@ -406,6 +434,16 @@ XmlElement::get_prev_element() {
 }
 
 void
+XmlElement::add_prev_sibling(XmlElement* element) {
+  xmlAddPrevSibling(xml_obj, element->xml_obj);
+}
+
+void
+XmlElement::add_next_sibling(XmlElement* element) {
+  xmlAddNextSibling(xml_obj, element->xml_obj);
+}
+
+void
 XmlElement::Initialize(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
   v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(New);
@@ -456,6 +494,14 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "text",
                         XmlElement::Text);
+
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "addPrevSibling",
+                        XmlElement::AddPrevSibling);
+  
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "addNextSibling",
+                        XmlElement::AddNextSibling);
 
   target->Set(v8::String::NewSymbol("Element"),
               constructor_template->GetFunction());
