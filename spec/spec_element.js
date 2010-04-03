@@ -100,4 +100,26 @@ describe('An element node', function() {
     assert(!doc.get('/name1/child'));
     assert(doc.get('/name1/name2/child'));
   });
+
+  it('can add a previous sibling', function() {
+    var child1 = elem.node('child1');
+    var child2 = elem.node('child2');
+    assertEqual(elem.childNodes().length, 2);
+    var prevSibling = new libxml.Element(elem.doc(), 'prev-sibling');
+    var addedSibling = child2.addPrevSibling(prevSibling);
+    var children = elem.childNodes();
+    assertEqual(3, children.length);
+    assertEqual('prev-sibling', children[1].name());
+  });
+
+  it('can add a next sibling', function() {
+    var child1 = elem.node('child1');
+    var child2 = elem.node('child2');
+    assertEqual(elem.childNodes().length, 2);
+    var nextSibling = new libxml.Element(elem.doc(), 'next-sibling');
+    var addedSibling = child1.addNextSibling(nextSibling);
+    var children = elem.childNodes();
+    assertEqual(3, children.length);
+    assertEqual('next-sibling', children[1].name());
+  });
 });
