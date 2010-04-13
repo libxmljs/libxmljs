@@ -2,7 +2,7 @@
 #ifndef SRC_XML_NAMESPACE_H_
 #define SRC_XML_NAMESPACE_H_
 
-#include "./libxmljs.h"
+#include "libxmljs.h"
 
 namespace libxmljs {
 

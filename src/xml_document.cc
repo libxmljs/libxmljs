@@ -1,7 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_document.h"
-#include "./xml_element.h"
-#include "./xml_namespace.h"
+#include "xml_document.h"
+#include "xml_element.h"
+#include "xml_namespace.h"
 
 namespace libxmljs {
 
@@ -10,7 +10,7 @@ v8::Persistent<v8::FunctionTemplate> XmlDocument::constructor_template;
 v8::Handle<v8::Value>
 XmlDocument::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -19,7 +19,7 @@ XmlDocument::Errors(const v8::Arguments& args) {
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
 
-  return document->errors;
+  return scope.Close(document->errors);
 }
 
 v8::Handle<v8::Value>
@@ -29,11 +29,11 @@ XmlDocument::Encoding(const v8::Arguments& args) {
   assert(document);
 
   if (args.Length() == 0)
-    return document->get_encoding();
+      return scope.Close(document->get_encoding());
 
   v8::String::Utf8Value encoding(args[0]->ToString());
   document->set_encoding(*encoding);
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -42,7 +42,7 @@ XmlDocument::Version(const v8::Arguments& args) {
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
 
-  return document->get_version();
+  return scope.Close(document->get_version());
 }
 
 v8::Handle<v8::Value>
@@ -52,7 +52,7 @@ XmlDocument::Root(const v8::Arguments& args) {
   assert(document);
 
   if (args.Length() == 0)
-    return document->get_root();
+      return scope.Close(document->get_root());
 
   if (document->has_root())
     return ThrowException(v8::Exception::Error(
@@ -61,7 +61,7 @@ XmlDocument::Root(const v8::Arguments& args) {
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
   assert(element);
   document->set_root(element->xml_obj);
-  return args[0];
+  return scope.Close(args[0]);
 }
 
 v8::Handle<v8::Value>
@@ -69,7 +69,7 @@ XmlDocument::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
   assert(document);
-  return document->to_string();
+  return scope.Close(document->to_string());
 }
 
 
@@ -87,7 +87,7 @@ XmlDocument::New(const v8::Arguments& args) {
     case 1:  // newDocument(version|callback)
       // was created by BUILD_NODE
       if (args[0]->StrictEquals(v8::Null()))
-        return args.This();
+          return scope.Close(args.This());
 
       if (args[0]->IsString()) {
         version = new v8::String::Utf8Value(args[0]->ToString());
@@ -151,7 +151,7 @@ XmlDocument::New(const v8::Arguments& args) {
   if (encoding)
     delete encoding;
 
-  return obj;
+  return scope.Close(obj);
 }
 
 XmlDocument::~XmlDocument() {
@@ -193,7 +193,7 @@ XmlDocument::to_string() {
   v8::Local<v8::String> str = v8::String::New((const char*)buffer, len);
   xmlFree(buffer);
 
-  return str;
+  return scope.Close(str);
 }
 
 bool

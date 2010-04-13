@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_xpath_context.h"
-#include "./xml_element.h"
+#include "xml_xpath_context.h"
+#include "xml_element.h"
 
 namespace libxmljs {
 
@@ -45,7 +45,7 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
 
   xmlXPathFreeObject(result);
 
-  return nodes;
+  return scope.Close(nodes);
 }
 
 }  // namespace libxmljs

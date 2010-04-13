@@ -1,5 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_attribute.h"
+#include "xml_attribute.h"
 
 namespace libxmljs {
 
@@ -10,7 +10,7 @@ XmlAttribute::New(const v8::Arguments& args) {
   v8::HandleScope scope;
   // was created by BUILD_NODE
   if (args.Length() == 1 && args[0]->StrictEquals(v8::Null()))
-    return args.This();
+      return scope.Close(args.This());
 
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
 
@@ -41,7 +41,7 @@ XmlAttribute::Name(const v8::Arguments& args) {
   XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(args.This());
   assert(attr);
 
-  return attr->get_name();
+  return scope.Close(attr->get_name());
 }
 
 v8::Handle<v8::Value>
@@ -53,11 +53,11 @@ XmlAttribute::Value(const v8::Arguments& args) {
   // attr.value('new value');
   if (args.Length() > 0) {
     attr->set_value(*v8::String::Utf8Value(args[0]));
-    return args.This();
+    return scope.Close(args.This());
   }
 
   // attr.value();
-  return attr->get_value();
+  return scope.Close(attr->get_value());
 }
 
 v8::Handle<v8::Value>
@@ -66,7 +66,7 @@ XmlAttribute::Node(const v8::Arguments& args) {
   XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(args.This());
   assert(attr);
 
-  return attr->get_element();
+  return scope.Close(attr->get_element());
 }
 
 v8::Handle<v8::Value>
@@ -80,12 +80,13 @@ XmlAttribute::get_name() {
 
 v8::Handle<v8::Value>
 XmlAttribute::get_value() {
+  v8::HandleScope scope;
   xmlChar* value = xmlNodeGetContent(xml_obj);
   if (value != NULL) {
     v8::Handle<v8::String> ret_value = v8::String::New((const char*)value,
                                                        xmlStrlen(value));
     xmlFree(value);
-    return ret_value;
+    return scope.Close(ret_value);
   }
 
   return v8::Null();

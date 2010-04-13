@@ -2,7 +2,7 @@
 #ifndef SRC_HTML_PARSER_H_
 #define SRC_HTML_PARSER_H_
 
-#include "./libxmljs.h"
+#include "libxmljs.h"
 
 namespace libxmljs {
 

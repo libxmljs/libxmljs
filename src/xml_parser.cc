@@ -1,13 +1,14 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_syntax_error.h"
-#include "./xml_parser.h"
-#include "./xml_sax_parser.h"
-#include "./xml_document.h"
+#include "xml_syntax_error.h"
+#include "xml_parser.h"
+#include "xml_sax_parser.h"
+#include "xml_document.h"
 
 namespace libxmljs {
 
 inline v8::Handle<v8::Value>
 BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
+  v8::HandleScope scope;
   if (doc == NULL) {
     xmlFreeDoc(doc);
     xmlError *error = xmlGetLastError();
@@ -25,7 +26,7 @@ BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
     LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(jsDoc);
   document->errors = jsErrArray;
-  return jsDoc;
+  return scope.Close(jsDoc);
 }
 
 v8::Handle<v8::Value>
@@ -47,7 +48,7 @@ ParseXmlString(const v8::Arguments& args) {
 
   xmlSetStructuredErrorFunc(NULL, NULL);
 
-  return BuildDoc(doc, errors);
+  return scope.Close(BuildDoc(doc, errors));
 }
 
 v8::Handle<v8::Value>
@@ -69,7 +70,7 @@ ParseXmlFile(const v8::Arguments& args) {
 
   xmlSetStructuredErrorFunc(NULL, NULL);
 
-  return BuildDoc(doc, errors);
+  return scope.Close(BuildDoc(doc, errors));
 }
 
 void

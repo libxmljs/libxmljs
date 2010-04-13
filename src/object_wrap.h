@@ -2,7 +2,7 @@
 #ifndef SRC_OBJECT_WRAP_H_
 #define SRC_OBJECT_WRAP_H_
 
-#include "./libxmljs.h"
+#include "libxmljs.h"
 
 namespace libxmljs {
 
@@ -49,6 +49,8 @@ class LibXmlObj {
   WeakCallback(v8::Persistent<v8::Value> value, void *data) {
     LibXmlObj *obj = static_cast<LibXmlObj*>(data);
     assert(value == obj->_handle);
+    //value.Dispose();
+    //value.Clear();
     delete obj;
   }
 };

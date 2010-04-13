@@ -2,9 +2,9 @@
 #ifndef SRC_XML_ATTRIBUTE_H_
 #define SRC_XML_ATTRIBUTE_H_
 
-#include "./libxmljs.h"
-#include "./xml_element.h"
-#include "./xml_namespace.h"
+#include "libxmljs.h"
+#include "xml_element.h"
+#include "xml_namespace.h"
 
 namespace libxmljs {
 

@@ -1,8 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_element.h"
-#include "./xml_document.h"
-#include "./xml_attribute.h"
-#include "./xml_xpath_context.h"
+#include "xml_element.h"
+#include "xml_document.h"
+#include "xml_attribute.h"
+#include "xml_xpath_context.h"
 
 namespace libxmljs {
 
@@ -17,7 +17,7 @@ XmlElement::New(const v8::Arguments& args) {
   v8::HandleScope scope;
   // was created by BUILD_NODE
   if (args.Length() == 0 || args[0]->StrictEquals(v8::Null()))
-    return args.This();
+      return scope.Close(args.This());
 
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args[0]->ToObject());
   v8::String::Utf8Value name(args[1]);
@@ -62,7 +62,7 @@ XmlElement::New(const v8::Arguments& args) {
     *callback->Call(obj, 1, argv);
   }
 
-  return obj;
+  return scope.Close(obj);
 }
 
 v8::Handle<v8::Value>
@@ -72,11 +72,11 @@ XmlElement::Name(const v8::Arguments& args) {
   assert(element);
 
   if (args.Length() == 0)
-    return element->get_name();
+      return scope.Close(element->get_name());
 
   v8::String::Utf8Value name(args[0]->ToString());
   element->set_name(*name);
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -92,7 +92,7 @@ XmlElement::Attr(const v8::Arguments& args) {
       // return the named attribute
       if (args[0]->IsString()) {
         v8::String::Utf8Value name(args[0]);
-        return element->get_attr(*name);
+        return scope.Close(element->get_attr(*name));
 
       // create a new attribute from a hash
       } else {
@@ -115,7 +115,7 @@ XmlElement::Attr(const v8::Arguments& args) {
     element->set_attr(*name, *value);
   }
 
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -124,7 +124,7 @@ XmlElement::Attrs(const v8::Arguments& args) {
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
   assert(element);
 
-  return element->get_attrs();
+  return scope.Close(element->get_attrs());
 }
 
 v8::Handle<v8::Value>
@@ -137,7 +137,7 @@ XmlElement::AddChild(const v8::Arguments& args) {
   assert(child);
 
   element->add_child(child);
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -168,7 +168,7 @@ XmlElement::Find(const v8::Arguments& args) {
     }
   }
 
-  return ctxt.evaluate((const xmlChar*)*xpath);
+  return scope.Close(ctxt.evaluate((const xmlChar*)*xpath));
 }
 
 v8::Handle<v8::Value>
@@ -177,7 +177,7 @@ XmlElement::NextElement(const v8::Arguments& args) {
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
   assert(element);
 
-  return element->get_next_element();
+  return scope.Close(element->get_next_element());
 }
 
 v8::Handle<v8::Value>
@@ -186,7 +186,7 @@ XmlElement::PrevElement(const v8::Arguments& args) {
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
   assert(element);
 
-  return element->get_prev_element();
+  return scope.Close(element->get_prev_element());
 }
 
 v8::Handle<v8::Value>
@@ -196,13 +196,13 @@ XmlElement::Text(const v8::Arguments& args) {
   assert(element);
 
   if (args.Length() == 0) {
-    return element->get_content();
+      return scope.Close(element->get_content());
 
   } else {
     element->set_content(*v8::String::Utf8Value(args[0]));
   }
 
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -233,9 +233,9 @@ XmlElement::ChildNodes(const v8::Arguments& args) {
   assert(element);
 
   if (args[0]->IsNumber())
-    return element->get_child(args[0]->ToNumber()->Value());
+      return scope.Close(element->get_child(args[0]->ToNumber()->Value()));
 
-  return element->get_child_nodes();
+  return scope.Close(element->get_child_nodes());
 }
 
 v8::Handle<v8::Value>
@@ -244,7 +244,7 @@ XmlElement::Path(const v8::Arguments& args) {
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args.This());
   assert(element);
 
-  return element->get_path();
+  return scope.Close(element->get_path());
 }
 
 v8::Handle<v8::Value>
@@ -258,7 +258,7 @@ XmlElement::AddPrevSibling(const v8::Arguments& args) {
 
   element->add_prev_sibling(new_sibling);
 
-  return args[0];
+  return scope.Close(args[0]);
 }
 
 v8::Handle<v8::Value>
@@ -272,7 +272,7 @@ XmlElement::AddNextSibling(const v8::Arguments& args) {
 
   element->add_next_sibling(new_sibling);
 
-  return args[0];
+  return scope.Close(args[0]);
 }
 
 void
@@ -326,7 +326,7 @@ XmlElement::get_attrs() {
     push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
-  return attributes;
+  return scope.Close(attributes);
 }
 
 void
@@ -370,7 +370,7 @@ XmlElement::get_child_nodes() {
                   LXJS_GET_MAYBE_BUILD(XmlElement, node));
   }
 
-  return children;
+  return scope.Close(children);
 }
 
 v8::Handle<v8::Value>

@@ -84,7 +84,7 @@ class LibXMLJS {
 
 }  // namespace libxmljs
 
-#include "./natives.h"
-#include "./object_wrap.h"
+#include "natives.h"
+#include "object_wrap.h"
 
 #endif  // SRC_LIBXMLJS_H_

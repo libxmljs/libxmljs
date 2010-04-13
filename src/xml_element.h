@@ -2,8 +2,8 @@
 #ifndef SRC_XML_ELEMENT_H_
 #define SRC_XML_ELEMENT_H_
 
-#include "./libxmljs.h"
-#include "./xml_node.h"
+#include "libxmljs.h"
+#include "xml_node.h"
 
 namespace libxmljs {
 

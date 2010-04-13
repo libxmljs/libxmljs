@@ -1,5 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_syntax_error.h"
+#include "xml_syntax_error.h"
 
 namespace libxmljs {
 
@@ -26,7 +26,7 @@ XmlSyntaxError::New(const v8::Arguments& args) {
   XmlSyntaxError *error = new XmlSyntaxError(err);
   error->Wrap(args.This());
 
-  return args.This();
+  return scope.Close(args.This());
 }
 
 #define STRING_OR_NULL(error, field)                                          \

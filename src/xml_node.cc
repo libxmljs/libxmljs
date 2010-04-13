@@ -1,9 +1,9 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_node.h"
-#include "./xml_document.h"
-#include "./xml_namespace.h"
-#include "./xml_element.h"
-#include "./xml_attribute.h"
+#include "xml_node.h"
+#include "xml_document.h"
+#include "xml_namespace.h"
+#include "xml_element.h"
+#include "xml_attribute.h"
 
 namespace libxmljs {
 
@@ -15,7 +15,7 @@ XmlNode::Doc(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->get_doc();
+  return scope.Close(node->get_doc());
 }
 
 v8::Handle<v8::Value>
@@ -26,10 +26,10 @@ XmlNode::Namespace(const v8::Arguments& args) {
 
   // #namespace() Get the node's namespace
   if (args.Length() == 0)
-    return node->get_namespace();
+      return scope.Close(node->get_namespace());
 
   if (args[0]->IsNull())
-    return node->remove_namespace();
+      return scope.Close(node->remove_namespace());
 
   XmlNamespace *ns = NULL;
 
@@ -72,7 +72,7 @@ XmlNode::Namespace(const v8::Arguments& args) {
 
   node->set_namespace(ns->xml_obj);
 
-  return node->get_namespace();
+  return scope.Close(node->get_namespace());
 }
 
 v8::Handle<v8::Value>
@@ -81,7 +81,7 @@ XmlNode::Parent(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->get_parent();
+  return scope.Close(node->get_parent());
 }
 
 v8::Handle<v8::Value>
@@ -90,7 +90,7 @@ XmlNode::PrevSibling(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->get_prev_sibling();
+  return scope.Close(node->get_prev_sibling());
 }
 
 v8::Handle<v8::Value>
@@ -99,7 +99,7 @@ XmlNode::NextSibling(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->get_next_sibling();
+  return scope.Close(node->get_next_sibling());
 }
 
 v8::Handle<v8::Value>
@@ -108,7 +108,7 @@ XmlNode::Type(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->get_type();
+  return scope.Close(node->get_type());
 }
 
 v8::Handle<v8::Value>
@@ -117,7 +117,7 @@ XmlNode::ToString(const v8::Arguments& args) {
   XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
   assert(node);
 
-  return node->to_string();
+  return scope.Close(node->to_string());
 }
 
 v8::Handle<v8::Value>
@@ -128,7 +128,7 @@ XmlNode::Remove(const v8::Arguments& args) {
 
   node->remove();
 
-  return args.This();
+  return scope.Close(args.This());
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {

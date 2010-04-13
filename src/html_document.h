@@ -2,8 +2,8 @@
 #ifndef SRC_HTML_DOCUMENT_H_
 #define SRC_HTML_DOCUMENT_H_
 
-#include "./libxmljs.h"
-#include "./xml_document.h"
+#include "libxmljs.h"
+#include "xml_document.h"
 
 namespace libxmljs {
 

@@ -2,8 +2,8 @@
 #ifndef SRC_XML_SAX_PARSER_H_
 #define SRC_XML_SAX_PARSER_H_
 
-#include "./libxmljs.h"
-#include "./xml_parser.h"
+#include "libxmljs.h"
+#include "xml_parser.h"
 
 namespace libxmljs {
 

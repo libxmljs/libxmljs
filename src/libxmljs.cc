@@ -1,10 +1,10 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./libxmljs.h"
-#include "./xml_syntax_error.h"
-#include "./xml_document.h"
-#include "./xml_node.h"
-#include "./xml_parser.h"
-#include "./html_parser.h"
+#include "libxmljs.h"
+#include "xml_syntax_error.h"
+#include "xml_document.h"
+#include "xml_node.h"
+#include "xml_parser.h"
+#include "html_parser.h"
 
 namespace libxmljs {
 

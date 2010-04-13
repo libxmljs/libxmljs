@@ -1,5 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_sax_parser.h"
+#include "xml_sax_parser.h"
 
 namespace libxmljs {
 
@@ -73,7 +73,7 @@ XmlSaxParser::NewParser(const v8::Arguments& args) {
                                "Bad argument: function required");
   parser->SetCallbacks(args.This(), v8::Local<v8::Function>::Cast(args[0]));
 
-  return args.This();
+  return scope.Close(args.This());
 }
 
 v8::Handle<v8::Value>
@@ -85,7 +85,7 @@ XmlSaxParser::NewPushParser(const v8::Arguments& args) {
   XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
   parser->initialize_push_parser();
 
-  return return_val;
+  return scope.Close(return_val);
 }
 
 void

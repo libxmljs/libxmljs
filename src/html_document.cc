@@ -1,5 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./html_document.h"
+#include "html_document.h"
 
 namespace libxmljs {
 

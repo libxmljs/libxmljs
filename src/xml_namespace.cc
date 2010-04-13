@@ -1,6 +1,6 @@
 // Copyright 2009, Squish Tech, LLC.
-#include "./xml_namespace.h"
-#include "./xml_node.h"
+#include "xml_namespace.h"
+#include "xml_node.h"
 
 namespace libxmljs {
 
@@ -10,7 +10,7 @@ v8::Handle<v8::Value>
 XmlNamespace::New(const v8::Arguments& args) {
   v8::HandleScope scope;
   if (args[0]->StrictEquals(v8::Null()))
-    return args.This();
+      return scope.Close(args.This());
 
   // TODO(sprsquish): ensure this is an actual Node object
   if (!args[0]->IsObject())
@@ -42,7 +42,7 @@ XmlNamespace::Href(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlNamespace *ns = LibXmlObj::Unwrap<XmlNamespace>(args.This());
   assert(ns);
-  return ns->get_href();
+  return scope.Close(ns->get_href());
 }
 
 v8::Handle<v8::Value>
@@ -50,7 +50,7 @@ XmlNamespace::Prefix(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlNamespace *ns = LibXmlObj::Unwrap<XmlNamespace>(args.This());
   assert(ns);
-  return ns->get_prefix();
+  return scope.Close(ns->get_prefix());
 }
 
 v8::Handle<v8::Value>
