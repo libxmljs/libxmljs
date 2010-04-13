@@ -204,14 +204,24 @@ XmlNode::get_next_sibling() {
 v8::Handle<v8::Value>
 XmlNode::to_string() {
   v8::HandleScope scope;
+
   xmlBuffer* buf = xmlBufferCreate();
+  const char* enc = "UTF-8";
 
-  xmlNodeDump(buf, xml_obj->doc, xml_obj, 0, 0);
-  v8::Local<v8::String> str =
-    v8::String::New((const char*)xmlBufferContent(buf), xmlBufferLength(buf));
-  xmlBufferFree(buf);
+  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, NULL);
+  xmlSaveTree(savectx, xml_obj);
+  xmlSaveFlush(savectx);
 
-  return str;
+  const xmlChar* xmlstr = xmlBufferContent(buf);
+
+  if(xmlstr) {
+      v8::Handle<v8::String> str = v8::String::New((char*)xmlstr, xmlBufferLength(buf));
+      xmlSaveClose(savectx);
+      return scope.Close(str);
+  } else { 
+      xmlSaveClose(savectx);
+      return v8::Null();
+  }
 }
 
 void

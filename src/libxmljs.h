@@ -7,6 +7,7 @@
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxml/xmlstring.h>
+#include <libxml/xmlsave.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 #include <libxml/HTMLparser.h>
