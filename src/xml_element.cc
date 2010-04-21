@@ -136,6 +136,12 @@ XmlElement::AddChild(const v8::Arguments& args) {
   XmlElement *child = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
   assert(child);
 
+  child = element->import_element(child);
+
+  if(child == NULL) {
+      LIBXMLJS_THROW_EXCEPTION("Could not add child (%s). Failed to copy node to new Document.");
+  }
+
   element->add_child(child);
   return scope.Close(args.This());
 }
@@ -443,6 +449,21 @@ XmlElement::add_prev_sibling(XmlElement* element) {
 void
 XmlElement::add_next_sibling(XmlElement* element) {
   xmlAddNextSibling(xml_obj, element->xml_obj);
+}
+
+XmlElement *
+XmlElement::import_element(XmlElement *element) {
+    xmlNode *new_child;
+    if(xml_obj->doc == element->xml_obj->doc) {
+        return element;
+    } else {
+        new_child = xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
+        if(new_child == NULL) {
+            return NULL;
+        }
+        element->remove();
+        return LibXmlObj::Unwrap<XmlElement>(LXJS_GET_MAYBE_BUILD(XmlElement, new_child));
+    }
 }
 
 void
