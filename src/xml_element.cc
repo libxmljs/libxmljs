@@ -262,6 +262,8 @@ XmlElement::AddPrevSibling(const v8::Arguments& args) {
   XmlElement* new_sibling = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
   assert(new_sibling);
 
+  new_sibling = element->import_element(new_sibling);
+
   element->add_prev_sibling(new_sibling);
 
   return scope.Close(args[0]);
@@ -275,6 +277,8 @@ XmlElement::AddNextSibling(const v8::Arguments& args) {
 
   XmlElement* new_sibling = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
   assert(new_sibling);
+
+  new_sibling = element->import_element(new_sibling);
 
   element->add_next_sibling(new_sibling);
 
