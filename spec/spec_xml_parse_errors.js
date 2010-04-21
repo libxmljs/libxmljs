@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Parse error object', function() {
   var synErr = null;
@@ -27,3 +27,5 @@ describe('Parse error object', function() {
     });
   }
 });
+
+}

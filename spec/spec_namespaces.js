@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('A namespace', function() {
   it('can be created and not set', function() {
@@ -88,3 +88,5 @@ describe('A namespace', function() {
     assert(!elem.namespace());
   });
 });
+
+}

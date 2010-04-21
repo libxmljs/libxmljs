@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Parsing XML', function() {
   var filename = path.dirname(__filename)+'/fixtures/parser.xml';
@@ -130,3 +130,5 @@ describe('A recoverable parse error when parsing an XML string', function() {
     assertEqual(err, doc.errors()[0]);
   });
 });
+
+}

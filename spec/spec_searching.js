@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Finding a node', function() {
   it('can be done with #get', function() {
@@ -134,3 +134,4 @@ describe('Finding a prefixed namespaced node', function() {
   });
 });
 
+}

@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('A new document', function() {
   it('can be instantiated with nothing', function() {
@@ -121,3 +121,5 @@ describe('A new document', function() {
     assertEqual(control, doc.toString());
   });
 });
+
+}

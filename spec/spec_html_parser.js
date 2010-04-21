@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 var recoverableFile = path.dirname(__filename)+'/fixtures/warnings/amp.html';
 var recoverableErrors = [
@@ -87,3 +87,5 @@ describe('A recoverable parse error when parsing an HTML string', function() {
     assertEqual(recoverableErrors, doc.errors());
   });
 });
+
+}

@@ -45,9 +45,9 @@
  * Copyright 2009, Jon Crosby, MIT Licensed
  *
  */
-process.mixin(require('sys'));
 
 (function() {
+with(require('sys')) {
   var path = require('path');
   var fs = require('fs');
   var specCount    = 0;
@@ -230,4 +230,5 @@ process.mixin(require('sys'));
   process.addListener("exit", function () {
     summarize();
   });
+}
 })();

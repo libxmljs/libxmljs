@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Attribute', function() {
   var doc = null;
@@ -69,3 +69,5 @@ describe('Attribute', function() {
     assert(!node.attr('attr-one-key'));
   });
 });
+
+}
