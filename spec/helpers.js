@@ -6,7 +6,7 @@ exports.clone = function(obj) {
 
   var temp = new obj.constructor();
   for(var key in obj)
-    temp[key] = clone(obj[key]);
+    temp[key] = arguments.callee(obj[key]);
 
   return temp;
 };

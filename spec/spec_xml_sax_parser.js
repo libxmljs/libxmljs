@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe("SAX Push Parser", function() {
   var callbacks = {};
@@ -107,3 +107,5 @@ describe("SAX Push Parser", function() {
     assert(true);
   });
 });
+
+}

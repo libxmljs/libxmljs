@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('A node attribute', function() {
   it('can be read', function() {
@@ -75,3 +75,5 @@ describe('A node attribute', function() {
     assertEqual(doc, elem.attr('foo').doc());
   });
 });
+
+}

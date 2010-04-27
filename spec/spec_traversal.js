@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Document traversal on a built document', function() {
   it('can get to the document from any node', function() {
@@ -164,3 +164,5 @@ describe('Document traversal on a parsed document', function() {
     assertEqual(null, child.nextElement().nextElement());
   });
 });
+
+}

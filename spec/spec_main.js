@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('libxmljs', function() {
   it('has a version number', function() {
@@ -16,3 +16,5 @@ describe('libxmljs', function() {
     assert(typeof libxml.libxml_parser_version == 'string');
   });
 });
+
+}

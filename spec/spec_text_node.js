@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('Text node', function() {
   it('knows its type is "text"', function() {
@@ -9,3 +9,5 @@ describe('Text node', function() {
     assertEqual('text', doc.child().type());
   });
 });
+
+}

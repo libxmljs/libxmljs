@@ -1,4 +1,4 @@
-process.mixin(require('./helpers'));
+with(require('./helpers')) {
 
 describe('An element node', function() {
   var doc = null;
@@ -123,3 +123,5 @@ describe('An element node', function() {
     assertEqual('next-sibling', children[1].name());
   });
 });
+
+}
