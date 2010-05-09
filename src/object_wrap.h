@@ -49,8 +49,8 @@ class LibXmlObj {
   WeakCallback(v8::Persistent<v8::Value> value, void *data) {
     LibXmlObj *obj = static_cast<LibXmlObj*>(data);
     assert(value == obj->_handle);
-    //value.Dispose();
-    //value.Clear();
+    value.Dispose();
+    value.Clear();
     delete obj;
   }
 };

@@ -4,6 +4,7 @@
 
 #include <v8.h>
 
+#include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxml/xmlstring.h>
@@ -17,9 +18,24 @@
 #include <string>
 #include <cassert>  // for assert()
 
-#define LIBXMLJS_VERSION "0.3.0"
+#define LIBXMLJS_VERSION "v0.3.0"
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
+
+static char *human_readable(long b_size) {
+    const char *sizes[] = { "B", "KB", "MB", "GB" };
+
+    int order = 0;
+    float f = (float) b_size;
+    while (f >= 1024 && order + 1 < sizeof(sizes)) {
+        order++;
+        f = f/1024.0;
+    }
+    char *result = NULL;
+    asprintf(&result, "%.2f%s", f, sizes[order]);
+
+    return result;
+}
 
 #define LIBXMLJS_SET_METHOD(obj, name, callback)                              \
   obj->Set(v8::String::NewSymbol(name),                                       \
@@ -66,10 +82,13 @@ do {                                                                          \
 ({                                                                            \
   if (!node->_private)                                                        \
     BUILD_NODE(klass, node);                                                  \
-  static_cast<klass *>(node->_private)->_handle;                                \
+  static_cast<klass *>(node->_private)->_handle;                              \
 })
 
 namespace libxmljs {
+
+    static int current_xml_memory = 0;
+    void UpdateV8Memory();
 
 // Ensure that libxml is properly initialised:
 class LibXMLJS {

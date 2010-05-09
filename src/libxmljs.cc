@@ -8,6 +8,8 @@
 
 namespace libxmljs {
 
+    v8::Persistent<v8::FunctionTemplate> memory_usage;
+
 namespace {
 
 void on_libxml_destruct(xmlNode* node) {
@@ -132,8 +134,44 @@ ExecuteNativeJS(const char* filename,
 }
 
 void
+UpdateV8Memory() {
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(-current_xml_memory);
+    current_xml_memory = xmlMemUsed();
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(current_xml_memory);
+}
+
+v8::Handle<v8::Value>
+MemoryUsage(const v8::Arguments& args) {
+    int readable = 0;
+    if(args.Length() > 0 && args[0]->IsTrue()) {
+        readable = 1;
+    }
+
+    v8::HandleScope scope;
+    v8::Local<v8::Object> obj = v8::Object::New();
+    int c = xmlMemUsed();
+
+    if(readable) {
+        char *s = human_readable(c);
+        obj->Set(v8::String::New("libxml"), v8::String::New(s));
+        free(s);
+        s = human_readable(current_xml_memory);
+        obj->Set(v8::String::New("v8"), v8::String::New(s));
+        free(s);
+    } else {
+        obj->Set(v8::String::New("libxml"), v8::Integer::New(c));
+        obj->Set(v8::String::New("v8"), v8::Integer::New(current_xml_memory));
+    }
+
+    return scope.Close(obj);
+}
+
+void
 InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
+
+  xmlMemSetup(xmlMemFree, xmlMemMalloc, xmlMemRealloc, xmlMemoryStrdup);
+  xmlInitMemory();
 
   XmlSyntaxError::Initialize(target);
   XmlDocument::Initialize(target);
@@ -148,6 +186,13 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
 
   target->Set(v8::String::NewSymbol("libxml_parser_version"),
               v8::String::New(xmlParserVersion));
+
+  v8::Local<v8::FunctionTemplate> func = v8::FunctionTemplate::New(MemoryUsage);
+  memory_usage = v8::Persistent<v8::FunctionTemplate>::New(func);
+  memory_usage->InstanceTemplate()->SetInternalFieldCount(1);
+
+  target->Set(v8::String::NewSymbol("memoryUsage"),
+              memory_usage->GetFunction());
 
   v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
   v8::Handle<v8::Context> context = v8::Context::New(NULL, global);

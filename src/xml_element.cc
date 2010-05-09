@@ -37,13 +37,16 @@ XmlElement::New(const v8::Arguments& args) {
                                 NULL,
                                 (const xmlChar*)*name,
                                 (const xmlChar*)content);
+  UpdateV8Memory();
 
   if(content)
       free(content);
 
   v8::Persistent<v8::Object> obj =
     LXJS_GET_MAYBE_BUILD(XmlElement, elem);
+
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(obj);
+
 
   if (args[2]->IsObject()) {
     v8::Handle<v8::Object> attributes = args[2]->ToObject();
