@@ -135,6 +135,9 @@ XmlDocument::New(const v8::Arguments& args) {
     version = new v8::String::Utf8Value(v8::String::New("1.0"));
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
+
+  UpdateV8Memory();
+
   v8::Persistent<v8::Object> obj =
     LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
@@ -156,11 +159,13 @@ XmlDocument::New(const v8::Arguments& args) {
 
 XmlDocument::~XmlDocument() {
   xmlFreeDoc(xml_obj);
+  UpdateV8Memory();
 }
 
 void
 XmlDocument::set_encoding(const char* encoding) {
-  xml_obj->encoding = xmlStrdup((const xmlChar*)encoding);
+    if(xml_obj->encoding != NULL) xmlFree((xmlChar*)xml_obj->encoding);
+    xml_obj->encoding = xmlStrdup((const xmlChar*)encoding);
 }
 
 v8::Handle<v8::Value>

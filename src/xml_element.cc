@@ -105,7 +105,7 @@ XmlElement::Attr(const v8::Arguments& args) {
       }
       break;
 
-    // 1 or 2 arguments only dude
+    // 1 argument only dude
     default:
       LIBXMLJS_THROW_EXCEPTION(
         "Bad argument(s): #attr(name) or #attr({name: value})");
@@ -144,7 +144,7 @@ XmlElement::AddChild(const v8::Arguments& args) {
   child = element->import_element(child);
 
   if(child == NULL) {
-      LIBXMLJS_THROW_EXCEPTION("Could not add child (%s). Failed to copy node to new Document.");
+      LIBXMLJS_THROW_EXCEPTION("Could not add child. Failed to copy node to new Document.");
   }
 
   element->add_child(child);
@@ -469,7 +469,11 @@ XmlElement::import_element(XmlElement *element) {
         if(new_child == NULL) {
             return NULL;
         }
+        
         element->remove();
+
+        UpdateV8Memory();
+
         return LibXmlObj::Unwrap<XmlElement>(LXJS_GET_MAYBE_BUILD(XmlElement, new_child));
     }
 }
