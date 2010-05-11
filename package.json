@@ -1,7 +1,8 @@
 { "name" : "libxmljs"
 , "author" : "Jeff Smick <sprsquish@gmail.com>"
+, "contributors" : ["Marco Rogers"]
 , "description" : "libxml bindings for v8 javascript engine"
-, "version" : "0.0.2"
+, "version" : "0.3.0"
 , "scripts" :
   { "preinstall" : "make node"
   , "preuninstall" : "make clean"
