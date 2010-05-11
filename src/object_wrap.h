@@ -41,7 +41,7 @@ class LibXmlObj {
     _handle.MakeWeak(this, WeakCallback);
   }
 
-  v8::Persistent<v8::Object> _handle;  // ro
+  v8::Persistent<v8::Object> _handle;
 
   private:
 
