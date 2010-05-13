@@ -40,6 +40,9 @@ XmlSaxParser::XmlSaxParser() : sax_handler_(new _xmlSAXHandler) {
   };
   *sax_handler_ = tmp;
 }
+XmlSaxParser::~XmlSaxParser() {
+  this->releaseContext();
+}
 
 void
 XmlSaxParser::initializeContext() {

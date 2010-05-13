@@ -17,6 +17,7 @@ class XmlSaxParser : public XmlParser {
   public:
 
   XmlSaxParser();
+  virtual ~XmlSaxParser();
 
   static void
   Initialize(v8::Handle<v8::Object> target);
