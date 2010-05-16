@@ -6,6 +6,21 @@
 #include "xml_parser.h"
 #include "html_parser.h"
 
+static char *human_readable(long b_size) {
+    const char *sizes[] = { "B", "KB", "MB", "GB" };
+
+    int order = 0;
+    float f = (float) b_size;
+    while (f >= 1024 && order + 1 < sizeof(sizes)) {
+        order++;
+        f = f/1024.0;
+    }
+    char *result = NULL;
+    asprintf(&result, "%.2f%s", f, sizes[order]);
+
+    return result;
+}
+
 namespace libxmljs {
 
     v8::Persistent<v8::FunctionTemplate> memory_usage;
@@ -149,7 +164,7 @@ MemoryUsage(const v8::Arguments& args) {
 
     v8::HandleScope scope;
     v8::Local<v8::Object> obj = v8::Object::New();
-    int c = xmlMemUsed();
+    long c = xmlMemUsed();
 
     if(readable) {
         char *s = human_readable(c);
