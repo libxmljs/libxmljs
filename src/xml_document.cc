@@ -206,7 +206,7 @@ XmlDocument::get_root() {
   v8::HandleScope scope;
   xmlNode *root = xmlDocGetRootElement(xml_obj);
   if (root)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, root);
+    return scope.Close(LXJS_GET_MAYBE_BUILD(XmlElement, root));
   else
     return v8::Null();
 }
