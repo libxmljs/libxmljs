@@ -22,11 +22,13 @@ XmlElement::New(const v8::Arguments& args) {
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args[0]->ToObject());
   v8::String::Utf8Value name(args[1]);
 
-  v8::String::Utf8Value *content = NULL;
   v8::Handle<v8::Function> callback;
 
-  if (args[3]->IsString())
-    content = new v8::String::Utf8Value(args[3]->ToString());
+  char* content = NULL;
+  if(!args[3]->IsUndefined() && !args[3]->IsNull()) {
+      v8::String::Utf8Value content_(args[3]);
+      content = strdup(*content_);
+  }
 
   if (args[4]->IsFunction())
     callback = v8::Handle<v8::Function>::Cast(args[4]);
@@ -34,10 +36,10 @@ XmlElement::New(const v8::Arguments& args) {
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
                                 (const xmlChar*)*name,
-                                content ? (const xmlChar*)**content
-                                        : NULL);
-  if (content)
-    delete content;
+                                (const xmlChar*)content);
+
+  if(content)
+      free(content);
 
   v8::Persistent<v8::Object> obj =
     LXJS_GET_MAYBE_BUILD(XmlElement, elem);
