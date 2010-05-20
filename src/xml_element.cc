@@ -202,8 +202,7 @@ XmlElement::Text(const v8::Arguments& args) {
   assert(element);
 
   if (args.Length() == 0) {
-      return scope.Close(element->get_content());
-
+    return scope.Close(element->get_content());
   } else {
     element->set_content(*v8::String::Utf8Value(args[0]));
   }
@@ -229,7 +228,7 @@ XmlElement::Child(const v8::Arguments& args) {
     }
   }
 
-  return element->get_child(idx);
+  return scope.Close(element->get_child(idx));
 }
 
 v8::Handle<v8::Value>
@@ -401,7 +400,7 @@ XmlElement::set_content(const char* content) {
 v8::Handle<v8::Value>
 XmlElement::get_content() {
   xmlChar* content = xmlNodeGetContent(xml_obj);
-  if (*content != 0) {
+  if (content) {
     v8::Handle<v8::String> ret_content =
       v8::String::New((const char *)content);
     xmlFree(content);
