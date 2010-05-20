@@ -409,7 +409,7 @@ XmlElement::get_content() {
     return ret_content;
   }
 
-  return v8::Null();
+  return v8::String::Empty();
 }
 
 v8::Handle<v8::Value>
