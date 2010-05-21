@@ -41,7 +41,7 @@ describe('An element node', function() {
   });
 
   it('can have content assigned after creation', function() {
-    assertEqual(null, elem.text());
+    assertEqual("", elem.text());
     elem.text('content');
     assertEqual('content', elem.text());
   });
