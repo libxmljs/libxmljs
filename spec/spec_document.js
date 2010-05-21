@@ -112,10 +112,10 @@ describe('A new document', function() {
 
     var doc = new libxml.Document(function(n) {
       n.node('root', function(n) {
-        n.node('child', {to: 'wongfoo'}, function(n) {
+        n.node('child', {to: 'wongfoo'}, null, function(n) {
           n.node('grandchild', {from: 'julie numar'}, 'with love');
         });
-        n.node('sibling', 'with content!');
+        n.node('sibling', null, 'with content!');
       });
     });
     assertEqual(control, doc.toString());
