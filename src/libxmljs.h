@@ -22,8 +22,6 @@
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
 
-static char* human_readable(long b_size);
-
 #define LIBXMLJS_SET_METHOD(obj, name, callback)                              \
   obj->Set(v8::String::NewSymbol(name),                                       \
            v8::FunctionTemplate::New(callback)->GetFunction())

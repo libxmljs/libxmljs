@@ -6,21 +6,6 @@
 #include "xml_parser.h"
 #include "html_parser.h"
 
-static char *human_readable(long b_size) {
-    const char *sizes[] = { "B", "KB", "MB", "GB" };
-
-    int order = 0;
-    float f = (float) b_size;
-    while (f >= 1024 && order + 1 < sizeof(sizes)) {
-        order++;
-        f = f/1024.0;
-    }
-    char *result = NULL;
-    asprintf(&result, "%.2f%s", f, sizes[order]);
-
-    return result;
-}
-
 namespace libxmljs {
 
     v8::Persistent<v8::FunctionTemplate> memory_usage;
@@ -157,26 +142,12 @@ UpdateV8Memory() {
 
 v8::Handle<v8::Value>
 MemoryUsage(const v8::Arguments& args) {
-    int readable = 0;
-    if(args.Length() > 0 && args[0]->IsTrue()) {
-        readable = 1;
-    }
-
     v8::HandleScope scope;
     v8::Local<v8::Object> obj = v8::Object::New();
     long c = xmlMemUsed();
 
-    if(readable) {
-        char *s = human_readable(c);
-        obj->Set(v8::String::New("libxml"), v8::String::New(s));
-        free(s);
-        s = human_readable(current_xml_memory);
-        obj->Set(v8::String::New("v8"), v8::String::New(s));
-        free(s);
-    } else {
-        obj->Set(v8::String::New("libxml"), v8::Integer::New(c));
-        obj->Set(v8::String::New("v8"), v8::Integer::New(current_xml_memory));
-    }
+    obj->Set(v8::String::New("libxml"), v8::Integer::New(c));
+    obj->Set(v8::String::New("v8"), v8::Integer::New(current_xml_memory));
 
     return scope.Close(obj);
 }
