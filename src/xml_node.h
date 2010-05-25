@@ -9,7 +9,7 @@ namespace libxmljs {
 class XmlNode : public LibXmlObj {
   public:
 
-  _xmlNode *xml_obj;
+  xmlNode *xml_obj;
 
   explicit XmlNode(xmlNode* node);
   virtual ~XmlNode();
