@@ -15,7 +15,7 @@
 #include <libxml/HTMLtree.h>
 
 #include <memory>
-#include <string>
+#include <string.h>
 #include <cassert>  // for assert()
 
 #define LIBXMLJS_VERSION "v0.3.0"
