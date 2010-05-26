@@ -43,9 +43,10 @@ XmlNode::Namespace(const v8::Arguments& args) {
   if (args[0]->IsString()) {
     v8::String::Utf8Value ns_to_find(args[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
-    if (found_ns)
+    if (found_ns) {
       ns = LibXmlObj::Unwrap<XmlNamespace>(
-        LXJS_GET_MAYBE_BUILD(XmlNamespace, found_ns));
+             LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(found_ns));
+    }
   }
 
   // Namespace does not seem to exist, so create it.
@@ -141,7 +142,8 @@ XmlNode::~XmlNode() {
 
 v8::Handle<v8::Value>
 XmlNode::get_doc() {
-  return LXJS_GET_MAYBE_BUILD(XmlDocument, xml_obj->doc);
+  v8::HandleScope scope;
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
 }
 
 v8::Handle<v8::Value>
@@ -152,10 +154,11 @@ XmlNode::remove_namespace() {
 
 v8::Handle<v8::Value>
 XmlNode::get_namespace() {
+  v8::HandleScope scope;
   if (!xml_obj->ns)
     return v8::Null();
 
-  return LXJS_GET_MAYBE_BUILD(XmlNamespace, xml_obj->ns);
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(xml_obj->ns));
 }
 
 void
@@ -179,24 +182,30 @@ XmlNode::find_namespace(const char* search_str) {
 
 v8::Handle<v8::Value>
 XmlNode::get_parent() {
-  if (xml_obj->parent)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->parent);
+  v8::HandleScope scope;
+  if (xml_obj->parent) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->parent));
+  }
 
-  return LXJS_GET_MAYBE_BUILD(XmlDocument, xml_obj->doc);
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
 }
 
 v8::Handle<v8::Value>
 XmlNode::get_prev_sibling() {
-  if (xml_obj->prev)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->prev);
+  v8::HandleScope scope;
+  if (xml_obj->prev) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->prev));
+  }
 
   return v8::Null();
 }
 
 v8::Handle<v8::Value>
 XmlNode::get_next_sibling() {
-  if (xml_obj->next)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj->next);
+  v8::HandleScope scope;
+  if (xml_obj->next) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->next));
+  }
 
   return v8::Null();
 }

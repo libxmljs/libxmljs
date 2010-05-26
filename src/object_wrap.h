@@ -6,53 +6,39 @@
 
 namespace libxmljs {
 
-class LibXmlObj {
-  public:
+class LibXmlObj : public node::ObjectWrap {
+ public:
 
-  virtual ~LibXmlObj() {
-    if (!_handle.IsEmpty()) {
-      assert(_handle.IsNearDeath());
-      _handle->SetInternalField(0, v8::Undefined());
-      _handle.Dispose();
-      _handle.Clear();
-    }
-  }
+  template <class T, class S>
+  static inline
+  v8::Handle<v8::Object>
+  GetMaybeBuild (S *node)
+  {
+      v8::HandleScope scope;
+      T *obj;
+      if (!node->_private) {
+          obj = new T(node);
+          node->_private = static_cast<void *>(obj);
+          v8::Handle<v8::Value> __jsobj_ARG[1] = { v8::Null() };
+          v8::Handle<v8::Object> __jsobj_JS =
+              T::constructor_template->GetFunction()->NewInstance(1, __jsobj_ARG);
+          obj->Wrap(__jsobj_JS);
+      } else {
+          obj = static_cast<T *>(node->_private);
+      }
 
-  template <class T>
-  static inline T*
-  Unwrap(v8::Handle<v8::Object> handle) {
-    assert(!handle.IsEmpty());
-    assert(handle->InternalFieldCount() > 0);
-    return static_cast<T*>(v8::Handle<v8::External>::Cast(
-        handle->GetInternalField(0))->Value());
+      return scope.Close(obj->handle_);
   }
 
   inline void
   Wrap(v8::Handle<v8::Object> handle) {
-    assert(_handle.IsEmpty());
+    assert(handle_.IsEmpty());
     assert(handle->InternalFieldCount() > 0);
-    _handle = v8::Persistent<v8::Object>::New(handle);
-    _handle->SetInternalField(0, v8::External::New(this));
+    handle_ = v8::Persistent<v8::Object>::New(handle);
+    handle_->SetInternalField(0, v8::External::New(this));
     MakeWeak();
   }
 
-  inline void
-  MakeWeak(void) {
-    _handle.MakeWeak(this, WeakCallback);
-  }
-
-  v8::Persistent<v8::Object> _handle;
-
-  private:
-
-  static void
-  WeakCallback(v8::Persistent<v8::Value> value, void *data) {
-    LibXmlObj *obj = static_cast<LibXmlObj*>(data);
-    assert(value == obj->_handle);
-    value.Dispose();
-    value.Clear();
-    delete obj;
-  }
 };
 
 }  // namespace libxmljs

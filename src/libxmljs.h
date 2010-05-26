@@ -3,6 +3,7 @@
 #define SRC_LIBXMLJS_H_
 
 #include <v8.h>
+#include <node.h>
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
@@ -63,7 +64,7 @@ do {                                                                          \
 ({                                                                            \
   if (!node->_private)                                                        \
     BUILD_NODE(klass, node);                                                  \
-  static_cast<klass *>(node->_private)->_handle;                              \
+  static_cast<klass *>(node->_private)->handle_;                              \
 })
 
 namespace libxmljs {

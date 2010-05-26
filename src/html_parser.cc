@@ -13,16 +13,16 @@ BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
     xmlError *error = xmlGetLastError();
     if (error) {
       return THROW_SYNTAX_ERROR(error);
-
     } else {
       return v8::ThrowException(v8::Exception::Error(
         v8::String::New("Could not parse XML string")));
     }
+
     return v8::Null();
   }
 
   v8::Handle<v8::Object> jsDoc =
-    LXJS_GET_MAYBE_BUILD(HtmlDocument, doc);
+      LibXmlObj::GetMaybeBuild<HtmlDocument, xmlDoc>(doc);
   HtmlDocument *document = LibXmlObj::Unwrap<HtmlDocument>(jsDoc);
   document->errors = v8::Persistent<v8::Array>::New(errors);
   return scope.Close(jsDoc);

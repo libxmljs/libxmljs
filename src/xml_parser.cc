@@ -23,7 +23,7 @@ BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
   }
 
   v8::Handle<v8::Object> jsDoc =
-    LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
+      LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(jsDoc);
   document->errors = jsErrArray;
   return scope.Close(jsDoc);

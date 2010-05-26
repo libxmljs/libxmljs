@@ -42,9 +42,8 @@ XmlElement::New(const v8::Arguments& args) {
   if(content)
       free(content);
 
-  v8::Persistent<v8::Object> obj =
-    LXJS_GET_MAYBE_BUILD(XmlElement, elem);
-
+  v8::Handle<v8::Object> obj =
+      LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(elem);
   XmlElement *element = LibXmlObj::Unwrap<XmlElement>(obj);
 
 
@@ -302,9 +301,12 @@ XmlElement::get_name() {
 // TODO(sprsquish) make these work with namespaces
 v8::Handle<v8::Value>
 XmlElement::get_attr(const char* name) {
+  v8::HandleScope scope;
   xmlAttr* attr = xmlHasProp(xml_obj, (const xmlChar*)name);
-  if (attr)
-    return LXJS_GET_MAYBE_BUILD(XmlAttribute, attr);
+
+  if (attr) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlAttribute, xmlAttr>(attr));
+  }
 
   return v8::Null();
 }
@@ -315,9 +317,9 @@ XmlElement::set_attr(const char* name,
                      const char* value) {
   v8::HandleScope scope;
   v8::Handle<v8::Value> argv[3] = {
-    LXJS_GET_MAYBE_BUILD(XmlElement, xml_obj),
-    v8::String::New(name),
-    v8::String::New(value)
+      LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj),
+      v8::String::New(name),
+      v8::String::New(value)
   };
   v8::Persistent<v8::Object>::New(
     XmlAttribute::constructor_template->GetFunction()->NewInstance(3, argv));
@@ -336,8 +338,8 @@ XmlElement::get_attrs() {
     attributes->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1];
   do {
-    argv[0] = LXJS_GET_MAYBE_BUILD(XmlAttribute, attr);
-    push->Call(attributes, 1, argv);
+      argv[0] = LibXmlObj::GetMaybeBuild<XmlAttribute, xmlAttr>(attr);
+      push->Call(attributes, 1, argv);
   } while ((attr = attr->next));
 
   return scope.Close(attributes);
@@ -350,6 +352,7 @@ XmlElement::add_child(XmlElement* child) {
 
 v8::Handle<v8::Value>
 XmlElement::get_child(double idx) {
+  v8::HandleScope scope;
   double i = 1;
   xmlNode* child = xml_obj->children;
 
@@ -361,7 +364,7 @@ XmlElement::get_child(double idx) {
   if (!child)
     return v8::Null();
 
-  return LXJS_GET_MAYBE_BUILD(XmlElement, child);
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(child));
 }
 
 v8::Handle<v8::Value>
@@ -381,7 +384,7 @@ XmlElement::get_child_nodes() {
   for (int i = 0; i < set->nodeNr; ++i) {
     xmlNode *node = set->nodeTab[i];
     children->Set(v8::Number::New(i),
-                  LXJS_GET_MAYBE_BUILD(XmlElement, node));
+                  LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node));
   }
 
   return scope.Close(children);
@@ -417,6 +420,7 @@ XmlElement::get_content() {
 
 v8::Handle<v8::Value>
 XmlElement::get_next_element() {
+  v8::HandleScope scope;
   xmlNode *sibling;
 
   sibling = xml_obj->next;
@@ -426,25 +430,29 @@ XmlElement::get_next_element() {
   while (sibling && sibling->type != XML_ELEMENT_NODE)
     sibling = sibling->next;
 
-  if (sibling)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, sibling);
+  if (sibling) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(sibling));
+  }
 
   return v8::Null();
 }
 
 v8::Handle<v8::Value>
 XmlElement::get_prev_element() {
+  v8::HandleScope scope;
   xmlNode *sibling;
 
   sibling = xml_obj->prev;
   if (!sibling)
     return v8::Null();
 
-  while (sibling && sibling->type != XML_ELEMENT_NODE)
+  while (sibling && sibling->type != XML_ELEMENT_NODE) {
     sibling = sibling->prev;
+  }
 
-  if (sibling)
-    return LXJS_GET_MAYBE_BUILD(XmlElement, sibling);
+  if (sibling) {
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(sibling));
+  }
 
   return v8::Null();
 }
@@ -461,6 +469,7 @@ XmlElement::add_next_sibling(XmlElement* element) {
 
 XmlElement *
 XmlElement::import_element(XmlElement *element) {
+    v8::HandleScope scope;
     xmlNode *new_child;
     if(xml_obj->doc == element->xml_obj->doc) {
         return element;
@@ -474,7 +483,9 @@ XmlElement::import_element(XmlElement *element) {
 
         UpdateV8Memory();
 
-        return LibXmlObj::Unwrap<XmlElement>(LXJS_GET_MAYBE_BUILD(XmlElement, new_child));
+        v8::Handle<v8::Object> obj =
+            LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(new_child);
+        return LibXmlObj::Unwrap<XmlElement>(obj);
     }
 }
 

@@ -36,7 +36,7 @@ XmlNamespace::New(const v8::Arguments& args) {
     delete prefix;
   delete href;
 
-  return LXJS_GET_MAYBE_BUILD(XmlNamespace, ns);
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(ns));
 }
 
 v8::Handle<v8::Value>

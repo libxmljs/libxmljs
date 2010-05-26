@@ -138,8 +138,8 @@ XmlDocument::New(const v8::Arguments& args) {
 
   UpdateV8Memory();
 
-  v8::Persistent<v8::Object> obj =
-    LXJS_GET_MAYBE_BUILD(XmlDocument, doc);
+  v8::Handle<v8::Object> obj =
+      LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
 
   if (encoding)
@@ -212,11 +212,10 @@ XmlDocument::get_root() {
   xmlNode *root = xmlDocGetRootElement(xml_obj);
 
   if (root) {
-      v8::Handle<v8::Value> rooth = LXJS_GET_MAYBE_BUILD(XmlElement, root);
-      return scope.Close(rooth);
-  } else {
-      return v8::Null();
+      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(root));
   }
+
+  return v8::Null();
 }
 
 void
