@@ -52,8 +52,8 @@ describe('Parsing HTML', function() {
   var filename = path.dirname(__filename)+'/fixtures/parser.html';
 
   it('can be done by string', function() {
-    var str = fs.readFileSync(filename);
-  
+    var str = fs.readFileSync(filename, 'utf8');
+
     var doc = libxml.parseHtmlString(str);
     assertEqual('html', doc.root().name());
     assertEqual('Test HTML document', doc.get('head/title').text());
@@ -77,7 +77,7 @@ describe('A recoverable parse error when parsing an HTML file', function() {
 });
 
 describe('A recoverable parse error when parsing an HTML string', function() {
-  var str = fs.readFileSync(recoverableFile);
+  var str = fs.readFileSync(recoverableFile, 'utf8');
 
   it('will attach the errors to the document', function() {
     var doc = libxml.parseHtmlString(str);
