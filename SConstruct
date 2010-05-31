@@ -9,6 +9,7 @@ root_dir = dirname(File('SConstruct').rfile().abspath)
 sys.path.insert(0, join(root_dir, 'tools'))
 import js2c
 
+xml2config = 'xml2-config'
 if ARGUMENTS.get('debug', 0):
   node_exe ='node_g'
 else:
@@ -31,14 +32,15 @@ libpath = [
   '/usr/local/lib',
   '/usr/lib'
 ]
-cflags = ' '.join([
-  '-I/opt/local/include',
-  '-I/opt/local/include/libxml2',
-  '-I/usr/local/include',
-  '-I/usr/local/include/libxml2',
-  '-I/usr/include',
-  '-I/usr/include/libxml2',
-])
+
+#cflags = ' '.join([
+#  '-I/opt/local/include',
+#  '-I/opt/local/include/libxml2',
+#  '-I/usr/local/include',
+#  '-I/usr/include',
+#  '-I/usr/include/libxml2',
+#])
+cflags = shellOut([xml2config, '--cflags'])
 
 if using_node_js:
   node_flags = shellOut([node_exe, '--vars'])
