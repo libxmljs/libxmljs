@@ -13,7 +13,7 @@ BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
     xmlFreeDoc(doc);
     xmlError *error = xmlGetLastError();
     if (error) {
-      return THROW_SYNTAX_ERROR(error);
+      return v8::ThrowException(XmlSyntaxError::BuildSyntaxError(error));
 
     } else {
       return v8::ThrowException(v8::Exception::Error(

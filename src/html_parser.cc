@@ -12,7 +12,7 @@ BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
     xmlFreeDoc(doc);
     xmlError *error = xmlGetLastError();
     if (error) {
-      return THROW_SYNTAX_ERROR(error);
+        return v8::ThrowException(XmlSyntaxError::BuildSyntaxError(error));
     } else {
       return v8::ThrowException(v8::Exception::Error(
         v8::String::New("Could not parse XML string")));

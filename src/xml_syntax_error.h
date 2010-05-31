@@ -18,21 +18,6 @@ namespace libxmljs {
 #define INT1_SYMBOL     v8::String::NewSymbol("int1")
 #define COLUMN_SYMBOL   v8::String::NewSymbol("column")
 
-#define BUILD_SYNTAX_ERROR(error)                                             \
-({                                                                            \
-  XmlSyntaxError *syntax_error = new XmlSyntaxError(error);                   \
-  v8::Handle<v8::Value> args[1] = { v8::Null() };                             \
-  v8::Handle<v8::Object> js_error_obj =                                       \
-    XmlSyntaxError::constructor_template->                                    \
-    GetFunction()->                                                           \
-    NewInstance(1, args);                                                     \
-  syntax_error->Wrap(js_error_obj);                                           \
-  js_error_obj;                                                               \
-})
-
-#define THROW_SYNTAX_ERROR(error)                                             \
-  v8::ThrowException(BUILD_SYNTAX_ERROR(error));
-
   class XmlSyntaxError : public LibXmlObj {
     public:
 
@@ -41,6 +26,18 @@ namespace libxmljs {
 
     static void Initialize(v8::Handle<v8::Object> target);
     static v8::Persistent<v8::FunctionTemplate> constructor_template;
+
+    static inline
+    v8::Handle<v8::Value>
+    BuildSyntaxError(xmlError *error) {
+        v8::HandleScope scope;
+        XmlSyntaxError *syntax_error = new XmlSyntaxError(error);
+        v8::Handle<v8::Value> args[1] = { v8::Null() };
+        v8::Handle<v8::Object> js_error_obj =
+            XmlSyntaxError::constructor_template->GetFunction()->NewInstance(1, args);
+        syntax_error->Wrap(js_error_obj);
+        return scope.Close(js_error_obj);
+    }
 
     static void PushToArray(void *ctx, xmlError *error);
 

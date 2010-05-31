@@ -14,7 +14,7 @@ XmlSyntaxError::PushToArray(void *errs, xmlError *error) {
   v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
     errors->Get(v8::String::NewSymbol("push")));
   v8::Handle<v8::Value> argv[1] =
-    { BUILD_SYNTAX_ERROR(error) };
+      { BuildSyntaxError(error) };
   push->Call(errors, 1, argv);
 }
 
