@@ -1,4 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
+
 #include "xml_node.h"
 #include "xml_document.h"
 #include "xml_namespace.h"
@@ -137,6 +138,7 @@ XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
 }
 
 XmlNode::~XmlNode() {
+    xml_obj->_private = NULL;
   // xmlFree(xml_obj);
 }
 

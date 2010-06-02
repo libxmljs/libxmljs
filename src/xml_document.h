@@ -33,7 +33,7 @@ class XmlDocument : public LibXmlObj {
   v8::Handle<v8::Value> get_version();
   v8::Handle<v8::Value> to_string();
   v8::Handle<v8::Value> get_root();
-  void set_root(xmlNodePtr node);
+  void set_root(xmlNode *node);
   bool has_root();
 };
 

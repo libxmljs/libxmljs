@@ -15,8 +15,11 @@ class LibXmlObj : public node::ObjectWrap {
   GetMaybeBuild (S *node)
   {
       v8::HandleScope scope;
+
+      assert(node);
+
       T *obj;
-      if (!node->_private) {
+      if (!(node->_private)) {
           obj = new T(node);
           node->_private = static_cast<void *>(obj);
           v8::Handle<v8::Value> __jsobj_ARG[1] = { v8::Null() };

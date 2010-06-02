@@ -209,17 +209,17 @@ XmlDocument::has_root() {
 v8::Handle<v8::Value>
 XmlDocument::get_root() {
   v8::HandleScope scope;
-  xmlNode *root = xmlDocGetRootElement(xml_obj);
 
-  if (root) {
-      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(root));
+  if (xml_obj->children) {
+      v8::Handle<v8::Value> root = LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->children);
+      return scope.Close(root);
   }
 
   return v8::Null();
 }
 
 void
-XmlDocument::set_root(xmlNodePtr node) {
+XmlDocument::set_root(xmlNode *node) {
   xmlDocSetRootElement(xml_obj, node);
 }
 
