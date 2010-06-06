@@ -173,6 +173,9 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   target->Set(v8::String::NewSymbol("libxml_parser_version"),
               v8::String::New(xmlParserVersion));
 
+  target->Set(v8::String::NewSymbol("libxml_debug_enabled"),
+              v8::Boolean::New(debugging));
+
   v8::Local<v8::FunctionTemplate> func = v8::FunctionTemplate::New(MemoryUsage);
   memory_usage = v8::Persistent<v8::FunctionTemplate>::New(func);
   memory_usage->InstanceTemplate()->SetInternalFieldCount(1);

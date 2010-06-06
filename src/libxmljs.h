@@ -69,6 +69,14 @@ do {                                                                          \
 
 namespace libxmljs {
 
+#ifdef LIBXML_DEBUG_ENABLED
+static const bool debugging = true;
+#endif
+
+#ifndef LIBXML_DEBUG_ENABLED
+static const bool debugging = false;
+#endif
+
     static long current_xml_memory = 0;
     void UpdateV8Memory();
 

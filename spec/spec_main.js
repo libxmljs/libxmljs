@@ -15,6 +15,11 @@ describe('libxmljs', function() {
     if (specVerbose) print(libxml.libxml_parser_version+" ");
     assert(typeof libxml.libxml_parser_version == 'string');
   });
+
+  it('knows if libxml debugging is enabled', function() {
+    if (specVerbose) print(libxml.libxml_debug_enabled+" ");
+    assert(typeof libxml.libxml_debug_enabled == 'boolean');
+  });
 });
 
 }
