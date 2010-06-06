@@ -54,6 +54,7 @@ describe('A new document', function() {
   it('can have a root node attached to it', function() {
     var doc = new libxml.Document();
     var root = doc.node('root');
+    assertEqual('root', root.name());
     assertEqual(root, doc.root());
   });
 

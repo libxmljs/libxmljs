@@ -210,9 +210,10 @@ v8::Handle<v8::Value>
 XmlDocument::get_root() {
   v8::HandleScope scope;
 
-  if (xml_obj->children) {
-      v8::Handle<v8::Value> root = LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->children);
-      return scope.Close(root);
+  xmlNode *root = xmlDocGetRootElement(xml_obj);
+  if (root) {
+      v8::Handle<v8::Value> rooth = LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(root);
+      return scope.Close(rooth);
   }
 
   return v8::Null();
