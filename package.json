@@ -1,6 +1,6 @@
 { "name" : "libxmljs"
-, "author" : "Jeff Smick <sprsquish@gmail.com>"
-, "contributors" : ["Marco Rogers"]
+, "author" : "Marco Rogers - http://github.com/polotek"
+, "contributors" : ["Jeff Smick"]
 , "description" : "libxml bindings for v8 javascript engine"
 , "version" : "0.3.0"
 , "scripts" :
