@@ -2,7 +2,7 @@
 , "author" : "Marco Rogers - http://github.com/polotek"
 , "contributors" : ["Jeff Smick"]
 , "description" : "libxml bindings for v8 javascript engine"
-, "version" : "0.3.0"
+, "version" : "0.3.1"
 , "scripts" :
   { "preinstall" : "make node"
   , "preuninstall" : "make clean"
