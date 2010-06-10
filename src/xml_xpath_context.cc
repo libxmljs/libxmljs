@@ -25,12 +25,12 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   xmlXPathObject* result = xmlXPathEval(xpath, ctxt);
 
   if (!result) {
-    return v8::Array::New(0);
+      return scope.Close(v8::Array::New(0));
   }
 
   if (result->type != XPATH_NODESET) {
     xmlXPathFreeObject(result);
-    return v8::Array::New(0);
+    return scope.Close(v8::Array::New(0));
   }
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);

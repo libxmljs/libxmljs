@@ -146,7 +146,7 @@ XmlSaxParser::Push(const v8::Arguments& args) {
 
   parser->push(*parsable, parsable.length(), terminate);
 
-  return v8::Boolean::New(true);
+  return scope.Close(v8::Boolean::New(true));
 }
 
 void
@@ -176,7 +176,7 @@ XmlSaxParser::ParseString(const v8::Arguments& args) {
   parser->parse_string(*parsable, parsable.length());
 
   // TODO(sprsquish): return based on the parser
-  return v8::Boolean::New(true);
+  return scope.Close(v8::Boolean::New(true));
 }
 
 void
@@ -201,7 +201,7 @@ XmlSaxParser::ParseFile(const v8::Arguments& args) {
   parser->parse_file(*parsable);
 
   // TODO(sprsquish): return based on the parser
-  return v8::Boolean::New(true);
+  return scope.Close(v8::Boolean::New(true));
 }
 
 void

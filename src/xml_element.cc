@@ -331,7 +331,7 @@ XmlElement::get_attrs() {
   xmlAttr* attr = xml_obj->properties;
 
   if (!attr)
-    return v8::Array::New();
+      return scope.Close(v8::Array::New(0));
 
   v8::Handle<v8::Array> attributes = v8::Array::New();
   v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
@@ -374,7 +374,7 @@ XmlElement::get_child_nodes() {
   xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
 
   if (!child)
-    return v8::Array::New();
+      return scope.Close(v8::Array::New(0));
 
   do {
     xmlXPathNodeSetAdd(set, child);
@@ -469,7 +469,6 @@ XmlElement::add_next_sibling(XmlElement* element) {
 
 XmlElement *
 XmlElement::import_element(XmlElement *element) {
-    v8::HandleScope scope;
     xmlNode *new_child;
     if(xml_obj->doc == element->xml_obj->doc) {
         return element;

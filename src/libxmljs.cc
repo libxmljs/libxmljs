@@ -44,6 +44,7 @@ OnFatalError(const char* location,
 }
 
 // Extracts a C str from a V8 Utf8Value.
+// TODO: Fix this error state, maybe throw exception?
 const char *
 ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<str conversion failed>";

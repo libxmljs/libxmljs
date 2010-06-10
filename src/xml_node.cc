@@ -286,6 +286,8 @@ XmlNode::get_type() {
   case XML_DOCB_DOCUMENT_NODE:
     return v8::String::NewSymbol("docb_document");
   }
+
+  return v8::Null();
 }
 
 void

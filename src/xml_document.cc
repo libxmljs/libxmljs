@@ -172,8 +172,8 @@ v8::Handle<v8::Value>
 XmlDocument::get_encoding() {
   v8::HandleScope scope;
   if (xml_obj->encoding)
-    return v8::String::New((const char *)xml_obj->encoding,
-                           xmlStrlen((const xmlChar*)xml_obj->encoding));
+      return scope.Close(v8::String::New((const char *)xml_obj->encoding,
+                                         xmlStrlen((const xmlChar*)xml_obj->encoding)));
 
   return v8::Null();
 }
@@ -182,8 +182,8 @@ v8::Handle<v8::Value>
 XmlDocument::get_version() {
   v8::HandleScope scope;
   if (xml_obj->version)
-    return v8::String::New((const char *)xml_obj->version,
-                           xmlStrlen((const xmlChar*)xml_obj->version));
+      return scope.Close(v8::String::New((const char *)xml_obj->version,
+                                         xmlStrlen((const xmlChar*)xml_obj->version)));
 
   return v8::Null();
 }
