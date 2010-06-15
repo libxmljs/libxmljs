@@ -19,7 +19,7 @@
 #include <string.h>
 #include <cassert>  // for assert()
 
-#define LIBXMLJS_VERSION "v0.3.1"
+#define LIBXMLJS_VERSION "v0.4.0"
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
 
