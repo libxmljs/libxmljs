@@ -53,7 +53,7 @@ XmlSaxParser::initializeContext() {
 
 void
 XmlSaxParser::releaseContext() {
-  if (context_) {
+  if (context_ && context_->_private) {
     context_->_private = 0;
     if (context_->myDoc != NULL)
       xmlFreeDoc(context_->myDoc);
