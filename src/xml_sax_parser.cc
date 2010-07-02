@@ -4,6 +4,8 @@
 namespace libxmljs {
 
 XmlSaxParser::XmlSaxParser() : sax_handler_(new _xmlSAXHandler) {
+  context_ = 0;
+
   xmlSAXHandler tmp = {
     0,  // internalSubset;
     0,  // isStandalone;
