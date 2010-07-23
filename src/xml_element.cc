@@ -114,9 +114,11 @@ XmlElement::Attr(const v8::Arguments& args) {
   for (unsigned int i = 0; i < properties->Length(); i++) {
     v8::Local<v8::String> prop_name = properties->Get(
       v8::Number::New(i))->ToString();
-    v8::String::Utf8Value name(prop_name);
-    v8::String::Utf8Value value(attrs->Get(prop_name));
-    element->set_attr(*name, *value);
+    if(attrs->HasRealNamedProperty(prop_name)) {
+        v8::String::Utf8Value name(prop_name);
+        v8::String::Utf8Value value(attrs->Get(prop_name));
+        element->set_attr(*name, *value);
+    }
   }
 
   return scope.Close(args.This());
@@ -371,10 +373,11 @@ v8::Handle<v8::Value>
 XmlElement::get_child_nodes() {
   v8::HandleScope scope;
   xmlNode* child = xml_obj->children;
-  xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
 
   if (!child)
       return scope.Close(v8::Array::New(0));
+
+  xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
 
   do {
     xmlXPathNodeSetAdd(set, child);
@@ -386,6 +389,8 @@ XmlElement::get_child_nodes() {
     children->Set(v8::Number::New(i),
                   LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node));
   }
+
+  xmlXPathFreeNodeSet(set);
 
   return scope.Close(children);
 }

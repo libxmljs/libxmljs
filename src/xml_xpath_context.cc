@@ -30,6 +30,7 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
 
   if (result->type != XPATH_NODESET) {
     xmlXPathFreeObject(result);
+
     return scope.Close(v8::Array::New(0));
   }
 

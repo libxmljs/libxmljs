@@ -228,9 +228,15 @@ XmlNode::to_string() {
   if(xmlstr) {
       v8::Handle<v8::String> str = v8::String::New((char*)xmlstr, xmlBufferLength(buf));
       xmlSaveClose(savectx);
+
+      xmlBufferFree(buf);
+
       return scope.Close(str);
   } else { 
       xmlSaveClose(savectx);
+
+      xmlBufferFree(buf);
+
       return v8::Null();
   }
 }

@@ -9,7 +9,7 @@ namespace libxmljs {
 inline v8::Handle<v8::Value>
 BuildDoc(xmlDoc *doc, v8::Persistent<v8::Array> jsErrArray) {
   v8::HandleScope scope;
-  if (doc == NULL) {
+  if (!doc) {
     xmlFreeDoc(doc);
     xmlError *error = xmlGetLastError();
     if (error) {
