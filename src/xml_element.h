@@ -48,7 +48,6 @@ class XmlElement : public XmlNode {
   v8::Handle<v8::Value> get_prev_element();
   void add_prev_sibling(XmlElement* element);
   void add_next_sibling(XmlElement* element);
-  XmlElement *import_element(XmlElement* element);
 };
 
 }  // namespace libxmljs
