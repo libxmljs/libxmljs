@@ -67,9 +67,8 @@ XmlNode::Namespace(const v8::Arguments& args) {
     v8::Handle<v8::Function> define_namespace =
       XmlNamespace::constructor_template->GetFunction();
 
-    v8::Persistent<v8::Object> new_ns = v8::Persistent<v8::Object>::New(
-      define_namespace->Call(args.This(), argc, argv)->ToObject());
-    ns = LibXmlObj::Unwrap<XmlNamespace>(new_ns);
+    v8::Handle<v8::Value> new_ns = define_namespace->Call(args.This(), argc, argv);
+    ns = LibXmlObj::Unwrap<XmlNamespace>(new_ns->ToObject());
   }
 
   node->set_namespace(ns->xml_obj);

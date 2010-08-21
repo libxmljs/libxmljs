@@ -323,8 +323,7 @@ XmlElement::set_attr(const char* name,
       v8::String::New(name),
       v8::String::New(value)
   };
-  v8::Persistent<v8::Object>::New(
-    XmlAttribute::constructor_template->GetFunction()->NewInstance(3, argv));
+  XmlAttribute::constructor_template->GetFunction()->NewInstance(3, argv);
 }
 
 v8::Handle<v8::Value>
