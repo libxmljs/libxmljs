@@ -297,7 +297,8 @@ XmlElement::set_name(const char* name) {
 
 v8::Handle<v8::Value>
 XmlElement::get_name() {
-  return v8::String::New((const char*)xml_obj->name);
+    if(xml_obj->name) return v8::String::New((const char*)xml_obj->name);
+    else return v8::Undefined();
 }
 
 // TODO(sprsquish) make these work with namespaces
