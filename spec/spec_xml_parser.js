@@ -76,7 +76,7 @@ describe('A recoverable parse error when parsing an XML file', function() {
       column: 13
     };
     assertEqual(1, doc.errors().length);
-    assertEqual(err, doc.errors()[0]);
+    assertEqual(err.code, doc.errors()[0].code);
   });
 });
 
@@ -103,7 +103,7 @@ describe('A fatal parse error when parsing an XML string', function() {
       int1: null,
       column: 10
     };
-    assertEqual(errorControl, err);
+    assertEqual(errorControl.code, err.code);
   });
 });
 
@@ -127,7 +127,7 @@ describe('A recoverable parse error when parsing an XML string', function() {
       column: 13
     };
     assertEqual(1, doc.errors().length);
-    assertEqual(err, doc.errors()[0]);
+    assertEqual(err.code, doc.errors()[0].code);
   });
 });
 
