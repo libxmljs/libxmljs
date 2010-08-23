@@ -6,9 +6,9 @@ It also plays nicely with [[node.js|http://nodejs.org/]]
 
 ## Basics
 
-* GitHub Repo - [[http://github.com/polotek/libxmljs]]
-* Docs - [[http://github.com/polotek/libxmljs/wiki]]
-* Mailing list - [[http://groups.google.com/group/libxmljs]]
+* GitHub Repo - [http://github.com/polotek/libxmljs](http://github.com/polotek/libxmljs)
+* Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+* Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
 
 ## API
 
