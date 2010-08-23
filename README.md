@@ -2,7 +2,7 @@
 
 LibXML bindings for Google's v8 javascript engine.
 
-It also plays nicely with [[node.js|http://nodejs.org/]]
+It also plays nicely with [node.js](http://nodejs.org/)
 
 ## Basics
 
@@ -12,7 +12,7 @@ It also plays nicely with [[node.js|http://nodejs.org/]]
 
 ## API
 
-Some examples below or check out the full [[http://github.com/polotek/libxmljs/wiki]]
+Some examples below or check out the full [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 
 ## Requirements
 
