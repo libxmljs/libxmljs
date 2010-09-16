@@ -371,28 +371,26 @@ XmlElement::get_child(double idx) {
 
 v8::Handle<v8::Value>
 XmlElement::get_child_nodes() {
-  v8::HandleScope scope;
-  xmlNode* child = xml_obj->children;
+    v8::HandleScope scope;
+    xmlNode* child = xml_obj->children;
 
-  if (!child)
-      return scope.Close(v8::Array::New(0));
+    if (!child)
+        return scope.Close(v8::Array::New(0));
 
-  xmlNodeSetPtr set = xmlXPathNodeSetCreate(child);
+    uint32_t len = 0, i = 0;
+    do {
+        len++;
+    } while ((child = child->next));
 
-  do {
-    xmlXPathNodeSetAdd(set, child);
-  } while ((child = child->next));
-
-  v8::Handle<v8::Array> children = v8::Array::New(set->nodeNr);
-  for (int i = 0; i < set->nodeNr; ++i) {
-    xmlNode *node = set->nodeTab[i];
-    children->Set(v8::Number::New(i),
-                  LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node));
-  }
-
-  xmlXPathFreeNodeSet(set);
-
-  return scope.Close(children);
+    v8::Handle<v8::Array> children = v8::Array::New(len);
+    child = xml_obj->children;
+    do {
+        children->Set(v8::Number::New(i),
+                      LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(child));
+        i++;
+    } while ((child = child->next) && i < len);
+    
+    return scope.Close(children);
 }
 
 v8::Handle<v8::Value>
