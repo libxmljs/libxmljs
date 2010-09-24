@@ -15,6 +15,7 @@ It also plays nicely with [[node.js|http://nodejs.org/]]
 * libxml
 * node.js
 * v8 (comes bundled with node, no need to install)
+* [scons](http://www.scons.org/) (for building)
 
 ## Installation
 
