@@ -28,6 +28,8 @@ class XmlNode : public LibXmlObj {
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
   static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
 
+  v8::Persistent<v8::Value> doc;
+
   v8::Handle<v8::Value> get_doc();
   v8::Handle<v8::Value> remove_namespace();
   v8::Handle<v8::Value> get_namespace();

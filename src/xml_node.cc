@@ -133,11 +133,19 @@ XmlNode::Remove(const v8::Arguments& args) {
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
-  xml_obj->_private = this;
+    xml_obj->_private = this;
+    if(xml_obj->doc) {
+        doc = v8::Persistent<v8::Value>::New(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
+    }
 }
 
 XmlNode::~XmlNode() {
     xml_obj->_private = NULL;
+    doc.Dispose();
+    doc.Clear();
+
+  // We do not free the xmlNode here. It could still be part of a document
+  // It will be freed when the doc is freed
   // xmlFree(xml_obj);
 }
 

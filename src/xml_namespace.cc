@@ -1,6 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
 #include "xml_namespace.h"
 #include "xml_node.h"
+#include "xml_document.h"
 
 namespace libxmljs {
 
@@ -37,6 +38,24 @@ XmlNamespace::New(const v8::Arguments& args) {
   delete href;
 
   return scope.Close(LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(ns));
+}
+
+XmlNamespace::XmlNamespace(xmlNs* node) : xml_obj(node) {
+    v8::HandleScope scope;
+    xml_obj->_private = this;
+    if(xml_obj->context) {
+        doc = v8::Persistent<v8::Value>::New(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->context));
+    }
+}
+
+XmlNamespace::~XmlNamespace() {
+    xml_obj->_private = NULL;
+    doc.Dispose();
+    doc.Clear();
+
+  // We do not free the xmlNode here. It could still be part of a document
+  // It will be freed when the doc is freed
+  // xmlFree(xml_obj);
 }
 
 v8::Handle<v8::Value>

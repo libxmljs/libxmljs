@@ -10,11 +10,13 @@ class XmlNamespace : public LibXmlObj {
   public:
 
   xmlNs* xml_obj;
+
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  explicit XmlNamespace(xmlNs* ns) : xml_obj(ns) {}
-  XmlNamespace(xmlNode* node, const char* prefix, const char* href);
+  explicit XmlNamespace(xmlNs* ns);
+  XmlNamespace(xmlNs* node, const char* prefix, const char* href);
+  ~XmlNamespace();
 
   static v8::Handle<v8::Value> New(xmlNs* ns);
 
@@ -23,6 +25,8 @@ class XmlNamespace : public LibXmlObj {
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Href(const v8::Arguments& args);
   static v8::Handle<v8::Value> Prefix(const v8::Arguments& args);
+
+  v8::Persistent<v8::Value> doc;
 
   v8::Handle<v8::Value> get_href();
   v8::Handle<v8::Value> get_prefix();
