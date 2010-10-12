@@ -58,7 +58,7 @@ XmlSaxParser::releaseContext() {
   if (context_) {
     context_->_private = 0;
     if (context_->myDoc != NULL)
-      xmlFreeDoc(context_->myDoc);
+      xmlFree(context_->myDoc);
 
     xmlFreeParserCtxt(context_);
     context_ = 0;
@@ -188,6 +188,8 @@ XmlSaxParser::parse_string(const char* str,
   parse();
   context_->sax = NULL;
   xmlFreeParserCtxt(context_);
+  // Avoid freeing again in releaseContext
+  context_ = NULL;
 }
 
 v8::Handle<v8::Value>
