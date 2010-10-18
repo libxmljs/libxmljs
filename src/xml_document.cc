@@ -158,7 +158,7 @@ XmlDocument::New(const v8::Arguments& args) {
 }
 
 XmlDocument::~XmlDocument() {
-  xmlFreeDoc(xml_obj);
+  xmlFree(xml_obj);
   UpdateV8Memory();
 }
 

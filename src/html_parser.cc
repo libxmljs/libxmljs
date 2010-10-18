@@ -9,7 +9,7 @@ inline v8::Handle<v8::Value>
 BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
   v8::HandleScope scope;
   if (doc == NULL) {
-    xmlFreeDoc(doc);
+    xmlFree(doc);
     xmlError *error = xmlGetLastError();
     if (error) {
         return v8::ThrowException(XmlSyntaxError::BuildSyntaxError(error));
