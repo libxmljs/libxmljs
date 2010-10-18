@@ -48,13 +48,15 @@
 
 (function() {
 with(require('sys')) {
+  if (typeof gc == 'undefined') var gc = function() {}
+
   var path = require('path');
   var fs = require('fs');
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];
   var specVerbose  = process.ARGV.join(";").match(/;=verbose/);
-
+  
   var describe = function(name, func) {
     specStack.push(name);
     if (specVerbose) print(name);
@@ -62,6 +64,7 @@ with(require('sys')) {
     func();
     if (specVerbose) print("\n\n");
     specStack.pop();
+    gc();
   };
 
   var it = function(name, func) {
@@ -82,6 +85,7 @@ with(require('sys')) {
     catch(e) { if (e != 'fail') specError(e); }
     specStack.pop();
     specAfterEach();
+    gc();
   };
 
   var specError = function(message) {

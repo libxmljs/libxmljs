@@ -5,14 +5,14 @@ describe("SAX Push Parser", function() {
   var filename = path.dirname(__filename)+'/fixtures/sax_parser.xml';
 
   function createParser(parserType) {
-    parser = new libxml[parserType](function(cb) {
+    var parser = new libxml[parserType](function(cb) {
       function argsToArray(args) {
         var ary = [];
         var i;
         for (i = 0; i < args.length; i++)
           ary.push(args[i]);
         return ary;
-      };
+      }
 
       cb.onStartDocument(function() {
         callbacks.startDocument.push(argsToArray(arguments));
@@ -53,7 +53,7 @@ describe("SAX Push Parser", function() {
       });
     });
     return parser;
-  };
+  }
 
   beforeEach(function() {
     callbacks = clone(callbackTest);
@@ -92,8 +92,10 @@ describe("SAX Push Parser", function() {
     var str = fs.readFileSync(filename, 'utf8');
     var parser = createParser('SaxParser');
 
-    for (var i=0; i<10; i++)
-      parser.parseString(str);
+    for (var i=0; i<10; i++) {
+        gc();
+        parser.parseString(str);
+    }
 
     assert(true);
   });
@@ -101,8 +103,10 @@ describe("SAX Push Parser", function() {
   it('can can be reused as a file parser', function() {
     var parser = createParser('SaxParser');
 
-    for (var i=0; i<10; i++)
-      parser.parseFile(filename);
+    for (var i=0; i<10; i++) {
+        gc();
+        parser.parseFile(filename);
+    }
 
     assert(true);
   });
