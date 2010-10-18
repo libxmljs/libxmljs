@@ -11,4 +11,4 @@ clean:
 	@$(SCONS) -c libxmljs.node
 
 test:
-	node spec/tacular.js
+	node --expose_gc spec/tacular.js
