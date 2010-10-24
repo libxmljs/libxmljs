@@ -121,6 +121,58 @@ describe('A new document', function() {
     });
     assertEqual(control, doc.toString());
   });
+
+  it('can add child nodes', function() {
+    var gchild = '';
+    var doc1_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"><grandchild from="julie numar">with love</grandchild></child><sibling>with content!</sibling></root>',
+      ''
+    ].join("\n");
+
+    var doc2_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
+      ''
+    ].join("\n");
+
+    var doc1 = libxml.parseXmlString(doc1_string);
+    var doc2 = libxml.parseXmlString(doc2_string);
+    doc2.child(0).addChild(doc1.child(0).child(0));
+    assertEqual(doc1.toString(), doc2.toString());
+  });
+
+  it('can haz cloned node', function() {
+    var gchild_string  = '<grandchild from="julie numar">with love</grandchild>';
+    var doc1_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo">'+gchild_string+'</child><sibling>with content!</sibling></root>',
+      ''
+    ].join("\n");
+
+    var doc2_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
+      ''
+    ].join("\n");
+
+    var doc1 = libxml.parseXmlString(doc1_string);
+    var doc2 = libxml.parseXmlString(doc2_string);
+    doc2.child(0).addChild(doc1.child(0).child(0)); // add gchild to doc 2
+
+    assertEqual(doc1.toString(), doc2.toString());; // both documents should be the same
+
+    var gchild = doc1.child(0).child(0).remove(); //the removed element
+    assertEqual(gchild_string, gchild.toString()); //make sure it's the same as what we started with
+
+    //require('sys').debug('doc1: '+doc1.toString());
+    //require('sys').debug('doc2: '+doc2.toString());
+    assertEqual(gchild_string, doc2.child(0).child(0).toString()); // doc2 should have gchild
+
+    assertEqual(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
+
+    assertEqual(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
+  });
 });
 
 }
