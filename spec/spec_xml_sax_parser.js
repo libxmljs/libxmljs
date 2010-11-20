@@ -85,7 +85,7 @@ describe("SAX Push Parser", function() {
     parser.parseFile(filename);
 
     var control = clone(callbackControl);
-    assert.equal(JSON.stringify(control), JSON.stringify(callbacks));
+    assert.deepEqual(control, callbacks);
   });
 
   it('can can be reused as a string parser', function() {

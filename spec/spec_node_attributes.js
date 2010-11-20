@@ -40,7 +40,7 @@ describe('A node attribute', function() {
     var doc = new libxml.Document();
     var elem = doc.node('root');
 
-    assert.equal([], elem.attrs());
+    assert.deepEqual([], elem.attrs());
 
     elem.attr({foo: 'bar'})
         .attr({bar: 'baz'})

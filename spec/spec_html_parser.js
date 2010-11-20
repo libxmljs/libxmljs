@@ -72,7 +72,7 @@ describe('A recoverable parse error when parsing an HTML file', function() {
   it('will attach the errors to the document', function() {
     var doc = libxml.parseHtmlFile(recoverableFile);
     assert.equal(4, doc.errors().length);
-    assert.equal(recoverableErrors, doc.errors());
+    assert.deepEqual(recoverableErrors, doc.errors());
   });
 });
 
@@ -84,7 +84,7 @@ describe('A recoverable parse error when parsing an HTML string', function() {
     assert.equal(4, doc.errors().length);
     for (var i in recoverableErrors)
       recoverableErrors[i].file = null;
-    assert.equal(recoverableErrors, doc.errors());
+    assert.deepEqual(recoverableErrors, doc.errors());
   });
 });
 

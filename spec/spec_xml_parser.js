@@ -53,7 +53,7 @@ describe('A fatal parse error when parsing an XML file', function() {
       int1: null,
       column: 10
     };
-    assert.equal(errorControl, err);
+    assert.deepEqual(errorControl, err);
   });
 });
 
