@@ -10,5 +10,8 @@ clean:
 	@$(SCONS) -c
 	@$(SCONS) -c libxmljs.node
 
+test-verbose:
+	node --expose_gc spec/tacular.js --verbose
+
 test:
 	node --expose_gc spec/tacular.js
