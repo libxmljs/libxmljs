@@ -119,10 +119,10 @@ class XmlSaxParser : public XmlParser {
   void initializeContext();
   void releaseContext();
 
-  _xmlParserCtxt* context_;
+  xmlParserCtxt* context_;
 
   v8::Persistent<v8::Object> callbacks_;
-  _xmlSAXHandler* sax_handler_;
+  xmlSAXHandler* sax_handler_;
 
   private:
 
