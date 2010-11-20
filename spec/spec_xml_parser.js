@@ -7,27 +7,27 @@ describe('Parsing XML', function() {
     var str = fs.readFileSync(filename, 'utf8');
 
     var doc = libxml.parseXmlString(str);
-    assertEqual('1.0', doc.version());
-    assertEqual('UTF-8', doc.encoding());
-    assertEqual('root', doc.root().name());
-    assertEqual('child', doc.get('child').name());
-    assertEqual('grandchild', doc.get('child').get('grandchild').name());
-    assertEqual('with love', doc.get('child/grandchild').text());
-    assertEqual('sibling', doc.get('sibling').name());
-    assertEqual('with content!', doc.get('sibling').text());
-    assertEqual(str, doc.toString());
+    assert.equal('1.0', doc.version());
+    assert.equal('UTF-8', doc.encoding());
+    assert.equal('root', doc.root().name());
+    assert.equal('child', doc.get('child').name());
+    assert.equal('grandchild', doc.get('child').get('grandchild').name());
+    assert.equal('with love', doc.get('child/grandchild').text());
+    assert.equal('sibling', doc.get('sibling').name());
+    assert.equal('with content!', doc.get('sibling').text());
+    assert.equal(str, doc.toString());
   });
 
   it('can be done by file', function() {
     var doc = libxml.parseXmlFile(filename);
-    assertEqual('1.0', doc.version());
-    assertEqual('UTF-8', doc.encoding());
-    assertEqual('root', doc.root().name());
-    assertEqual('child', doc.get('child').name());
-    assertEqual('grandchild', doc.get('child').get('grandchild').name());
-    assertEqual('with love', doc.get('child/grandchild').text());
-    assertEqual('sibling', doc.get('sibling').name());
-    assertEqual('with content!', doc.get('sibling').text());
+    assert.equal('1.0', doc.version());
+    assert.equal('UTF-8', doc.encoding());
+    assert.equal('root', doc.root().name());
+    assert.equal('child', doc.get('child').name());
+    assert.equal('grandchild', doc.get('child').get('grandchild').name());
+    assert.equal('with love', doc.get('child/grandchild').text());
+    assert.equal('sibling', doc.get('sibling').name());
+    assert.equal('with content!', doc.get('sibling').text());
   });
 });
 
@@ -53,7 +53,7 @@ describe('A fatal parse error when parsing an XML file', function() {
       int1: null,
       column: 10
     };
-    assertEqual(errorControl, err);
+    assert.equal(errorControl, err);
   });
 });
 
@@ -75,8 +75,8 @@ describe('A recoverable parse error when parsing an XML file', function() {
       int1: null,
       column: 13
     };
-    assertEqual(1, doc.errors().length);
-    assertEqual(err.code, doc.errors()[0].code);
+    assert.equal(1, doc.errors().length);
+    assert.equal(err.code, doc.errors()[0].code);
   });
 });
 
@@ -103,7 +103,7 @@ describe('A fatal parse error when parsing an XML string', function() {
       int1: null,
       column: 10
     };
-    assertEqual(errorControl.code, err.code);
+    assert.equal(errorControl.code, err.code);
   });
 });
 
@@ -126,8 +126,8 @@ describe('A recoverable parse error when parsing an XML string', function() {
       int1: null,
       column: 13
     };
-    assertEqual(1, doc.errors().length);
-    assertEqual(err.code, doc.errors()[0].code);
+    assert.equal(1, doc.errors().length);
+    assert.equal(err.code, doc.errors()[0].code);
   });
 });
 

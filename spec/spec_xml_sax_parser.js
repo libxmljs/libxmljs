@@ -65,7 +65,7 @@ describe("SAX Push Parser", function() {
     parser.parseString(str);
     var control = JSON.stringify(callbackControl);
     var test = JSON.stringify(callbacks);
-    assertEqual(control, test);
+    assert.equal(control, test);
   });
 
   it('will properly parse a string chunk by chunk', function() {
@@ -77,7 +77,7 @@ describe("SAX Push Parser", function() {
 
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
-    assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
+    assert.equal(JSON.stringify(control), JSON.stringify(callbacks));
   });
 
   it('will properly parse a file', function() {
@@ -85,7 +85,7 @@ describe("SAX Push Parser", function() {
     parser.parseFile(filename);
 
     var control = clone(callbackControl);
-    assertEqual(JSON.stringify(control), JSON.stringify(callbacks));
+    assert.equal(JSON.stringify(control), JSON.stringify(callbacks));
   });
 
   it('can can be reused as a string parser', function() {
@@ -97,7 +97,7 @@ describe("SAX Push Parser", function() {
         parser.parseString(str);
     }
 
-    assert(true);
+    assert.ok(true);
   });
 
   it('can can be reused as a file parser', function() {
@@ -108,7 +108,7 @@ describe("SAX Push Parser", function() {
         parser.parseFile(filename);
     }
 
-    assert(true);
+    assert.ok(true);
   });
 });
 

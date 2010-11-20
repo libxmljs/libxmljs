@@ -28,14 +28,15 @@
  *   // Supply a function that takes no arguments for a syncronous test
  *   it("should do X", function() {
  *     // place code and assertions here
- *     // available: assert(x), assertEqual(x, y), assertNotEqual(x, y)
+ *     // assert module is available
+       assert.ok(true);
  *   });
  *
  *   // Supply a function that takes one argument, a promise, to
  *   // use an async test
  *   it("should fail async", function(promise){
  *     promise.addCallback(function(){
- *       assert(false);
+ *       assert.ok(false);
  *     })
  *     setTimeout(function(){ promise.emitSuccess() }, 500);
  *   });
@@ -50,6 +51,7 @@
 with(require('sys')) {
   if (typeof gc == 'undefined') var gc = function() {}
 
+  var assert = require('assert');
   var path = require('path');
   var fs = require('fs');
   var specCount    = 0;
@@ -167,20 +169,6 @@ with(require('sys')) {
         return element.toString();
       }
     }
-  };
-
-  var assert = function(value) {
-    value ? specPass() : specFail("Expected " + value + " to be true");
-  };
-
-  var assertEqual = function(a, b) {
-    var debugA = inspect(a), debugB = inspect(b);
-    debugA == debugB ? specPass() : specFail("Expected:\n" + debugA + "\n\n" + "Found:\n" + debugB);
-  };
-
-  var assertNotEqual = function(a, b) {
-    var debugA = inspect(a), debugB = inspect(b);
-    debugA != debugB ? specPass() : specFail("Expected:\n" + debugA + "\n\nto not equal:\n" + debugB);
   };
 
   var beforeEach = function(func) {

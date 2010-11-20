@@ -11,7 +11,7 @@ describe('Document traversal on a built document', function() {
       });
     });
 
-    assertEqual(doc, gchild.doc());
+    assert.equal(doc, gchild.doc());
   });
 
   it('can travel down the tree', function() {
@@ -24,7 +24,7 @@ describe('Document traversal on a built document', function() {
       });
     });
     // uses the specific and default syntax for returning a child.
-    assertEqual(gchild, doc.child(1).child());
+    assert.equal(gchild, doc.child(1).child());
   });
 
   it('can travel across siblings', function() {
@@ -35,7 +35,7 @@ describe('Document traversal on a built document', function() {
         sibling = n.node('sibling');
       });
     });
-    assertEqual(sibling, doc.child(2));
+    assert.equal(sibling, doc.child(2));
   });
 
   it('can travel up the tree', function() {
@@ -47,8 +47,8 @@ describe('Document traversal on a built document', function() {
         });
       });
     });
-    assertEqual(doc, doc.root().parent());
-    assertEqual(child, gchild.parent());
+    assert.equal(doc, doc.root().parent());
+    assert.equal(child, gchild.parent());
   });
 
   it('will list children', function() {
@@ -61,9 +61,9 @@ describe('Document traversal on a built document', function() {
       });
     });
     var i;
-    assertEqual(children.length, doc.childNodes().length);
+    assert.equal(children.length, doc.childNodes().length);
     for (i = 0; i < children.length; i++)
-      assertEqual(children[i], doc.child(i+1));
+      assert.equal(children[i], doc.child(i+1));
   });
 
   it('can traverse siblings', function() {
@@ -75,10 +75,10 @@ describe('Document traversal on a built document', function() {
         children.push(n.node('nextSibling'));
       });
     });
-    assertEqual(children[0], children[1].prevSibling());
-    assertEqual(children[2], children[1].nextSibling());
-    assertEqual(null, children[0].prevSibling());
-    assertEqual(null, children[2].nextSibling());
+    assert.equal(children[0], children[1].prevSibling());
+    assert.equal(children[2], children[1].nextSibling());
+    assert.equal(null, children[0].prevSibling());
+    assert.equal(null, children[2].nextSibling());
   });
 });
 
@@ -88,7 +88,7 @@ describe('Document traversal on a parsed document', function() {
       '<?xml version="1.0"?>\
       <root><child><grandchild /></child></root>\
     ');
-    assertEqual(doc, doc.child(0).child(1).doc());
+    assert.equal(doc, doc.child(0).child(1).doc());
   });
 
   it('can travel down the tree', function() {
@@ -97,7 +97,7 @@ describe('Document traversal on a parsed document', function() {
       <root><child><grandchild /></child></root>\
     ');
     // uses the specific and default syntax for returning a child.
-    assertEqual('grandchild', doc.child(1).child().name());
+    assert.equal('grandchild', doc.child(1).child().name());
   });
 
   it('can travel across siblings', function() {
@@ -105,7 +105,7 @@ describe('Document traversal on a parsed document', function() {
       '<?xml version="1.0"?>\
       <root><child /><sibling /></root>\
     ');
-    assertEqual('sibling', doc.child(2).name());
+    assert.equal('sibling', doc.child(2).name());
   });
 
   it('can travel up the tree', function() {
@@ -114,8 +114,8 @@ describe('Document traversal on a parsed document', function() {
       '<?xml version="1.0"?>\
       <root><child><grandchild /></child></root>\
     ');
-    assertEqual(doc, doc.root().parent());
-    assertEqual('child', doc.child().child().parent().name());
+    assert.equal(doc, doc.root().parent());
+    assert.equal('child', doc.child().child().parent().name());
   });
 
   it('will list children', function() {
@@ -125,9 +125,9 @@ describe('Document traversal on a parsed document', function() {
     ');
     var children = ['child', 'sibling1', 'sibling2'];
     var i;
-    assertEqual(3, doc.childNodes().length);
+    assert.equal(3, doc.childNodes().length);
     for (i = 0; i < children.length; i++)
-      assertEqual(children[i], doc.child(i+1).name());
+      assert.equal(children[i], doc.child(i+1).name());
   });
 
   it('can traverse siblings', function() {
@@ -138,11 +138,11 @@ describe('Document traversal on a parsed document', function() {
 
     var children = ['prevSibling', 'child', 'nextSibling'];
     var child = doc.child(2);
-    assertEqual('child', child.name());
-    assertEqual(children[0], child.prevSibling().name());
-    assertEqual(children[2], child.nextSibling().name());
-    assertEqual(null, child.prevSibling().prevSibling());
-    assertEqual(null, child.nextSibling().nextSibling());
+    assert.equal('child', child.name());
+    assert.equal(children[0], child.prevSibling().name());
+    assert.equal(children[2], child.nextSibling().name());
+    assert.equal(null, child.prevSibling().prevSibling());
+    assert.equal(null, child.nextSibling().nextSibling());
   });
 
   it('can traverse sibling elements', function() {
@@ -157,11 +157,11 @@ describe('Document traversal on a parsed document', function() {
 
     var children = ['prevSibling', 'child', 'nextSibling'];
     var child = doc.child(4);
-    assertEqual('child', child.name());
-    assertEqual(children[0], child.prevElement().name());
-    assertEqual(children[2], child.nextElement().name());
-    assertEqual(null, child.prevElement().prevElement());
-    assertEqual(null, child.nextElement().nextElement());
+    assert.equal('child', child.name());
+    assert.equal(children[0], child.prevElement().name());
+    assert.equal(children[2], child.nextElement().name());
+    assert.equal(null, child.prevElement().prevElement());
+    assert.equal(null, child.nextElement().nextElement());
   });
 });
 

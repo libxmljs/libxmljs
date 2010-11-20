@@ -11,11 +11,11 @@ describe('Text node', function() {
   });
 
   it('knows its type is "text"', function() {
-    assertEqual('text', doc.child().type());
+    assert.equal('text', doc.child().type());
   });
 
   it('knows its name is "text"', function() {
-    assertEqual('text', doc.child().name());
+    assert.equal('text', doc.child().name());
   });
 });
 
@@ -30,11 +30,11 @@ describe('Comment node', function() {
   });
 
   it('knows its type is "comment"', function() {
-    assertEqual('comment', doc.child().type());
+    assert.equal('comment', doc.child().type());
   });
 
   it('knows its name is "comment"', function() {
-    assertEqual('comment', doc.child().name());
+    assert.equal('comment', doc.child().name());
   });
 });
 
@@ -49,11 +49,11 @@ describe('CDATA node', function() {
   });
 
   it('knows its type is "cdata"', function() {
-    assertEqual('cdata', doc.child().type());
+    assert.equal('cdata', doc.child().type());
   });
 
   it('has no name', function() {
-    assertEqual(undefined, doc.child().name());
+    assert.equal(undefined, doc.child().name());
   });
 });
 

@@ -6,7 +6,7 @@ describe('Finding a node', function() {
     var doc = new libxml.Document(function(n) {
       n.node('root', function(n) { child = n.node('child'); });
     });
-    assertEqual(child, doc.get('child'));
+    assert.equal(child, doc.get('child'));
   });
 
   it('can be done with #find', function() {
@@ -17,10 +17,10 @@ describe('Finding a node', function() {
       children.push(n.node('child'));
     });
     var results = doc.find('child');
-    assertEqual(2, children.length);
-    assertEqual(2, results.length);
+    assert.equal(2, children.length);
+    assert.equal(2, results.length);
     for (child = 0; child < children.length; child++)
-      assertEqual(children[child], results[child]);
+      assert.equal(children[child], results[child]);
   });
 
   it('can be nested', function() {
@@ -31,7 +31,7 @@ describe('Finding a node', function() {
         grandchild = n.node('grandchild');
       });
     });
-    assertEqual(grandchild, doc.get('child').get('grandchild'));
+    assert.equal(grandchild, doc.get('child').get('grandchild'));
   });
 });
 
@@ -47,7 +47,7 @@ describe('Finding a non-prefix namespaced node', function() {
       });
     });
 
-    assertEqual(child, doc.get('xmlns:child', uri));
+    assert.equal(child, doc.get('xmlns:child', uri));
   });
 
   it('can be done with #find', function() {
@@ -62,10 +62,10 @@ describe('Finding a non-prefix namespaced node', function() {
     children[1].namespace(ns);
 
     var results = doc.find('xmlns:child', uri);
-    assertEqual(2, children.length);
-    assertEqual(2, results.length);
+    assert.equal(2, children.length);
+    assert.equal(2, results.length);
     for (child = 0; child < children.length; child++)
-      assertEqual(children[child], results[child]);
+      assert.equal(children[child], results[child]);
   });
 
   it('can be nested', function() {
@@ -78,7 +78,7 @@ describe('Finding a non-prefix namespaced node', function() {
       });
     });
 
-    assertEqual(grandchild, doc.get('child').get('xmlns:grandchild', uri));
+    assert.equal(grandchild, doc.get('child').get('xmlns:grandchild', uri));
   });
 });
 
@@ -98,7 +98,7 @@ describe('Finding a prefixed namespaced node', function() {
       });
     });
 
-    assertEqual(child, doc.get(prefix+':child', ns_parms));
+    assert.equal(child, doc.get(prefix+':child', ns_parms));
   });
 
   it('can be done with #find', function() {
@@ -113,10 +113,10 @@ describe('Finding a prefixed namespaced node', function() {
     children[1].namespace(ns);
 
     var results = doc.find(prefix+':child', ns_parms);
-    assertEqual(2, children.length);
-    assertEqual(2, results.length);
+    assert.equal(2, children.length);
+    assert.equal(2, results.length);
     for (child = 0; child < children.length; child++)
-      assertEqual(children[child], results[child]);
+      assert.equal(children[child], results[child]);
   });
 
   it('can be nested', function() {
@@ -129,7 +129,7 @@ describe('Finding a prefixed namespaced node', function() {
       });
     });
 
-    assertEqual(grandchild,
+    assert.equal(grandchild,
                 doc.get('child').get(prefix+':grandchild', ns_parms));
   });
 });

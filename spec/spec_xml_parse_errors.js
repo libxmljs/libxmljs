@@ -23,7 +23,7 @@ describe('Parse error object', function() {
   for (var i = 0; i < accessors.length; ++i) {
     var accessor = accessors[i];
     it('has a '+accessor+' accessor', function() {
-      assertEqual('object', typeof synErr[accessor]);
+      assert.equal('object', typeof synErr[accessor]);
     });
   }
 });

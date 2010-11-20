@@ -55,24 +55,24 @@ describe('Parsing HTML', function() {
     var str = fs.readFileSync(filename, 'utf8');
 
     var doc = libxml.parseHtmlString(str);
-    assertEqual('html', doc.root().name());
-    assertEqual('Test HTML document', doc.get('head/title').text());
-    assertEqual('HTML content!', doc.get('body/span').text());
+    assert.equal('html', doc.root().name());
+    assert.equal('Test HTML document', doc.get('head/title').text());
+    assert.equal('HTML content!', doc.get('body/span').text());
   });
 
   it('can be done by file', function() {
     var doc = libxml.parseHtmlFile(filename);
-    assertEqual('html', doc.root().name());
-    assertEqual('Test HTML document', doc.get('head/title').text());
-    assertEqual('HTML content!', doc.get('body/span').text());
+    assert.equal('html', doc.root().name());
+    assert.equal('Test HTML document', doc.get('head/title').text());
+    assert.equal('HTML content!', doc.get('body/span').text());
   });
 });
 
 describe('A recoverable parse error when parsing an HTML file', function() {
   it('will attach the errors to the document', function() {
     var doc = libxml.parseHtmlFile(recoverableFile);
-    assertEqual(4, doc.errors().length);
-    assertEqual(recoverableErrors, doc.errors());
+    assert.equal(4, doc.errors().length);
+    assert.equal(recoverableErrors, doc.errors());
   });
 });
 
@@ -81,10 +81,10 @@ describe('A recoverable parse error when parsing an HTML string', function() {
 
   it('will attach the errors to the document', function() {
     var doc = libxml.parseHtmlString(str);
-    assertEqual(4, doc.errors().length);
+    assert.equal(4, doc.errors().length);
     for (var i in recoverableErrors)
       recoverableErrors[i].file = null;
-    assertEqual(recoverableErrors, doc.errors());
+    assert.equal(recoverableErrors, doc.errors());
   });
 });
 
