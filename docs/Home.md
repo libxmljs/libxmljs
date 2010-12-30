@@ -1,14 +1,31 @@
 # Libxmljs
 
-LibXML bindings for Google's v8 javascript engine.
+LibXML bindings for  [node.js](http://nodejs.org/)
 
-It also plays nicely with [[node.js|http://nodejs.org/]]
+    var libxmljs = require("libxmljs");
+    var xml =  '<?xml version="1.0" encoding="UTF-8"?>' +
+               '<root>' +
+                   '<child foo="bar">' +
+                       '<grandchild baz="fizbuzz">grandchild content</grandchild>' +
+                   '</child>' +
+                   '<sibling>with content!</sibling>' +
+               '</root>';
+
+    var xmlDoc = libxmljs.parseXmlString(xml);
+    var gchild = xmlDoc.get('//grandchild');
+
+    console.log(gchild.text());  // prints "grandchild content"
+
+    var children = xmlDoc.root().childNodes();
+    var child = children[0];
+
+    console.log(child.attr('foo').value()); // prints "bar"
 
 ## Basics
 
-* GitHub Repo - [[http://github.com/polotek/libxmljs]]
-* Docs - [[http://github.com/polotek/libxmljs/wiki]]
-* Mailing list - [[http://groups.google.com/group/libxmljs]]
+* GitHub Repo - [http://github.com/polotek/libxmljs](http://github.com/polotek/libxmljs)
+* Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+* Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
 
 ## Requirements
 
@@ -26,10 +43,16 @@ To build the addon, the libxml C library must be installed and the xml2-config h
 
 **source**
 
-In the root of the source directory, just run `make`.  This will generate libxmljs.node in the root of the source folder.  You can copy this file to `~/.node_libraries` or any other directory in your require path.
+In the root of the source directory, just run `make`.  This will
+generate the binary `libxmljs.node` in the root of the source folder.
+You can copy this file to `~/.node_libraries` or any other directory
+in your require path.
 
-**node**
-    var libxml = require('libxmljs');
+**tests**
+
+    make test
+  
+    make test-verbose
 
 ## API
 
