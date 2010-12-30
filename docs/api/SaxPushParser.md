@@ -98,3 +98,8 @@ libxmljs provides a SAX2 push parser interface that accepts chunks of data.
 *msg* - a string representing the error message  
 
 
+### Examples
+
+Here's an extended example of using the sax push parser to recreate an xml document.
+
+[http://gist.github.com/484083](http://gist.github.com/484083)
