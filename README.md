@@ -33,14 +33,20 @@ Some examples below or check out the wiki [http://github.com/polotek/libxmljs/wi
 
 ## Requirements
 
-* libxml
-* node.js
+* [libxml2](http://www.xmlsoft.org/)
+* [node.js](http://nodejs.org/)
 * v8 (comes bundled with node, no need to install)
 * [scons](http://www.scons.org/) (for building)
 
-## Installation
+**pre-conditions**
 
-To build the addon, the libxml C library must be installed and the xml2-config helper script must be on your path.
+You will need have the libxml2 library installed and also the libxml2-devel
+package. This comes with the `xml2-config` utility that is needed for
+compiling.  **This command must be in your path.**
+
+The `scons` command is used for building and must also be in your path.
+
+## Installation
 
 **npm**
     npm install libxmljs
