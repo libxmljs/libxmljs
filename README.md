@@ -12,6 +12,8 @@ LibXML bindings for [node.js](http://nodejs.org/)
                '</root>';
 
     var xmlDoc = libxmljs.parseXmlString(xml);
+
+    // xpath queries
     var gchild = xmlDoc.get('//grandchild');
 
     console.log(gchild.text());  // prints "grandchild content"
@@ -27,9 +29,9 @@ LibXML bindings for [node.js](http://nodejs.org/)
 * Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
 
-## API
+## API and Examples
 
-Some examples below or check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 
 ## Requirements
 

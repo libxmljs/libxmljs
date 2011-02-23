@@ -12,6 +12,8 @@ LibXML bindings for  [node.js](http://nodejs.org/)
                '</root>';
 
     var xmlDoc = libxmljs.parseXmlString(xml);
+
+    // xpath queries
     var gchild = xmlDoc.get('//grandchild');
 
     console.log(gchild.text());  // prints "grandchild content"
@@ -21,42 +23,20 @@ LibXML bindings for  [node.js](http://nodejs.org/)
 
     console.log(child.attr('foo').value()); // prints "bar"
 
-## Basics
-
-* GitHub Repo - [http://github.com/polotek/libxmljs](http://github.com/polotek/libxmljs)
-* Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
-* Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
-
-## Requirements
-
-* libxml
-* node.js
-* v8 (comes bundled with node, no need to install)
-* [scons](http://www.scons.org/) (for building)
-
-## Installation
-
-To build the addon, the libxml C library must be installed and the xml2-config helper script must be on your path.
-
-**npm**
-    npm install libxmljs
-
-**source**
-
-In the root of the source directory, just run `make`.  This will
-generate the binary `libxmljs.node` in the root of the source folder.
-You can copy this file to `~/.node_libraries` or any other directory
-in your require path.
-
-**tests**
-
-    make test
-  
-    make test-verbose
-
 ## API
 
-Some examples below or check out the full [[Documentation|#api]]
+* [[Libxmljs]]
+* [[XmlDocument]]
+* [[Element]]
+* [[Attribute]]
+* [[Namespace]]
+* [[HtmlDocument]]
+* [[Parser]]
+* [[SaxParser]]
+* [[SaxPushParser]]
+* [[SyntaxError]]
+
+Check out some examples on parsing and building xml documents below.
 
 ### Builder
 
@@ -144,4 +124,46 @@ Push parsers are created the same way DOM parsers are, but take input a chunk at
     while(xmlChunk)
       parser.push(xmlChunk);
 
-<a name="api"></a>
+[Here's a more complex example](https://gist.github.com/484083)
+
+
+## Basics
+
+* GitHub Repo - [http://github.com/polotek/libxmljs](http://github.com/polotek/libxmljs)
+* Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+* Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
+
+## Requirements
+
+* [libxml2](http://www.xmlsoft.org/)
+* [node.js](http://nodejs.org/)
+* v8 (comes bundled with node, no need to install)
+* [scons](http://www.scons.org/) (for building)
+
+**pre-conditions**
+
+You will need have the libxml2 library installed and also the libxml2-devel
+package. This comes with the `xml2-config` utility that is needed for
+compiling.  **This command must be in your path.**
+
+The `scons` command is used for building and must also be in your path.
+
+## Installation
+
+To build the addon, the libxml C library must be installed and the xml2-config helper script must be on your path.
+
+**npm**
+    npm install libxmljs
+
+**source**
+
+In the root of the source directory, just run `make`.  This will
+generate the binary `libxmljs.node` in the root of the source folder.
+You can copy this file to `~/.node_libraries` or any other directory
+in your require path.
+
+**tests**
+
+    make test
+  
+    make test-verbose
