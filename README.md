@@ -35,7 +35,7 @@ Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/p
 
 ## Requirements
 
-* [libxml2](http://www.xmlsoft.org/)
+* [libxml2](http://www.xmlsoft.org/) (and development packages)
 * [node.js](http://nodejs.org/)
 * v8 (comes bundled with node, no need to install)
 * [scons](http://www.scons.org/) (for building)
