@@ -152,7 +152,7 @@ describe('A new document', function() {
 
     var doc2_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
+      '<root><child to="wongfoo"/><sibling>with content!</sibling></root>',
       ''
     ].join("\n");
 
@@ -160,17 +160,21 @@ describe('A new document', function() {
     var doc2 = libxml.parseXmlString(doc2_string);
     doc2.child(0).addChild(doc1.child(0).child(0)); // add gchild to doc 2
 
-    assert.equal(doc1.toString(), doc2.toString());; // both documents should be the same
-
+    assert.equal(doc1.toString(), doc2.toString()); // both documents should be the same
+	
     var gchild = doc1.child(0).child(0); //the removed element
+	
+	// the node can only have one parent reference, this is expected behavior, but
+	// this raises the question of what is the expected behavior of this test?
+	assert.equal(gchild.doc().toString(), doc2.toString()); 
+
     assert.equal(gchild, doc2.child(0).child(0), true);
 
     gchild.remove();
-//    assert.equal(gchild_string, doc2.child(0).child(0).toString()); // doc2 should have gchild
+	
+    assert.equal(doc1_string, doc1.toString()); //doc1 should be the same as doc2 str
 
-    assert.equal(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
-
-    assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
+    assert.equal(doc2_string, doc2.toString()); //doc2 should be the same as doc1 str
   });
 });
 
