@@ -142,7 +142,7 @@ describe('A new document', function() {
     assert.equal(doc1.toString(), doc2.toString());
   });
 
-  it('can haz cloned node', function() {
+  it('can add a cloned node', function() {
     var gchild_string  = '<grandchild from="julie numar">with love</grandchild>';
     var doc1_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
@@ -158,23 +158,24 @@ describe('A new document', function() {
 
     var doc1 = libxml.parseXmlString(doc1_string);
     var doc2 = libxml.parseXmlString(doc2_string);
-    doc2.child(0).addChild(doc1.child(0).child(0)); // add gchild to doc 2
+	
+	var gchild = doc1.child(0).child(0); //the element to operate on
+	
+	// we should never try to attach an already-attached node to another document without unlinking it with remove()
+	// doc2.child(0).addChild(gchild); 
+	// perhaps this should throw an error or warning?
+	
+    doc2.child(0).addChild(gchild.clone()); // add gchild clone to doc2
 
     assert.equal(doc1.toString(), doc2.toString()); // both documents should be the same
-	
-    var gchild = doc1.child(0).child(0); //the removed element
-	
-	// the node can only have one parent reference, this is expected behavior, but
-	// this raises the question of what is the expected behavior of this test?
-	assert.equal(gchild.doc().toString(), doc2.toString()); 
 
-    assert.equal(gchild, doc2.child(0).child(0), true);
+    assert. notEqual(gchild, doc2.child(0).child(0)); // these nodes should be different (cloned)
 
     gchild.remove();
 	
-    assert.equal(doc1_string, doc1.toString()); //doc1 should be the same as doc2 str
+    assert.equal(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
 
-    assert.equal(doc2_string, doc2.toString()); //doc2 should be the same as doc1 str
+    assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
   });
 });
 

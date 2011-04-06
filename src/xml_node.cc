@@ -132,6 +132,20 @@ XmlNode::Remove(const v8::Arguments& args) {
   return scope.Close(args.This());
 }
 
+v8::Handle<v8::Value>
+XmlNode::Clone(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  assert(node);
+  
+  bool recurse = true;
+  
+  if (args.Length() == 1 && args[0]->IsBoolean())
+      recurse = *(args[0]->ToBoolean());
+
+  return scope.Close(node->clone(recurse)); 
+}
+
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
     xml_obj->_private = this;
     if(xml_obj->doc) {
@@ -220,6 +234,13 @@ XmlNode::get_next_sibling() {
 }
 
 v8::Handle<v8::Value>
+XmlNode::clone(bool recurse) {
+  v8::HandleScope scope;
+ 
+  return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xmlCopyNode(xml_obj, recurse))); 
+}
+
+v8::Handle<v8::Value>
 XmlNode::to_string() {
   v8::HandleScope scope;
 
@@ -247,7 +268,7 @@ XmlNode::to_string() {
       return v8::Null();
   }
 }
-
+  
 void
 XmlNode::remove() {
   xmlUnlinkNode(xml_obj);
@@ -337,7 +358,11 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "remove",
                         XmlNode::Remove);
-
+						
+  LXJS_SET_PROTO_METHOD(constructor_template,
+                        "clone",
+                        XmlNode::Clone);
+						
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "toString",
                         XmlNode::ToString);
