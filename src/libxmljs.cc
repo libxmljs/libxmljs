@@ -18,6 +18,8 @@ void on_libxml_destruct(xmlNode* node) {
 }  // namespace
 
 LibXMLJS::LibXMLJS() {
+  xmlMemSetup(xmlMemFree, xmlMemMalloc, xmlMemRealloc, xmlMemoryStrdup);
+
   xmlInitParser();  // Not always necessary, but necessary for thread safety.
   // xmlRegisterNodeDefault(on_libxml_construct);
   xmlDeregisterNodeDefault(on_libxml_destruct);
@@ -156,9 +158,6 @@ MemoryUsage(const v8::Arguments& args) {
 void
 InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
-
-  xmlMemSetup(xmlMemFree, xmlMemMalloc, xmlMemRealloc, xmlMemoryStrdup);
-  xmlInitMemory();
 
   XmlSyntaxError::Initialize(target);
   XmlDocument::Initialize(target);
