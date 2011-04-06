@@ -26,7 +26,7 @@ def CheckForNodeJS(context):
 
 using_node_js = (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS))
 
-libs = ['xml2','node']
+libs = ['xml2']
 libpath = [
   '/opt/local/lib',
   '/usr/local/lib',
@@ -57,6 +57,10 @@ env.Append(
   CCFLAGS = cflags
 )
 
+# explicitly link against node under cygwin
+if env['PLATFORM'] == 'cygwin':
+	libs += ['node']
+
 if not env.GetOption('clean'):
   conf = Configure(env, custom_tests = {'CheckForNodeJS' : CheckForNodeJS})
   print conf.CheckForNodeJS()
@@ -81,7 +85,7 @@ libxmljs = env.Program(
   target = 'libxmljs',
   source = cc_sources,
   CCFLAGS = cflags,
-  LIBS = libs + ['v8'],
+  LIBS = libs,
   LIBPATH = libpath
 )
 
