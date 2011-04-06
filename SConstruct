@@ -26,7 +26,7 @@ def CheckForNodeJS(context):
 
 using_node_js = (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS))
 
-libs = ['xml2']
+libs = ['xml2','node']
 libpath = [
   '/opt/local/lib',
   '/usr/local/lib',
