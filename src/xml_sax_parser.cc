@@ -58,8 +58,11 @@ XmlSaxParser::releaseContext() {
   if (context_) {
     context_->_private = 0;
     if (context_->myDoc != NULL)
+    {
       xmlFreeDoc(context_->myDoc);
-
+      context_->myDoc = NULL;
+    }
+	
     xmlFreeParserCtxt(context_);
     context_ = 0;
   }
@@ -187,7 +190,7 @@ XmlSaxParser::parse_string(const char* str,
   context_ = xmlCreateMemoryParserCtxt(str, size);
   parse();
   context_->sax = NULL;
-  xmlFreeParserCtxt(context_);
+  releaseContext();
 }
 
 v8::Handle<v8::Value>
@@ -211,7 +214,7 @@ XmlSaxParser::parse_file(const char* filename) {
   context_ = xmlCreateFileParserCtxt(filename);
   parse();
   context_->sax = NULL;
-  xmlFreeParserCtxt(context_);
+  releaseContext();
 }
 
 void
