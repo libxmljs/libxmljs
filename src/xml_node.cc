@@ -141,7 +141,7 @@ XmlNode::Clone(const v8::Arguments& args) {
   bool recurse = true;
   
   if (args.Length() == 1 && args[0]->IsBoolean())
-      recurse = *(args[0]->ToBoolean());
+      recurse = args[0]->ToBoolean()->BooleanValue();
 
   return scope.Close(node->clone(recurse)); 
 }
