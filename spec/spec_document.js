@@ -161,11 +161,7 @@ describe('A new document', function() {
 	
 	var gchild = doc1.child(0).child(0); //the element to operate on
 	
-	// we should never try to attach an already-attached node to another document without unlinking it with remove()
-	// doc2.child(0).addChild(gchild); 
-	// perhaps this should throw an error or warning?
-	
-    doc2.child(0).addChild(gchild.clone()); // add gchild clone to doc2
+    doc2.child(0).addChild(gchild); // add gchild clone to doc2, implicit clone
 
     assert.equal(doc1.toString(), doc2.toString()); // both documents should be the same
 

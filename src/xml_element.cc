@@ -473,16 +473,15 @@ XmlElement::add_next_sibling(XmlElement* element) {
 XmlElement *
 XmlElement::import_element(XmlElement *element) {
     xmlNode *new_child;
-    if(element->xml_obj->type == XML_ELEMENT_NODE || xml_obj->doc == element->xml_obj->doc) {
-        return element;
+
+    if (xml_obj->doc == element->xml_obj->doc) {
+       return element;
     } else {
         new_child = xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
         if(new_child == NULL) {
             return NULL;
         }
-        
-        element->remove();
-
+		
         UpdateV8Memory();
 
         v8::Handle<v8::Object> obj =
