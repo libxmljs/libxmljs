@@ -33,14 +33,14 @@ libpath = [
   '/usr/lib'
 ]
 
-#cflags = ' '.join([
-#  '-I/opt/local/include',
-#  '-I/opt/local/include/libxml2',
-#  '-I/usr/local/include',
-#  '-I/usr/include',
-#  '-I/usr/include/libxml2',
-#])
-cflags = shellOut([xml2config, '--cflags'])
+cflags = ' '.join([
+  '-I/opt/local/include/libxml2',
+  '-I/opt/local/include',
+  '-I/usr/local/include',
+  '-I/usr/include',
+  '-I/usr/include/libxml2',
+])
+cflags += ' ' + shellOut([xml2config, '--cflags'])
 
 if using_node_js:
   node_flags = shellOut([node_exe, '--vars'])
@@ -51,7 +51,7 @@ if using_node_js:
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
-env = Environment(BUILDERS = {'Test' : testBuilder})
+env = Environment(BUILDERS = {'Test' : testBuilder}, ENV = {'PATH' : os.environ['PATH']})
 env.Append(
   LIBPATH = libpath,
   CCFLAGS = cflags
