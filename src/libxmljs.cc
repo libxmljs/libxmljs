@@ -157,8 +157,10 @@ void
 InitializeLibXMLJS(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
 
+#ifdef DEBUG_MEMORY
   xmlMemSetup(xmlMemFree, xmlMemMalloc, xmlMemRealloc, xmlMemoryStrdup);
   xmlInitMemory();
+#endif
 
   XmlSyntaxError::Initialize(target);
   XmlDocument::Initialize(target);
