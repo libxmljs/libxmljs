@@ -135,7 +135,7 @@ describe('An element node', function() {
         assert. notEqual(doc, newdoc, true);
         assert.equal('child1', newdoc.root().childNodes()[0].name());
         gc();
-        assert. notEqual(child1, elem.childNodes()[0]);
+        assert.equal(child1, elem.childNodes()[0]); // child1 is the the first child of elem
     });
 });
 

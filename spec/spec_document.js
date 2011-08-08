@@ -142,7 +142,7 @@ describe('A new document', function() {
     assert.equal(doc1.toString(), doc2.toString());
   });
 
-  it('can haz cloned node', function() {
+  it('can add a cloned node', function() {
     var gchild_string  = '<grandchild from="julie numar">with love</grandchild>';
     var doc1_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
@@ -152,22 +152,23 @@ describe('A new document', function() {
 
     var doc2_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
+      '<root><child to="wongfoo"/><sibling>with content!</sibling></root>',
       ''
     ].join("\n");
 
     var doc1 = libxml.parseXmlString(doc1_string);
     var doc2 = libxml.parseXmlString(doc2_string);
-    doc2.child(0).addChild(doc1.child(0).child(0)); // add gchild to doc 2
+	
+	var gchild = doc1.child(0).child(0); //the element to operate on
+	
+    doc2.child(0).addChild(gchild); // add gchild clone to doc2, implicit clone
 
-    assert.equal(doc1.toString(), doc2.toString());; // both documents should be the same
+    assert.equal(doc1.toString(), doc2.toString()); // both documents should be the same
 
-    var gchild = doc1.child(0).child(0); //the removed element
-    assert.equal(gchild, doc2.child(0).child(0), true);
+    assert. notEqual(gchild, doc2.child(0).child(0)); // these nodes should be different (cloned)
 
     gchild.remove();
-//    assert.equal(gchild_string, doc2.child(0).child(0).toString()); // doc2 should have gchild
-
+	
     assert.equal(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
 
     assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
