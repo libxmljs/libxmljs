@@ -9,7 +9,6 @@ root_dir = dirname(File('SConstruct').rfile().abspath)
 sys.path.insert(0, join(root_dir, 'tools'))
 import js2c
 
-xml2config = 'xml2-config'
 if ARGUMENTS.get('debug', 0):
   node_exe ='node_g'
 else:
@@ -23,6 +22,20 @@ def CheckForNodeJS(context):
   result = shellOut(['which', node_exe]) != ''
   context.Result(result)
   return result
+
+def CheckVersion(a,b):
+    from pkg_resources import parse_version as V
+    return V(a) >= V(b)
+
+def GetLibXml2cflags():
+    minxml2version = '2.7.1'
+    if CheckVersion(shellOut(['xml2-config', '--version']), minxml2version):
+        return shellOut(['xml2-config', '--cflags'])
+    elif os.path.isfile('/opt/local/bin/xml2-config') and CheckVersion(shellOut(['/opt/local/bin/xml2-config', '--version']), minxml2versio$
+        return shellOut(['/opt/local/bin/xml2-config', '--cflags'])
+    else:
+        print 'Your version of libxml2 is too old, exiting.'
+        Exit(1);
 
 using_node_js = (('libxmljs.node' in COMMAND_LINE_TARGETS) or ('test' in COMMAND_LINE_TARGETS))
 
@@ -40,7 +53,7 @@ libpath = [
 #  '-I/usr/include',
 #  '-I/usr/include/libxml2',
 #])
-cflags = shellOut([xml2config, '--cflags'])
+cflags = GetLibXml2cflags()
 
 if using_node_js:
   node_flags = shellOut([node_exe, '--vars'])
