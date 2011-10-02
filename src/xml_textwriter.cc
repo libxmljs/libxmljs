@@ -4,13 +4,17 @@
 namespace libxmljs {
 
 XmlTextWriter::XmlTextWriter() {
-    textWriter = NULL;
+  textWriter = NULL;
+  writerBuffer = NULL;
 }
 
 XmlTextWriter::~XmlTextWriter() {
-    if (textWriter) {
-        xmlFreeTextWriter(textWriter);
-    }
+  if (textWriter) {
+    xmlFreeTextWriter(textWriter);
+  }
+  if (writerBuffer) {
+    xmlBufferFree(writerBuffer);
+  }
 }
 
 v8::Handle<v8::Value>
@@ -28,6 +32,10 @@ XmlTextWriter::OpenMemory(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = LibXmlObj::Unwrap<XmlTextWriter>(args.Holder());
+  if (writer->is_open()) {
+    LIBXMLJS_THROW_EXCEPTION("openXXX may only be called once. Output already set.");
+  }
+
   writer->open_memory();
 
   return scope.Close(v8::Undefined());
@@ -39,13 +47,29 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
 
   XmlTextWriter *writer = LibXmlObj::Unwrap<XmlTextWriter>(args.Holder());
 
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
-                               IsBoolean,
-                               "Bad Argument: must be a boolean");
+  bool flush = true;
+  if (!args[0]->IsUndefined()) {
+    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
+                                 IsBoolean,
+                                 "Bad Argument: must be a boolean");
+    flush = args[0]->ToBoolean()->Value();
+  }
 
-  char* result = writer->output_memory(args[0]->ToBoolean()->Value());
+  const xmlChar *buf = writer->output_memory();
+  if (!writer->is_open()) {
+    LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
+  }
+  if (!writer->is_inmemory()) {
+    LIBXMLJS_THROW_EXCEPTION("May not retreive output memory if this is not an inmemory writer opened using openMemory().");
+  }
 
-  return scope.Close(v8::String::New(result));
+  v8::Handle<v8::String> result = v8::String::New((const char*)buf);
+
+  if (flush) {
+    writer->output_memory_flush();
+  }
+
+  return scope.Close(result);
 }
 
 v8::Handle<v8::Value>
@@ -56,6 +80,9 @@ XmlTextWriter::OpenURI(const v8::Arguments& args) {
                                "Bad Argument: must be a string");
 
   XmlTextWriter *writer = LibXmlObj::Unwrap<XmlTextWriter>(args.Holder());
+  if (writer->is_open()) {
+    LIBXMLJS_THROW_EXCEPTION("openXXX may only be called once. Output already set.");
+  }
 
   v8::String::Utf8Value uri(args[0]->ToString());
   writer->open_uri(*uri);
@@ -66,19 +93,32 @@ XmlTextWriter::OpenURI(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlTextWriter::StartDocument(const v8::Arguments& args) {
   v8::HandleScope scope;
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                               IsString,
-                               "Bad Argument: first argument of startDocument must be a string (e.g. 1.0)");
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
-                               IsString,
-                               "Bad Argument: second argument of startDocument must be a string (e.g. UTF-8)");
+
+  if (!args[0]->IsUndefined()) {
+    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
+                                 IsString,
+                                 "Bad Argument: first argument of startDocument must be a string (e.g. '1.0' or undefined)");
+  }
+  if (!args[1]->IsUndefined()) {
+    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
+                                 IsString,
+                                 "Bad Argument: second argument of startDocument must be a string (e.g. 'UTF-8' or undefined)");
+  }
+  if (!args[2]->IsUndefined()) {
+    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[2],
+                                 IsString,
+                                 "Bad Argument: third argument of startDocument must be a string (e.g. 'yes', 'no' or undefined)");
+  }
 
   XmlTextWriter *writer = LibXmlObj::Unwrap<XmlTextWriter>(args.Holder());
+  if (!writer->is_open()) {
+    LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
+  }
 
   v8::String::Utf8Value version(args[0]->ToString());
-  v8::String::Utf8Value encoding(args[0]->ToString());
-  bool standalone = args[0]->ToBoolean()->Value();
-  int result = writer->start_document(*version, *encoding, standalone);
+  v8::String::Utf8Value encoding(args[1]->ToString());
+  v8::String::Utf8Value standalone(args[2]->ToString());
+  int result = writer->start_document(*version, *encoding, *standalone);
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -88,6 +128,9 @@ XmlTextWriter::EndDocument(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = LibXmlObj::Unwrap<XmlTextWriter>(args.Holder());
+  if (!writer->is_open()) {
+    LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
+  }
 
   int result = writer->end_document();
 
@@ -221,63 +264,56 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
 }
 
 
-void
+inline bool
 XmlTextWriter::open_memory() {
-  if (textWriter) {
-    LIBXMLJS_THROW_EXCEPTION("outputXXX may only be called once. Output already set.");
+  writerBuffer = xmlBufferCreate();
+  if (!writerBuffer) {
+    return false;
   }
 
-  LIBXMLJS_THROW_EXCEPTION("openMemory not implemented yet.");
+  textWriter = xmlNewTextWriterMemory(writerBuffer, 0);
+  if (!textWriter) {
+    xmlBufferFree(writerBuffer);
+    return false;
+  }
+
+  return true;
 }
 
-char*
-XmlTextWriter::output_memory(bool flush) {
-  LIBXMLJS_THROW_EXCEPTION("outputMemory not imlpmented yet.");
+const xmlChar*
+XmlTextWriter::output_memory() {
+  return xmlBufferContent(writerBuffer);
 }
 
-void
+inline void
+XmlTextWriter::output_memory_flush() {
+  xmlBufferEmpty(writerBuffer);
+}
+
+inline bool
 XmlTextWriter::open_uri(const char *uri) {
-  if (textWriter) {
-    LIBXMLJS_THROW_EXCEPTION("openXXX may only be called once. Output already set.");
-  }
-
   textWriter = xmlNewTextWriterFilename(uri, 0);
-  if (!textWriter) {
-    LIBXMLJS_THROW_EXCEPTION("Failed to setup TextWriter for the given path");
-  }
+  return (textWriter != NULL);
 }
 
-int
-XmlTextWriter::start_document(const char *version, const char *charset, bool standalone) {
-  int result;
-
-  if (!textWriter) {
-    LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
-  }
-
-  result = xmlTextWriterStartDocument(textWriter, version, charset,
-      standalone ? "yes" : "no");
-  if (result == -1) {
-    LIBXMLJS_THROW_EXCEPTION("Failed to start document");
-  }
-
-  return result;
+inline bool
+XmlTextWriter::is_open() {
+  return (textWriter != NULL);
 }
 
-int
+inline bool
+XmlTextWriter::is_inmemory() {
+  return (writerBuffer != NULL);
+}
+
+inline int
+XmlTextWriter::start_document(const char *version, const char *charset, const char* standalone) {
+  return xmlTextWriterStartDocument(textWriter, version, charset, NULL);
+}
+
+inline int
 XmlTextWriter::end_document() {
-  int result;
-
-  if (!textWriter) {
-    LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
-  }
-  
-  result = xmlTextWriterEndDocument(textWriter);
-  if (result == -1) {
-    LIBXMLJS_THROW_EXCEPTION("Failed to end document");
-  }
-
-  return result;
+  return xmlTextWriterEndDocument(textWriter);
 }
 
 }  // namespace libxmljs
