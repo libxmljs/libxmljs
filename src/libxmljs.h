@@ -42,7 +42,7 @@ do {                                                                          \
 #define LIBXMLJS_THROW_EXCEPTION(err)                                         \
   v8::Local<v8::Value> exception = v8::Exception::TypeError(                  \
     v8::String::New(err));                                                    \
-  ThrowException(exception);
+  return v8::ThrowException(exception);
 
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                          \
   if (!arg->type()) {                                                         \
