@@ -65,21 +65,9 @@ class XmlTextWriter : public LibXmlObj {
   xmlTextWriterPtr textWriter;
   xmlBufferPtr  writerBuffer;
 
-  bool open_memory();
-
-  const xmlChar* output_memory();
-
-  void output_memory_flush();
-
-  bool open_uri(const char *filename);
-
   bool is_open();
 
   bool is_inmemory();
-
-  int start_document(const char *version, const char *charset, const char *standalone);
-
-  int end_document();
 };
 }
 
