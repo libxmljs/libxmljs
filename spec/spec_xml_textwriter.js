@@ -10,28 +10,28 @@ with(require('./helpers')) {
       count += writer.startDocument();
       count += writer.endDocument();
       output = writer.outputMemory();
-      assertEqual('<?xml version="1.0"?>\n\n', output);
+      assert.equal('<?xml version="1.0"?>\n\n', output);
 
       writer = new libxml.TextWriter();
       writer.openMemory();
       count += writer.startDocument('1.0');
       count += writer.endDocument();
       output = writer.outputMemory();
-      assertEqual('<?xml version="1.0"?>\n\n', output);
+      assert.equal('<?xml version="1.0"?>\n\n', output);
 
       writer = new libxml.TextWriter();
       writer.openMemory();
       count += writer.startDocument('1.0', 'UTF-8');
       count += writer.endDocument();
       output = writer.outputMemory();
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n\n', output);
 
       writer = new libxml.TextWriter();
       writer.openMemory();
       count += writer.startDocument('1.0', 'UTF-8', 'yes');
       count += writer.endDocument();
       output = writer.outputMemory();
-      assertEqual('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n\n', output);
     });
 
     it('will fail if no output is set and document start function is called', function () {
@@ -48,7 +48,7 @@ with(require('./helpers')) {
         message: "No output method set. Call outputXXX once before trying to write."
       };
 
-      assertEqual(expectError.message, err.message);
+      assert.equal(expectError.message, err.message);
     });
 
     it('will fail if output is set more than once', function () {
@@ -67,7 +67,7 @@ with(require('./helpers')) {
         message: "openXXX may only be called once. Output already set."
       };
 
-      assertEqual(expectError.message, err.message);
+      assert.equal(expectError.message, err.message);
     });
 
     it('will write elements without namespace', function () {
@@ -84,7 +84,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<root><child/></root>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root><child/></root>\n', output);
     });
 
     it('will write elements with default namespace', function () {
@@ -101,7 +101,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<html xmlns="http://www.w3.org/1999/xhtml"><head/></html>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<html xmlns="http://www.w3.org/1999/xhtml"><head/></html>\n', output);
     });
 
     it('will write elements with namespace prefix', function () {
@@ -118,7 +118,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<html:html xmlns:html="http://www.w3.org/1999/xhtml"><html:head/></html:html>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<html:html xmlns:html="http://www.w3.org/1999/xhtml"><html:head/></html:html>\n', output);
     });
 
     it('will write attributes with default namespace', function () {
@@ -136,7 +136,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<root attr="value" xmlns="http://example.com"/>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root attr="value" xmlns="http://example.com"/>\n', output);
     });
 
     it('will write attributes with namespace prefix', function () {
@@ -154,7 +154,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<root pfx:attr="value" xmlns:pfx="http://example.com"/>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root pfx:attr="value" xmlns:pfx="http://example.com"/>\n', output);
     });
 
     it('will write text node', function () {
@@ -170,7 +170,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<root>some text here</root>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root>some text here</root>\n', output);
     });
 
     it('will write cdata section', function () {
@@ -188,7 +188,7 @@ with(require('./helpers')) {
       count += writer.endDocument();
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0" encoding="UTF-8"?>\n<root><![CDATA[some text here]]></root>\n', output);
+      assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root><![CDATA[some text here]]></root>\n', output);
     });
   });
 }
