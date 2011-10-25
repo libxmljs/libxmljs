@@ -57,7 +57,7 @@ with(require('sys')) {
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];
-    var specVerbose  = process.ARGV.join(";").match(/;(--verbose|-v)/);
+    var specVerbose  = process.argv.join(";").match(/;(--verbose|-v)/);
   
   var describe = function(name, func) {
     specStack.push(name);

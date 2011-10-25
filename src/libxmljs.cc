@@ -122,20 +122,6 @@ ExecuteString(v8::Handle<v8::String> source,
   return scope.Close(result);
 }
 
-static void
-ExecuteNativeJS(const char* filename,
-                const char* data) {
-  v8::HandleScope scope;
-  v8::TryCatch try_catch;
-  ExecuteString(v8::String::New(data), v8::String::New(filename));
-  if (try_catch.HasCaught())  {
-    puts("There is an error in Node's built-in javascript");
-    puts("This should be reported as a bug!");
-    ReportException(&try_catch);
-    exit(1);
-  }
-}
-
 void
 UpdateV8Memory() {
     v8::V8::AdjustAmountOfExternalAllocatedMemory(-current_xml_memory);
@@ -188,10 +174,6 @@ InitializeLibXMLJS(v8::Handle<v8::Object> target) {
 
   v8::Context::Scope context_scope(context);
   context->Global()->Set(v8::String::NewSymbol("libxml"), target);
-
-  ExecuteNativeJS("xml_sax_parser.js", native_xml_sax_parser);
-  ExecuteNativeJS("xml_document.js", native_xml_document);
-  ExecuteNativeJS("xml_element.js", native_xml_element);
 }
 
 // used by node.js to initialize libraries
