@@ -247,7 +247,7 @@ XmlNode::to_string() {
   xmlBuffer* buf = xmlBufferCreate();
   const char* enc = "UTF-8";
 
-  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, NULL);
+  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, 0);
   xmlSaveTree(savectx, xml_obj);
   xmlSaveFlush(savectx);
 
