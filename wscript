@@ -20,7 +20,7 @@ def configure(conf):
 
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
-  obj.cxxflags = ["-g", "-Wall", "-Werror"]
+  obj.cxxflags = ["-g", "-Wall"]
   obj.target = 'libxmljs'
   obj.source = [
     'src/html_document.cc',
