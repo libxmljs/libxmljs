@@ -1,4 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
+
 #include "xml_syntax_error.h"
 #include "html_parser.h"
 #include "html_document.h"
@@ -9,7 +10,6 @@ inline v8::Handle<v8::Value>
 BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
   v8::HandleScope scope;
   if (doc == NULL) {
-    xmlFree(doc);
     xmlError *error = xmlGetLastError();
     if (error) {
         return v8::ThrowException(XmlSyntaxError::BuildSyntaxError(error));
@@ -23,8 +23,10 @@ BuildDoc(xmlDoc *doc, v8::Handle<v8::Array> errors) {
 
   v8::Handle<v8::Object> jsDoc =
       LibXmlObj::GetMaybeBuild<HtmlDocument, xmlDoc>(doc);
-  HtmlDocument *document = LibXmlObj::Unwrap<HtmlDocument>(jsDoc);
-  document->errors = v8::Persistent<v8::Array>::New(errors);
+
+  //HtmlDocument *document = LibXmlObj::Unwrap<HtmlDocument>(jsDoc);
+  //document->errors = v8::Persistent<v8::Array>::New(errors);
+
   return scope.Close(jsDoc);
 }
 
@@ -36,8 +38,7 @@ ParseHtmlString(const v8::Arguments& args) {
     return v8::ThrowException(v8::Exception::Error(
       v8::String::New("Must supply parseHtmlString with a string")));
 
-  v8::Persistent<v8::Array> errors = v8::Persistent<v8::Array>::New(
-      v8::Array::New());
+  v8::Handle<v8::Array> errors = v8::Array::New();
   xmlResetLastError();
   xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
                             XmlSyntaxError::PushToArray);

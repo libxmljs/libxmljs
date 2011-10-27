@@ -35,7 +35,6 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   }
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
-  v8::Handle<v8::Value> argv[1];
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
     xmlNode *node = result->nodesetval->nodeTab[i];
     nodes->Set(i, LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node));

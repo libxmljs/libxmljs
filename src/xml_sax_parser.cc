@@ -3,7 +3,7 @@
 
 namespace libxmljs {
 
-  XmlSaxParser::XmlSaxParser() : sax_handler_(new xmlSAXHandler), context_(NULL) {
+  XmlSaxParser::XmlSaxParser() : context_(NULL), sax_handler_(new xmlSAXHandler) {
 
   xmlSAXHandler tmp = {
     0,  // internalSubset;
@@ -61,7 +61,7 @@ XmlSaxParser::releaseContext() {
       xmlFreeDoc(context_->myDoc);
       context_->myDoc = NULL;
     }
-	
+
     xmlFreeParserCtxt(context_);
     context_ = 0;
   }
@@ -163,7 +163,7 @@ void
 XmlSaxParser::push(const char* str,
                    unsigned int size,
                    bool terminate = false) {
-  int e = xmlParseChunk(context_, str, size, terminate);
+  xmlParseChunk(context_, str, size, terminate);
 }
 
 v8::Handle<v8::Value>
@@ -220,7 +220,7 @@ XmlSaxParser::parse() {
   initializeContext();
   context_->replaceEntities = 1;
   context_->sax = sax_handler_;
-  int e = xmlParseDocument(context_);
+  xmlParseDocument(context_);
 }
 
 void
