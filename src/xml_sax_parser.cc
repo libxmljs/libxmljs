@@ -124,7 +124,7 @@ XmlSaxParser::Callback(const char* what,
     callbacks_->Get(v8::String::New("callback")));
   assert(callback->IsFunction());
 
-  v8::Handle<v8::Value> args[argc+1];
+  v8::Handle<v8::Value>* args = new v8::Handle<v8::Value>[argc+1];
   args[0] = v8::String::New(what);
   for (int i = 1; i <= argc; i++) {
     args[i] = argv[i-1];
@@ -132,6 +132,8 @@ XmlSaxParser::Callback(const char* what,
 
   v8::Handle<v8::Object> global = v8::Context::GetCurrent()->Global();
   callback->Call(global, argc+1, args);
+
+  delete[] args;
 }
 
 v8::Handle<v8::Value>

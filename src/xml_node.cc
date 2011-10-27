@@ -52,7 +52,7 @@ XmlNode::Namespace(const v8::Arguments& args) {
 
   // Namespace does not seem to exist, so create it.
   if (!ns) {
-    int argc = 3;
+      const unsigned int argc = 3;
     v8::Handle<v8::Value> argv[argc];
     argv[0] = args.This();
 
