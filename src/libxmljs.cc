@@ -1,7 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
 
-#include <iostream>
 #include <cstdlib>
+
+#include <v8.h>
 
 #include "libxmljs.h"
 #include "xml_syntax_error.h"
@@ -12,9 +13,55 @@
 
 namespace libxmljs {
 
+// track how much memory libxml2 is using
+int xml_memory_used = 0;
+
+// wrapper for xmlMemMalloc to update v8's knowledge of memory used
+// the GC relies on this information
+void* xmlMemMallocWrap(size_t size) {
+    void* res = xmlMemMalloc(size);
+
+    // no need to udpate memory if we didn't allocate
+    if (!res) {
+        return res;
+    }
+
+    const int diff = xmlMemUsed() - xml_memory_used;
+    xml_memory_used += diff;
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    return res;
+}
+
+// wrapper for xmlMemFree to update v8's knowledge of memory used
+// the GC relies on this information
+void xmlMemFreeWrap(void* p) {
+    xmlMemFree(p);
+
+    // if v8 is no longer running, don't try to adjust memory
+    // this happens when the v8 vm is shutdown and the program is exiting
+    // our cleanup routines for libxml will be called (freeing memory)
+    // but v8 is already offline and does not need to be informed
+    // trying to adjust after shutdown will result in a fatal error
+    if (v8::V8::IsDead()) {
+        return;
+    }
+
+    const int diff = xmlMemUsed() - xml_memory_used;
+    xml_memory_used += diff;
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+}
+
 LibXMLJS::LibXMLJS() {
+
+    // populated debugMemSize (see xmlmemory.h/c) and makes the call to
+    // xmlMemUsed work, this must happen first!
+    xmlMemSetup(xmlMemFreeWrap, xmlMemMallocWrap, xmlMemRealloc, xmlMemoryStrdup);
+
     // initialize libxml
-    LIBXML_TEST_VERSION
+    LIBXML_TEST_VERSION;
+
+    // initial memory usage
+    xml_memory_used = xmlMemUsed();
 }
 
 LibXMLJS::~LibXMLJS() {
