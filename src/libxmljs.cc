@@ -53,11 +53,42 @@ void xmlMemFreeWrap(void* p) {
     v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
 }
 
+// wrapper for xmlMemRealloc to update v8's knowledge of memory used
+void* xmlMemReallocWrap(void* ptr, size_t size) {
+    void* res = xmlMemRealloc(ptr, size);
+
+    // if realloc fails, no need to update v8 memory state
+    if (!res) {
+        return res;
+    }
+
+    const int diff = xmlMemUsed() - xml_memory_used;
+    xml_memory_used += diff;
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    return res;
+}
+
+// wrapper for xmlMemoryStrdupWrap to update v8's knowledge of memory used
+char* xmlMemoryStrdupWrap(const char* str) {
+    char* res = xmlMemoryStrdup(str);
+
+    // if strdup fails, no need to update v8 memory state
+    if (!res) {
+        return res;
+    }
+
+    const int diff = xmlMemUsed() - xml_memory_used;
+    xml_memory_used += diff;
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    return res;
+}
+
 LibXMLJS::LibXMLJS() {
 
     // populated debugMemSize (see xmlmemory.h/c) and makes the call to
     // xmlMemUsed work, this must happen first!
-    xmlMemSetup(xmlMemFreeWrap, xmlMemMallocWrap, xmlMemRealloc, xmlMemoryStrdup);
+    xmlMemSetup(xmlMemFreeWrap, xmlMemMallocWrap,
+            xmlMemReallocWrap, xmlMemoryStrdupWrap);
 
     // initialize libxml
     LIBXML_TEST_VERSION;
