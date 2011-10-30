@@ -1,7 +1,5 @@
 // Copyright 2009, Squish Tech, LLC.
 
-#include <cstdlib>
-
 #include <v8.h>
 
 #include "libxmljs.h"
@@ -12,6 +10,10 @@
 #include "html_parser.h"
 
 namespace libxmljs {
+
+// ensure destruction at exit time
+// v8 doesn't cleanup its resources
+LibXMLJS LibXMLJS::instance;
 
 // track how much memory libxml2 is using
 int xml_memory_used = 0;
@@ -67,8 +69,6 @@ LibXMLJS::LibXMLJS() {
 LibXMLJS::~LibXMLJS() {
     xmlCleanupParser();
 }
-
-LibXMLJS LibXMLJS::init_;
 
 // used by node.js to initialize libraries
 extern "C" void

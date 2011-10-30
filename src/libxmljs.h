@@ -81,14 +81,12 @@ static const bool debugging = false;
 
 // Ensure that libxml is properly initialised:
 class LibXMLJS {
-  public:
+public:
+    LibXMLJS();
+    virtual ~LibXMLJS();
 
-  LibXMLJS();
-  virtual ~LibXMLJS();
-
-  private:
-
-  static LibXMLJS init_;
+private:
+    static LibXMLJS instance;
 };
 
 }  // namespace libxmljs
