@@ -32,7 +32,6 @@ class LibXmlObj : public node::ObjectWrap {
 
       return scope.Close(obj->handle_);
   }
-
 };
 
 }  // namespace libxmljs

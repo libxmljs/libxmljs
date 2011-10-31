@@ -12,7 +12,6 @@ class XmlDocument : public LibXmlObj {
   virtual ~XmlDocument();
 
   xmlDoc* xml_obj;
-  v8::Persistent<v8::Array> errors;
   explicit XmlDocument(xmlDoc* doc) : xml_obj(doc) {}
   static void Initialize(v8::Handle<v8::Object> target);
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
