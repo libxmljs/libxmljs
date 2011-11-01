@@ -215,7 +215,12 @@ with(require('sys')) {
     if(file.match(/^spec/)) {
       if (specVerbose) print(file+"\n");
       var content = fs.readFileSync(specDirectory + "/" + file, "utf8");
-      eval(content);
+      try {
+          eval(content);
+      } catch (e) {
+          console.log('failed to evaluate: ', file);
+          throw e;
+      }
     }
   }
   puts("\n");

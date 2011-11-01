@@ -30,13 +30,17 @@ XmlSyntaxError::BuildSyntaxError(xmlError* error) {
     set_numeric_field(out, "code", error->code);
     set_string_field(out, "message", error->message);
     set_numeric_field(out, "level", error->level);
+    set_numeric_field(out, "column", error->int2);
     set_string_field(out, "file", error->file);
     set_numeric_field(out, "line", error->line);
     set_string_field(out, "str1", error->str1);
     set_string_field(out, "str2", error->str2);
     set_string_field(out, "str3", error->str3);
-    set_numeric_field(out, "int1", error->int1);
-    set_numeric_field(out, "int2", error->int2);
+
+    // only add if we have something interesting
+    if (error->int1) {
+        set_numeric_field(out, "int1", error->int1);
+    }
     return out;
 }
 

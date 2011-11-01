@@ -8,6 +8,9 @@
       "install" : "node-waf configure build"
     , "test" : "make test"
   },
+  "scripts": {
+      "test": "node --expose_gc spec/tacular.js"
+  },
   "repository" : {
       "type" : "git"
     , "url" : "http://github.com/polotek/libxmljs.git"
