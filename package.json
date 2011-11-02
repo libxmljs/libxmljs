@@ -1,21 +1,24 @@
-{ "name" : "libxmljs"
-, "author" : "Marco Rogers - http://github.com/polotek"
-, "contributors" : ["Jeff Smick"]
-, "description" : "libxml bindings for v8 javascript engine"
-, "version" : "0.4.2"
-, "scripts" :
-  { "preinstall" : "make node"
-  , "preuninstall" : "make clean"
-  , "test" : "make test"
-  }
-, "repository" :
-  { "type" : "git"
-  , "url" : "http://github.com/polotek/libxmljs.git"
-  }
-, "bugs" :
-  { "mail" : ""
-  , "web" : "http://github.com/polotek/libxmljs/issues"
-  }
-, "main" : "./libxmljs"
-, "engines" : { "node" : ">=0.1.90" }
+{
+    "name" : "libxmljs"
+  , "author" : "Marco Rogers - http://github.com/polotek"
+  , "contributors" : ["Jeff Smick"]
+  , "description" : "libxml bindings for v8 javascript engine"
+  , "version" : "0.4.2"
+  , "scripts" : {
+      "install" : "node-waf configure build"
+    , "test" : "make test"
+  },
+  "scripts": {
+      "install": "node-waf configure build",
+      "test": "node-waf build && node --expose_gc spec/tacular.js"
+  },
+  "repository" : {
+      "type" : "git"
+    , "url" : "http://github.com/polotek/libxmljs.git"
+  },
+  "bugs" : {
+      "mail" : ""
+    , "url" : "http://github.com/polotek/libxmljs/issues"
+  },
+  "main" : "./index.js"
 }

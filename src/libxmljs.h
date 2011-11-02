@@ -16,8 +16,10 @@
 #include <libxml/HTMLtree.h>
 
 #include <memory>
-#include <string.h>
+#include <cstring>
 #include <cassert>  // for assert()
+
+#include "object_wrap.h"
 
 #define LIBXMLJS_VERSION "v0.4.0"
 
@@ -77,24 +79,16 @@ static const bool debugging = true;
 static const bool debugging = false;
 #endif
 
-    static long current_xml_memory = 0;
-    void UpdateV8Memory();
-
 // Ensure that libxml is properly initialised:
 class LibXMLJS {
-  public:
+public:
+    LibXMLJS();
+    virtual ~LibXMLJS();
 
-  LibXMLJS();
-  virtual ~LibXMLJS();
-
-  private:
-
-  static LibXMLJS init_;
+private:
+    static LibXMLJS instance;
 };
 
 }  // namespace libxmljs
-
-#include "natives.h"
-#include "object_wrap.h"
 
 #endif  // SRC_LIBXMLJS_H_

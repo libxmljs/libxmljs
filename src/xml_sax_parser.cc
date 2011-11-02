@@ -3,7 +3,7 @@
 
 namespace libxmljs {
 
-  XmlSaxParser::XmlSaxParser() : sax_handler_(new xmlSAXHandler), context_(NULL) {
+  XmlSaxParser::XmlSaxParser() : context_(NULL), sax_handler_(new xmlSAXHandler) {
 
   xmlSAXHandler tmp = {
     0,  // internalSubset;
@@ -61,7 +61,7 @@ XmlSaxParser::releaseContext() {
       xmlFreeDoc(context_->myDoc);
       context_->myDoc = NULL;
     }
-	
+
     xmlFreeParserCtxt(context_);
     context_ = 0;
   }
@@ -124,7 +124,7 @@ XmlSaxParser::Callback(const char* what,
     callbacks_->Get(v8::String::New("callback")));
   assert(callback->IsFunction());
 
-  v8::Handle<v8::Value> args[argc+1];
+  v8::Handle<v8::Value>* args = new v8::Handle<v8::Value>[argc+1];
   args[0] = v8::String::New(what);
   for (int i = 1; i <= argc; i++) {
     args[i] = argv[i-1];
@@ -132,6 +132,8 @@ XmlSaxParser::Callback(const char* what,
 
   v8::Handle<v8::Object> global = v8::Context::GetCurrent()->Global();
   callback->Call(global, argc+1, args);
+
+  delete[] args;
 }
 
 v8::Handle<v8::Value>
@@ -163,7 +165,7 @@ void
 XmlSaxParser::push(const char* str,
                    unsigned int size,
                    bool terminate = false) {
-  int e = xmlParseChunk(context_, str, size, terminate);
+  xmlParseChunk(context_, str, size, terminate);
 }
 
 v8::Handle<v8::Value>
@@ -220,7 +222,7 @@ XmlSaxParser::parse() {
   initializeContext();
   context_->replaceEntities = 1;
   context_->sax = sax_handler_;
-  int e = xmlParseDocument(context_);
+  xmlParseDocument(context_);
 }
 
 void

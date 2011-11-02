@@ -37,8 +37,6 @@ XmlElement::New(const v8::Arguments& args) {
                                 NULL,
                                 (const xmlChar*)*name,
                                 (const xmlChar*)content);
-  UpdateV8Memory();
-
   if(content)
       free(content);
 
@@ -481,8 +479,6 @@ XmlElement::import_element(XmlElement *element) {
         if(new_child == NULL) {
             return NULL;
         }
-		
-        UpdateV8Memory();
 
         v8::Handle<v8::Object> obj =
             LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(new_child);

@@ -1,17 +1,16 @@
-SCONS=scons
 
-node:
-	@$(SCONS) libxmljs.node
+target=./build/Release/libxmljs.node
 
-node-debug:
-	@$(SCONS) libxmljs.node debug=1
+all: $(target)
+
+$(target): src/*.cc src/*.h
+	node-waf configure build
 
 clean:
-	@$(SCONS) -c
-	@$(SCONS) -c libxmljs.node
+	rm -rf build
 
-test-verbose:
+test-verbose: $(target)
 	node --expose_gc spec/tacular.js --verbose
 
-test:
+test: $(target)
 	node --expose_gc spec/tacular.js

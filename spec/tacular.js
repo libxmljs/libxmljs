@@ -57,7 +57,7 @@ with(require('sys')) {
   var specCount    = 0;
   var specStack    = [];
   var specFailures = [];
-    var specVerbose  = process.ARGV.join(";").match(/;(--verbose|-v)/);
+    var specVerbose  = process.argv.join(";").match(/;(--verbose|-v)/);
   
   var describe = function(name, func) {
     specStack.push(name);
@@ -215,7 +215,12 @@ with(require('sys')) {
     if(file.match(/^spec/)) {
       if (specVerbose) print(file+"\n");
       var content = fs.readFileSync(specDirectory + "/" + file, "utf8");
-      eval(content);
+      try {
+          eval(content);
+      } catch (e) {
+          console.log('failed to evaluate: ', file);
+          throw e;
+      }
     }
   }
   puts("\n");

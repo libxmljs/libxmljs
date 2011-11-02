@@ -14,15 +14,6 @@ XmlDocument::Doc(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-XmlDocument::Errors(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
-  assert(document);
-
-  return scope.Close(document->errors);
-}
-
-v8::Handle<v8::Value>
 XmlDocument::Encoding(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(args.This());
@@ -136,8 +127,6 @@ XmlDocument::New(const v8::Arguments& args) {
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
 
-  UpdateV8Memory();
-
   v8::Handle<v8::Object> obj =
       LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
@@ -158,8 +147,7 @@ XmlDocument::New(const v8::Arguments& args) {
 }
 
 XmlDocument::~XmlDocument() {
-  xmlFree(xml_obj);
-  UpdateV8Memory();
+  xmlFreeDoc(xml_obj);
 }
 
 void
@@ -246,10 +234,6 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target) {
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "document",
                         XmlDocument::Doc);
-
-  LXJS_SET_PROTO_METHOD(constructor_template,
-                        "errors",
-                        XmlDocument::Errors);
 
   LXJS_SET_PROTO_METHOD(constructor_template,
                         "toString",
