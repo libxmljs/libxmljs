@@ -39,12 +39,4 @@ ParseHtmlString(const v8::Arguments& args) {
     return scope.Close(built_doc);
 }
 
-void
-HtmlParser::Initialize(v8::Handle<v8::Object> target) {
-  v8::HandleScope scope;
-
-  LIBXMLJS_SET_METHOD(target,
-                      "parseHtmlString",
-                      ParseHtmlString);
-}
 }  // namespace libxmljs
