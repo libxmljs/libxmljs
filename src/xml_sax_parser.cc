@@ -2,6 +2,8 @@
 
 #include <node.h>
 
+#include <libxml/parserInternals.h>
+
 #include "xml_sax_parser.h"
 
 namespace libxmljs {

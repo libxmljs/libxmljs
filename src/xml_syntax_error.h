@@ -2,6 +2,8 @@
 #ifndef SRC_XML_SYNTAX_ERROR_H_
 #define SRC_XML_SYNTAX_ERROR_H_
 
+#include <libxml/xmlerror.h>
+
 #include "libxmljs.h"
 
 namespace libxmljs {

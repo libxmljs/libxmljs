@@ -2,6 +2,8 @@
 #ifndef SRC_XML_NODE_H_
 #define SRC_XML_NODE_H_
 
+#include <libxml/tree.h>
+
 #include "libxmljs.h"
 
 namespace libxmljs {
@@ -28,7 +30,7 @@ class XmlNode : public LibXmlObj {
   static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
   static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
   static v8::Handle<v8::Value> Clone(const v8::Arguments& args);
-  
+
   v8::Persistent<v8::Value> doc;
 
   v8::Handle<v8::Value> get_doc();

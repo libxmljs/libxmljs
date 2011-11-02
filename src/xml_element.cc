@@ -2,6 +2,8 @@
 
 #include <node.h>
 
+#include <cstring>
+
 #include "xml_element.h"
 #include "xml_document.h"
 #include "xml_attribute.h"
