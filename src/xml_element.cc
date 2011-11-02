@@ -1,4 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <node.h>
+
 #include "xml_element.h"
 #include "xml_document.h"
 #include "xml_attribute.h"
@@ -494,55 +497,55 @@ XmlElement::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->Inherit(XmlNode::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "addChild",
                         XmlElement::AddChild);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "attr",
                         XmlElement::Attr);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "attrs",
                         XmlElement::Attrs);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "child",
                         XmlElement::Child);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "childNodes",
                         XmlElement::ChildNodes);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "find",
                         XmlElement::Find);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "nextElement",
                         XmlElement::NextElement);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "prevElement",
                         XmlElement::PrevElement);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "name",
                         XmlElement::Name);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "path",
                         XmlElement::Path);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "text",
                         XmlElement::Text);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "addPrevSibling",
                         XmlElement::AddPrevSibling);
-  
-  LXJS_SET_PROTO_METHOD(constructor_template,
+
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "addNextSibling",
                         XmlElement::AddNextSibling);
 

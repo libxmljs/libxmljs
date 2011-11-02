@@ -25,17 +25,6 @@
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
 
-#define LXJS_SET_PROTO_METHOD(templ, name, callback)                          \
-do {                                                                          \
-  v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);      \
-  v8::Local<v8::FunctionTemplate> __callback##_TEM =                          \
-    v8::FunctionTemplate::New(callback,                                       \
-                              v8::Handle<v8::Value>(),                        \
-                              __callback##_SIG);                              \
-  templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),                \
-                                  __callback##_TEM);                          \
-} while (0)
-
 #define LIBXMLJS_THROW_EXCEPTION(err)                                         \
   v8::Local<v8::Value> exception = v8::Exception::TypeError(                  \
     v8::String::New(err));                                                    \

@@ -1,4 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <node.h>
+
 #include "xml_sax_parser.h"
 
 namespace libxmljs {
@@ -497,11 +500,11 @@ XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {
 
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(sax_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_parser_template,
                         "parseString",
                         XmlSaxParser::ParseString);
 
-  LXJS_SET_PROTO_METHOD(sax_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_parser_template,
                         "parseFile",
                         XmlSaxParser::ParseFile);
 
@@ -518,7 +521,7 @@ XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {
 
   sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(sax_push_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_push_parser_template,
                         "push",
                         XmlSaxParser::Push);
 
