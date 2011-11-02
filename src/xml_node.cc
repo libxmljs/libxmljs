@@ -1,5 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
 
+#include <node.h>
+
 #include "xml_node.h"
 #include "xml_document.h"
 #include "xml_namespace.h"
@@ -331,39 +333,39 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
     v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "doc",
                         XmlNode::Doc);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "parent",
                         XmlNode::Parent);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "namespace",
                         XmlNode::Namespace);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "prevSibling",
                         XmlNode::PrevSibling);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "nextSibling",
                         XmlNode::NextSibling);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "type",
                         XmlNode::Type);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "remove",
                         XmlNode::Remove);
-						
-  LXJS_SET_PROTO_METHOD(constructor_template,
+
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "clone",
                         XmlNode::Clone);
-						
-  LXJS_SET_PROTO_METHOD(constructor_template,
+
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "toString",
                         XmlNode::ToString);
 

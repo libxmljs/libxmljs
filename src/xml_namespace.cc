@@ -1,4 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <node.h>
+
 #include "xml_namespace.h"
 #include "xml_node.h"
 #include "xml_document.h"
@@ -98,11 +101,11 @@ XmlNamespace::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "href",
                         XmlNamespace::Href);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "prefix",
                         XmlNamespace::Prefix);
 

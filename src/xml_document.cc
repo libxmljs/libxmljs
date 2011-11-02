@@ -1,4 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <node.h>
+
 #include "xml_document.h"
 #include "xml_element.h"
 #include "xml_namespace.h"
@@ -219,23 +222,23 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target) {
   constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "root",
                         XmlDocument::Root);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "version",
                         XmlDocument::Version);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "encoding",
                         XmlDocument::Encoding);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "document",
                         XmlDocument::Doc);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "toString",
                         XmlDocument::ToString);
 

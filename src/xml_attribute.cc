@@ -136,17 +136,9 @@ XmlAttribute::Initialize(v8::Handle<v8::Object> target) {
   constructor_template->Inherit(XmlNode::constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(constructor_template,
-                        "name",
-                        XmlAttribute::Name);
-
-  LXJS_SET_PROTO_METHOD(constructor_template,
-                        "value",
-                        XmlAttribute::Value);
-
-  LXJS_SET_PROTO_METHOD(constructor_template,
-                        "node",
-                        XmlAttribute::Node);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "name", XmlAttribute::Name);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "value", XmlAttribute::Value);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "node", XmlAttribute::Node);
 
   target->Set(v8::String::NewSymbol("Attribute"),
               constructor_template->GetFunction());
