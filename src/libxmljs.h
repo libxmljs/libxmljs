@@ -25,10 +25,6 @@
 
 #define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
 
-#define LIBXMLJS_SET_METHOD(obj, name, callback)                              \
-  obj->Set(v8::String::NewSymbol(name),                                       \
-           v8::FunctionTemplate::New(callback)->GetFunction())
-
 #define LXJS_SET_PROTO_METHOD(templ, name, callback)                          \
 do {                                                                          \
   v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);      \
