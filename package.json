@@ -9,7 +9,8 @@
     , "test" : "make test"
   },
   "scripts": {
-      "test": "node --expose_gc spec/tacular.js"
+      "install": "node-waf configure build",
+      "test": "node-waf build && node --expose_gc spec/tacular.js"
   },
   "repository" : {
       "type" : "git"
