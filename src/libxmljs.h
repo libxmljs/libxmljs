@@ -47,13 +47,6 @@
   __klass##_OBJ->Wrap(__jsobj_JS);                                            \
 })
 
-#define LXJS_GET_MAYBE_BUILD(klass, node)                                     \
-({                                                                            \
-  if (!node->_private)                                                        \
-    BUILD_NODE(klass, node);                                                  \
-  static_cast<klass *>(node->_private)->handle_;                              \
-})
-
 namespace libxmljs {
 
 #ifdef LIBXML_DEBUG_ENABLED
