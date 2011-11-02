@@ -1,14 +1,16 @@
 
-all: ./build/Release/libxmljs.node
+target=./build/Release/libxmljs.node
 
-./build/Release/libxmljs.node: src/*.cc src/*.h
+all: $(target)
+
+$(target): src/*.cc src/*.h
 	node-waf configure build
 
 clean:
 	rm -rf build
 
-test-verbose:
+test-verbose: $(target)
 	node --expose_gc spec/tacular.js --verbose
 
-test:
+test: $(target)
 	node --expose_gc spec/tacular.js
