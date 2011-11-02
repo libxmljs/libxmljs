@@ -21,7 +21,6 @@ def build(bld):
   obj.cxxflags = ["-O3", "-g", "-Wall", "-Werror"]
   obj.target = 'libxmljs'
   obj.source = [
-    'src/html_document.cc',
     'src/html_parser.cc',
     'src/libxmljs.cc',
     'src/xml_attribute.cc',

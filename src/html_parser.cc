@@ -1,8 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
 
 #include "xml_syntax_error.h"
+#include "xml_document.h"
 #include "html_parser.h"
-#include "html_document.h"
 
 namespace libxmljs {
 
@@ -33,7 +33,7 @@ ParseHtmlString(const v8::Arguments& args) {
                     v8::String::New("Could not parse XML string")));
     }
 
-    v8::Handle<v8::Object> built_doc = LibXmlObj::GetMaybeBuild<HtmlDocument, xmlDoc>(doc);
+    v8::Handle<v8::Object> built_doc = LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(doc);
     built_doc->Set(v8::String::New("errors"), errors);
 
     return scope.Close(built_doc);
