@@ -2,6 +2,8 @@
 
 #include <node.h>
 
+#include <libxml/xmlsave.h>
+
 #include "xml_node.h"
 #include "xml_document.h"
 #include "xml_namespace.h"

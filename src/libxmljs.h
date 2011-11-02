@@ -5,20 +5,6 @@
 #include <v8.h>
 #include <node.h>
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h>
-#include <libxml/xmlstring.h>
-#include <libxml/xmlsave.h>
-#include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
-#include <libxml/HTMLparser.h>
-#include <libxml/HTMLtree.h>
-
-#include <memory>
-#include <cstring>
-#include <cassert>  // for assert()
-
 #include "object_wrap.h"
 
 #define LIBXMLJS_VERSION "v0.4.0"

@@ -1,4 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <libxml/parser.h>
+
 #include "xml_syntax_error.h"
 #include "xml_parser.h"
 #include "xml_sax_parser.h"

@@ -2,6 +2,8 @@
 
 #include <v8.h>
 
+#include <libxml/xmlmemory.h>
+
 #include "libxmljs.h"
 #include "xml_document.h"
 #include "xml_node.h"

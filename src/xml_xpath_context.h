@@ -2,6 +2,8 @@
 #ifndef SRC_XML_XPATH_CONTEXT_H_
 #define SRC_XML_XPATH_CONTEXT_H_
 
+#include <libxml/xpath.h>
+
 #include "libxmljs.h"
 
 namespace libxmljs {

@@ -1,4 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
 #include "xml_xpath_context.h"
 #include "xml_element.h"
 
