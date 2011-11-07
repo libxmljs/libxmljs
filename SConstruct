@@ -48,6 +48,11 @@ if using_node_js:
 
   if node_flags:
     cflags += ' ' + node_flags.group(1)
+  else:
+    node_prefix = shellOut([node_exe, "-e", "console.log(require('path').dirname(require('path').dirname(process.execPath)))"])
+
+    cflags += ' -I' + node_prefix + '/include'
+    cflags += ' -I' + node_prefix + '/include/node'
 
 testBuilder = Builder(action = 'node spec/tacular.js')
 
