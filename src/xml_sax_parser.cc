@@ -455,10 +455,9 @@ SaxParserCallback::warning(void* context,
 
   va_list args;
   va_start(args, msg);
-  vasprintf(&message, msg, args);
+  if (vasprintf(&message, msg, args) >= 0)
+      parser->warning(message);
   va_end(args);
-
-  parser->warning(message);
 
   free(message);
 }
@@ -473,10 +472,9 @@ SaxParserCallback::error(void* context,
 
   va_list args;
   va_start(args, msg);
-  vasprintf(&message, msg, args);
+  if (vasprintf(&message, msg, args) >= 0)
+      parser->error(message);
   va_end(args);
-
-  parser->error(message);
 
   free(message);
 }
