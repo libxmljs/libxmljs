@@ -4,7 +4,15 @@
 
 #include <libxml/parserInternals.h>
 
+#include "libxmljs.h"
+
 #include "xml_sax_parser.h"
+
+#define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
+({                                                                            \
+  _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
+  static_cast<XmlSaxParser*>(the_context->_private);                          \
+})
 
 namespace libxmljs {
 
@@ -76,7 +84,7 @@ v8::Handle<v8::Value>
 XmlSaxParser::NewParser(const v8::Arguments& args) {
   v8::HandleScope scope;
 
-  XmlSaxParser *parser = new XmlSaxParser();
+  XmlSaxParser* parser = new XmlSaxParser();
   parser->Wrap(args.This());
 
   LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
@@ -93,7 +101,7 @@ XmlSaxParser::NewPushParser(const v8::Arguments& args) {
 
   v8::Handle<v8::Value> return_val = NewParser(args);
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
   parser->initialize_push_parser();
 
   return scope.Close(return_val);
@@ -148,7 +156,7 @@ XmlSaxParser::Push(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
 
@@ -180,7 +188,7 @@ XmlSaxParser::ParseString(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_string(*parsable, parsable.length());
@@ -205,7 +213,7 @@ XmlSaxParser::ParseFile(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseFile requires a filename");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_file(*parsable);

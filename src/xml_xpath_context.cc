@@ -40,8 +40,8 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
-    xmlNode *node = result->nodesetval->nodeTab[i];
-    nodes->Set(i, LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node));
+    xmlNode* node = result->nodesetval->nodeTab[i];
+    nodes->Set(i, XmlElement::New(node));
   }
 
   xmlXPathFreeObject(result);

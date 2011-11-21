@@ -8,37 +8,66 @@ v8::Persistent<v8::FunctionTemplate> XmlAttribute::constructor_template;
 v8::Handle<v8::Value>
 XmlAttribute::New(const v8::Arguments& args) {
   v8::HandleScope scope;
-  // was created by BUILD_NODE
+
+#if 0
   if (args.Length() == 1 && args[0]->StrictEquals(v8::Null()))
       return scope.Close(args.This());
 
-  XmlElement *element = LibXmlObj::Unwrap<XmlElement>(args[0]->ToObject());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
+#endif
 
-  v8::String::Utf8Value name(args[1]->ToString());
-  v8::String::Utf8Value value(args[2]->ToString());
+  //v8::String::Utf8Value name(args[0]->ToString());
+  //v8::String::Utf8Value value(args[1]->ToString());
 
-  xmlAttr *elem = xmlSetProp(element->xml_obj,
-                             (const xmlChar*)*name,
-                             (const xmlChar*)*value);
+  /*
+  XmlAttribute* attr = new XmlAttribute(elem);
+  attr->Wrap(args.This());
+  */
 
+  /*
   // namespace passed in
   if (args.Length() == 4 && args[3]->IsObject()) {
-    XmlNamespace *ns = LibXmlObj::Unwrap<XmlNamespace>(args[3]->ToObject());
+    XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args[3]->ToObject());
     assert(ns);
-
-    v8::Handle<v8::Object> js_attr =
-        LibXmlObj::GetMaybeBuild<XmlAttribute, xmlAttr>(elem);
-    XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(js_attr);
     attr->set_namespace(ns->xml_obj);
   }
+  */
 
-  return scope.Close(LibXmlObj::GetMaybeBuild<XmlAttribute, xmlAttr>(elem));
+  return scope.Close(args.This());
+}
+
+v8::Handle<v8::Object>
+XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
+{
+    xmlAttr* attr = xmlSetProp(xml_obj, name, value);
+
+    if (attr->_private) {
+        return static_cast<XmlNode*>(xml_obj->_private)->handle_;
+    }
+
+    XmlAttribute* attribute = new XmlAttribute(attr);
+    v8::Local<v8::Object> obj = constructor_template->GetFunction()->NewInstance();
+    attribute->Wrap(obj);
+    return obj;
+}
+
+v8::Handle<v8::Object>
+XmlAttribute::New(xmlAttr* attr)
+{
+    if (attr->_private) {
+        return static_cast<XmlNode*>(attr->_private)->handle_;
+    }
+
+    XmlAttribute* attribute = new XmlAttribute(attr);
+    v8::Local<v8::Object> obj = constructor_template->GetFunction()->NewInstance();
+    attribute->Wrap(obj);
+    return obj;
 }
 
 v8::Handle<v8::Value>
 XmlAttribute::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
   assert(attr);
 
   return scope.Close(attr->get_name());
@@ -47,7 +76,7 @@ XmlAttribute::Name(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlAttribute::Value(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
   assert(attr);
 
   // attr.value('new value');
@@ -63,7 +92,7 @@ XmlAttribute::Value(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlAttribute::Node(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = LibXmlObj::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
   assert(attr);
 
   return scope.Close(attr->get_element());
@@ -124,7 +153,7 @@ XmlAttribute::set_value(const char* value) {
 
 v8::Handle<v8::Value>
 XmlAttribute::get_element() {
-    return LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->parent);
+    return XmlElement::New(xml_obj->parent);
 }
 
 void

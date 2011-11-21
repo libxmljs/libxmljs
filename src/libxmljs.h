@@ -5,16 +5,7 @@
 #include <v8.h>
 #include <node.h>
 
-#include "object_wrap.h"
-
 #define LIBXMLJS_VERSION "v0.4.0"
-
-#define BAD_ARGUMENTS Exception::TypeError(String::New("Bad argument"))
-
-#define LIBXMLJS_THROW_EXCEPTION(err)                                         \
-  v8::Local<v8::Value> exception = v8::Exception::TypeError(                  \
-    v8::String::New(err));                                                    \
-  ThrowException(exception);
 
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                          \
   if (!arg->type()) {                                                         \
@@ -23,27 +14,18 @@
     return v8::ThrowException(exception);                                     \
   }
 
-#define BUILD_NODE(klass, node)                                               \
-({                                                                            \
-  klass *__klass##_OBJ = new klass(node);                                     \
-  node->_private = static_cast<void *>(__klass##_OBJ);                        \
-  v8::Handle<v8::Value> __jsobj_ARG[1] = { v8::Null() };                      \
-  v8::Handle<v8::Object> __jsobj_JS =                                         \
-    klass::constructor_template->GetFunction()->NewInstance(1, __jsobj_ARG);  \
-  __klass##_OBJ->Wrap(__jsobj_JS);                                            \
-})
-
 namespace libxmljs {
+
+// convenience function to create a v8 error wrapped by ThrowException
+v8::Handle<v8::Value> ThrowError(const char* msg);
 
 #ifdef LIBXML_DEBUG_ENABLED
 static const bool debugging = true;
-#endif
-
-#ifndef LIBXML_DEBUG_ENABLED
+#else
 static const bool debugging = false;
 #endif
 
-// Ensure that libxml is properly initialised:
+// Ensure that libxml is properly initialised and destructed at shutdown
 class LibXMLJS {
 public:
     LibXMLJS();
