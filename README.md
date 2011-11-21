@@ -25,13 +25,8 @@ LibXML bindings for [node.js](http://nodejs.org/)
 
 ## Basics
 
-* GitHub Repo - [http://github.com/polotek/libxmljs](http://github.com/polotek/libxmljs)
 * Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
-
-## API and Examples
-
-Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 
 ## Requirements
 
@@ -40,7 +35,7 @@ Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/p
 
 **pre-conditions**
 
-You will need have the libxml2 library installed and also the libxml2-devel
+You will need have the libxml2 library installed and also the libxml2-devel (libxml2-dev on debian systems)
 package. This comes with the `xml2-config` utility that is needed for
 compiling.  **This command must be in your path.**
 
@@ -62,6 +57,5 @@ use `npm link` or copy the source folder to a `node_modules` directory
 
 **tests**
 
-    make test
-
-    make test-verbose
+    npm test
+    
