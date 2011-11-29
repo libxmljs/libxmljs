@@ -1,8 +1,8 @@
 var libxml = require('../index');
 
 module.exports.new = function(assert) {
-    var doc = libxml.Document.new();
-    var elem = libxml.Element.new(doc, 'name1');
+    var doc = libxml.Document();
+    var elem = libxml.Element(doc, 'name1');
     doc.root(elem);
     assert.equal('name1', elem.name());
     assert.equal('name1', doc.root().name());
@@ -10,7 +10,7 @@ module.exports.new = function(assert) {
 };
 
 module.exports.setters = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     // change content
@@ -26,7 +26,7 @@ module.exports.setters = function(assert) {
 };
 
 module.exports.getters = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     assert.equal('element', elem.type());
@@ -35,7 +35,7 @@ module.exports.getters = function(assert) {
 };
 
 module.exports.remove = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var child = elem.node('child');
     assert.ok(doc.get('/name1/child'));
@@ -47,7 +47,7 @@ module.exports.remove = function(assert) {
 };
 
 module.exports.toString = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     assert.equal('<name1/>', elem.toString());
     elem.node('child');
@@ -57,7 +57,7 @@ module.exports.toString = function(assert) {
 
 module.exports.path = function(assert) {
     var gchild = null, sibling = null;
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     var gchild = root.node('child').node('grandchild');
     var sibling = root.node('child');
@@ -67,7 +67,7 @@ module.exports.path = function(assert) {
 };
 
 module.exports.move = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var child = elem.node('child');
     assert.ok(doc.get('/name1/child'));
@@ -81,22 +81,22 @@ module.exports.move = function(assert) {
 };
 
 module.exports.addChild = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
-    var newChild = libxml.Element.new(doc, 'new-child');
+    var newChild = libxml.Element(doc, 'new-child');
     elem.addChild(newChild);
     assert.ok(doc.get('/name1/new-child'));
     assert.done();
 };
 
 module.exports.add_prev_sibling = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     var child1 = elem.node('child1');
     var child2 = elem.node('child2');
     assert.equal(elem.childNodes().length, 2);
-    var prevSibling = libxml.Element.new(doc, 'prev-sibling');
+    var prevSibling = libxml.Element(doc, 'prev-sibling');
     var addedSibling = child2.addPrevSibling(prevSibling);
     var children = elem.childNodes();
     assert.equal(3, children.length);
@@ -105,13 +105,13 @@ module.exports.add_prev_sibling = function(assert) {
 };
 
 module.exports.add_next_sibling = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     var child1 = elem.node('child1');
     var child2 = elem.node('child2');
     assert.equal(elem.childNodes().length, 2);
-    var nextSibling = libxml.Element.new(elem.doc(), 'next-sibling');
+    var nextSibling = libxml.Element(elem.doc(), 'next-sibling');
     var addedSibling = child1.addNextSibling(nextSibling);
     var children = elem.childNodes();
     assert.equal(3, children.length);
@@ -120,13 +120,13 @@ module.exports.add_next_sibling = function(assert) {
 };
 
 module.exports.import = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     var child1 = elem.node('child1');
     doc = child1.doc();
 
-    var newdoc = libxml.Document.new();
+    var newdoc = libxml.Document();
     newdoc.node('newdoc');
 
     newdoc.root().addChild(child1);

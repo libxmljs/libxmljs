@@ -1,7 +1,7 @@
 var libxml = require('../index');
 
 module.exports.blank = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     assert.ok(doc);
     assert.equal('1.0', doc.version());
     assert.equal('utf8', doc.encoding());
@@ -9,7 +9,7 @@ module.exports.blank = function(assert) {
 };
 
 module.exports.version = function(assert) {
-    var doc = libxml.Document.new('2.0');
+    var doc = libxml.Document('2.0');
     assert.ok(doc);
     assert.equal('2.0', doc.version());
     assert.equal('utf8', doc.encoding());
@@ -17,7 +17,7 @@ module.exports.version = function(assert) {
 };
 
 module.exports.full = function(assert) {
-    var doc = libxml.Document.new('2.0', 'UTF-8');
+    var doc = libxml.Document('2.0', 'UTF-8');
     assert.ok(doc);
     assert.equal('2.0', doc.version());
     assert.equal('UTF-8', doc.encoding());
@@ -25,13 +25,13 @@ module.exports.full = function(assert) {
 };
 
 module.exports.null_root = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     assert.equal(null, doc.root());
     assert.done();
 };
 
 module.exports.new_root = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     assert.equal('root', root.name());
     assert.equal(root, doc.root());
@@ -42,7 +42,7 @@ module.exports.new_root = function(assert) {
 };
 
 module.exports.one_child = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root').node('child-one').parent().node('child-two');
     assert.equal('child-one', doc.child(1).name());
     assert.equal('child-two', doc.child(2).name());
@@ -50,7 +50,7 @@ module.exports.one_child = function(assert) {
 };
 
 module.exports.root_children = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     doc.node('root').node('child-one').parent().node('child-two');
     assert.equal('child-one', doc.childNodes()[0].name());
     assert.equal('child-two', doc.childNodes()[1].name());
@@ -58,14 +58,14 @@ module.exports.root_children = function(assert) {
 };
 
 module.exports.xpath = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     doc.node('root').node('child').parent().node('child');
     assert.equal(2, doc.find('child').length);
     assert.done();
 };
 
 module.exports.xpath_child = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     doc.node('root').node('child-one').parent().node('child-two');
     assert.equal('child-one', doc.get('child-one').name());
     assert.equal('child-two', doc.get('child-two').name());
@@ -79,7 +79,7 @@ module.exports.toString = function(assert) {
       ''
     ].join("\n");
 
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     root.node('child').attr('to', 'wongfoo')
         .node('grandchild', 'with love').attr('from', 'julie numar')

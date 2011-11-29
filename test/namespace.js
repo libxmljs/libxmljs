@@ -1,7 +1,7 @@
 var libxml = require('../index');
 
 module.exports.create = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var ns = elem.defineNamespace('http://my-namespace.com');
     assert.ok(ns);
@@ -13,7 +13,7 @@ module.exports.create = function(assert) {
 
 // assign namespace to a node
 module.exports.set = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
 
     // this will set a namespace on the node
@@ -27,7 +27,7 @@ module.exports.set = function(assert) {
 
 
 module.exports.with_prefix = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var ns = elem.defineNamespace('pref', 'http://my-namespace.com');
     assert.equal(null, elem.namespace());
@@ -69,14 +69,14 @@ module.exports.from_parsing = function(assert) {
 };
 
 module.exports.existing = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var ns = elem.defineNamespace('http://my-namespace.com');
     elem.namespace('http://my-namespace.com');
     assert.ok(ns);
     assert.equal(ns, elem.namespace());
 
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var ns = elem.defineNamespace('pref', 'http://my-namespace.com');
     elem.namespace('pref', 'http://my-namespace.com');
@@ -86,7 +86,7 @@ module.exports.existing = function(assert) {
 };
 
 module.exports.remove = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name1');
     var ns = elem.namespace('http://my-namespace.com');
     assert.ok(ns);

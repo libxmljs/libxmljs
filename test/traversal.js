@@ -1,7 +1,7 @@
 var libxml = require('../index');
 
 module.exports.built = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var child = doc.node('root').node('child');
     var sibling = doc.root().node('sibling');
     var gchild = child.node('grandchild');
@@ -19,7 +19,7 @@ module.exports.built = function(assert) {
 
 module.exports.children = function(assert) {
     var children = [];
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     children.push(root.node('child'));
     children.push(root.node('sibling1'));
@@ -34,7 +34,7 @@ module.exports.children = function(assert) {
 
 module.exports.siblings = function(assert) {
     var children = [];
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     children.push(root.node('prevSibling'));
     children.push(root.node('child'));

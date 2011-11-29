@@ -2,21 +2,21 @@ var libxml = require('../index');
 
 module.exports.basic = function(assert) {
     // reading a node is implied during all tests
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name').attr('to', 'wongfoo');
     assert.equal('wongfoo', elem.attr('to').value());
     assert.done();
 };
 
 module.exports.null = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name');
     assert.equal(null, elem.attr('to'));
     assert.done();
 };
 
 module.exports.assign_object = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name');
     elem.attr({to: 'wongfoo'});
     assert.equal('wongfoo', elem.attr('to').value());
@@ -24,7 +24,7 @@ module.exports.assign_object = function(assert) {
 };
 
 module.exports.change = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('name').attr({to: 'wongfoo'});
     assert.equal('wongfoo', elem.attr('to').value());
     elem.attr({to: 'julie newmar'});
@@ -33,7 +33,7 @@ module.exports.change = function(assert) {
 };
 
 module.exports.attrs = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('root');
 
     assert.deepEqual([], elem.attrs());
@@ -50,7 +50,7 @@ module.exports.attrs = function(assert) {
 };
 
 module.exports.siblings = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('root')
         .attr({foo: 'bar'})
         .attr({bar: 'baz'})
@@ -63,7 +63,7 @@ module.exports.siblings = function(assert) {
 };
 
 module.exports.getters = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var elem = doc.node('root').attr({foo: 'bar'});
 
     // get node

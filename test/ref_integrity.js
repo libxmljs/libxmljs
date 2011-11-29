@@ -5,7 +5,7 @@ if (!global.gc) {
 }
 
 module.exports.gc = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     doc.node('root').node('child').node('grandchild').parent().node('child2');
     gc();
     assert.ok(doc, "doc");

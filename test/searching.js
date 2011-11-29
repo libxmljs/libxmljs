@@ -1,7 +1,7 @@
 var libxml = require('../index');
 
 module.exports.get = function(assert) {
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     var child = root.node('child');
     var grandchild = child.node('grandchild');
@@ -16,7 +16,7 @@ module.exports.get = function(assert) {
 
 module.exports.find = function(assert) {
     var children = [];
-    var doc = libxml.Document.new();
+    var doc = libxml.Document();
     var root = doc.node('root');
     children.push(root.node('child'));
     children.push(root.node('child'));
@@ -38,7 +38,7 @@ var prefix = 'pefname';
 // non prefixed namespaces
 module.exports.namespace = {
     get: function(assert) {
-        var doc = libxml.Document.new();
+        var doc = libxml.Document();
         var root = doc.node('root');
         var child = root.node('child');
         var grandchild = child.node('grandchild');
@@ -53,7 +53,7 @@ module.exports.namespace = {
     },
     find: function(assert) {
         var children = [];
-        var doc = libxml.Document.new();
+        var doc = libxml.Document();
         var root = doc.node('root');
         children.push(root.node('child'));
         children.push(root.node('child'));
@@ -73,7 +73,7 @@ module.exports.namespace = {
 
 module.exports.prefixed_namespace = {
     get: function(assert) {
-        var doc = libxml.Document.new();
+        var doc = libxml.Document();
         var root = doc.node('root');
         var child = root.node('child');
         var grandchild = child.node('grandchild');
@@ -92,7 +92,7 @@ module.exports.prefixed_namespace = {
     },
     find: function(assert) {
         var children = [];
-        var doc = libxml.Document.new();
+        var doc = libxml.Document();
         var root = doc.node('root');
         children.push(root.node('child'));
         children.push(root.node('child'));
