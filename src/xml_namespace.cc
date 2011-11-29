@@ -17,7 +17,7 @@ XmlNamespace::New(const v8::Arguments& args) {
   // created for an already existing namespace
   if (args.Length() == 0)
   {
-      return scope.Close(args.This());
+      return scope.Close(args.Holder());
   }
 
   // TODO(sprsquish): ensure this is an actual Node object
@@ -42,9 +42,9 @@ XmlNamespace::New(const v8::Arguments& args) {
           prefix ? (const xmlChar*)(prefix->operator*()) : NULL);
 
   XmlNamespace* namesp = new XmlNamespace(ns);
-  namesp->Wrap(args.This());
+  namesp->Wrap(args.Holder());
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Object>
@@ -91,7 +91,7 @@ XmlNamespace::~XmlNamespace()
 v8::Handle<v8::Value>
 XmlNamespace::Href(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.This());
+  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.Holder());
   assert(ns);
   return scope.Close(ns->get_href());
 }
@@ -99,7 +99,7 @@ XmlNamespace::Href(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNamespace::Prefix(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.This());
+  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.Holder());
   assert(ns);
   return scope.Close(ns->get_prefix());
 }

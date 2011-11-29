@@ -11,7 +11,7 @@ XmlAttribute::New(const v8::Arguments& args) {
 
 #if 0
   if (args.Length() == 1 && args[0]->StrictEquals(v8::Null()))
-      return scope.Close(args.This());
+      return scope.Close(args.Holder());
 
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
 #endif
@@ -21,7 +21,7 @@ XmlAttribute::New(const v8::Arguments& args) {
 
   /*
   XmlAttribute* attr = new XmlAttribute(elem);
-  attr->Wrap(args.This());
+  attr->Wrap(args.Holder());
   */
 
   /*
@@ -33,7 +33,7 @@ XmlAttribute::New(const v8::Arguments& args) {
   }
   */
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Object>
@@ -67,7 +67,7 @@ XmlAttribute::New(xmlAttr* attr)
 v8::Handle<v8::Value>
 XmlAttribute::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
   return scope.Close(attr->get_name());
@@ -76,13 +76,13 @@ XmlAttribute::Name(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlAttribute::Value(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
   // attr.value('new value');
   if (args.Length() > 0) {
     attr->set_value(*v8::String::Utf8Value(args[0]));
-    return scope.Close(args.This());
+    return scope.Close(args.Holder());
   }
 
   // attr.value();
@@ -92,7 +92,7 @@ XmlAttribute::Value(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlAttribute::Node(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.This());
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
   return scope.Close(attr->get_element());

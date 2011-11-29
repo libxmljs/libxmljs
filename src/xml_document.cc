@@ -17,7 +17,7 @@ v8::Handle<v8::Value>
 XmlDocument::Encoding(const v8::Arguments& args)
 {
     v8::HandleScope scope;
-    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.This());
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
     // if no args, get the encoding
@@ -37,14 +37,14 @@ XmlDocument::Encoding(const v8::Arguments& args)
     }
 
     document->xml_obj->encoding = xmlStrdup((const xmlChar*)*encoding);
-    return scope.Close(args.This());
+    return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlDocument::Version(const v8::Arguments& args)
 {
     v8::HandleScope scope;
-    XmlDocument *document = ObjectWrap::Unwrap<XmlDocument>(args.This());
+    XmlDocument *document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
     if (document->xml_obj->version)
@@ -58,7 +58,7 @@ v8::Handle<v8::Value>
 XmlDocument::Root(const v8::Arguments& args)
 {
     v8::HandleScope scope;
-    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.This());
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
     xmlNode* root = xmlDocGetRootElement(document->xml_obj);
@@ -73,7 +73,7 @@ XmlDocument::Root(const v8::Arguments& args)
 
     if (root != NULL) {
         return ThrowException(v8::Exception::Error(
-                    v8::String::New("This document already has a root node")));
+                    v8::String::New("Holder document already has a root node")));
     }
 
     // set the element as the root element for the document
@@ -89,7 +89,7 @@ XmlDocument::ToString(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
-    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.This());
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
     xmlChar* buffer = NULL;
@@ -212,9 +212,9 @@ XmlDocument::New(const v8::Arguments& args)
     xmlDoc* doc = xmlNewDoc((const xmlChar*)(*version));
 
     XmlDocument* document = new XmlDocument(doc);
-    document->Wrap(args.This());
+    document->Wrap(args.Holder());
 
-    return scope.Close(args.This());
+    return scope.Close(args.Holder());
 }
 
 XmlDocument::XmlDocument(xmlDoc* doc)
@@ -235,6 +235,8 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     v8::HandleScope scope;
 
     v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(New);
+    t->SetClassName(v8::String::NewSymbol("Document"));
+
     constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
     constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 

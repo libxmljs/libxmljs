@@ -85,14 +85,14 @@ XmlSaxParser::NewParser(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlSaxParser* parser = new XmlSaxParser();
-  parser->Wrap(args.This());
+  parser->Wrap(args.Holder());
 
   LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
                                IsFunction,
                                "Bad argument: function required");
-  parser->SetCallbacks(args.This(), v8::Local<v8::Function>::Cast(args[0]));
+  parser->SetCallbacks(args.Holder(), v8::Local<v8::Function>::Cast(args[0]));
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>

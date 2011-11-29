@@ -17,7 +17,7 @@ v8::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
 v8::Handle<v8::Value>
 XmlNode::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_doc());
@@ -26,7 +26,7 @@ XmlNode::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   // #namespace() Get the node's namespace
@@ -60,7 +60,7 @@ XmlNode::Namespace(const v8::Arguments& args) {
   if (!ns) {
       const unsigned int argc = 3;
       v8::Handle<v8::Value> argv[argc];
-      argv[0] = args.This();
+      argv[0] = args.Holder();
 
       if (args.Length() == 1) {
           argv[1] = v8::Null();
@@ -87,7 +87,7 @@ XmlNode::Namespace(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_parent());
@@ -96,7 +96,7 @@ XmlNode::Parent(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::PrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_prev_sibling());
@@ -105,7 +105,7 @@ XmlNode::PrevSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::NextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_next_sibling());
@@ -114,7 +114,7 @@ XmlNode::NextSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Type(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_type());
@@ -123,7 +123,7 @@ XmlNode::Type(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->to_string());
@@ -132,18 +132,18 @@ XmlNode::ToString(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Remove(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   node->remove();
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlNode::Clone(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
   
   bool recurse = true;

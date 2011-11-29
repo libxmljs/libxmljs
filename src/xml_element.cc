@@ -24,7 +24,7 @@ XmlElement::New(const v8::Arguments& args) {
   // to create a new node on the document
   if (args.Length() == 0)
   {
-      return scope.Close(args.This());
+      return scope.Close(args.Holder());
   }
 
   XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
@@ -47,18 +47,18 @@ XmlElement::New(const v8::Arguments& args) {
 
   XmlElement* element = new XmlElement(elem);
   elem->_private = element;
-  element->Wrap(args.This());
+  element->Wrap(args.Holder());
 
   // this prevents the document from going away
-  args.This()->Set(v8::String::NewSymbol("document"), args[0]);
+  args.Holder()->Set(v8::String::NewSymbol("document"), args[0]);
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlElement::Name(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   if (args.Length() == 0)
@@ -66,13 +66,13 @@ XmlElement::Name(const v8::Arguments& args) {
 
   v8::String::Utf8Value name(args[0]->ToString());
   element->set_name(*name);
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlElement::Attr(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   // getter
@@ -87,13 +87,13 @@ XmlElement::Attr(const v8::Arguments& args) {
   v8::String::Utf8Value value(args[1]->ToString());
   element->set_attr(*name, *value);
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlElement::Attrs(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   return scope.Close(element->get_attrs());
@@ -102,7 +102,7 @@ XmlElement::Attrs(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::AddChild(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   XmlElement* child = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
@@ -115,13 +115,13 @@ XmlElement::AddChild(const v8::Arguments& args) {
   }
 
   element->add_child(child);
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlElement::Find(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   v8::String::Utf8Value xpath(args[0]);
@@ -152,7 +152,7 @@ XmlElement::Find(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::NextElement(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   return scope.Close(element->get_next_element());
@@ -161,7 +161,7 @@ XmlElement::NextElement(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::PrevElement(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   return scope.Close(element->get_prev_element());
@@ -170,7 +170,7 @@ XmlElement::PrevElement(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::Text(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   if (args.Length() == 0) {
@@ -179,13 +179,13 @@ XmlElement::Text(const v8::Arguments& args) {
     element->set_content(*v8::String::Utf8Value(args[0]));
   }
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlElement::Child(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   if (args.Length() != 1 || !args[0]->IsInt32())
@@ -200,7 +200,7 @@ XmlElement::Child(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::ChildNodes(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   if (args[0]->IsNumber())
@@ -212,7 +212,7 @@ XmlElement::ChildNodes(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::Path(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement *element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   return scope.Close(element->get_path());
@@ -221,7 +221,7 @@ XmlElement::Path(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::AddPrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   XmlElement* new_sibling = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
@@ -237,7 +237,7 @@ XmlElement::AddPrevSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlElement::AddNextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.This());
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   XmlElement* new_sibling = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
