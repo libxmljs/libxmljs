@@ -190,5 +190,49 @@ with(require('./helpers')) {
 
       assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<root><![CDATA[some text here]]></root>\n', output);
     });
+
+    it('will return the contents of the output buffer when told so', function() {
+      var writer = new libxml.TextWriter();
+      var count;
+      var output;
+
+      writer.openMemory();
+      count += writer.startDocument();
+      count += writer.startElementNS(undefined, 'root');
+      output = writer.outputMemory();
+
+      assertEqual('<?xml version="1.0"?>\n<root', output);
+
+      output = writer.outputMemory();
+      assertEqual('', output);
+
+      count += writer.endElement();
+      count += writer.endDocument();
+
+      output = writer.outputMemory();
+      assertEqual('/>\n', output);
+    });
+
+    it('will not flush the output buffer when told so', function() {
+      var writer = new libxml.TextWriter();
+      var count;
+      var output;
+
+      writer.openMemory();
+      count += writer.startDocument();
+      count += writer.startElementNS(undefined, 'root');
+
+      // flush buffer=false, ...
+      output = writer.outputMemory(false);
+      assertEqual('<?xml version="1.0"?>\n<root', output);
+
+      // content should be receivable here.
+      output = writer.outputMemory(true);
+      assertEqual('<?xml version="1.0"?>\n<root', output);
+
+      // but not here anymore because of recent flush.
+      output = writer.outputMemory();
+      assertEqual('', output);
+    });
   });
 }

@@ -64,7 +64,6 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
     flush = args[0]->ToBoolean()->Value();
   }
 
-  const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
   if (!writer->is_open()) {
     LIBXMLJS_THROW_EXCEPTION("No output method set. Call outputXXX once before trying to write.");
   }
@@ -72,6 +71,12 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
     LIBXMLJS_THROW_EXCEPTION("May not retreive output memory if this is not an inmemory writer opened using openMemory().");
   }
 
+  // Flush the output buffer of the libxml writer instance in order to push all
+  // the content to our writerBuffer.
+  xmlTextWriterFlush(writer->textWriter);
+
+  // Receive bytes from the writerBuffer
+  const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
   v8::Handle<v8::String> result = v8::String::New((const char*)buf);
 
   if (flush) {
