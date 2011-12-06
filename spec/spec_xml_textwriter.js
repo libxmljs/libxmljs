@@ -201,16 +201,16 @@ with(require('./helpers')) {
       count += writer.startElementNS(undefined, 'root');
       output = writer.outputMemory();
 
-      assertEqual('<?xml version="1.0"?>\n<root', output);
+      assert.equal('<?xml version="1.0"?>\n<root', output);
 
       output = writer.outputMemory();
-      assertEqual('', output);
+      assert.equal('', output);
 
       count += writer.endElement();
       count += writer.endDocument();
 
       output = writer.outputMemory();
-      assertEqual('/>\n', output);
+      assert.equal('/>\n', output);
     });
 
     it('will not flush the output buffer when told so', function() {
@@ -224,15 +224,15 @@ with(require('./helpers')) {
 
       // flush buffer=false, ...
       output = writer.outputMemory(false);
-      assertEqual('<?xml version="1.0"?>\n<root', output);
+      assert.equal('<?xml version="1.0"?>\n<root', output);
 
       // content should be receivable here.
       output = writer.outputMemory(true);
-      assertEqual('<?xml version="1.0"?>\n<root', output);
+      assert.equal('<?xml version="1.0"?>\n<root', output);
 
       // but not here anymore because of recent flush.
       output = writer.outputMemory();
-      assertEqual('', output);
+      assert.equal('', output);
     });
   });
 }
