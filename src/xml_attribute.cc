@@ -9,30 +9,6 @@ v8::Handle<v8::Value>
 XmlAttribute::New(const v8::Arguments& args) {
   v8::HandleScope scope;
 
-#if 0
-  if (args.Length() == 1 && args[0]->StrictEquals(v8::Null()))
-      return scope.Close(args.Holder());
-
-  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
-#endif
-
-  //v8::String::Utf8Value name(args[0]->ToString());
-  //v8::String::Utf8Value value(args[1]->ToString());
-
-  /*
-  XmlAttribute* attr = new XmlAttribute(elem);
-  attr->Wrap(args.Holder());
-  */
-
-  /*
-  // namespace passed in
-  if (args.Length() == 4 && args[3]->IsObject()) {
-    XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args[3]->ToObject());
-    assert(ns);
-    attr->set_namespace(ns->xml_obj);
-  }
-  */
-
   return scope.Close(args.Holder());
 }
 
