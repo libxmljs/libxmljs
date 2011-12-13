@@ -9,25 +9,30 @@
 namespace libxmljs {
 
 class XmlAttribute : public XmlNode {
-  public:
+public:
 
-  explicit XmlAttribute(xmlAttr* node) :
-    XmlNode(reinterpret_cast<xmlNode*>(node)) {}
+    explicit XmlAttribute(xmlAttr* node) :
+        XmlNode(reinterpret_cast<xmlNode*>(node)) {}
 
-  static void Initialize(v8::Handle<v8::Object> target);
-  static v8::Persistent<v8::FunctionTemplate> constructor_template;
+    static void Initialize(v8::Handle<v8::Object> target);
+    static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  protected:
+    static v8::Handle<v8::Object> New(xmlNode* xml_obj,
+            const xmlChar* name, const xmlChar* value);
 
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Name(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Value(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Node(const v8::Arguments& args);
+    static v8::Handle<v8::Object> New(xmlAttr* attr);
 
-  v8::Handle<v8::Value> get_name();
-  v8::Handle<v8::Value> get_value();
-  void set_value(const char* value);
-  v8::Handle<v8::Value> get_element();
+protected:
+
+    static v8::Handle<v8::Value> New(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Name(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Value(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Node(const v8::Arguments& args);
+
+    v8::Handle<v8::Value> get_name();
+    v8::Handle<v8::Value> get_value();
+    void set_value(const char* value);
+    v8::Handle<v8::Value> get_element();
 };
 
 }  // namespace libxmljs

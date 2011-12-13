@@ -1,9 +1,22 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <node.h>
+
+#include <libxml/parserInternals.h>
+
+#include "libxmljs.h"
+
 #include "xml_sax_parser.h"
+
+#define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
+({                                                                            \
+  _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
+  static_cast<XmlSaxParser*>(the_context->_private);                          \
+})
 
 namespace libxmljs {
 
-  XmlSaxParser::XmlSaxParser() : sax_handler_(new xmlSAXHandler), context_(NULL) {
+  XmlSaxParser::XmlSaxParser() : context_(NULL), sax_handler_(new xmlSAXHandler) {
 
   xmlSAXHandler tmp = {
     0,  // internalSubset;
@@ -61,7 +74,7 @@ XmlSaxParser::releaseContext() {
       xmlFreeDoc(context_->myDoc);
       context_->myDoc = NULL;
     }
-	
+
     xmlFreeParserCtxt(context_);
     context_ = 0;
   }
@@ -71,15 +84,15 @@ v8::Handle<v8::Value>
 XmlSaxParser::NewParser(const v8::Arguments& args) {
   v8::HandleScope scope;
 
-  XmlSaxParser *parser = new XmlSaxParser();
-  parser->Wrap(args.This());
+  XmlSaxParser* parser = new XmlSaxParser();
+  parser->Wrap(args.Holder());
 
   LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
                                IsFunction,
                                "Bad argument: function required");
-  parser->SetCallbacks(args.This(), v8::Local<v8::Function>::Cast(args[0]));
+  parser->SetCallbacks(args.Holder(), v8::Local<v8::Function>::Cast(args[0]));
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
@@ -88,7 +101,7 @@ XmlSaxParser::NewPushParser(const v8::Arguments& args) {
 
   v8::Handle<v8::Value> return_val = NewParser(args);
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
   parser->initialize_push_parser();
 
   return scope.Close(return_val);
@@ -124,7 +137,7 @@ XmlSaxParser::Callback(const char* what,
     callbacks_->Get(v8::String::New("callback")));
   assert(callback->IsFunction());
 
-  v8::Handle<v8::Value> args[argc+1];
+  v8::Handle<v8::Value>* args = new v8::Handle<v8::Value>[argc+1];
   args[0] = v8::String::New(what);
   for (int i = 1; i <= argc; i++) {
     args[i] = argv[i-1];
@@ -132,6 +145,8 @@ XmlSaxParser::Callback(const char* what,
 
   v8::Handle<v8::Object> global = v8::Context::GetCurrent()->Global();
   callback->Call(global, argc+1, args);
+
+  delete[] args;
 }
 
 v8::Handle<v8::Value>
@@ -141,7 +156,7 @@ XmlSaxParser::Push(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
 
@@ -163,7 +178,7 @@ void
 XmlSaxParser::push(const char* str,
                    unsigned int size,
                    bool terminate = false) {
-  int e = xmlParseChunk(context_, str, size, terminate);
+  xmlParseChunk(context_, str, size, terminate);
 }
 
 v8::Handle<v8::Value>
@@ -173,7 +188,7 @@ XmlSaxParser::ParseString(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseString requires a string");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_string(*parsable, parsable.length());
@@ -198,7 +213,7 @@ XmlSaxParser::ParseFile(const v8::Arguments& args) {
                                IsString,
                                "Bad Argument: parseFile requires a filename");
 
-  XmlSaxParser *parser = LibXmlObj::Unwrap<XmlSaxParser>(args.Holder());
+  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
 
   v8::String::Utf8Value parsable(args[0]->ToString());
   parser->parse_file(*parsable);
@@ -220,7 +235,7 @@ XmlSaxParser::parse() {
   initializeContext();
   context_->replaceEntities = 1;
   context_->sax = sax_handler_;
-  int e = xmlParseDocument(context_);
+  xmlParseDocument(context_);
 }
 
 void
@@ -448,10 +463,9 @@ SaxParserCallback::warning(void* context,
 
   va_list args;
   va_start(args, msg);
-  vasprintf(&message, msg, args);
+  if (vasprintf(&message, msg, args) >= 0)
+      parser->warning(message);
   va_end(args);
-
-  parser->warning(message);
 
   free(message);
 }
@@ -466,10 +480,9 @@ SaxParserCallback::error(void* context,
 
   va_list args;
   va_start(args, msg);
-  vasprintf(&message, msg, args);
+  if (vasprintf(&message, msg, args) >= 0)
+      parser->error(message);
   va_end(args);
-
-  parser->error(message);
 
   free(message);
 }
@@ -495,11 +508,11 @@ XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {
 
   sax_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(sax_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_parser_template,
                         "parseString",
                         XmlSaxParser::ParseString);
 
-  LXJS_SET_PROTO_METHOD(sax_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_parser_template,
                         "parseFile",
                         XmlSaxParser::ParseFile);
 
@@ -516,7 +529,7 @@ XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {
 
   sax_push_parser_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  LXJS_SET_PROTO_METHOD(sax_push_parser_template,
+  NODE_SET_PROTOTYPE_METHOD(sax_push_parser_template,
                         "push",
                         XmlSaxParser::Push);
 

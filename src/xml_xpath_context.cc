@@ -1,4 +1,8 @@
 // Copyright 2009, Squish Tech, LLC.
+
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
 #include "xml_xpath_context.h"
 #include "xml_element.h"
 
@@ -35,13 +39,9 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   }
 
   v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
-  v8::Handle<v8::Function> push = v8::Handle<v8::Function>::Cast(
-    nodes->Get(v8::String::NewSymbol("push")));
-  v8::Handle<v8::Value> argv[1];
   for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
-    xmlNode *node = result->nodesetval->nodeTab[i];
-    argv[0] = LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(node);
-    push->Call(nodes, 1, argv);
+    xmlNode* node = result->nodesetval->nodeTab[i];
+    nodes->Set(i, XmlElement::New(node));
   }
 
   xmlXPathFreeObject(result);

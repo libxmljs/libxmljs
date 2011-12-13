@@ -2,18 +2,11 @@
 #ifndef SRC_XML_SAX_PARSER_H_
 #define SRC_XML_SAX_PARSER_H_
 
-#include "libxmljs.h"
-#include "xml_parser.h"
+#include <node.h>
 
 namespace libxmljs {
 
-#define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
-({                                                                            \
-  _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
-  static_cast<XmlSaxParser*>(the_context->_private);                          \
-})
-
-class XmlSaxParser : public XmlParser {
+class XmlSaxParser : public node::ObjectWrap {
   public:
 
   XmlSaxParser();
