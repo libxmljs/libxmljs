@@ -50,6 +50,7 @@
 (function() {
 with(require('sys')) {
   if (typeof gc == 'undefined') var gc = function() {}
+  if (process.argv) { process.ARGV = process.argv; }
 
   var assert = require('assert');
   var path = require('path');
