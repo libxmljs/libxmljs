@@ -14,7 +14,7 @@
   }
 , "bugs" :
   { "mail" : ""
-  , "web" : "http://github.com/polotek/libxmljs/issues"
+  , "url" : "http://github.com/polotek/libxmljs/issues"
   }
 , "main" : "./libxmljs"
 , "engines" : { "node" : ">=0.1.90" }
