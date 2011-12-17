@@ -62,6 +62,9 @@ env.Append(
   CCFLAGS = cflags
 )
 
+if 'CPPPATH' in os.environ:
+  env.Append(CPPPATH = os.environ['CPPPATH'])
+
 # explicitly link against node under cygwin
 if env['PLATFORM'] == 'cygwin':
 	libs += ['node']
