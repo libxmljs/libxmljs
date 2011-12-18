@@ -14,6 +14,7 @@
 #include <libxml/xpathInternals.h>
 #include <libxml/HTMLparser.h>
 #include <libxml/HTMLtree.h>
+#include <libxml/xmlwriter.h>
 
 #include <memory>
 #include <string.h>
