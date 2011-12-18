@@ -31,8 +31,6 @@ XmlNamespace::New(const v8::Arguments& args) {
                        (const xmlChar*)**href,
                        prefix ? (const xmlChar*)**prefix : NULL);
 
-  UpdateV8Memory();
-
   if (prefix)
     delete prefix;
   delete href;

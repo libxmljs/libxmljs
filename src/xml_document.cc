@@ -136,8 +136,6 @@ XmlDocument::New(const v8::Arguments& args) {
 
   xmlDoc* doc = xmlNewDoc((const xmlChar*)**version);
 
-  UpdateV8Memory();
-
   v8::Handle<v8::Object> obj =
       LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(doc);
   XmlDocument *document = LibXmlObj::Unwrap<XmlDocument>(obj);
@@ -158,8 +156,7 @@ XmlDocument::New(const v8::Arguments& args) {
 }
 
 XmlDocument::~XmlDocument() {
-  xmlFree(xml_obj);
-  UpdateV8Memory();
+  xmlFreeDoc(xml_obj);
 }
 
 void

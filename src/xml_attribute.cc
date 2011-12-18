@@ -21,8 +21,6 @@ XmlAttribute::New(const v8::Arguments& args) {
                              (const xmlChar*)*name,
                              (const xmlChar*)*value);
 
-  UpdateV8Memory();
-
   // namespace passed in
   if (args.Length() == 4 && args[3]->IsObject()) {
     XmlNamespace *ns = LibXmlObj::Unwrap<XmlNamespace>(args[3]->ToObject());
