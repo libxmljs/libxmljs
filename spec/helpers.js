@@ -1,6 +1,6 @@
 exports.gc = (typeof gc == 'undefined') ? function() {} : gc;
 
-exports.libxml = require('../libxmljs');
+exports.libxml = require('../index');
 
 exports.clone = function(obj) {
   if(obj == null || typeof(obj) != 'object')
