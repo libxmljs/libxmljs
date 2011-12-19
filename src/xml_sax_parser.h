@@ -3,7 +3,6 @@
 #define SRC_XML_SAX_PARSER_H_
 
 #include "libxmljs.h"
-#include "xml_parser.h"
 
 namespace libxmljs {
 
@@ -13,7 +12,7 @@ namespace libxmljs {
   static_cast<XmlSaxParser*>(the_context->_private);                          \
 })
 
-class XmlSaxParser : public XmlParser {
+class XmlSaxParser : public LibXmlObj {
   public:
 
   XmlSaxParser();

@@ -6,11 +6,8 @@
 
 namespace libxmljs {
 
-class XmlParser : public LibXmlObj {
-  public:
-
-  static void Initialize(v8::Handle<v8::Object> target);
-};
+v8::Handle<v8::Value>
+ParseXmlString(const v8::Arguments& args);
 
 }  // namespace libxmljs
 

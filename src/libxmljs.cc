@@ -3,11 +3,11 @@
 #include <v8.h>
 
 #include "libxmljs.h"
-#include "xml_syntax_error.h"
 #include "xml_document.h"
 #include "xml_node.h"
-#include "xml_parser.h"
+#include "xml_sax_parser.h"
 #include "html_parser.h"
+#include "xml_parser.h"
 
 namespace libxmljs {
 
@@ -106,10 +106,14 @@ extern "C" void
 init(v8::Handle<v8::Object> target) {
       v8::HandleScope scope;
 
-      XmlSyntaxError::Initialize(target);
       XmlDocument::Initialize(target);
-      XmlParser::Initialize(target);
-      HtmlParser::Initialize(target);
+      XmlSaxParser::Initialize(target);
+
+      NODE_SET_METHOD(target, "parseHtmlString",
+                      libxmljs::ParseHtmlString);
+
+      NODE_SET_METHOD(target, "parseXmlString",
+                      libxmljs::ParseXmlString);
 
       target->Set(v8::String::NewSymbol("version"),
                   v8::String::New(LIBXMLJS_VERSION));
