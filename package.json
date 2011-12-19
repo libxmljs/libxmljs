@@ -6,7 +6,7 @@
 , "scripts" :
   { "install" : "node-waf configure build"
   , "preuninstall" : "node-waf clean"
-  , "test" : "node --expose_gc spec/tacular.js"
+  , "test" : "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
   }
 , "repository" :
   { "type" : "git"
@@ -18,4 +18,8 @@
   }
 , "main" : "./index"
 , "engines" : { "node" : ">=0.1.90" }
+, "devDependencies":
+  {
+    "nodeunit": "*"
+  }
 }

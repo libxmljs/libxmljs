@@ -15,3 +15,4 @@ clean:
 test: $(target)
 	npm test
 
+.PHONY: test clean
