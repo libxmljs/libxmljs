@@ -126,14 +126,12 @@ function createParser(parserType, callbacks) {
 
 var filename = __dirname + '/fixtures/sax_parser.xml';
 
-module.exports.sax_push = function(assert) {
+module.exports.sax = function(assert) {
     var callbacks = clone(callbackTest);
     var str = fs.readFileSync(filename, 'utf8');
     var parser = createParser('SaxParser', callbacks);
     parser.parseString(str);
-    var control = JSON.stringify(callbackControl);
-    var test = JSON.stringify(callbacks);
-    assert.equal(control, test);
+    assert.deepEqual(callbackControl, callbacks);
     assert.done();
 };
 
@@ -147,16 +145,6 @@ module.exports.sax_push_chunked = function(assert) {
 
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
-    assert.equal(JSON.stringify(control), JSON.stringify(callbacks));
-    assert.done();
-};
-
-module.exports.sax = function(assert) {
-    var callbacks = clone(callbackTest);
-    var parser = createParser('SaxParser', callbacks);
-    parser.parseFile(filename);
-
-    var control = clone(callbackControl);
     assert.deepEqual(control, callbacks);
     assert.done();
 };
@@ -175,14 +163,3 @@ module.exports.string_parser = function(assert) {
     assert.done();
 };
 
-module.exports.file_parser = function(assert) {
-    var callbacks = clone(callbackTest);
-    var parser = createParser('SaxParser', callbacks);
-    for (var i=0; i<10; ++i) {
-        gc();
-        parser.parseFile(filename);
-    }
-
-    assert.ok(true);
-    assert.done();
-};

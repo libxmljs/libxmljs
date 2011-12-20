@@ -218,30 +218,6 @@ XmlSaxParser::parse_string(const char* str,
   releaseContext();
 }
 
-v8::Handle<v8::Value>
-XmlSaxParser::ParseFile(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                               IsString,
-                               "Bad Argument: parseFile requires a filename");
-
-  XmlSaxParser *parser = ObjectWrap::Unwrap<XmlSaxParser>(args.Holder());
-
-  v8::String::Utf8Value parsable(args[0]->ToString());
-  parser->parse_file(*parsable);
-
-  // TODO(sprsquish): return based on the parser
-  return scope.Close(v8::Boolean::New(true));
-}
-
-void
-XmlSaxParser::parse_file(const char* filename) {
-  context_ = xmlCreateFileParserCtxt(filename);
-  parse();
-  context_->sax = NULL;
-  releaseContext();
-}
-
 void
 XmlSaxParser::parse() {
   initializeContext();
@@ -525,13 +501,8 @@ XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {
                         "parseString",
                         XmlSaxParser::ParseString);
 
-  NODE_SET_PROTOTYPE_METHOD(sax_parser_template,
-                        "parseFile",
-                        XmlSaxParser::ParseFile);
-
   target->Set(v8::String::NewSymbol("SaxParser"),
               sax_parser_template->GetFunction());
-
 
   v8::Local<v8::FunctionTemplate> push_parser_t =
     v8::FunctionTemplate::New(NewPushParser);
