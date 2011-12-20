@@ -154,6 +154,7 @@ module.exports.string_parser = function(assert) {
     var str = fs.readFileSync(filename, 'utf8');
     var parser = createParser('SaxParser', callbacks);
 
+    // test that the parser can be reused after a gc run
     for (var i=0; i<10; i++) {
         gc();
         parser.parseString(str);
