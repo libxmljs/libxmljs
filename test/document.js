@@ -4,7 +4,7 @@ module.exports.blank = function(assert) {
     var doc = libxml.Document();
     assert.ok(doc);
     assert.equal('1.0', doc.version());
-    //assert.equal('utf8', doc.encoding());
+    assert.equal('utf8', doc.encoding());
     assert.done();
 };
 
@@ -12,7 +12,7 @@ module.exports.version = function(assert) {
     var doc = libxml.Document('2.0');
     assert.ok(doc);
     assert.equal('2.0', doc.version());
-    //assert.equal('utf8', doc.encoding());
+    assert.equal('utf8', doc.encoding());
     assert.done();
 };
 

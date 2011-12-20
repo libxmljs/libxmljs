@@ -17,7 +17,7 @@ v8::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
 v8::Handle<v8::Value>
 XmlNode::Doc(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_doc());
@@ -26,22 +26,23 @@ XmlNode::Doc(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Namespace(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   // #namespace() Get the node's namespace
-  if (args.Length() == 0)
+  if (args.Length() == 0) {
       return scope.Close(node->get_namespace());
+  }
 
   if (args[0]->IsNull())
       return scope.Close(node->remove_namespace());
 
-  XmlNamespace *ns = NULL;
+  XmlNamespace* ns = NULL;
 
   // #namespace(ns) libxml.Namespace object was provided
   // TODO(sprsquish): check that it was actually given a namespace obj
   if (args[0]->IsObject())
-    ns = LibXmlObj::Unwrap<XmlNamespace>(args[0]->ToObject());
+    ns = ObjectWrap::Unwrap<XmlNamespace>(args[0]->ToObject());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
@@ -49,41 +50,44 @@ XmlNode::Namespace(const v8::Arguments& args) {
     v8::String::Utf8Value ns_to_find(args[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns) {
-      ns = LibXmlObj::Unwrap<XmlNamespace>(
-             LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(found_ns));
+        // maybe build
+        v8::Handle<v8::Object> existing = XmlNamespace::New(found_ns);
+        ns = ObjectWrap::Unwrap<XmlNamespace>(existing);
     }
   }
 
   // Namespace does not seem to exist, so create it.
   if (!ns) {
       const unsigned int argc = 3;
-    v8::Handle<v8::Value> argv[argc];
-    argv[0] = args.This();
+      v8::Handle<v8::Value> argv[argc];
+      argv[0] = args.Holder();
 
-    if (args.Length() == 1) {
-      argv[1] = v8::Null();
-      argv[2] = args[0];
-    } else {
-      argv[1] = args[0];
-      argv[2] = args[1];
-    }
+      if (args.Length() == 1) {
+          argv[1] = v8::Null();
+          argv[2] = args[0];
+      } else {
+          argv[1] = args[0];
+          argv[2] = args[1];
+      }
 
-    v8::Handle<v8::Function> define_namespace =
-      XmlNamespace::constructor_template->GetFunction();
+      v8::Handle<v8::Function> define_namespace =
+          XmlNamespace::constructor_template->GetFunction();
 
-    v8::Handle<v8::Value> new_ns = define_namespace->Call(args.This(), argc, argv);
-    ns = LibXmlObj::Unwrap<XmlNamespace>(new_ns->ToObject());
+      // will create a new namespace attached to this node
+      // since we keep the document around, the namespace, like the node, won't be
+      // garbage collected
+      v8::Handle<v8::Value> new_ns = define_namespace->NewInstance(argc, argv);
+      ns = ObjectWrap::Unwrap<XmlNamespace>(new_ns->ToObject());
   }
 
   node->set_namespace(ns->xml_obj);
-
   return scope.Close(node->get_namespace());
 }
 
 v8::Handle<v8::Value>
 XmlNode::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_parent());
@@ -92,7 +96,7 @@ XmlNode::Parent(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::PrevSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_prev_sibling());
@@ -101,7 +105,7 @@ XmlNode::PrevSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::NextSibling(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_next_sibling());
@@ -110,7 +114,7 @@ XmlNode::NextSibling(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Type(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->get_type());
@@ -119,7 +123,7 @@ XmlNode::Type(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::ToString(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   return scope.Close(node->to_string());
@@ -128,18 +132,18 @@ XmlNode::ToString(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlNode::Remove(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
   node->remove();
 
-  return scope.Close(args.This());
+  return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
 XmlNode::Clone(const v8::Arguments& args) {
   v8::HandleScope scope;
-  XmlNode *node = LibXmlObj::Unwrap<XmlNode>(args.This());
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
   
   bool recurse = true;
@@ -152,15 +156,19 @@ XmlNode::Clone(const v8::Arguments& args) {
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
     xml_obj->_private = this;
-    if(xml_obj->doc) {
-        doc = v8::Persistent<v8::Value>::New(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
-    }
+
+    // this will prevent the document from being cleaned up
+    // we keep the document if any of the nodes attached to it are still alive
+    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
+    doc->ref();
 }
 
 XmlNode::~XmlNode() {
     xml_obj->_private = NULL;
-    doc.Dispose();
-    doc.Clear();
+
+    // release the hold and allow the document to be freed
+    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
+    doc->unref();
 
   // We do not free the xmlNode here. It could still be part of a document
   // It will be freed when the doc is freed
@@ -169,8 +177,7 @@ XmlNode::~XmlNode() {
 
 v8::Handle<v8::Value>
 XmlNode::get_doc() {
-  v8::HandleScope scope;
-  return scope.Close(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
+    return XmlDocument::New(xml_obj->doc);
 }
 
 v8::Handle<v8::Value>
@@ -183,14 +190,17 @@ v8::Handle<v8::Value>
 XmlNode::get_namespace() {
   v8::HandleScope scope;
   if (!xml_obj->ns)
-    return v8::Null();
+  {
+      return v8::Null();
+  }
 
-  return scope.Close(LibXmlObj::GetMaybeBuild<XmlNamespace, xmlNs>(xml_obj->ns));
+  return scope.Close(XmlNamespace::New(xml_obj->ns));
 }
 
 void
 XmlNode::set_namespace(xmlNs* ns) {
   xmlSetNs(xml_obj, ns);
+  assert(xml_obj->ns);
 }
 
 xmlNs*
@@ -210,18 +220,19 @@ XmlNode::find_namespace(const char* search_str) {
 v8::Handle<v8::Value>
 XmlNode::get_parent() {
   v8::HandleScope scope;
+
   if (xml_obj->parent) {
-      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->parent));
+      return scope.Close(XmlElement::New(xml_obj->parent));
   }
 
-  return scope.Close(LibXmlObj::GetMaybeBuild<XmlDocument, xmlDoc>(xml_obj->doc));
+  return scope.Close(XmlDocument::New(xml_obj->doc));
 }
 
 v8::Handle<v8::Value>
 XmlNode::get_prev_sibling() {
   v8::HandleScope scope;
   if (xml_obj->prev) {
-      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->prev));
+      return scope.Close(XmlElement::New(xml_obj->prev));
   }
 
   return v8::Null();
@@ -231,7 +242,7 @@ v8::Handle<v8::Value>
 XmlNode::get_next_sibling() {
   v8::HandleScope scope;
   if (xml_obj->next) {
-      return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xml_obj->next));
+      return scope.Close(XmlElement::New(xml_obj->next));
   }
 
   return v8::Null();
@@ -240,8 +251,8 @@ XmlNode::get_next_sibling() {
 v8::Handle<v8::Value>
 XmlNode::clone(bool recurse) {
   v8::HandleScope scope;
- 
-  return scope.Close(LibXmlObj::GetMaybeBuild<XmlElement, xmlNode>(xmlCopyNode(xml_obj, recurse))); 
+
+  return scope.Close(XmlElement::New(xmlCopyNode(xml_obj, recurse)));
 }
 
 v8::Handle<v8::Value>

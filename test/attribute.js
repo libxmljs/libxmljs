@@ -20,9 +20,8 @@ module.exports.create_with_namespace = function(assert) {
     );
     var node = doc.get('node');
 
-    var ns = new libxml.Namespace(node, 'ns-prefix', 'ns-uri');
-    var attr = new libxml.Attribute(node, 'new-attr-key', 'new-attr-value', ns);
-    var attr = node.attr('new-attr-key');
+    var attr = node.attr({'new-attr-key': 'new-attr-value'});
+    var ns = attr.namespace('ns-prefix', 'ns-url');
     assert.ok(attr);
     assert.equal(ns.prefix(), attr.namespace().prefix());
     assert.equal(ns.href(), attr.namespace().href());

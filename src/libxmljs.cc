@@ -8,8 +8,6 @@
 #include "xml_document.h"
 #include "xml_node.h"
 #include "xml_sax_parser.h"
-#include "html_parser.h"
-#include "xml_parser.h"
 
 namespace libxmljs {
 
@@ -22,11 +20,13 @@ int xml_memory_used = 0;
 
 // wrapper for xmlMemMalloc to update v8's knowledge of memory used
 // the GC relies on this information
-void* xmlMemMallocWrap(size_t size) {
+void* xmlMemMallocWrap(size_t size)
+{
     void* res = xmlMemMalloc(size);
 
     // no need to udpate memory if we didn't allocate
-    if (!res) {
+    if (!res)
+    {
         return res;
     }
 
@@ -38,7 +38,8 @@ void* xmlMemMallocWrap(size_t size) {
 
 // wrapper for xmlMemFree to update v8's knowledge of memory used
 // the GC relies on this information
-void xmlMemFreeWrap(void* p) {
+void xmlMemFreeWrap(void* p)
+{
     xmlMemFree(p);
 
     // if v8 is no longer running, don't try to adjust memory
@@ -46,7 +47,8 @@ void xmlMemFreeWrap(void* p) {
     // our cleanup routines for libxml will be called (freeing memory)
     // but v8 is already offline and does not need to be informed
     // trying to adjust after shutdown will result in a fatal error
-    if (v8::V8::IsDead()) {
+    if (v8::V8::IsDead())
+    {
         return;
     }
 
@@ -56,11 +58,13 @@ void xmlMemFreeWrap(void* p) {
 }
 
 // wrapper for xmlMemRealloc to update v8's knowledge of memory used
-void* xmlMemReallocWrap(void* ptr, size_t size) {
+void* xmlMemReallocWrap(void* ptr, size_t size)
+{
     void* res = xmlMemRealloc(ptr, size);
 
     // if realloc fails, no need to update v8 memory state
-    if (!res) {
+    if (!res)
+    {
         return res;
     }
 
@@ -71,11 +75,13 @@ void* xmlMemReallocWrap(void* ptr, size_t size) {
 }
 
 // wrapper for xmlMemoryStrdupWrap to update v8's knowledge of memory used
-char* xmlMemoryStrdupWrap(const char* str) {
+char* xmlMemoryStrdupWrap(const char* str)
+{
     char* res = xmlMemoryStrdup(str);
 
     // if strdup fails, no need to update v8 memory state
-    if (!res) {
+    if (!res)
+    {
         return res;
     }
 
@@ -85,7 +91,13 @@ char* xmlMemoryStrdupWrap(const char* str) {
     return res;
 }
 
-LibXMLJS::LibXMLJS() {
+v8::Handle<v8::Value> ThrowError(const char* msg)
+{
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
+}
+
+LibXMLJS::LibXMLJS()
+{
 
     // populated debugMemSize (see xmlmemory.h/c) and makes the call to
     // xmlMemUsed work, this must happen first!
@@ -99,23 +111,19 @@ LibXMLJS::LibXMLJS() {
     xml_memory_used = xmlMemUsed();
 }
 
-LibXMLJS::~LibXMLJS() {
+LibXMLJS::~LibXMLJS()
+{
     xmlCleanupParser();
 }
 
 // used by node.js to initialize libraries
 extern "C" void
-init(v8::Handle<v8::Object> target) {
+init(v8::Handle<v8::Object> target)
+{
       v8::HandleScope scope;
 
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
-
-      NODE_SET_METHOD(target, "parseHtmlString",
-                      libxmljs::ParseHtmlString);
-
-      NODE_SET_METHOD(target, "parseXmlString",
-                      libxmljs::ParseXmlString);
 
       target->Set(v8::String::NewSymbol("version"),
                   v8::String::New(LIBXMLJS_VERSION));
