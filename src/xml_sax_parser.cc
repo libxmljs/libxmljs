@@ -14,46 +14,54 @@
   static_cast<XmlSaxParser*>(the_context->_private);                          \
 })
 
+namespace {
+    v8::Persistent<v8::String> emit_symbol = NODE_PSYMBOL("emit");
+}
+
 namespace libxmljs {
 
-  XmlSaxParser::XmlSaxParser() : context_(NULL), sax_handler_(new xmlSAXHandler) {
+XmlSaxParser::XmlSaxParser()
+    : context_(NULL)
+    , sax_handler_(new xmlSAXHandler)
+{
+    xmlSAXHandler tmp = {
+        0,  // internalSubset;
+        0,  // isStandalone;
+        0,  // hasInternalSubset;
+        0,  // hasExternalSubset;
+        0,  // resolveEntity;
+        0,  // getEntity;
+        0,  // entityDecl;
+        0,  // notationDecl;
+        0,  // attributeDecl;
+        0,  // elementDecl;
+        0,  // unparsedEntityDecl;
+        0,  // setDocumentLocator;
+        SaxParserCallback::start_document,  // startDocument;
+        SaxParserCallback::end_document,  // endDocument;
+        0,  // startElement;
+        0,  // endElement;
+        0,  // reference;
+        SaxParserCallback::characters,  // characters;
+        0,  // ignorableWhitespace;
+        0,  // processingInstruction;
+        SaxParserCallback::comment,  // comment;
+        SaxParserCallback::warning,  // warning;
+        SaxParserCallback::error,  // error;
+        0,  // fatalError; /* unused error() get all the errors */
+        0,  // getParameterEntity;
+        SaxParserCallback::cdata_block,  // cdataBlock;
+        0,  // externalSubset;
+        XML_SAX2_MAGIC, /* force SAX2 */
+        this,  /* _private */
+        SaxParserCallback::start_element_ns,  // startElementNs;
+        SaxParserCallback::end_element_ns,  // endElementNs;
+        0  // SaxParserCallback::structured_error // serror
+    };
 
-  xmlSAXHandler tmp = {
-    0,  // internalSubset;
-    0,  // isStandalone;
-    0,  // hasInternalSubset;
-    0,  // hasExternalSubset;
-    0,  // resolveEntity;
-    0,  // getEntity;
-    0,  // entityDecl;
-    0,  // notationDecl;
-    0,  // attributeDecl;
-    0,  // elementDecl;
-    0,  // unparsedEntityDecl;
-    0,  // setDocumentLocator;
-    SaxParserCallback::start_document,  // startDocument;
-    SaxParserCallback::end_document,  // endDocument;
-    0,  // startElement;
-    0,  // endElement;
-    0,  // reference;
-    SaxParserCallback::characters,  // characters;
-    0,  // ignorableWhitespace;
-    0,  // processingInstruction;
-    SaxParserCallback::comment,  // comment;
-    SaxParserCallback::warning,  // warning;
-    SaxParserCallback::error,  // error;
-    0,  // fatalError; /* unused error() get all the errors */
-    0,  // getParameterEntity;
-    SaxParserCallback::cdata_block,  // cdataBlock;
-    0,  // externalSubset;
-    XML_SAX2_MAGIC, /* force SAX2 */
-    this,  /* _private */
-    SaxParserCallback::start_element_ns,  // startElementNs;
-    SaxParserCallback::end_element_ns,  // endElementNs;
-    0  // SaxParserCallback::structured_error // serror
-  };
-  *sax_handler_ = tmp;
+    *sax_handler_ = tmp;
 }
+
 XmlSaxParser::~XmlSaxParser() {
   this->releaseContext();
 }
@@ -87,11 +95,6 @@ XmlSaxParser::NewParser(const v8::Arguments& args) {
   XmlSaxParser* parser = new XmlSaxParser();
   parser->Wrap(args.Holder());
 
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                               IsFunction,
-                               "Bad argument: function required");
-  parser->SetCallbacks(args.Holder(), v8::Local<v8::Function>::Cast(args[0]));
-
   return scope.Close(args.Holder());
 }
 
@@ -123,30 +126,39 @@ XmlSaxParser::SetCallbacks(v8::Handle<v8::Object> self,
 void
 XmlSaxParser::Callback(const char* what) {
   v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[0];
-  Callback(what, 0, argv);
+  Callback(what, 0, NULL);
 }
 
 void
 XmlSaxParser::Callback(const char* what,
                        int argc,
                        v8::Handle<v8::Value> argv[]) {
-  v8::HandleScope scope;
+    v8::HandleScope scope;
 
-  v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(
-    callbacks_->Get(v8::String::New("callback")));
-  assert(callback->IsFunction());
+    // new arguments array with first argument being the event name
+    v8::Handle<v8::Value>* args = new v8::Handle<v8::Value>[argc+1];
+    args[0] = v8::String::New(what);
+    for (int i = 1; i <= argc; ++i)
+    {
+        args[i] = argv[i-1];
+    }
 
-  v8::Handle<v8::Value>* args = new v8::Handle<v8::Value>[argc+1];
-  args[0] = v8::String::New(what);
-  for (int i = 1; i <= argc; i++) {
-    args[i] = argv[i-1];
-  }
+    // get the 'emit' function from ourselves
+    v8::Local<v8::Value> emit_v = this->handle_->Get(emit_symbol);
+    assert(emit_v->IsFunction());
+    v8::Local<v8::Function> emit = v8::Local<v8::Function>::Cast(emit_v);
 
-  v8::Handle<v8::Object> global = v8::Context::GetCurrent()->Global();
-  callback->Call(global, argc+1, args);
+    v8::TryCatch try_catch;
 
-  delete[] args;
+    // trigger the event
+    emit->Call(this->handle_, argc + 1, args);
+
+    if (try_catch.HasCaught())
+    {
+        node::FatalException(try_catch);
+    }
+
+    delete[] args;
 }
 
 v8::Handle<v8::Value>
@@ -239,8 +251,9 @@ XmlSaxParser::parse() {
 }
 
 void
-XmlSaxParser::start_document() {
-  Callback("startDocument");
+XmlSaxParser::start_document()
+{
+    Callback("startDocument");
 }
 
 void

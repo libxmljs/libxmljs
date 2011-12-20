@@ -80,54 +80,48 @@ var callbackControl = {
   ]
 };
 
+function argsToArray(args) {
+    return Array.prototype.slice.call(args);
+}
+
 function createParser(parserType, callbacks) {
-    return new libxml[parserType](function(cb) {
-        function argsToArray(args) {
-            var ary = [];
-            var i;
-            for (i = 0; i < args.length; i++)
-            ary.push(args[i]);
-            return ary;
-        }
-
-        cb.onStartDocument(function() {
+    // can connect by passing in as arguments to constructor
+    var parser = new libxml[parserType]({
+        startDocument: function() {
             callbacks.startDocument.push(argsToArray(arguments));
-        });
-
-        cb.onEndDocument(function() {
+        },
+        endDocument: function() {
             callbacks.endDocument.push(argsToArray(arguments));
-        });
-
-        cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {
+        },
+        startElementNS: function(elem, attrs, prefix, uri, namespaces) {
             // p({e: elem, a: attrs, p: prefix, u: uri, n: namespaces});
             callbacks.startElementNS.push(argsToArray(arguments));
-        });
-
-        cb.onEndElementNS(function(elem, prefix, uri) {
+        },
+        endElementNS: function(elem, prefix, uri) {
             callbacks.endElementNS.push(argsToArray(arguments));
-        });
-
-        cb.onCharacters(function(chars) {
-            if (!chars.match(/^[\s\n\r]+$/))
+        },
+        characters: function(chars) {
+            if (!chars.match(/^[\s\n\r]+$/)) {
                 callbacks.characters.push(argsToArray(arguments));
-        });
-
-        cb.onCdata(function(cdata) {
-            callbacks.cdata.push(argsToArray(arguments));
-        });
-
-        cb.onComment(function(msg) {
+            }
+        },
+        comment: function(msg) {
             callbacks.comment.push(argsToArray(arguments));
-        });
-
-        cb.onWarning(function(msg) {
+        },
+        warning: function(msg) {
             callbacks.warning.push(argsToArray(arguments));
-        });
-
-        cb.onError(function(msg) {
+        },
+        error: function(msg) {
             callbacks.error.push(argsToArray(arguments));
-        });
+        }
     });
+
+    // can also connect directly because it is an event emitter
+    parser.on('cdata', function(cdata) {
+        callbacks.cdata.push(argsToArray(arguments));
+    });
+
+    return parser;
 }
 
 var filename = __dirname + '/fixtures/sax_parser.xml';
