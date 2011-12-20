@@ -11,7 +11,7 @@
 #define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
 ({                                                                            \
   _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
-  static_cast<XmlSaxParser*>(the_context->_private);                          \
+  static_cast<libxmljs::XmlSaxParser*>(the_context->_private);                \
 })
 
 namespace {
@@ -37,25 +37,25 @@ XmlSaxParser::XmlSaxParser()
         0,  // elementDecl;
         0,  // unparsedEntityDecl;
         0,  // setDocumentLocator;
-        SaxParserCallback::start_document,  // startDocument;
-        SaxParserCallback::end_document,  // endDocument;
+        XmlSaxParser::start_document,
+        XmlSaxParser::end_document,  // endDocument;
         0,  // startElement;
         0,  // endElement;
         0,  // reference;
-        SaxParserCallback::characters,  // characters;
+        XmlSaxParser::characters,  // characters;
         0,  // ignorableWhitespace;
         0,  // processingInstruction;
-        SaxParserCallback::comment,  // comment;
-        SaxParserCallback::warning,  // warning;
-        SaxParserCallback::error,  // error;
+        XmlSaxParser::comment,  // comment;
+        XmlSaxParser::warning,  // warning;
+        XmlSaxParser::error,  // error;
         0,  // fatalError; /* unused error() get all the errors */
         0,  // getParameterEntity;
-        SaxParserCallback::cdata_block,  // cdataBlock;
+        XmlSaxParser::cdata_block,  // cdataBlock;
         0,  // externalSubset;
         XML_SAX2_MAGIC, /* force SAX2 */
         this,  /* _private */
-        SaxParserCallback::start_element_ns,  // startElementNs;
-        SaxParserCallback::end_element_ns,  // endElementNs;
+        XmlSaxParser::start_element_ns,  // startElementNs;
+        XmlSaxParser::end_element_ns,  // endElementNs;
         0  // SaxParserCallback::structured_error // serror
     };
 
@@ -108,25 +108,6 @@ XmlSaxParser::NewPushParser(const v8::Arguments& args) {
   parser->initialize_push_parser();
 
   return scope.Close(return_val);
-}
-
-void
-XmlSaxParser::SetCallbacks(v8::Handle<v8::Object> self,
-                           const v8::Handle<v8::Function> callbacks) {
-  v8::HandleScope scope;
-
-  v8::Handle<v8::Function> set_callbacks = v8::Handle<v8::Function>::Cast(
-    self->Get(v8::String::NewSymbol("setCallbacks")));
-
-  v8::Handle<v8::Value> argv[1] = { callbacks };
-  callbacks_ = v8::Persistent<v8::Object>::New(
-    set_callbacks->Call(self, 1, argv)->ToObject());
-}
-
-void
-XmlSaxParser::Callback(const char* what) {
-  v8::HandleScope scope;
-  Callback(what, 0, NULL);
 }
 
 void
@@ -213,32 +194,31 @@ void
 XmlSaxParser::parse_string(const char* str,
                            unsigned int size) {
   context_ = xmlCreateMemoryParserCtxt(str, size);
-  parse();
+  initializeContext();
+  context_->replaceEntities = 1;
+  context_->sax = sax_handler_;
+  xmlParseDocument(context_);
   context_->sax = NULL;
   releaseContext();
 }
 
 void
-XmlSaxParser::parse() {
-  initializeContext();
-  context_->replaceEntities = 1;
-  context_->sax = sax_handler_;
-  xmlParseDocument(context_);
-}
-
-void
-XmlSaxParser::start_document()
+XmlSaxParser::start_document(void* context)
 {
-    Callback("startDocument");
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+    parser->Callback("startDocument");
 }
 
 void
-XmlSaxParser::end_document() {
-  Callback("endDocument");
+XmlSaxParser::end_document(void* context)
+{
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+    parser->Callback("endDocument");
 }
 
 void
-XmlSaxParser::start_element_ns(const xmlChar* localname,
+XmlSaxParser::start_element_ns(void* context,
+                               const xmlChar* localname,
                                const xmlChar* prefix,
                                const xmlChar* uri,
                                int nb_namespaces,
@@ -247,6 +227,7 @@ XmlSaxParser::start_element_ns(const xmlChar* localname,
                                int nb_defaulted,
                                const xmlChar** attributes) {
   v8::HandleScope scope;
+  libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
 
   const int argc = 5;
   const xmlChar *nsPref, *nsUri, *attrLocal, *attrPref, *attrUri, *attrVal;
@@ -312,177 +293,97 @@ XmlSaxParser::start_element_ns(const xmlChar* localname,
   }
   argv[4] = nsList;
 
-  Callback("startElementNS", argc, argv);
+  parser->Callback("startElementNS", argc, argv);
 }
 
 void
-XmlSaxParser::end_element_ns(const xmlChar* localname,
-                             const xmlChar* prefix,
-                             const xmlChar* uri) {
-  v8::HandleScope scope;
+XmlSaxParser::end_element_ns(void* context,
+        const xmlChar* localname,
+        const xmlChar* prefix,
+        const xmlChar* uri)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
 
-  v8::Handle<v8::Value> argv[3] = {
-    v8::String::New((const char*)localname),
-    prefix ? v8::String::New((const char*)prefix) : v8::Null(),
-    uri ? v8::String::New((const char*)uri) : v8::Null()
-  };
+    v8::Handle<v8::Value> argv[3] = {
+        v8::String::New((const char*)localname),
+        prefix ? v8::String::New((const char*)prefix) : v8::Null(),
+        uri ? v8::String::New((const char*)uri) : v8::Null()
+    };
 
-  Callback("endElementNS", 3, argv);
+    parser->Callback("endElementNS", 3, argv);
 }
 
 void
-XmlSaxParser::characters(const xmlChar* ch,
-                         int len) {
-  v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)ch, len) };
-  Callback("characters", 1, argv);
+XmlSaxParser::characters(void* context,
+                         const xmlChar* ch,
+                         int len)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+
+    v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)ch, len) };
+    parser->Callback("characters", 1, argv);
 }
 
 void
-XmlSaxParser::comment(const xmlChar* value) {
-  v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)value) };
-  Callback("comment", 1, argv);
+XmlSaxParser::comment(void* context, const xmlChar* value)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+    v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)value) };
+    parser->Callback("comment", 1, argv);
 }
 
 void
-XmlSaxParser::cdata_block(const xmlChar* value,
-                          int len) {
-  v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)value, len) };
-  Callback("cdata", 1, argv);
+XmlSaxParser::cdata_block(void* context, const xmlChar* value,
+                          int len)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+    v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)value, len) };
+    parser->Callback("cdata", 1, argv);
 }
 
 void
-XmlSaxParser::warning(const char* message) {
-  v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)message) };
-  Callback("warning", 1, argv);
-}
+XmlSaxParser::warning(void* context, const char* msg, ...)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
 
+    char* message;
 
-void
-XmlSaxParser::error(const char* message) {
-  v8::HandleScope scope;
-  v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)message) };
-  Callback("error", 1, argv);
-}
+    va_list args;
+    va_start(args, msg);
+    if (vasprintf(&message, msg, args) >= 0)
+    {
+        v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)message) };
+        parser->Callback("warning", 1, argv);
+    }
 
-
-// TODO(sprsquish)
-// void
-// XmlSaxParser::structured_error(
-//   xmlErrorPtr xerror)
-// {
-// }
-
-
-void
-SaxParserCallback::start_document(void* context) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->start_document();
+    va_end(args);
+    free(message);
 }
 
 void
-SaxParserCallback::end_document(void* context) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->end_document();
+XmlSaxParser::error(void* context, const char* msg, ...)
+{
+    v8::HandleScope scope;
+    libxmljs::XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
+
+    char* message;
+
+    va_list args;
+    va_start(args, msg);
+    if (vasprintf(&message, msg, args) >= 0)
+    {
+        v8::Handle<v8::Value> argv[1] = { v8::String::New((const char*)message) };
+        parser->Callback("error", 1, argv);
+    }
+
+    va_end(args);
+    free(message);
 }
-
-void
-SaxParserCallback::start_element_ns(void* context,
-                                    const xmlChar* localname,
-                                    const xmlChar* prefix,
-                                    const xmlChar* uri,
-                                    int nb_namespaces,
-                                    const xmlChar** namespaces,
-                                    int nb_attributes,
-                                    int nb_defaulted,
-                                    const xmlChar** attributes) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->start_element_ns(localname,
-                           prefix,
-                           uri,
-                           nb_namespaces,
-                           namespaces,
-                           nb_attributes,
-                           nb_defaulted,
-                           attributes);
-}
-
-void
-SaxParserCallback::end_element_ns(void* context,
-                                  const xmlChar* localname,
-                                  const xmlChar* prefix,
-                                  const xmlChar* uri) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->end_element_ns(localname, prefix, uri);
-}
-
-void
-SaxParserCallback::characters(void* context,
-                              const xmlChar* ch,
-                              int len) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->characters(ch, len);
-}
-
-void
-SaxParserCallback::comment(void* context,
-                           const xmlChar* value) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->comment(value);
-}
-
-void
-SaxParserCallback::cdata_block(void* context,
-                               const xmlChar* value,
-                               int len) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-  parser->cdata_block(value, len);
-}
-
-void
-SaxParserCallback::warning(void* context,
-                           const char* msg,
-                           ...) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-
-  char* message;
-
-  va_list args;
-  va_start(args, msg);
-  if (vasprintf(&message, msg, args) >= 0)
-      parser->warning(message);
-  va_end(args);
-
-  free(message);
-}
-
-void
-SaxParserCallback::error(void* context,
-                         const char* msg,
-                         ...) {
-  XmlSaxParser* parser = LXJS_GET_PARSER_FROM_CONTEXT(context);
-
-  char* message;
-
-  va_list args;
-  va_start(args, msg);
-  if (vasprintf(&message, msg, args) >= 0)
-      parser->error(message);
-  va_end(args);
-
-  free(message);
-}
-
-// TODO(sprsquish)
-// void
-// SaxParserCallback::structured_error(
-//   void *ctx,
-//   xmlErrorPtr xerror)
-// {
-// }
 
 void
 XmlSaxParser::Initialize(v8::Handle<v8::Object> target) {

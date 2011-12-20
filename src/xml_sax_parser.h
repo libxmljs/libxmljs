@@ -25,29 +25,16 @@ class XmlSaxParser : public node::ObjectWrap {
   ParseString(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  ParseFile(const v8::Arguments& args);
-
-  static v8::Handle<v8::Value>
   Push(const v8::Arguments& args);
 
   void
-  SetCallbacks(const v8::Handle<v8::Object> context,
-               const v8::Handle<v8::Function> callbacks);
-
-  void
-  Callback(const char* what);
-
-  void
   Callback(const char* what,
-           int argc,
-           v8::Handle<v8::Value> argv[]);
+           int argc = 0,
+           v8::Handle<v8::Value> argv[] = NULL);
 
   void
   parse_string(const char* str,
                unsigned int size);
-
-  void
-  parse_file(const char* filename);
 
   void
   initialize_push_parser();
@@ -57,78 +44,21 @@ class XmlSaxParser : public node::ObjectWrap {
        unsigned int size,
        bool terminate);
 
-  void
-  start_document();
+  /// callbacks
 
-  void
-  end_document();
-
-  void
-  start_element(const xmlChar* name,
-                const xmlChar** p);
-
-  void
-  end_element(const xmlChar* name);
-
-  void
-  start_element_ns(const xmlChar* localname,
-                   const xmlChar* prefix,
-                   const xmlChar* uri,
-                   int nb_namespaces,
-                   const xmlChar** namespaces,
-                   int nb_attributes,
-                   int nb_defaulted,
-                   const xmlChar** attributes);
-
-  void
-  end_element_ns(const xmlChar* localname,
-                 const xmlChar* prefix,
-                 const xmlChar* uri);
-
-  void
-  characters(const xmlChar* ch,
-             int len);
-
-  void
-  comment(const xmlChar* value);
-
-  void
-  cdata_block(const xmlChar* value,
-              int len);
-
-  void
-  warning(const char* message);
-
-  void
-  error(const char* message);
-
-  // TODO(sprsquish)
-  // void
-  // structured_error(
-  //   xmlErrorPtr xerror);
-
-  protected:
-
-  void initializeContext();
-  void releaseContext();
-
-  xmlParserCtxt* context_;
-
-  v8::Persistent<v8::Object> callbacks_;
-  xmlSAXHandler* sax_handler_;
-
-  private:
-
-  friend struct SaxParserCallback;
-  void parse();
-};
-
-struct SaxParserCallback {
   static void
   start_document(void* context);
 
   static void
   end_document(void* context);
+
+  static void
+  start_element(void* context,
+                const xmlChar* name,
+                const xmlChar** p);
+
+  static void
+  end_element(void* context, const xmlChar* name);
 
   static void
   start_element_ns(void* context,
@@ -153,30 +83,27 @@ struct SaxParserCallback {
              int len);
 
   static void
-  comment(void* context,
-          const xmlChar* value);
+  comment(void* context, const xmlChar* value);
 
   static void
-  cdata_block(void* context,
-              const xmlChar* value,
-              int len);
+  cdata_block(void* context, const xmlChar* value, int len);
 
   static void
-  warning(void* context,
-          const char* fmt,
-          ...);
+  warning(void* context, const char* msg, ...);
 
   static void
-  error(void* context,
-        const char* fmt,
-        ...);
+  error(void* context, const char* msg, ...);
 
-  // TODO(sprsquish)
-  // static void
-  // structured_error(
-  //   void *ctx,
-  //   xmlErrorPtr xerror);
+  protected:
+
+  void initializeContext();
+  void releaseContext();
+
+  xmlParserCtxt* context_;
+
+  xmlSAXHandler* sax_handler_;
 };
+
 }  // namespace libxmljs
 
 #endif  // SRC_XML_SAX_PARSER_H_
