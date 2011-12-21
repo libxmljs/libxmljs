@@ -425,59 +425,59 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
   xml_writer_template->InstanceTemplate()->SetInternalFieldCount(1);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "openMemory",
+          "_openMemory",
           XmlTextWriter::OpenMemory);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "outputMemory",
+          "_outputMemory",
           XmlTextWriter::OutputMemory);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "openURI",
+          "_openURI",
           XmlTextWriter::OpenURI);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "startDocument",
+          "_startDocument",
           XmlTextWriter::StartDocument);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "endDocument",
+          "_endDocument",
           XmlTextWriter::EndDocument);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "startElementNS",
+          "_startElementNS",
           XmlTextWriter::StartElementNS);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "endElement",
+          "_endElement",
           XmlTextWriter::EndElement);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "startAttributeNS",
+          "_startAttributeNS",
           XmlTextWriter::StartAttributeNS);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "endAttribute",
+          "_endAttribute",
           XmlTextWriter::EndAttribute);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "startCdata",
+          "_startCdata",
           XmlTextWriter::StartCdata);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "endCdata",
+          "_endCdata",
           XmlTextWriter::EndCdata);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "startComment",
+          "_startComment",
           XmlTextWriter::StartComment);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "endComment",
+          "_endComment",
           XmlTextWriter::EndComment);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "writeString",
+          "_writeString",
           XmlTextWriter::WriteString);
 
   target->Set(v8::String::NewSymbol("TextWriter"),
