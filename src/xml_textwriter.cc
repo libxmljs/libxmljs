@@ -92,29 +92,6 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-XmlTextWriter::OpenURI(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                               IsString,
-                               "Bad Argument: must be a string");
-
-  XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "openXXX may only be called once. Output already set.")));
-  }
-
-  v8::String::Utf8Value uri(args[0]->ToString());
-  writer->textWriter = xmlNewTextWriterFilename(*uri, 0);
-  if (writer->textWriter == NULL) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to open URL")));
-  }
-
-  return scope.Close(v8::Undefined());
-}
-
-v8::Handle<v8::Value>
 XmlTextWriter::StartDocument(const v8::Arguments& args) {
   v8::HandleScope scope;
 
@@ -431,10 +408,6 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
           "_outputMemory",
           XmlTextWriter::OutputMemory);
-
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "_openURI",
-          XmlTextWriter::OpenURI);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
           "_startDocument",
