@@ -24,16 +24,14 @@ module.exports.recoverable_parse = function(assert) {
     var str = fs.readFileSync(filename, 'utf8');
 
     var doc = libxml.parseXmlString(str);
-    var err = {
-        domain: 3,
-        code: 201,
-        message: "Namespace prefix prefix on node is not defined\n",
-        level: 2,
-        line: 1,
-        str1: "prefix",
-        str2: "node",
-        column: 13,
-    };
+    var err = new Error('Namespace prefix prefix on node is not defined\n');
+    err.domain = 3;
+    err.code = 201;
+    err.level = 2;
+    err.line = 1;
+    err.str1 = 'prefix';
+    err.str2 = 'node';
+    err.column = 13;
     assert.equal(1, doc.errors.length);
     assert.deepEqual(err, doc.errors.shift());
     assert.done();

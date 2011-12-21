@@ -25,7 +25,10 @@ namespace libxmljs {
 
 v8::Handle<v8::Value>
 XmlSyntaxError::BuildSyntaxError(xmlError* error) {
-    v8::Local<v8::Object> out = v8::Object::New();
+    v8::Local<v8::Value> err = v8::Exception::Error(
+            v8::String::New(error->message));
+    v8::Local<v8::Object> out = v8::Local<v8::Object>::Cast(err);
+
     set_numeric_field(out, "domain", error->domain);
     set_numeric_field(out, "code", error->code);
     set_string_field(out, "message", error->message);
@@ -41,7 +44,7 @@ XmlSyntaxError::BuildSyntaxError(xmlError* error) {
     if (error->int1) {
         set_numeric_field(out, "int1", error->int1);
     }
-    return out;
+    return err;
 }
 
 void
