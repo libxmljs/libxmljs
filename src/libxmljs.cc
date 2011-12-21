@@ -8,6 +8,7 @@
 #include "xml_document.h"
 #include "xml_node.h"
 #include "xml_sax_parser.h"
+#include "xml_textwriter.h"
 
 namespace libxmljs {
 
@@ -124,6 +125,7 @@ init(v8::Handle<v8::Object> target)
 
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
+      XmlTextWriter::Initialize(target);
 
       target->Set(v8::String::NewSymbol("version"),
                   v8::String::New(LIBXMLJS_VERSION));
