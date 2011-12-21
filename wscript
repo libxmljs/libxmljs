@@ -31,6 +31,7 @@ def build(bld):
     'src/xml_sax_parser.cc',
     'src/xml_syntax_error.cc',
     'src/xml_xpath_context.cc',
+    'src/xml_textwriter.cc',
   ]
   obj.uselib = 'XML2'
 
