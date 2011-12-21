@@ -32,10 +32,6 @@ XmlTextWriter::OpenMemory(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "openXXX may only be called once. Output already set.")));
-  }
 
   writer->writerBuffer = xmlBufferCreate();
   if (!writer->writerBuffer) {
@@ -67,10 +63,6 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
     flush = args[0]->ToBoolean()->Value();
   }
 
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
   if (!writer->is_inmemory()) {
     return ThrowException(v8::Exception::Error(v8::String::New(
                     "May not retreive output memory if this is not an inmemory writer opened using openMemory().")));
@@ -112,10 +104,6 @@ XmlTextWriter::StartDocument(const v8::Arguments& args) {
   }
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   v8::String::Utf8Value version(args[0]->ToString());
   v8::String::Utf8Value encoding(args[1]->ToString());
@@ -127,11 +115,6 @@ XmlTextWriter::StartDocument(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : *encoding,
           args[2]->IsUndefined() ? NULL : *standalone);
 
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to start document")));
-  }
-
   return scope.Close(v8::Number::New((double)result));
 }
 
@@ -140,17 +123,8 @@ XmlTextWriter::EndDocument(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterEndDocument(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to end document")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -176,10 +150,6 @@ XmlTextWriter::StartElementNS(const v8::Arguments& args) {
   }
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   v8::String::Utf8Value prefix(args[0]->ToString());
   v8::String::Utf8Value name(args[1]->ToString());
@@ -191,11 +161,6 @@ XmlTextWriter::StartElementNS(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           args[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to start element")));
-  }
-
   return scope.Close(v8::Number::New((double)result));
 }
 
@@ -204,17 +169,8 @@ XmlTextWriter::EndElement(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterEndElement(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to end element")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -240,10 +196,6 @@ XmlTextWriter::StartAttributeNS(const v8::Arguments& args) {
   }
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   v8::String::Utf8Value prefix(args[0]->ToString());
   v8::String::Utf8Value name(args[1]->ToString());
@@ -255,11 +207,6 @@ XmlTextWriter::StartAttributeNS(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           args[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to start attribute")));
-  }
-
   return scope.Close(v8::Number::New((double)result));
 }
 
@@ -268,17 +215,8 @@ XmlTextWriter::EndAttribute(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterEndAttribute(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to end attribute")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -288,17 +226,8 @@ XmlTextWriter::StartCdata(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterStartCDATA(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to start CDATA section")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -308,17 +237,8 @@ XmlTextWriter::EndCdata(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterEndCDATA(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to end CDATA section")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -328,17 +248,8 @@ XmlTextWriter::StartComment(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterStartComment(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to start Comment section")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -348,17 +259,8 @@ XmlTextWriter::EndComment(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   int result = xmlTextWriterEndComment(writer->textWriter);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to end Comment section")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -371,20 +273,11 @@ XmlTextWriter::WriteString(const v8::Arguments& args) {
       "Bad Argument: first argument of writeString must be a string.");
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-  if (!writer->is_open()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "No output method set. Call outputXXX once before trying to write.")));
-  }
 
   v8::String::Utf8Value string(args[0]->ToString());
 
   int result = xmlTextWriterWriteString(writer->textWriter,
       (const xmlChar*)*string);
-
-  if (result == -1) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to write string")));
-  }
 
   return scope.Close(v8::Number::New((double)result));
 }
@@ -457,11 +350,6 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
               xml_writer_template->GetFunction());
 }
 
-
-inline bool
-XmlTextWriter::is_open() {
-  return (textWriter != NULL);
-}
 
 inline bool
 XmlTextWriter::is_inmemory() {
