@@ -23,10 +23,10 @@ class XmlTextWriter : public node::ObjectWrap {
   OpenMemory(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  OutputMemory(const v8::Arguments& args);
+  BufferContent(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
-  OpenURI(const v8::Arguments& args);
+  BufferEmpty(const v8::Arguments& args);
 
   static v8::Handle<v8::Value>
   StartDocument(const v8::Arguments& args);
