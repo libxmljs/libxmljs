@@ -63,11 +63,6 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
     flush = args[0]->ToBoolean()->Value();
   }
 
-  if (!writer->is_inmemory()) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "May not retreive output memory if this is not an inmemory writer opened using openMemory().")));
-  }
-
   // Flush the output buffer of the libxml writer instance in order to push all
   // the content to our writerBuffer.
   xmlTextWriterFlush(writer->textWriter);
@@ -348,11 +343,5 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
 
   target->Set(v8::String::NewSymbol("TextWriter"),
               xml_writer_template->GetFunction());
-}
-
-
-inline bool
-XmlTextWriter::is_inmemory() {
-  return (writerBuffer != NULL);
 }
 }  // namespace libxmljs
