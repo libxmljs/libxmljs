@@ -55,13 +55,7 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
-  bool flush = true;
-  if (!args[0]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                                 IsBoolean,
-                                 "Bad Argument: must be a boolean");
-    flush = args[0]->ToBoolean()->Value();
-  }
+  bool clear = args[0]->ToBoolean()->Value();
 
   // Flush the output buffer of the libxml writer instance in order to push all
   // the content to our writerBuffer.
@@ -71,7 +65,7 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
   const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
   v8::Handle<v8::String> result = v8::String::New((const char*)buf);
 
-  if (flush) {
+  if (clear) {
     xmlBufferEmpty(writer->writerBuffer);
   }
 
@@ -81,22 +75,6 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlTextWriter::StartDocument(const v8::Arguments& args) {
   v8::HandleScope scope;
-
-  if (!args[0]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                                 IsString,
-                                 "Bad Argument: first argument of startDocument must be a string (e.g. '1.0' or undefined)");
-  }
-  if (!args[1]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
-                                 IsString,
-                                 "Bad Argument: second argument of startDocument must be a string (e.g. 'UTF-8' or undefined)");
-  }
-  if (!args[2]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[2],
-                                 IsString,
-                                 "Bad Argument: third argument of startDocument must be a string (e.g. 'yes', 'no' or undefined)");
-  }
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -128,22 +106,6 @@ v8::Handle<v8::Value>
 XmlTextWriter::StartElementNS(const v8::Arguments& args) {
   v8::HandleScope scope;
 
-  if (!args[0]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                                 IsString,
-                                 "Bad Argument: first argument of startElementNS must be a string (e.g. 'xhtml' or undefined)");
-  }
-  if (!args[1]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
-                                 IsString,
-                                 "Bad Argument: second argument of startElementNS must be a string (e.g. 'head' or undefined)");
-  }
-  if (!args[2]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[2],
-                                 IsString,
-                                 "Bad Argument: third argument of startElementNS must be a string (e.g. 'http://www.w3.org/1999/xhtml' or undefined)");
-  }
-
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   v8::String::Utf8Value prefix(args[0]->ToString());
@@ -173,22 +135,6 @@ XmlTextWriter::EndElement(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlTextWriter::StartAttributeNS(const v8::Arguments& args) {
   v8::HandleScope scope;
-
-  if (!args[0]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0],
-                                 IsString,
-                                 "Bad Argument: first argument of startAttributeNS must be a string (e.g. 'xhtml' or undefined)");
-  }
-  if (!args[1]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[1],
-                                 IsString,
-                                 "Bad Argument: second argument of startAttributeNS must be a string (e.g. 'head' or undefined)");
-  }
-  if (!args[2]->IsUndefined()) {
-    LIBXMLJS_ARGUMENT_TYPE_CHECK(args[2],
-                                 IsString,
-                                 "Bad Argument: third argument of startAttributeNS must be a string (e.g. 'http://www.w3.org/1999/xhtml' or undefined)");
-  }
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -263,9 +209,6 @@ XmlTextWriter::EndComment(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 XmlTextWriter::WriteString(const v8::Arguments& args) {
   v8::HandleScope scope;
-
-  LIBXMLJS_ARGUMENT_TYPE_CHECK(args[0], IsString,
-      "Bad Argument: first argument of writeString must be a string.");
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
