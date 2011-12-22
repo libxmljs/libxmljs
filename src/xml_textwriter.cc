@@ -50,12 +50,10 @@ XmlTextWriter::OpenMemory(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
-XmlTextWriter::OutputMemory(const v8::Arguments& args) {
+XmlTextWriter::BufferContent(const v8::Arguments& args) {
   v8::HandleScope scope;
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
-
-  bool clear = args[0]->ToBoolean()->Value();
 
   // Flush the output buffer of the libxml writer instance in order to push all
   // the content to our writerBuffer.
@@ -65,11 +63,23 @@ XmlTextWriter::OutputMemory(const v8::Arguments& args) {
   const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
   v8::Handle<v8::String> result = v8::String::New((const char*)buf);
 
-  if (clear) {
-    xmlBufferEmpty(writer->writerBuffer);
-  }
-
   return scope.Close(result);
+}
+
+v8::Handle<v8::Value>
+XmlTextWriter::BufferEmpty(const v8::Arguments& args) {
+  v8::HandleScope scope;
+
+  XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
+
+  // Flush the output buffer of the libxml writer instance in order to push all
+  // the content to our writerBuffer.
+  xmlTextWriterFlush(writer->textWriter);
+
+  // Clear the memory buffer
+  xmlBufferEmpty(writer->writerBuffer);
+
+  return scope.Close(v8::Undefined());
 }
 
 v8::Handle<v8::Value>
@@ -237,8 +247,12 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
           XmlTextWriter::OpenMemory);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
-          "_outputMemory",
-          XmlTextWriter::OutputMemory);
+          "_bufferContent",
+          XmlTextWriter::BufferContent);
+
+  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+          "_bufferEmpty",
+          XmlTextWriter::BufferEmpty);
 
   NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
           "_startDocument",
