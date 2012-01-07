@@ -39,6 +39,7 @@ cflags = ' '.join([
   '-I/usr/local/include',
   '-I/usr/include',
   '-I/usr/include/libxml2',
+  '-I/usr/include/nodejs'
 ])
 cflags += ' ' + shellOut([xml2config, '--cflags'])
 
