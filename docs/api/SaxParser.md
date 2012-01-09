@@ -20,13 +20,21 @@ libxmljs provides a SAX2 parser interface that can take a string, file.
 ### Parse Events
 
 >**startDocument** - Fired at the start of a document
+
 >**endDocument** - Fired at the end of the document parse
+
 >**startElementNS** - Fired on an open element tag
+
 >**endElementNS** - Fired at the close of an element
+
 >**characters** - Fired when a set of content characters is encountered
+
 >**cdata** - Fired when a CDATA is encountered
+
 >**comment** - Fired when an comment is encountered
+
 >**warning** - Fired when an warning is encountered
+
 >**error** - Fired when an error is encountered
 
 
