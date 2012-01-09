@@ -4,9 +4,9 @@
 , "description" : "libxml bindings for v8 javascript engine"
 , "version" : "0.4.3"
 , "scripts" :
-  { "preinstall" : "make node"
-  , "preuninstall" : "make clean"
-  , "test" : "make test"
+  { "install" : "node-waf configure build"
+  , "preuninstall" : "node-waf clean"
+  , "test" : "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
   }
 , "repository" :
   { "type" : "git"
@@ -16,6 +16,10 @@
   { "mail" : ""
   , "url" : "http://github.com/polotek/libxmljs/issues"
   }
-, "main" : "./libxmljs"
+, "main" : "./index"
 , "engines" : { "node" : ">=0.1.90" }
+, "devDependencies":
+  {
+    "nodeunit": "*"
+  }
 }
