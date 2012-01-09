@@ -2,10 +2,10 @@
 
 The Attribute object represents an element attribute.
 
-### Constructor
+## Constructor
 
 
-#### new libxml.Attribute(node, name, value)
+### new libxml.Attribute(node, name, value)
 
 >Creates a new attribute on node with name and value
 
@@ -17,7 +17,7 @@ The Attribute object represents an element attribute.
 
 >**returns**  a new attribute object
 
-#### new libxml.Attribute(node, name, value, ns)
+### new libxml.Attribute(node, name, value, ns)
 
 >Creates a new attribute on node with name and value under the ns
             namespace
@@ -31,49 +31,49 @@ The Attribute object represents an element attribute.
 
 >**returns**  a new attribute object
 
-### Methods
+## Methods
 
 
-#### attribute.name()
+### attribute.name()
 
 >Get the attribute name
 
 >**returns**  a string representing the name of the attribute
 
-#### attribute.namespace()
+### attribute.namespace()
 
 >See Element#namespace()
 
-#### attribute.namespace(ns)
+### attribute.namespace(ns)
 
 >See Element#namespace(ns)
 
-#### attribute.nextSibling()
+### attribute.nextSibling()
 
 >Get the next sibling
 
 >**returns**  an attribute object or null
 
-#### attribute.node()
+### attribute.node()
 
 >Get the node the attribute is attached to
             
 
 >**returns**  an element object
 
-#### attribute.prevSibling()
+### attribute.prevSibling()
 
 >Get the previous sibling
 
 >**returns**  an attribute object or null
 
-#### attribute.remove()
+### attribute.remove()
 
 >Remove the node from the context
 
 >**returns**  the attribute
 
-#### attribute.value()
+### attribute.value()
 
 >Get the value of the attribute
 

@@ -3,17 +3,17 @@
 The Element class represents an element node in the XML tree.
 *Inherits from Node*
 
-### Constructor
+## Constructor
 
 
-#### new libxml.Element(doc, name)  
+### new libxml.Element(doc, name)  
 > Creates a new element object called name
 
 > **args**  
 *doc* - a Document object to provide context for the node  
 *name* - a string representing the name of the element  
 
-#### new libxml.Element(doc, name, attrs)
+### new libxml.Element(doc, name, attrs)
 
 >Creates a new element object called name with attrs as its attributes
 
@@ -22,18 +22,7 @@ The Element class represents an element node in the XML tree.
 *name* - a string representing the name of the element  
 *attrs* - a hash of {name: value} pairs to set as attributes  
 
-#### new libxml.Element(doc, name, attrs, content)
-
->Creates a new element object called name with attrs as its attributes
-
->**args**  
-*doc* - a document object to provide context for the node  
-*name* - a string representing the name of the element  
-*attrs* - a hash of {name: value} pairs to set as attributes  
-*content* - a string representing the content to add to the node  
-*callback* - a function that will accept the new object as an argument
-
-#### new libxml.Element(doc, name, attrs, content, callback)
+### new libxml.Element(doc, name, attrs, content)
 
 >Creates a new element object called name with attrs as its attributes
 
@@ -44,16 +33,27 @@ The Element class represents an element node in the XML tree.
 *content* - a string representing the content to add to the node  
 *callback* - a function that will accept the new object as an argument
 
-### Methods
+### new libxml.Element(doc, name, attrs, content, callback)
 
-#### element.name()
+>Creates a new element object called name with attrs as its attributes
+
+>**args**  
+*doc* - a document object to provide context for the node  
+*name* - a string representing the name of the element  
+*attrs* - a hash of {name: value} pairs to set as attributes  
+*content* - a string representing the content to add to the node  
+*callback* - a function that will accept the new object as an argument
+
+## Methods
+
+### element.name()
 
 >Get the name of the element
 
 >**returns** - a string representing the name of the element
 
 
-#### element.name(new_name)
+### element.name(new_name)
 
 >Set the name of the element
 
@@ -63,7 +63,7 @@ The Element class represents an element node in the XML tree.
 >**returns** - the Element object
 
 
-#### element.text()
+### element.text()
 
 >Get the text content of the element
 
@@ -71,7 +71,7 @@ The Element class represents an element node in the XML tree.
   including the text() of all child Nodes
 
 
-#### element.attr(name)
+### element.attr(name)
 
 >Get the Attribute called name
 
@@ -81,7 +81,7 @@ The Element class represents an element node in the XML tree.
 >**returns** - an Attribute node or null
 
 
-#### element.attr(attr)
+### element.attr(attr)
 
 >Add an Attribute object to the element
 
@@ -91,7 +91,7 @@ The Element class represents an element node in the XML tree.
 >**returns** - the element node (not the attribute)
 
 
-#### element.attr(attrObject)
+### element.attr(attrObject)
 
 >Create a set of attributes from a hash and add them to the element
 
@@ -101,28 +101,28 @@ The Element class represents an element node in the XML tree.
 >**returns** - the element object
 
 
-#### element.attrs()
+### element.attrs()
 
 >Get the list of attributes attached to the element
 
 >**returns** - an array of Attribute objects. may be empty
 
 
-#### element.parent()
+### element.parent()
 
 >Get the parent element
 
 >**returns** - an Element node or the Document if this is the root node
 
 
-#### element.doc()
+### element.doc()
 
 >Get the document object containing the element
 
 >**returns** - a Document object
 
 
-#### element.child(idx)
+### element.child(idx)
 
 >Get a child node by index
 
@@ -132,14 +132,14 @@ The Element class represents an element node in the XML tree.
 >**returns** - a Node object or null
 
 
-#### elements.childNodes()
+### elements.childNodes()
 
 >Get a list of all the immediate children of the element
 
 >**returns** - an array of Nodes, including text nodes
 
 
-#### element.addChild(child)
+### element.addChild(child)
 
 >Add a child node to the node
 
@@ -149,21 +149,21 @@ The Element class represents an element node in the XML tree.
 >**returns** - the element node (not the child)
 
 
-#### element.nextSibling()
+### element.nextSibling()
 
 >Get the next sibling node
 
 >**returns** - a Node object or null
 
 
-#### element.nextElement()
+### element.nextElement()
 
 >Get the next element sibling
 
 >**returns** - an Element node or null
 
 
-#### element.addNextSibling(siblingNode)
+### element.addNextSibling(siblingNode)
 
 >Add a Node as a sibling immediately after this element
 
@@ -173,21 +173,21 @@ The Element class represents an element node in the XML tree.
 >**returns** - the sibling object
 
 
-#### element.prevSibling()
+### element.prevSibling()
 
 >Get the previous sibling node
 
 >**returns** - a Node object or null
 
 
-#### element.prevElement()
+### element.prevElement()
 
 >Get the previous element sibling
 
 >**returns** - an Element object or null
 
 
-#### element.addPrevSibling(siblingNode)
+### element.addPrevSibling(siblingNode)
 
 >Add a Node as a sibling immediately before this element
 
@@ -197,7 +197,7 @@ The Element class represents an element node in the XML tree.
 >**returns** - the sibling object
 
 
-#### element.find(xpath)
+### element.find(xpath)
 
 >Search the element's children by xpath
 
@@ -207,7 +207,7 @@ The Element class represents an element node in the XML tree.
 >**returns** - an array of Node objects. may be empty
 
 
-#### element.find(xpath, ns_uri)
+### element.find(xpath, ns_uri)
 
 >Search the element's children by xpath within the URI namespace
 
@@ -221,7 +221,7 @@ The Element class represents an element node in the XML tree.
     doc.find("xmlns:child-name", "ns:uri")
 
 
-#### element.get(xpath, ns_uri)
+### element.get(xpath, ns_uri)
 
 >Return the first node node that matches the xpath expression  
 This this is syntactic sugar for `find(xpath, ns_uri)[0]`
@@ -233,7 +233,7 @@ This this is syntactic sugar for `find(xpath, ns_uri)[0]`
 >**returns** - a Node or null
 
 
-#### element.find(xpath, namespaces)
+### element.find(xpath, namespaces)
 
 >Search the element's children by xpath within any of the URI  
 namespaces
@@ -249,7 +249,7 @@ namespaces
     doc.find("ns-1:child1/ns-2:child2", {"ns-1": "ns:uri1", "ns-2": "ns:uri2"})
 
 
-#### element.get(xpath, ns_uri)
+### element.get(xpath, ns_uri)
 
 >Return the first node that matches the xpath  
 This is syntactic sugar for `find(xpath, namespaces)[0]`
@@ -257,7 +257,7 @@ This is syntactic sugar for `find(xpath, namespaces)[0]`
 >**returns** - a element object or null
 
 
-#### element.defineNamespace(href)
+### element.defineNamespace(href)
 
 >Define a new namespace on the element using href for the URI.  This
 will only define the namespace but wont add it to the node
@@ -268,7 +268,7 @@ will only define the namespace but wont add it to the node
 >**returns** - the new Namespace object
 
 
-#### element.defineNamespace(prefix, href)
+### element.defineNamespace(prefix, href)
 
 >Define a new namespace on the element using href for the URI and
 prefix as the prefix. This will only define the namespace but wont add
@@ -281,14 +281,14 @@ it to the node
 >**returns** - the new Namespace object
 
 
-#### element.namespace()
+### element.namespace()
 
 Get the elements's namespace
 
 >**returns** - a Namespace object or null
 
 
-#### element.namespace(ns)
+### element.namespace(ns)
 
 >Set the element's namespace to ns
 
@@ -298,7 +298,7 @@ Get the elements's namespace
 >**returns** - the element object
 
 
-#### element.namespace(href)
+### element.namespace(href)
 
 >Add namespace with href as the URI to the element.  This will search
 up the tree to find a namespace with the given href and, if found will
@@ -310,7 +310,7 @@ use it. Otherwise it will create a new namespace.
 >**returns** - the namespace object
 
 
-#### element.namespace(prefix, href)
+### element.namespace(prefix, href)
 
 >Add namespace with href as the URI and prefix as the prefix to the
 node. This will search up the tree to find a namespace with the given
@@ -324,14 +324,14 @@ namespace.
 >**returns** - the Namespace object
 
 
-#### element.remove()
+### element.remove()
 
 >Remove The element from the context
 
 >**returns** - the Element
 
 
-#### element.path()
+### element.path()
 
 >Get the xpath of the element
 
