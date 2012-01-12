@@ -1,7 +1,7 @@
 // js acts as a wrapper to the c++ bindings
 // prefer to do error handling and other abstrctions in the
 // js layer and only go to c++ when we need to hit libxml
-var bindings = require('./build/Release/libxmljs');
+var bindings = require('./lib/bindings');
 
 // document parsing for backwards compat
 var Document = require('./lib/document');
