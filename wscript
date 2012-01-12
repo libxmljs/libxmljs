@@ -1,4 +1,5 @@
-from os import popen
+from os import popen, symlink, unlink
+from os.path import exists, lexists
 
 srcdir = '.'
 blddir = 'build'
@@ -32,4 +33,9 @@ def build(bld):
     'src/xml_xpath_context.cc',
   ]
   obj.uselib = 'XML2'
+  if exists('build/default') and not exists('build/Release'):
+    symlink('default', 'build/Release')
 
+def clean(bld):
+  if lexists('build/Release'):
+    unlink('build/Release')
