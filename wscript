@@ -13,8 +13,9 @@ def configure(conf):
 
   conf.env.append_value("LIB_XML2", "xml2")
   xml2_config = conf.find_program('xml2-config', var='XML2_CONFIG', mandatory=True)
-  xml2_includedir = popen("%s --cflags" % xml2_config).readline().strip().replace('-I', '')
-  conf.env.append_value("CPPPATH_XML2", xml2_includedir)
+  xml2_includedir = popen("%s --cflags" % xml2_config).readline().strip()
+  conf.env.append_value("CPPPATH_XML2", [i.strip() for i in xml2_includedir.split('-I') if len(i) > 0])
+
 
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
