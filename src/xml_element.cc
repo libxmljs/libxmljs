@@ -203,8 +203,8 @@ XmlElement::ChildNodes(const v8::Arguments& args) {
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
-  if (args[0]->IsNumber())
-      return scope.Close(element->get_child(args[0]->ToNumber()->Value()));
+  if (args[0]->IsInt32())
+      return scope.Close(element->get_child(args[0]->Int32Value()));
 
   return scope.Close(element->get_child_nodes());
 }

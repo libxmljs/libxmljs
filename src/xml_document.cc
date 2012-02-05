@@ -192,11 +192,6 @@ XmlDocument::FromXmlString(const v8::Arguments& args)
                     v8::String::New("parsed document has no root element")));
     }
 
-    // set the element as the root element for the document
-    // allows for proper retrieval of root later
-    v8::Handle<v8::Value> root = XmlElement::New(root_node);
-    doc_handle->Set(v8::String::New("_root_element"), root);
-
     // create the xml document handle to return
     return scope.Close(doc_handle);
 }

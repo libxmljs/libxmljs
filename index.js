@@ -1,7 +1,7 @@
 // js acts as a wrapper to the c++ bindings
 // prefer to do error handling and other abstrctions in the
 // js layer and only go to c++ when we need to hit libxml
-var bindings = require('./build/Release/libxmljs');
+var bindings = require('./lib/bindings');
 
 // document parsing for backwards compat
 var Document = require('./lib/document');
@@ -30,3 +30,4 @@ var sax_parser = require('./lib/sax_parser');
 module.exports.SaxParser = sax_parser.SaxParser;
 module.exports.SaxPushParser = sax_parser.SaxPushParser;
 
+module.exports.TextWriter = require('./lib/textwriter.js');

@@ -2,7 +2,7 @@
 , "author" : "Marco Rogers - http://github.com/polotek"
 , "contributors" : ["Jeff Smick"]
 , "description" : "libxml bindings for v8 javascript engine"
-, "version" : "0.4.3"
+, "version" : "0.5.3"
 , "scripts" :
   { "install" : "node-waf configure build"
   , "preuninstall" : "node-waf clean"
@@ -17,7 +17,7 @@
   , "url" : "http://github.com/polotek/libxmljs/issues"
   }
 , "main" : "./index"
-, "engines" : { "node" : ">=0.1.90" }
+, "engines" : { "node" : ">=0.4.7" }
 , "devDependencies":
   {
     "nodeunit": "*"

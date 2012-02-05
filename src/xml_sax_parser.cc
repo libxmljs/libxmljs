@@ -15,6 +15,7 @@
 })
 
 namespace {
+    using namespace v8; // node 0.4.7 fails to use v8:: in NODE_PSYMBOL
     v8::Persistent<v8::String> emit_symbol = NODE_PSYMBOL("emit");
 }
 
