@@ -31,6 +31,7 @@ protected:
     static v8::Handle<v8::Value> Child(const v8::Arguments& args);
     static v8::Handle<v8::Value> ChildNodes(const v8::Arguments& args);
     static v8::Handle<v8::Value> AddChild(const v8::Arguments& args);
+    static v8::Handle<v8::Value> AddCData(const v8::Arguments& args);
     static v8::Handle<v8::Value> NextElement(const v8::Arguments& args);
     static v8::Handle<v8::Value> PrevElement(const v8::Arguments& args);
     static v8::Handle<v8::Value> AddPrevSibling(const v8::Arguments& args);
@@ -46,6 +47,7 @@ protected:
     v8::Handle<v8::Value> get_attrs();
     void set_attr(const char* name, const char* value);
     void add_child(XmlElement* child);
+    void add_cdata(xmlNode* cdata);
     void set_content(const char* content);
     v8::Handle<v8::Value> get_content();
     v8::Handle<v8::Value> get_next_element();

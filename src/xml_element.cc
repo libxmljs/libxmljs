@@ -119,6 +119,27 @@ XmlElement::AddChild(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+XmlElement::AddCData(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
+  assert(element);
+
+  v8::String::Utf8Value content_(args[0]->ToString());
+  char* content = NULL;
+  content = strdup(*content_);
+
+  xmlNode* elem = xmlNewCDataBlock(element->xml_obj->doc,
+                                  (const xmlChar*)content,
+                                  xmlStrlen((const xmlChar*)content));
+
+  if(content)
+        free(content);
+
+  element->add_cdata(elem);
+  return scope.Close(args.Holder());
+}
+
+v8::Handle<v8::Value>
 XmlElement::Find(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
@@ -308,6 +329,12 @@ XmlElement::add_child(XmlElement* child) {
   xmlAddChild(xml_obj, child->xml_obj);
 }
 
+void
+XmlElement::add_cdata(xmlNode* cdata) {
+  xmlAddChild(xml_obj, cdata);
+}
+
+
 v8::Handle<v8::Value>
 XmlElement::get_child(int32_t idx) {
   v8::HandleScope scope;
@@ -477,6 +504,9 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
             "addChild",
             XmlElement::AddChild);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+			"addCData",
+			XmlElement::AddCData);
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_attr",
             XmlElement::Attr);
