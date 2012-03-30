@@ -4,9 +4,7 @@
 , "description" : "libxml bindings for v8 javascript engine"
 , "version" : "0.5.4"
 , "scripts" :
-  { "install" : "node-waf configure build"
-  , "preuninstall" : "node-waf clean"
-  , "test" : "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
+  { "test" : "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
   }
 , "repository" :
   { "type" : "git"
