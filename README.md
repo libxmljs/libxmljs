@@ -53,7 +53,8 @@ compiling.  **This command must be in your path.**
 
 To build with node waf:
 
-    node-waf configure build
+    node-gyp configure
+    node-gyp build
 
 Alternatively, run `make`.
 
