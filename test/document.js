@@ -138,3 +138,18 @@ module.exports.cloned_node = function(assert) {
     assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
     assert.done();
 };
+
+module.exports.validate = function(assert) {
+    var xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
+    var xml_valid = '<?xml version="1.0"?><comment>A comment</comment>';
+    var xml_invalid = '<?xml version="1.0"?><commentt>A comment</commentt>';
+    
+    var xsdDoc = libxml.parseXmlString(xsd);
+    var xmlDocValid = libxml.parseXmlString(xml_valid);
+    var xmlDocInvalid = libxml.parseXmlString(xml_invalid);
+    
+    assert.equal(xmlDocValid.validate(xsdDoc), true);
+    assert.equal(xmlDocInvalid.validate(xsdDoc), false);
+
+    assert.done();
+}
