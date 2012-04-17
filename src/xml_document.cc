@@ -3,6 +3,7 @@
 #include <node.h>
 
 #include <libxml/HTMLparser.h>
+#include <libxml/xmlschemas.h>
 
 #include "xml_document.h"
 #include "xml_element.h"
@@ -196,6 +197,40 @@ XmlDocument::FromXmlString(const v8::Arguments& args)
     return scope.Close(doc_handle);
 }
 
+v8::Handle<v8::Value>
+XmlDocument::Validate(const v8::Arguments& args)
+{
+    v8::HandleScope scope;
+
+    v8::Local<v8::Array> errors = v8::Array::New();
+    xmlResetLastError();
+    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
+            XmlSyntaxError::PushToArray);
+
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    XmlDocument* documentSchema = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
+
+    xmlSchemaParserCtxtPtr parser_ctxt = xmlSchemaNewDocParserCtxt(documentSchema->xml_obj);
+    if (parser_ctxt == NULL) {
+        return v8::ThrowException(v8::Exception::Error(
+            v8::String::New("Could not create context for schema parser")));
+    }
+    xmlSchemaPtr schema = xmlSchemaParse(parser_ctxt);
+    if (schema == NULL) {
+        return v8::ThrowException(v8::Exception::Error(
+            v8::String::New("Invalid XSD schema")));
+    }
+    xmlSchemaValidCtxtPtr valid_ctxt = xmlSchemaNewValidCtxt(schema);
+    if (valid_ctxt == NULL) {
+        return v8::ThrowException(v8::Exception::Error(
+            v8::String::New("Unable to create a validation context for the schema")));
+    }
+    bool valid = xmlSchemaValidateDoc(valid_ctxt, document->xml_obj) == 0;
+
+    return scope.Close(v8::Boolean::New(valid));
+}
+
+
 /// this is a blank object with prototype methods
 /// not exposed to the user and not called from js
 v8::Handle<v8::Value>
@@ -251,6 +286,10 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_toString",
             XmlDocument::ToString);
+
+    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+            "_validate",
+            XmlDocument::Validate);
 
     NODE_SET_METHOD(target, "fromXmlString", XmlDocument::FromXmlString);
     NODE_SET_METHOD(target, "fromHtmlString", XmlDocument::FromHtmlString);
