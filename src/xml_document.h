@@ -50,6 +50,7 @@ protected:
     static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
     static v8::Handle<v8::Value> Errors(const v8::Arguments& args);
     static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Validate(const v8::Arguments& args);
 };
 
 }  // namespace libxmljs
