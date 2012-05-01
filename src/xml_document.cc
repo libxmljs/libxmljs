@@ -230,6 +230,29 @@ XmlDocument::Validate(const v8::Arguments& args)
     return scope.Close(v8::Boolean::New(valid));
 }
 
+v8::Handle<v8::Value>
+XmlDocument::Namespaces(const v8::Arguments& args)
+{
+    v8::HandleScope scope;
+
+    // Get root element
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    xmlDoc* doc = document->xml_obj;
+    xmlNode* root = xmlDocGetRootElement(doc);
+
+    // Iterate through namespaces
+    v8::Local<v8::Array> namespaces = v8::Array::New();
+    xmlNs** nsList = xmlGetNsList(doc, root);
+    if (nsList != NULL) {
+        for (int i = 0; nsList[i] != NULL; i++) {
+            v8::Handle<v8::Number> index = v8::Number::New(i);
+            v8::Handle<v8::Object> ns = XmlNamespace::New(nsList[i]);
+            namespaces->Set(index, ns);
+        }
+    }
+
+    return scope.Close(namespaces);
+}
 
 /// this is a blank object with prototype methods
 /// not exposed to the user and not called from js
@@ -290,6 +313,9 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_validate",
             XmlDocument::Validate);
+    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+            "_namespaces",
+            XmlDocument::Namespaces);
 
     NODE_SET_METHOD(target, "fromXmlString", XmlDocument::FromXmlString);
     NODE_SET_METHOD(target, "fromHtmlString", XmlDocument::FromHtmlString);
