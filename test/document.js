@@ -153,26 +153,3 @@ module.exports.validate = function(assert) {
 
     assert.done();
 }
-
-module.exports.namespaces = function(assert) {
-    var xml = [
-        '<?xml version="1.0"?>',
-        '<root xmlns:com="http://example.com" xmlns:net="http://example.net" xmlns="http://example.org">',
-        '<child/>',
-        '</root>'
-    ].join('\n');
-
-    var document = libxml.parseXmlString(xml);
-    var namespaces = document.namespaces();
-
-    assert.equal(namespaces[0].prefix(), 'com');
-    assert.equal(namespaces[0].href(), 'http://example.com');
-
-    assert.equal(namespaces[1].prefix(), 'net');
-    assert.equal(namespaces[1].href(), 'http://example.net');
-
-    assert.ok(namespaces[2].prefix() == null);
-    assert.equal(namespaces[2].href(), 'http://example.org');
-
-    assert.done();
-};
