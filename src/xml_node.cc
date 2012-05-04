@@ -85,6 +85,15 @@ XmlNode::Namespace(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+XmlNode::Namespaces(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  assert(node);
+
+  return scope.Close(node->get_all_namespaces());
+}
+
+v8::Handle<v8::Value>
 XmlNode::Parent(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
@@ -215,6 +224,24 @@ XmlNode::find_namespace(const char* search_str) {
     ns = xmlSearchNsByHref(xml_obj->doc, xml_obj, (const xmlChar*)search_str);
 
   return ns;
+}
+
+v8::Handle<v8::Value>
+XmlNode::get_all_namespaces() {
+  v8::HandleScope scope;
+
+  // Iterate through namespaces
+  v8::Local<v8::Array> namespaces = v8::Array::New();
+  xmlNs** nsList = xmlGetNsList(xml_obj->doc, xml_obj);
+  if (nsList != NULL) {
+    for (int i = 0; nsList[i] != NULL; i++) {
+      v8::Handle<v8::Number> index = v8::Number::New(i);
+      v8::Handle<v8::Object> ns = XmlNamespace::New(nsList[i]);
+      namespaces->Set(index, ns);
+    }
+  }
+
+  return scope.Close(namespaces);
 }
 
 v8::Handle<v8::Value>
@@ -357,6 +384,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "namespace",
                         XmlNode::Namespace);
+
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
+                        "namespaces",
+                        XmlNode::Namespaces);
 
   NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "prevSibling",

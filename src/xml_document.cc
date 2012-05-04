@@ -230,7 +230,6 @@ XmlDocument::Validate(const v8::Arguments& args)
     return scope.Close(v8::Boolean::New(valid));
 }
 
-
 /// this is a blank object with prototype methods
 /// not exposed to the user and not called from js
 v8::Handle<v8::Value>

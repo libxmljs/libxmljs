@@ -96,3 +96,45 @@ module.exports.remove = function(assert) {
     assert.done();
 };
 
+module.exports.all = function(assert) {
+    var document = libxml.Document();
+    var root = document.node('root');
+    var list = [];
+
+    list.push(root.namespace('com', 'http://example.com'));
+    list.push(root.namespace('net', 'http://example.net'));
+    list.push(root.namespace('http://example.org'));
+
+    assert.ok(root.namespaces().every(function(ns, index) {
+        return ns.href() === list[index].href() && ns.prefix() === list[index].prefix();
+    }));
+    assert.equal(root.namespaces().length, list.length);
+
+    assert.done();
+};
+
+module.exports.empty = function(assert) {
+    var document = libxml.Document();
+    var root = document.node('root');
+
+    assert.equal(root.namespaces().length, 0);
+
+    assert.done();
+};
+
+module.exports.nested = function(assert) {
+    var document = libxml.Document();
+    var root = document.node('root');
+
+    root.namespace('com', 'http://example.com');
+    assert.equal(root.namespaces().length, 1);
+
+    var child = root.node('child');
+    child.namespace('net', 'http://example.net');
+    assert.equal(child.namespaces().length, 2); // <child xmlns:net="http://example.net"/> + root
+
+    root.namespace('http://example.org');
+    assert.equal(child.namespaces().length, 3); // child's namespace + root's two namespaces
+
+    assert.done();
+};
