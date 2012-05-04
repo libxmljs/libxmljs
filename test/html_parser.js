@@ -54,7 +54,13 @@ module.exports.recoverable_parse = function(assert) {
 
     var doc = libxml.parseHtmlString(str);
     assert.equal(4, doc.errors.length);
-    assert.deepEqual(recoverableErrors, doc.errors);
+    for(var i = 0; i < recoverableErrors.length; i++) {
+        assert.equal(recoverableErrors[i].domain, doc.errors[i].domain);
+        assert.equal(recoverableErrors[i].code, doc.errors[i].code);
+        assert.equal(recoverableErrors[i].message, doc.errors[i].message);
+        assert.equal(recoverableErrors[i].level, doc.errors[i].level);
+        assert.equal(recoverableErrors[i].line, doc.errors[i].line);
+    }
     assert.done();
 };
 
