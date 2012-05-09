@@ -107,6 +107,25 @@ module.exports.add_child_nodes = function(assert) {
     assert.done();
 };
 
+module.exports.add_cdata_nodes = function(assert) {
+    var gchild = '';
+    var doc1_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"/></root>',
+    ].join("\n");
+
+    var expected_string = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<root><child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child></root>',
+      '' /* Why?!? */
+    ].join("\n");
+
+    var doc1 = libxml.parseXmlString(doc1_string);
+    doc1.child(0).cdata('<p>Bacon</p>');
+    assert.equal(doc1.toString(), expected_string);
+    assert.done();
+};
+
 module.exports.cloned_node = function(assert) {
     var gchild_string  = '<grandchild from="julie numar">with love</grandchild>';
     var doc1_string = [
