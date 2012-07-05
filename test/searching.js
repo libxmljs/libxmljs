@@ -14,6 +14,30 @@ module.exports.get = function(assert) {
     assert.done();
 };
 
+module.exports.get_attr = function(assert) {
+    var doc = libxml.Document();
+    var root = doc.node('root');
+    var child = root.node('child');
+    child.attr('attr', 'val');
+    var attr = child.attr('attr');
+
+    // on document
+    assert.equal(attr, doc.get('//@attr'));
+    assert.equal('val', doc.get('//@attr').value());
+
+    // nested
+    assert.equal(attr, doc.get('child').get('@attr'));
+    assert.equal('val', doc.get('child').get('@attr').value());
+
+    // check again after re-parsign the doc
+    doc = libxml.parseXmlString(doc.toString())
+    assert.equal('val', doc.get('//@attr').value());
+    assert.equal('val', doc.get('child').get('@attr').value());
+    assert.equal(doc.get('child'), doc.get('//@attr').node());
+
+    assert.done();
+};
+
 module.exports.find = function(assert) {
     var children = [];
     var doc = libxml.Document();

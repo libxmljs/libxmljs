@@ -30,6 +30,8 @@ XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
 v8::Handle<v8::Object>
 XmlAttribute::New(xmlAttr* attr)
 {
+    assert(attr->type == XML_ATTRIBUTE_NODE);
+
     if (attr->_private) {
         return static_cast<XmlNode*>(attr->_private)->handle_;
     }
