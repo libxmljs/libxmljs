@@ -23,30 +23,45 @@ XmlXpathContext::register_ns(const xmlChar* prefix,
   xmlXPathRegisterNs(ctxt, prefix, uri);
 }
 
-v8::Handle<v8::Array>
+v8::Handle<v8::Value>
 XmlXpathContext::evaluate(const xmlChar* xpath) {
   v8::HandleScope scope;
-  xmlXPathObject* result = xmlXPathEval(xpath, ctxt);
+  xmlXPathObject* xpathobj = xmlXPathEval(xpath, ctxt);
+  v8::Handle<v8::Value> res;
 
-  if (!result) {
-      return scope.Close(v8::Array::New(0));
+  if (xpathobj) {
+    switch (xpathobj->type) {
+    case XPATH_NODESET: {
+      v8::Handle<v8::Array> nodes = v8::Array::New(xpathobj->nodesetval->nodeNr);
+      for (int i = 0; i != xpathobj->nodesetval->nodeNr; ++i) {
+        nodes->Set(i, XmlNode::New(xpathobj->nodesetval->nodeTab[i]));
+      }
+
+      res = nodes;
+      break;
+    }
+
+    case XPATH_BOOLEAN:
+      res = v8::Boolean::New(xpathobj->boolval);
+      break;
+
+    case XPATH_NUMBER:
+      res = v8::Number::New(xpathobj->floatval);
+      break;
+
+    case XPATH_STRING:
+      res = v8::String::New((const char *)xpathobj->stringval,
+                            xmlStrlen(xpathobj->stringval));
+      break;
+
+    default:
+      res = v8::Null();
+      break;
+    }
   }
 
-  if (result->type != XPATH_NODESET || !result->nodesetval) {
-    xmlXPathFreeObject(result);
-
-    return scope.Close(v8::Array::New(0));
-  }
-
-  v8::Handle<v8::Array> nodes = v8::Array::New(result->nodesetval->nodeNr);
-  for (int i = 0; i != result->nodesetval->nodeNr; ++i) {
-    xmlNode* node = result->nodesetval->nodeTab[i];
-    nodes->Set(i, XmlNode::New(node));
-  }
-
-  xmlXPathFreeObject(result);
-
-  return scope.Close(nodes);
+  xmlXPathFreeObject(xpathobj);
+  return scope.Close(res);
 }
 
 }  // namespace libxmljs

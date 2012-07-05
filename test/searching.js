@@ -38,6 +38,17 @@ module.exports.get_attr = function(assert) {
     assert.done();
 };
 
+module.exports.get_non_nodeset = function(assert) {
+    var doc = libxml.Document();
+    var root = doc.node('root');
+
+    assert.equal(true, doc.get('true()'));
+    assert.equal(false, doc.get('false()'));
+    assert.equal('Hello, world!', doc.get('"Hello, world!"'));
+    assert.equal(1.23, doc.get('1.23'));
+    assert.done();
+};
+
 module.exports.find = function(assert) {
     var children = [];
     var doc = libxml.Document();
