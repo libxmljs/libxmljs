@@ -163,6 +163,22 @@ XmlNode::Clone(const v8::Arguments& args) {
   return scope.Close(node->clone(recurse)); 
 }
 
+v8::Handle<v8::Value>
+XmlNode::New(xmlNode* node)
+{
+  switch (node->type) {
+  case XML_ATTRIBUTE_NODE:
+    return XmlAttribute::New(reinterpret_cast<xmlAttr *>(node));
+
+  default:
+    // if we don't know how to convert to specific libxmljs wrapper,
+    // wrap in an XmlElement.  There should probably be specific
+    // wrapper types for text nodes etc., but this is what existing
+    // code expects.
+    return XmlElement::New(node);
+  }
+}
+
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
     xml_obj->_private = this;
 
@@ -259,7 +275,7 @@ v8::Handle<v8::Value>
 XmlNode::get_prev_sibling() {
   v8::HandleScope scope;
   if (xml_obj->prev) {
-      return scope.Close(XmlElement::New(xml_obj->prev));
+      return scope.Close(XmlNode::New(xml_obj->prev));
   }
 
   return v8::Null();
@@ -269,7 +285,7 @@ v8::Handle<v8::Value>
 XmlNode::get_next_sibling() {
   v8::HandleScope scope;
   if (xml_obj->next) {
-      return scope.Close(XmlElement::New(xml_obj->next));
+      return scope.Close(XmlNode::New(xml_obj->next));
   }
 
   return v8::Null();
@@ -279,7 +295,7 @@ v8::Handle<v8::Value>
 XmlNode::clone(bool recurse) {
   v8::HandleScope scope;
 
-  return scope.Close(XmlElement::New(xmlCopyNode(xml_obj, recurse)));
+  return scope.Close(XmlNode::New(xmlCopyNode(xml_obj, recurse)));
 }
 
 v8::Handle<v8::Value>
