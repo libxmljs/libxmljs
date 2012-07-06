@@ -370,7 +370,7 @@ XmlElement::get_child_nodes() {
 
     uint32_t i = 0;
     do {
-        children->Set(i, XmlElement::New(child));
+        children->Set(i, XmlNode::New(child));
     } while ((child = child->next) && ++i < len);
 
     return scope.Close(children);

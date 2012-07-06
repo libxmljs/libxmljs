@@ -15,7 +15,7 @@ class XmlXpathContext {
   ~XmlXpathContext();
 
   void register_ns(const xmlChar* prefix, const xmlChar* uri);
-  v8::Handle<v8::Array> evaluate(const xmlChar* xpath);
+  v8::Handle<v8::Value> evaluate(const xmlChar* xpath);
 
   xmlXPathContext *ctxt;
 };
