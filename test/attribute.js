@@ -4,7 +4,7 @@ var body = "<?xml version='1.0' encoding='UTF-8'?>\n" +
   "<root><node attr-one-key='attr-one-value' attr-two-key='attr-two-value' attr-three-key='attr-three-value' /></root>";
 
 module.exports.new = function(assert) {
-    var doc = libxml.parseXmlString(body);
+    var doc = libxml.parseXml(body);
     var node = doc.get('node');
 
     // add new attribute to the node
@@ -14,7 +14,7 @@ module.exports.new = function(assert) {
 };
 
 module.exports.create_with_namespace = function(assert) {
-    var doc = new libxml.parseXmlString(
+    var doc = new libxml.parseXml(
       "<?xml version='1.0' encoding='UTF-8'?>\n"+
       "<root><node attr-one-key='attr-one-value' attr-two-key='attr-two-value' attr-three-key='attr-three-value' /></root>"
     );
@@ -29,7 +29,7 @@ module.exports.create_with_namespace = function(assert) {
 };
 
 module.exports.getters = function(assert) {
-    var doc = libxml.parseXmlString(body);
+    var doc = libxml.parseXml(body);
     var node = doc.get('node');
 
     assert.equal('attr-one-key', node.attr('attr-one-key').name());
@@ -45,7 +45,7 @@ module.exports.getters = function(assert) {
 };
 
 module.exports.setters = function(assert) {
-    var doc = libxml.parseXmlString(body);
+    var doc = libxml.parseXml(body);
     var node = doc.get('node');
 
     node.attr('attr-one-key').value('new-value');
@@ -55,7 +55,7 @@ module.exports.setters = function(assert) {
 
 /*
 module.exports.namespace = function(assert) {
-    var doc = libxml.parseXmlString(body);
+    var doc = libxml.parseXml(body);
     var node = doc.get('node');
 
     var ns = new libxml.Namespace(node, 'ns-prefix', 'ns-uri');
@@ -68,7 +68,7 @@ module.exports.namespace = function(assert) {
 */
 
 module.exports.remove = function(assert) {
-    var doc = libxml.parseXmlString(body);
+    var doc = libxml.parseXml(body);
     var node = doc.get('node');
 
     var attr = node.attr('attr-one-key');

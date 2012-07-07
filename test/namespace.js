@@ -45,7 +45,7 @@ module.exports.with_prefix = function(assert) {
 };
 
 module.exports.from_parsing = function(assert) {
-    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>' +
+    var doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>' +
         '<name1 xmlns="http://my-namespace.com"/>');
     var elem = doc.root();
     assert.ok(elem.namespace());
@@ -53,12 +53,12 @@ module.exports.from_parsing = function(assert) {
     assert.equal('http://my-namespace.com', elem.namespace().href());
 
     // no prefix from parsing
-    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>' +
+    var doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>' +
         '<name1 xmlns:pref="http://my-namespace.com"/>');
     var elem = doc.root();
     assert.ok(!elem.namespace());
 
-    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>' +
+    var doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>' +
         '<pref:name1 xmlns:pref="http://my-namespace.com"/>');
     var elem = doc.root();
     assert.ok(elem.namespace());

@@ -15,12 +15,17 @@ module.exports.parse = function(assert) {
     var filename = __dirname + '/fixtures/parser.html';
     var str = fs.readFileSync(filename, 'utf8');
 
-    var doc = libxml.parseHtmlString(str);
+    var doc = libxml.parseHtml(str);
     assert.equal('html', doc.root().name());
     assert.equal('Test HTML document', doc.get('head/title').text());
     assert.equal('HTML content!', doc.get('body/span').text());
     assert.done();
 };
+
+module.exports.parse_synonym = function(assert) {
+    assert.strictEqual(libxml.parseHtml, libxml.parseHtmlString);
+    assert.done();
+}
 
 module.exports.recoverable_parse = function(assert) {
     var recoverableFile = __dirname +'/fixtures/warnings/amp.html';
@@ -52,7 +57,7 @@ module.exports.recoverable_parse = function(assert) {
         column: 4 })
     ];
 
-    var doc = libxml.parseHtmlString(str);
+    var doc = libxml.parseHtml(str);
     assert.equal(4, doc.errors.length);
     for(var i = 0; i < recoverableErrors.length; i++) {
         assert.equal(recoverableErrors[i].domain, doc.errors[i].domain);

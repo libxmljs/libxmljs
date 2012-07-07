@@ -47,7 +47,7 @@ module.exports.siblings = function(assert) {
 };
 
 module.exports.parsed = function(assert) {
-    var doc = libxml.parseXmlString(
+    var doc = libxml.parseXml(
         '<?xml version="1.0"?>' +
         '<root><child><grandchild /></child><sibling/></root>');
     assert.equal(doc, doc.child(0).doc());
@@ -67,7 +67,7 @@ module.exports.parsed = function(assert) {
 };
 
 module.exports.parsed_children = function(assert) {
-    var doc = libxml.parseXmlString(
+    var doc = libxml.parseXml(
         '<?xml version="1.0"?>' +
         '<root><prevSibling /><child /><nextSibling /></root>');
     var children = ['prevSibling', 'child', 'nextSibling'];

@@ -130,7 +130,7 @@ XmlDocument::New(xmlDoc* doc)
 }
 
 v8::Handle<v8::Value>
-XmlDocument::FromHtmlString(const v8::Arguments& args)
+XmlDocument::FromHtml(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
@@ -161,7 +161,7 @@ XmlDocument::FromHtmlString(const v8::Arguments& args)
 }
 
 v8::Handle<v8::Value>
-XmlDocument::FromXmlString(const v8::Arguments& args)
+XmlDocument::FromXml(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
@@ -290,8 +290,8 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
             "_validate",
             XmlDocument::Validate);
 
-    NODE_SET_METHOD(target, "fromXmlString", XmlDocument::FromXmlString);
-    NODE_SET_METHOD(target, "fromHtmlString", XmlDocument::FromHtmlString);
+    NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
+    NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
 
     // used to create new document handles
     target->Set(v8::String::NewSymbol("Document"), t->GetFunction());
