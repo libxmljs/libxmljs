@@ -13,12 +13,22 @@ function make_error(object) {
 
 module.exports.parse = function(assert) {
     var filename = __dirname + '/fixtures/parser.html';
-    var str = fs.readFileSync(filename, 'utf8');
 
-    var doc = libxml.parseHtml(str);
-    assert.equal('html', doc.root().name());
-    assert.equal('Test HTML document', doc.get('head/title').text());
-    assert.equal('HTML content!', doc.get('body/span').text());
+    function attempt_parse(encoding) {
+        var str = fs.readFileSync(filename, encoding);
+
+        var doc = libxml.parseHtml(str);
+        assert.equal('html', doc.root().name());
+        assert.equal('Test HTML document', doc.get('head/title').text());
+        assert.equal('HTML content!', doc.get('body/span').text());
+    }
+
+    // Parse via a string
+    attempt_parse('utf-8');
+
+    // Parse via a Buffer
+    attempt_parse(null);
+
     assert.done();
 };
 

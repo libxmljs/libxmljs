@@ -19,6 +19,17 @@ module.exports.parse = function(assert) {
     assert.done();
 };
 
+module.exports.parse_buffer = function(assert) {
+    var filename = __dirname + '/fixtures/parser-utf16.xml';
+    var buf = fs.readFileSync(filename);
+
+    var doc = libxml.parseXml(buf);
+    assert.equal('1.0', doc.version());
+    assert.equal('UTF-16', doc.encoding());
+    assert.equal('root', doc.root().name());
+    assert.done();
+};
+
 module.exports.parse_synonym = function(assert) {
     assert.strictEqual(libxml.parseXml, libxml.parseXmlString);
     assert.done();
