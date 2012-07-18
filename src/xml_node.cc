@@ -195,9 +195,10 @@ XmlNode::~XmlNode() {
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->unref();
 
-  // We do not free the xmlNode here. It could still be part of a document
-  // It will be freed when the doc is freed
-  // xmlFree(xml_obj);
+    // We do not free the xmlNode here if it is linked to a document
+    // It will be freed when the doc is freed
+    if (xml_obj->parent == NULL)
+      xmlFreeNode(xml_obj);
 }
 
 v8::Handle<v8::Value>

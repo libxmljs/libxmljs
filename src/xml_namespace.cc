@@ -41,6 +41,9 @@ XmlNamespace::New(const v8::Arguments& args) {
           (const xmlChar*)(href->operator*()),
           prefix ? (const xmlChar*)(prefix->operator*()) : NULL);
 
+  delete prefix;
+  delete href;
+
   XmlNamespace* namesp = new XmlNamespace(ns);
   namesp->Wrap(args.Holder());
 

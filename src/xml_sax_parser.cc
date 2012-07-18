@@ -23,7 +23,6 @@ namespace libxmljs {
 
 XmlSaxParser::XmlSaxParser()
     : context_(NULL)
-    , sax_handler_(new xmlSAXHandler)
 {
     xmlSAXHandler tmp = {
         0,  // internalSubset;
@@ -60,7 +59,7 @@ XmlSaxParser::XmlSaxParser()
         0  // SaxParserCallback::structured_error // serror
     };
 
-    *sax_handler_ = tmp;
+    sax_handler_ = tmp;
 }
 
 XmlSaxParser::~XmlSaxParser() {
@@ -163,7 +162,7 @@ XmlSaxParser::Push(const v8::Arguments& args) {
 
 void
 XmlSaxParser::initialize_push_parser() {
-  context_ = xmlCreatePushParserCtxt(sax_handler_, NULL, NULL, 0, "");
+  context_ = xmlCreatePushParserCtxt(&sax_handler_, NULL, NULL, 0, "");
   context_->replaceEntities = 1;
   initializeContext();
 }
@@ -197,9 +196,10 @@ XmlSaxParser::parse_string(const char* str,
   context_ = xmlCreateMemoryParserCtxt(str, size);
   initializeContext();
   context_->replaceEntities = 1;
-  context_->sax = sax_handler_;
+  xmlSAXHandler* old_sax = context_->sax;
+  context_->sax = &sax_handler_;
   xmlParseDocument(context_);
-  context_->sax = NULL;
+  context_->sax = old_sax;
   releaseContext();
 }
 
