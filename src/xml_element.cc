@@ -52,6 +52,8 @@ XmlElement::New(const v8::Arguments& args) {
       elem = xmlNewDocText(document->xml_obj,
                            (const xmlChar*)content);
 
+  if(name)
+      free(name);
 
   if(content)
       free(content);
