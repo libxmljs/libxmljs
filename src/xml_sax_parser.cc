@@ -196,9 +196,10 @@ XmlSaxParser::parse_string(const char* str,
   context_ = xmlCreateMemoryParserCtxt(str, size);
   initializeContext();
   context_->replaceEntities = 1;
+  xmlSAXHandler* old_sax = context_->sax;
   context_->sax = &sax_handler_;
   xmlParseDocument(context_);
-  context_->sax = NULL;
+  context_->sax = old_sax;
   releaseContext();
 }
 
