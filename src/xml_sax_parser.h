@@ -101,7 +101,7 @@ class XmlSaxParser : public node::ObjectWrap {
 
   xmlParserCtxt* context_;
 
-  xmlSAXHandler* sax_handler_;
+  xmlSAXHandler  sax_handler_;
 };
 
 }  // namespace libxmljs
