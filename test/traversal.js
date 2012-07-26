@@ -11,9 +11,9 @@ module.exports.built = function(assert) {
     assert.equal(doc, doc.root().parent());
 
     assert.equal(child, gchild.parent());
-    assert.equal(gchild, doc.child(1).child(0));
+    assert.equal(gchild, doc.child(0).child(0));
 
-    assert.equal(sibling, doc.child(2));
+    assert.equal(sibling, doc.child(1));
     assert.done();
 };
 
@@ -27,7 +27,7 @@ module.exports.children = function(assert) {
 
     assert.equal(children.length, doc.childNodes().length);
     for (var i = 0; i < children.length; ++i) {
-        assert.equal(children[i], doc.child(i+1));
+        assert.equal(children[i], doc.child(i));
     }
     assert.done();
 };
@@ -51,18 +51,18 @@ module.exports.parsed = function(assert) {
         '<?xml version="1.0"?>' +
         '<root><child><grandchild /></child><sibling/></root>');
     assert.equal(doc, doc.child(0).doc());
-    assert.equal(doc, doc.child(2).doc());
-    assert.equal(doc, doc.child(0).child(1).doc());
+    assert.equal(doc, doc.child(1).doc());
+    assert.equal(doc, doc.child(0).child(0).doc());
     assert.equal(doc, doc.root().parent());
 
     // down and back up
     assert.equal('child', doc.child(0).child(0).parent().name());
 
     // propertly access inner nodes
-    assert.equal('grandchild', doc.child(1).child(0).name());
+    assert.equal('grandchild', doc.child(0).child(0).name());
 
     // sibling nodes
-    assert.equal('sibling', doc.child(2).name());
+    assert.equal('sibling', doc.child(1).name());
     assert.done();
 };
 
@@ -75,11 +75,11 @@ module.exports.parsed_children = function(assert) {
     // childNodes
     assert.equal(3, doc.childNodes().length);
     for (var i = 0; i < children.length; ++i) {
-        assert.equal(children[i], doc.child(i+1).name());
+        assert.equal(children[i], doc.child(i).name());
     }
 
     // check prev/next sibling
-    var child = doc.child(2);
+    var child = doc.child(1);
     assert.equal('child', child.name());
     assert.equal(children[0], child.prevSibling().name());
     assert.equal(children[2], child.nextSibling().name());
@@ -87,7 +87,7 @@ module.exports.parsed_children = function(assert) {
     assert.equal(null, child.nextSibling().nextSibling());
 
     // prev/next Element
-    var child = doc.child(2);
+    var child = doc.child(1);
     assert.equal('child', child.name());
     assert.equal(children[0], child.prevElement().name());
     assert.equal(children[2], child.nextElement().name());

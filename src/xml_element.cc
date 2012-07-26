@@ -340,7 +340,7 @@ XmlElement::get_child(int32_t idx) {
   v8::HandleScope scope;
   xmlNode* child = xml_obj->children;
 
-  int32_t i = 1;
+  int32_t i = 0;
   while (child && i < idx) {
     child = child->next;
     ++i;
