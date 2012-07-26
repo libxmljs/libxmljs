@@ -1,6 +1,7 @@
 // Copyright 2009, Squish Tech, LLC.
 
 #include <node.h>
+#include <node_buffer.h>
 
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
@@ -130,7 +131,7 @@ XmlDocument::New(xmlDoc* doc)
 }
 
 v8::Handle<v8::Value>
-XmlDocument::FromHtmlString(const v8::Arguments& args)
+XmlDocument::FromHtml(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
@@ -139,8 +140,18 @@ XmlDocument::FromHtmlString(const v8::Arguments& args)
     xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
             XmlSyntaxError::PushToArray);
 
-    v8::String::Utf8Value str(args[0]->ToString());
-    htmlDocPtr doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
+    htmlDocPtr doc;
+    if (!node::Buffer::HasInstance(args[0])) {
+      // Parse a string
+      v8::String::Utf8Value str(args[0]->ToString());
+      doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
+    }
+    else {
+      // Parse a buffer
+      v8::Local<v8::Object> buf = args[0]->ToObject();
+      doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
+                           NULL, NULL, 0);
+    }
 
     xmlSetStructuredErrorFunc(NULL, NULL);
 
@@ -161,7 +172,7 @@ XmlDocument::FromHtmlString(const v8::Arguments& args)
 }
 
 v8::Handle<v8::Value>
-XmlDocument::FromXmlString(const v8::Arguments& args)
+XmlDocument::FromXml(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
@@ -170,8 +181,18 @@ XmlDocument::FromXmlString(const v8::Arguments& args)
     xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
             XmlSyntaxError::PushToArray);
 
-    v8::String::Utf8Value str(args[0]->ToString());
-    xmlDocPtr doc = xmlReadMemory(*str, str.length(), NULL, "UTF-8", 0);
+    xmlDocPtr doc;
+    if (!node::Buffer::HasInstance(args[0])) {
+      // Parse a string
+      v8::String::Utf8Value str(args[0]->ToString());
+      doc = xmlReadMemory(*str, str.length(), NULL, "UTF-8", 0);
+    }
+    else {
+      // Parse a buffer
+      v8::Local<v8::Object> buf = args[0]->ToObject();
+      doc = xmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
+                          NULL, NULL, 0);
+    }
 
     xmlSetStructuredErrorFunc(NULL, NULL);
 
@@ -290,8 +311,8 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
             "_validate",
             XmlDocument::Validate);
 
-    NODE_SET_METHOD(target, "fromXmlString", XmlDocument::FromXmlString);
-    NODE_SET_METHOD(target, "fromHtmlString", XmlDocument::FromHtmlString);
+    NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
+    NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
 
     // used to create new document handles
     target->Set(v8::String::NewSymbol("Document"), t->GetFunction());

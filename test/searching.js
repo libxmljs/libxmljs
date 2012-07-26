@@ -30,7 +30,7 @@ module.exports.get_attr = function(assert) {
     assert.equal('val', doc.get('child').get('@attr').value());
 
     // check again after re-parsign the doc
-    doc = libxml.parseXmlString(doc.toString())
+    doc = libxml.parseXml(doc.toString())
     assert.equal('val', doc.get('//@attr').value());
     assert.equal('val', doc.get('child').get('@attr').value());
     assert.equal(doc.get('child'), doc.get('//@attr').node());
