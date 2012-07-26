@@ -16,6 +16,9 @@
   }
 , "main" : "./index"
 , "engines" : { "node" : ">=0.4.7" }
+, "dependencies": {
+    "bindings": "1.0.0"
+  }
 , "devDependencies":
   {
     "nodeunit": "*"
