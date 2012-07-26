@@ -7,14 +7,10 @@ var bindings = require('./lib/bindings');
 var Document = require('./lib/document');
 
 /// parse an xml string and return a Document
-module.exports.parseXmlString = function(string) {
-    return Document.fromXmlString(string);
-}
+module.exports.parseXml = Document.fromXml;
 
 /// parse an html string and return a Document
-module.exports.parseHtmlString = function(string) {
-    return Document.fromHtmlString(string);
-}
+module.exports.parseHtml = Document.fromHtml;
 
 // constants
 module.exports.version = bindings.version;
@@ -25,6 +21,12 @@ module.exports.libxml_debug_enabled = bindings.libxml_debug_enabled;
 // lib exports
 module.exports.Document = Document;
 module.exports.Element = require('./lib/element');
+
+// Compatibility synonyms
+Document.fromXmlString = Document.fromXml;
+Document.fromHtmlString = Document.fromHtmlString;
+module.exports.parseXmlString = module.exports.parseXml;
+module.exports.parseHtmlString = module.exports.parseHtml;
 
 var sax_parser = require('./lib/sax_parser');
 module.exports.SaxParser = sax_parser.SaxParser;

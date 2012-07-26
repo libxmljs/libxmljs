@@ -6,7 +6,7 @@ module.exports.parse = function(assert) {
     var filename = __dirname + '/fixtures/parser.xml';
     var str = fs.readFileSync(filename, 'utf8');
 
-    var doc = libxml.parseXmlString(str);
+    var doc = libxml.parseXml(str);
     assert.equal('1.0', doc.version());
     assert.equal('UTF-8', doc.encoding());
     assert.equal('root', doc.root().name());
@@ -19,11 +19,27 @@ module.exports.parse = function(assert) {
     assert.done();
 };
 
+module.exports.parse_buffer = function(assert) {
+    var filename = __dirname + '/fixtures/parser-utf16.xml';
+    var buf = fs.readFileSync(filename);
+
+    var doc = libxml.parseXml(buf);
+    assert.equal('1.0', doc.version());
+    assert.equal('UTF-16', doc.encoding());
+    assert.equal('root', doc.root().name());
+    assert.done();
+};
+
+module.exports.parse_synonym = function(assert) {
+    assert.strictEqual(libxml.parseXml, libxml.parseXmlString);
+    assert.done();
+}
+
 module.exports.recoverable_parse = function(assert) {
     var filename = __dirname + '/fixtures/warnings/ent9.xml';
     var str = fs.readFileSync(filename, 'utf8');
 
-    var doc = libxml.parseXmlString(str);
+    var doc = libxml.parseXml(str);
 
     assert.equal(1, doc.errors.length);
     var err = doc.errors.shift();
@@ -43,7 +59,7 @@ module.exports.fatal_error = function(assert) {
     var err = null;
 
     try {
-        libxml.parseXmlString(str);
+        libxml.parseXml(str);
     } catch(e) { err = e; }
 
     var errorControl = {

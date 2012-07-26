@@ -17,7 +17,7 @@ module.exports.gc = function(assert) {
 };
 
 module.exports.references = function(assert) {
-    var nodes = libxml.parseXmlString('<root> <child> <grandchildren/> </child> <child2/></root>').childNodes();
+    var nodes = libxml.parseXml('<root> <child> <grandchildren/> </child> <child2/></root>').childNodes();
 
     gc();
 

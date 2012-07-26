@@ -6,7 +6,7 @@ the document as a set of javascript objects is returned
 ### Methods
 
 
-#### libxmljs.parseXmlString(string)
+#### libxmljs.parseXml(string)
 
 >Parse an in-memory XML string
 
@@ -26,7 +26,7 @@ the document as a set of javascript objects is returned
 
 >**returns**  an XmlDocument object
 
-#### libxmljs.parseHtmlString(string)
+#### libxmljs.parseHtml(string)
 
 >Parse an in-memory HTML string
 

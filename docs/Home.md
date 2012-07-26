@@ -11,7 +11,7 @@ LibXML bindings for  [node.js](http://nodejs.org/)
                    '<sibling>with content!</sibling>' +
                '</root>';
 
-    var xmlDoc = libxmljs.parseXmlString(xml);
+    var xmlDoc = libxmljs.parseXml(xml);
 
     // xpath queries
     var gchild = xmlDoc.get('//grandchild');
@@ -81,7 +81,7 @@ By file:
 
 By String:
 
-    var doc = libxml.parseXmlString([xmlString]);
+    var doc = libxml.parseXml([xmlString]);
 
 #### SAX Parsing
 

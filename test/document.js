@@ -100,8 +100,8 @@ module.exports.add_child_nodes = function(assert) {
       '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
     ].join("\n");
 
-    var doc1 = libxml.parseXmlString(doc1_string);
-    var doc2 = libxml.parseXmlString(doc2_string);
+    var doc1 = libxml.parseXml(doc1_string);
+    var doc2 = libxml.parseXml(doc2_string);
     doc2.child(0).addChild(doc1.child(0).child(0));
     assert.equal(doc1.toString(), doc2.toString());
     assert.done();
@@ -120,7 +120,7 @@ module.exports.add_cdata_nodes = function(assert) {
       '' /* Why?!? */
     ].join("\n");
 
-    var doc1 = libxml.parseXmlString(doc1_string);
+    var doc1 = libxml.parseXml(doc1_string);
     doc1.child(0).cdata('<p>Bacon</p>');
     assert.equal(doc1.toString(), expected_string);
     assert.done();
@@ -140,8 +140,8 @@ module.exports.cloned_node = function(assert) {
       ''
     ].join("\n");
 
-    var doc1 = libxml.parseXmlString(doc1_string);
-    var doc2 = libxml.parseXmlString(doc2_string);
+    var doc1 = libxml.parseXml(doc1_string);
+    var doc2 = libxml.parseXml(doc2_string);
 
 	var gchild = doc1.child(0).child(0); //the element to operate on
 
@@ -163,9 +163,9 @@ module.exports.validate = function(assert) {
     var xml_valid = '<?xml version="1.0"?><comment>A comment</comment>';
     var xml_invalid = '<?xml version="1.0"?><commentt>A comment</commentt>';
     
-    var xsdDoc = libxml.parseXmlString(xsd);
-    var xmlDocValid = libxml.parseXmlString(xml_valid);
-    var xmlDocInvalid = libxml.parseXmlString(xml_invalid);
+    var xsdDoc = libxml.parseXml(xsd);
+    var xmlDocValid = libxml.parseXml(xml_valid);
+    var xmlDocInvalid = libxml.parseXml(xml_invalid);
     
     assert.equal(xmlDocValid.validate(xsdDoc), true);
     assert.equal(xmlDocInvalid.validate(xsdDoc), false);
