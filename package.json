@@ -1,26 +1,30 @@
-{ "name" : "libxmljs"
-, "author" : "Marco Rogers - http://github.com/polotek"
-, "contributors" : ["Jeff Smick"]
-, "description" : "libxml bindings for v8 javascript engine"
-, "version" : "0.5.4"
-, "scripts" :
-  { "test" : "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
-  }
-, "repository" :
-  { "type" : "git"
-  , "url" : "http://github.com/polotek/libxmljs.git"
-  }
-, "bugs" :
-  { "mail" : ""
-  , "url" : "http://github.com/polotek/libxmljs/issues"
-  }
-, "main" : "./index"
-, "engines" : { "node" : ">=0.4.7" }
-, "dependencies": {
+{
+  "name": "libxmljs",
+  "author": "Marco Rogers - http://github.com/polotek",
+  "contributors": [
+    "Jeff Smick"
+  ],
+  "description": "libxml bindings for v8 javascript engine",
+  "version": "0.6.0",
+  "scripts": {
+    "test": "node --expose_gc ./node_modules/nodeunit/bin/nodeunit test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/polotek/libxmljs.git"
+  },
+  "bugs": {
+    "mail": "",
+    "url": "http://github.com/polotek/libxmljs/issues"
+  },
+  "main": "./index",
+  "engines": {
+    "node": ">=0.4.7"
+  },
+  "dependencies": {
     "bindings": "1.0.0"
-  }
-, "devDependencies":
-  {
+  },
+  "devDependencies": {
     "nodeunit": "*"
   }
 }
