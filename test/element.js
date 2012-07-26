@@ -137,3 +137,13 @@ module.exports.import = function(assert) {
     assert.equal(child1, elem.childNodes()[0]); // child1 is the the first child of elem
     assert.done();
 };
+
+module.exports.clone = function(assert) {
+    var doc = libxml.Document();
+    var elem = doc.node('child');
+    var elem2 = elem.clone();
+    assert.equal(elem.name(), elem2.name());
+    assert.equal(elem.text(), elem2.text());
+    assert.equal(elem.toString(), elem2.toString());
+    assert.done();
+};
