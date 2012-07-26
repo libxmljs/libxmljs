@@ -326,7 +326,13 @@ XmlElement::get_attrs() {
 
 void
 XmlElement::add_child(XmlElement* child) {
-  xmlAddChild(xml_obj, child->xml_obj);
+  xmlNodePtr node = xmlAddChild(xml_obj, child->xml_obj);
+  if (node != child->xml_obj)
+  {
+    // xmlAddChild deleted child->xml_obj by merging it with xml_obj last child
+    // recreate a valid xml_obj for child to avoid any memory issue
+    child->xml_obj = xmlNewDocText(xml_obj->doc, (const xmlChar*) "");
+  }
 }
 
 void
