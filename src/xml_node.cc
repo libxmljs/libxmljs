@@ -296,7 +296,8 @@ v8::Handle<v8::Value>
 XmlNode::clone(bool recurse) {
   v8::HandleScope scope;
 
-  return scope.Close(XmlNode::New(xmlCopyNode(xml_obj, recurse)));
+  xmlNode* new_xml_obj = xmlDocCopyNode(xml_obj, xml_obj->doc, recurse);
+  return scope.Close(XmlNode::New(new_xml_obj));
 }
 
 v8::Handle<v8::Value>
