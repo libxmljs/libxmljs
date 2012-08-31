@@ -32,6 +32,11 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
   if (xpathobj) {
     switch (xpathobj->type) {
     case XPATH_NODESET: {
+      if (xmlXPathNodeSetIsEmpty(xpathobj->nodesetval)) {
+        res = v8::Array::New(0);
+        break;
+      }
+
       v8::Handle<v8::Array> nodes = v8::Array::New(xpathobj->nodesetval->nodeNr);
       for (int i = 0; i != xpathobj->nodesetval->nodeNr; ++i) {
         nodes->Set(i, XmlNode::New(xpathobj->nodesetval->nodeTab[i]));
