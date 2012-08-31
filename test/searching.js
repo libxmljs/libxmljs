@@ -14,6 +14,15 @@ module.exports.get = function(assert) {
     assert.done();
 };
 
+module.exports.get_missing = function(assert) {
+    var doc = libxml.Document();
+    var root = doc.node('root');
+
+    var missing = doc.get('missing/text()');
+    assert.equal(missing, undefined);
+    assert.done();
+};
+
 module.exports.get_attr = function(assert) {
     var doc = libxml.Document();
     var root = doc.node('root');
