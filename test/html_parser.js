@@ -32,6 +32,39 @@ module.exports.parse = function(assert) {
     assert.done();
 };
 
+// Although libxml defaults to a utf-8 encoding, if not specifically specified
+// it will guess the encoding based on meta http-equiv tags available
+// This test shows that the "guessed" encoding can be overridden
+module.exports.parse_force_encoding = function(assert) {
+    var filename = __dirname + '/fixtures/parser.euc_jp.html';
+
+    function attempt_parse(encoding, opts) {
+        var str = fs.readFileSync(filename, encoding);
+
+        var doc = libxml.parseHtml(str, opts);
+        assert.equal('html', doc.root().name());
+
+        // make sure libxml rewrite the meta charset of this document
+
+        // calling toString on the document ensure that it is converted to the
+        // correct internal format and the new meta tag is replaced
+        doc.root().toString();
+        var fixedCharset = doc.find('/html/head/meta/@content')[0].value();
+        assert.ok( fixedCharset.indexOf(opts.encoding.toUpperCase() ) !== -1);
+
+        assert.equal('テスト', doc.get('head/title').text());
+        assert.equal('テスト', doc.get('body/div').text());
+    }
+
+    // Parse via a string
+    attempt_parse('utf-8', {encoding: 'utf-8'});
+
+    // Parse via a Buffer
+    attempt_parse(null, {encoding: 'utf-8'});
+
+    assert.done();
+};
+
 module.exports.parse_synonym = function(assert) {
     assert.strictEqual(libxml.parseHtml, libxml.parseHtmlString);
     assert.done();
