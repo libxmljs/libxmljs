@@ -2,7 +2,6 @@
 
 #include <node.h>
 #include <node_buffer.h>
-#include <cstring>
 
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
@@ -138,10 +137,12 @@ XmlDocument::FromHtml(const v8::Arguments& args)
 
     // the base URL that will be used for this HTML parsed document
     char * baseUrl = NULL;
+    v8::String::Utf8Value * baseUrl_p = NULL;
 
     // the encoding to be used for this document
     // (leave NULL for libxml to autodetect)
     char * encoding = NULL;
+    v8::String::Utf8Value * encoding_p = NULL;
 
     if (args.Length() > 1 && args[1]->IsObject()) {
         v8::Local<v8::Object> options = args[1]->ToObject();
@@ -151,12 +152,12 @@ XmlDocument::FromHtml(const v8::Arguments& args)
             v8::String::NewSymbol("encoding"));
 
         if (urlOpt->IsString()) {
-            v8::String::Utf8Value baseUrl_(urlOpt->ToString());
-            baseUrl = strdup(*baseUrl_);
+            baseUrl_p = new v8::String::Utf8Value(urlOpt->ToString());
+            baseUrl  = **baseUrl_p;
         }
         if (encOpt->IsString()) {
-            v8::String::Utf8Value encoding_(encOpt->ToString());
-            encoding = strdup(*encoding_);
+            encoding_p = new v8::String::Utf8Value(encOpt->ToString());
+            encoding = **encoding_p;
         }
     }
 
@@ -178,9 +179,6 @@ XmlDocument::FromHtml(const v8::Arguments& args)
                             baseUrl, encoding, 0);
     }
 
-    if (baseUrl)  free(baseUrl);
-    if (encoding) free(encoding);
-
     xmlSetStructuredErrorFunc(NULL, NULL);
 
     if (!doc) {
@@ -190,6 +188,15 @@ XmlDocument::FromHtml(const v8::Arguments& args)
         }
         return v8::ThrowException(v8::Exception::Error(
                     v8::String::New("Could not parse XML string")));
+    }
+
+    if (baseUrl_p != NULL){
+      delete baseUrl_p;
+      baseUrl_p = NULL;
+    }
+    if (encoding_p != NULL){
+      delete encoding_p;
+      encoding_p = NULL;
     }
 
     v8::Handle<v8::Object> doc_handle = XmlDocument::New(doc);
