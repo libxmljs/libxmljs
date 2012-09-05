@@ -2,6 +2,7 @@
 
 #include <node.h>
 #include <node_buffer.h>
+#include <cstring>
 
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
@@ -151,11 +152,11 @@ XmlDocument::FromHtml(const v8::Arguments& args)
 
         if (urlOpt->IsString()) {
             v8::String::Utf8Value baseUrl_(urlOpt->ToString());
-            baseUrl = *baseUrl_;
+            baseUrl = strdup(*baseUrl_);
         }
         if (encOpt->IsString()) {
             v8::String::Utf8Value encoding_(encOpt->ToString());
-            encoding = *encoding_;
+            encoding = strdup(*encoding_);
         }
     }
 
@@ -176,6 +177,9 @@ XmlDocument::FromHtml(const v8::Arguments& args)
         doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
                             baseUrl, encoding, 0);
     }
+
+    if (baseUrl)  free(baseUrl);
+    if (encoding) free(encoding);
 
     xmlSetStructuredErrorFunc(NULL, NULL);
 
