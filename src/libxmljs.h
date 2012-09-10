@@ -5,7 +5,7 @@
 #include <v8.h>
 #include <node.h>
 
-#define LIBXMLJS_VERSION "v0.4.0"
+#define LIBXMLJS_VERSION "v0.6.1"
 
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                          \
   if (!arg->type()) {                                                         \
