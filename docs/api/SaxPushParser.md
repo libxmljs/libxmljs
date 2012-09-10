@@ -1,44 +1,14 @@
 # SaxPushParser
 
-libxmljs provides a SAX2 push parser interface that accepts chunks of data.
+libxmljs provides a SAX2 push parser interface that accepts chunks of data. SaxPush parser inherits from EventEmitter to emit parse events.
 
 ### Constructor
-
 
 #### new libxmljs.SaxPushParser()
 
 >Instantiate a new SaxParser
 
-#### new libxmljs.SaxPushParser(callbacks)
-
->Instantiate a new SaxParser
-
->**args**
-*callbacks* - an object with event names as properties and event handler functions as values
-
-### Parse Events
-
->**startDocument** - Fired at the start of a document
-
->**endDocument** - Fired at the end of the document parse
-
->**startElementNS** - Fired on an open element tag
-
->**endElementNS** - Fired at the close of an element
-
->**characters** - Fired when a set of content characters is encountered
-
->**cdata** - Fired when a CDATA is encountered
-
->**comment** - Fired when an comment is encountered
-
->**warning** - Fired when an warning is encountered
-
->**error** - Fired when an error is encountered
-
-
 ### Methods
-
 
 #### parser.push(string)
 
@@ -47,18 +17,19 @@ libxmljs provides a SAX2 push parser interface that accepts chunks of data.
 >**args**
 *string* - a string representing the document to parse
 
+### Parse Events
 
-#### parser.onStartDocument(function() {})
+#### startDocument
 
->Called at the start of a document
+>Emitted at the start of a document
 
-#### parse.onEndDocument(function() {})
+#### endDocument
 
->Called at the end of the document parse
+>Emitted at the end of the document parse
 
-#### parser.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {})
+#### startElementNS(elem, attrs, prefix, uri, namespace)
 
->Called on an open element tag
+>Emitted on an open element tag
 
 >**args**
 *elem* - a string representing the element name
@@ -67,59 +38,47 @@ libxmljs provides a SAX2 push parser interface that accepts chunks of data.
 *uri* - the namespace URI of the element
 *namespaces* - an array of arrays: `[[prefix, uri]]`
 
+#### endElementNS(elem, prefix, uri)
 
-#### parser.onEndElementNS(function(elem, prefix, uri) {})
-
->Called at the close of an element
+>Emitted at the close of an element
 
 >**args**
 *elem* - a string representing the element name
 *prefix* - a string representing the namespace prefix of the element
 *uri* - the namespace URI of the element
 
+#### characters(chars)
 
-#### parser.onCharacters(function(chars) {})
-
->Called when a set of content characters is encountered
+>Emitted when a set of content characters is encountered
 
 >**args**
 *chars* - a string of characters
 
+#### cdata(cdata)
 
-#### parser.onCdata(function(cdata) {})
-
->Called when a CDATA is encountered
+>Emitted when a CDATA is encountered
 
 >**args**
 *cdata* - a string representing the CDATA
 
+#### comment(msg)
 
-#### parser.onComment(function(msg) {})
-
->Called when a comment is encountered
+>Emitted when a comment is encountered
 
 >**args**
 *msg* - a string representing the comment
 
+#### warning(msg)
 
-#### parser.onWarning(function(msg) {})
-
->Called when a warning is encountered
+>Emitted when a warning is encountered
 
 >**args**
 *msg* - a string representing the warning message
 
+#### error(msg)
 
-#### parser.onError(function(msg) {})
-
->Called when an error is encountered
+>Emitted when an error is encountered
 
 >**args**
 *msg* - a string representing the error message
 
-
-### Examples
-
-Here's an extended example of using the sax push parser to recreate an xml document.
-
-[http://gist.github.com/484083](http://gist.github.com/484083)

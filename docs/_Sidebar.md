@@ -4,7 +4,6 @@
 * [[Attribute]]
 * [[Namespace]]
 * [[HtmlDocument]]
-* [[Parser]]
 * [[SaxParser]]
 * [[SaxPushParser]]
 * [[SyntaxError]]

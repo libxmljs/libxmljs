@@ -1,42 +1,12 @@
 # SaxParser
 
-libxmljs provides a SAX2 parser interface that can take a string, file.
+libxmljs provides a SAX2 parser interface that can take a string, file. A SaxParser inherits from EventEmitter to emit parsing events.
 
 ### Constructor
-
 
 #### new libxml.SaxParser()
 
 >Instantiate a new SaxParser
-
-#### new libxml.SaxParser(callbacks)
-
->Instantiate a new SaxParser
-
->**args**
-*callbacks* - an object with event names as properties and event handler functions as values
-
-
-### Parse Events
-
->**startDocument** - Fired at the start of a document
-
->**endDocument** - Fired at the end of the document parse
-
->**startElementNS** - Fired on an open element tag
-
->**endElementNS** - Fired at the close of an element
-
->**characters** - Fired when a set of content characters is encountered
-
->**cdata** - Fired when a CDATA is encountered
-
->**comment** - Fired when an comment is encountered
-
->**warning** - Fired when an warning is encountered
-
->**error** - Fired when an error is encountered
-
 
 ### Methods
 
@@ -48,17 +18,19 @@ libxmljs provides a SAX2 parser interface that can take a string, file.
 >**args**
 *string* - a string representing the document to parse
 
-#### parser.onStartDocument(function() {})
+### Parse Events
 
->Called at the start of a document
+#### startDocument
 
-#### parse.onEndDocument(function() {})
+>Emitted at the start of a document
 
->Called at the end of the document parse
+#### endDocument
 
-#### parser.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {})
+>Emitted at the end of the document parse
 
->Called on an open element tag
+#### startElementNS(elem, attrs, prefix, uri, namespace)
+
+>Emitted on an open element tag
 
 >**args**
 *elem* - a string representing the element name
@@ -67,54 +39,47 @@ libxmljs provides a SAX2 parser interface that can take a string, file.
 *uri* - the namespace URI of the element
 *namespaces* - an array of arrays: `[[prefix, uri]]`
 
+#### endElementNS(elem, prefix, uri)
 
-#### parser.onEndElementNS(function(elem, prefix, uri) {})
-
->Called at the close of an element
+>Emitted at the close of an element
 
 >**args**
 *elem* - a string representing the element name
 *prefix* - a string representing the namespace prefix of the element
 *uri* - the namespace URI of the element
 
+#### characters(chars)
 
-#### parser.onCharacters(function(chars) {})
-
->Called when a set of content characters is encountered
+>Emitted when a set of content characters is encountered
 
 >**args**
 *chars* - a string of characters
 
+#### cdata(cdata)
 
-#### parser.onCdata(function(cdata) {})
-
->Called when a CDATA is encountered
+>Emitted when a CDATA is encountered
 
 >**args**
 *cdata* - a string representing the CDATA
 
+#### comment(msg)
 
-#### parser.onComment(function(msg) {})
-
->Called when a comment is encountered
+>Emitted when a comment is encountered
 
 >**args**
 *msg* - a string representing the comment
 
+#### warning(msg)
 
-#### parser.onWarning(function(msg) {})
-
->Called when a warning is encountered
+>Emitted when a warning is encountered
 
 >**args**
 *msg* - a string representing the warning message
 
+#### error(msg)
 
-#### parser.onError(function(msg) {})
-
->Called when an error is encountered
+>Emitted when an error is encountered
 
 >**args**
 *msg* - a string representing the error message
-
 

@@ -6,43 +6,14 @@ The Element class represents an element node in the XML tree.
 ## Constructor
 
 
-### new libxml.Element(doc, name)  
-> Creates a new element object called name
+### new libxml.Element(doc, name, [content])
 
-> **args**  
-*doc* - a Document object to provide context for the node  
-*name* - a string representing the name of the element  
+>Creates a new element object called name with attrs as its attributes. It is recommended that you use the *node* method of Document or Element instead.
 
-### new libxml.Element(doc, name, attrs)
-
->Creates a new element object called name with attrs as its attributes
-
->**args**  
-*doc* - a document object to provide context for the node  
-*name* - a string representing the name of the element  
-*attrs* - a hash of {name: value} pairs to set as attributes  
-
-### new libxml.Element(doc, name, attrs, content)
-
->Creates a new element object called name with attrs as its attributes
-
->**args**  
-*doc* - a document object to provide context for the node  
-*name* - a string representing the name of the element  
-*attrs* - a hash of {name: value} pairs to set as attributes  
-*content* - a string representing the content to add to the node  
-*callback* - a function that will accept the new object as an argument
-
-### new libxml.Element(doc, name, attrs, content, callback)
-
->Creates a new element object called name with attrs as its attributes
-
->**args**  
-*doc* - a document object to provide context for the node  
-*name* - a string representing the name of the element  
-*attrs* - a hash of {name: value} pairs to set as attributes  
-*content* - a string representing the content to add to the node  
-*callback* - a function that will accept the new object as an argument
+>**args**
+*doc* - a document object to provide context for the node
+*name* - a string representing the name of the element
+*content* - a string representing the content to add to the node
 
 ## Methods
 
@@ -57,7 +28,7 @@ The Element class represents an element node in the XML tree.
 
 >Set the name of the element
 
->**args**  
+>**args**
 *new_name* - a string representing the new name of the element
 
 >**returns** - the Element object
@@ -75,8 +46,8 @@ The Element class represents an element node in the XML tree.
 
 >Get the Attribute called name
 
->**args**  
-*name* - a string representing the name of the attribute  
+>**args**
+*name* - a string representing the name of the attribute
 
 >**returns** - an Attribute node or null
 
@@ -85,8 +56,8 @@ The Element class represents an element node in the XML tree.
 
 >Add an Attribute object to the element
 
->**args**  
-*attr* - an Attribute node  
+>**args**
+*attr* - an Attribute node
 
 >**returns** - the element node (not the attribute)
 
@@ -95,8 +66,8 @@ The Element class represents an element node in the XML tree.
 
 >Create a set of attributes from a hash and add them to the element
 
->**args**  
-*attr* - an object of {name: value} pairs  
+>**args**
+*attr* - an object of {name: value} pairs
 
 >**returns** - the element object
 
@@ -126,13 +97,13 @@ The Element class represents an element node in the XML tree.
 
 >Get a child node by index
 
->**args**  
-*idx* - a zero indexed integer representing the child node to return  
+>**args**
+*idx* - a zero indexed integer representing the child node to return
 
 >**returns** - a Node object or null
 
 
-### elements.childNodes()
+### element.childNodes()
 
 >Get a list of all the immediate children of the element
 
@@ -143,8 +114,8 @@ The Element class represents an element node in the XML tree.
 
 >Add a child node to the node
 
->**args**  
-*child* - an Element node to be added as a child  
+>**args**
+*child* - an Element node to be added as a child
 
 >**returns** - the element node (not the child)
 
@@ -167,7 +138,7 @@ The Element class represents an element node in the XML tree.
 
 >Add a Node as a sibling immediately after this element
 
->**args**  
+>**args**
 *siblingNode* - a Node to add as a sibling
 
 >**returns** - the sibling object
@@ -191,7 +162,7 @@ The Element class represents an element node in the XML tree.
 
 >Add a Node as a sibling immediately before this element
 
->**args**  
+>**args**
 *siblingNode* - a Node to add as a sibling
 
 >**returns** - the sibling object
@@ -201,8 +172,8 @@ The Element class represents an element node in the XML tree.
 
 >Search the element's children by xpath
 
->**args**  
-*xpath* - a string representing the xpath to search  
+>**args**
+*xpath* - a string representing the xpath to search
 
 >**returns** - an array of Node objects. may be empty
 
@@ -211,47 +182,48 @@ The Element class represents an element node in the XML tree.
 
 >Search the element's children by xpath within the URI namespace
 
->**args**  
-*xpath* - a string representing the xpath to search  
-*ns_uri* - a string representing the namespace URI  
+>**args**
+*xpath* - a string representing the xpath to search
+*ns_uri* - a string representing the namespace URI
 
 >**returns** - an array of Node objects
 
-*example*  
-    doc.find("xmlns:child-name", "ns:uri")
+*examples*
+     `doc.find("xmlns:child-name", "ns:uri")
+      doc.find('//y:child-name', { y: 'http://some.com/for/y'});`
 
 
 ### element.get(xpath, ns_uri)
 
->Return the first node node that matches the xpath expression  
+>Return the first node node that matches the xpath expression
 This this is syntactic sugar for `find(xpath, ns_uri)[0]`
 
->**args**  
-*xpath* - a string representing the xpath to search  
-*ns_uri* - a string representing the namespace URI  
+>**args**
+*xpath* - a string representing the xpath to search
+*ns_uri* - a string representing the namespace URI
 
 >**returns** - a Node or null
 
 
 ### element.find(xpath, namespaces)
 
->Search the element's children by xpath within any of the URI  
+>Search the element's children by xpath within any of the URI
 namespaces
 
->**args**  
-*xpath* - a string representing the xpath to search  
-*namespaces* - a hash representing the namespaces  
+>**args**
+*xpath* - a string representing the xpath to search
+*namespaces* - a hash representing the namespaces
 
 >**returns** - an array of Node objects
 
-*example*  
+*example*
     doc.find("ns-1:child-name", {"ns-1": "ns:uri"})
     doc.find("ns-1:child1/ns-2:child2", {"ns-1": "ns:uri1", "ns-2": "ns:uri2"})
 
 
 ### element.get(xpath, ns_uri)
 
->Return the first node that matches the xpath  
+>Return the first node that matches the xpath
 This is syntactic sugar for `find(xpath, namespaces)[0]`
 
 >**returns** - a element object or null
@@ -262,8 +234,8 @@ This is syntactic sugar for `find(xpath, namespaces)[0]`
 >Define a new namespace on the element using href for the URI.  This
 will only define the namespace but wont add it to the node
 
->**args**  
-*href* - a string representing the URI of the new namespace  
+>**args**
+*href* - a string representing the URI of the new namespace
 
 >**returns** - the new Namespace object
 
@@ -274,9 +246,9 @@ will only define the namespace but wont add it to the node
 prefix as the prefix. This will only define the namespace but wont add
 it to the node
 
->**args**  
-*prefix* - a string representing the prefix for the new namespace  
-*href* - a string representing the URI for the new namespace  
+>**args**
+*prefix* - a string representing the prefix for the new namespace
+*href* - a string representing the URI for the new namespace
 
 >**returns** - the new Namespace object
 
@@ -292,8 +264,8 @@ Get the elements's namespace
 
 >Set the element's namespace to ns
 
->**args**  
-*ns* - a Namespace object  
+>**args**
+*ns* - a Namespace object
 
 >**returns** - the element object
 
@@ -304,8 +276,8 @@ Get the elements's namespace
 up the tree to find a namespace with the given href and, if found will
 use it. Otherwise it will create a new namespace.
 
->**args**  
-*href* - a string representing the namespace URI  
+>**args**
+*href* - a string representing the namespace URI
 
 >**returns** - the namespace object
 
@@ -317,9 +289,9 @@ node. This will search up the tree to find a namespace with the given
 href and, if found will use it. Otherwise it will create a new
 namespace.
 
->**args**  
-*prefix* - a string representing the namespace prefix  
-*href* - a string representing the namespace URI  
+>**args**
+*prefix* - a string representing the namespace prefix
+*href* - a string representing the namespace URI
 
 >**returns** - the Namespace object
 

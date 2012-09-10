@@ -5,69 +5,14 @@ instantiating an object using the "new" keyword or by parsing a document.
 
 ## Constructor
 
-
-### new libxmljs.Document();
-
->Instantiate a new document object defaulting the version to 1.0 and the
-encoding to UTF-8.
-
->**returns**  a new document object
-
-### new libxmljs.Document(callback);
-
->Instantiate a new document object defaulting the version to 1.0 and the
-encoding to UTF-8.
-
->**args**  
-*callback* - a function that accepts the new document object  
-
-
->**returns**  a new document object
-
-### new libxmljs.Document(version);
-
->Instantiate a new document setting the version to version and defaulting
-the encoding to UTF-8.
-
->**args**  
-*version* - a string representing the desired document version  
-
-
->**returns**  a new document object
-
-### new libxmljs.Document(version, callback);
-
->Instantiate a new document setting the version to version and defaulting
-the encoding to UTF-8.
-
->**args**  
-*version* - a string representing the desired document version  
-*callback* - a function that accepts the new document object  
-
-
->**returns**  a new document object
-
 ### new libxmljs.Document(version, encoding);
 
 >Instantiate a new document setting the version to version and the encoding
 to encoding.
 
 >**args**  
-*version* - a string representing the desired document version  
-*encoding* - a string representing the desired document encoding  
-
-
->**returns**  a new document object
-
-### new libxmljs.Document(version, encoding, callback);
-
->Instantiate a new document setting the version to version and the encoding
-to encoding.
-
->**args**  
-*version* - a string representing the desired document version  
-*encoding* - a string representing the desired document encoding  
-*callback* - a function that accepts the new document as an argument  
+*version* - a string representing the desired document version (default '1.0')
+*encoding* - a string representing the desired document encoding (default 'utf8') 
 
 
 >**returns**  a new document object
@@ -91,12 +36,6 @@ See Element#child for more information
 >Get all the children of the root node
 
 >**returns**  an array of element objects
-
-### doc.document()
-
->A convenience method that 
-
->**returns**  the document object
 
 ### doc.errors()
 
@@ -139,10 +78,15 @@ See Element#get for more information
 
 >**returns**  a element object or null
 
-### doc.node([args])
+### doc.node(name, content)
 
 >A convenience method for creating and setting the root node
-See new libxmljs.Element for the full spec
+
+>**args**
+*name* - the tag name
+*content* - text content of the node (a string)
+
+>**returns** the newly created node
 
 ### doc.root()
 
