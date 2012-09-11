@@ -67,17 +67,23 @@ compiling.  **This command must be in your path.**
 
 **npm**
 
-    npm install libxmljs
+```shell
+npm install libxmljs
+```
 
 **source**
 
 To build with node waf:
 
-    node-gyp configure
-    node-gyp build
+```shell
+node-gyp configure
+node-gyp build
+```
 
 Alternatively, run `make`.
 
 **tests**
 
-    npm test
+```shell
+npm test
+```
