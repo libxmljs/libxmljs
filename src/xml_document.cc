@@ -135,6 +135,32 @@ XmlDocument::FromHtml(const v8::Arguments& args)
 {
     v8::HandleScope scope;
 
+    // the base URL that will be used for this HTML parsed document
+    char * baseUrl = NULL;
+    v8::String::Utf8Value * baseUrl_p = NULL;
+
+    // the encoding to be used for this document
+    // (leave NULL for libxml to autodetect)
+    char * encoding = NULL;
+    v8::String::Utf8Value * encoding_p = NULL;
+
+    if (args.Length() > 1 && args[1]->IsObject()) {
+        v8::Local<v8::Object> options = args[1]->ToObject();
+        v8::Local<v8::Value>  urlOpt  = options->Get(
+            v8::String::NewSymbol("baseUrl"));
+        v8::Local<v8::Value>  encOpt  = options->Get(
+            v8::String::NewSymbol("encoding"));
+
+        if (urlOpt->IsString()) {
+            baseUrl_p = new v8::String::Utf8Value(urlOpt->ToString());
+            baseUrl  = **baseUrl_p;
+        }
+        if (encOpt->IsString()) {
+            encoding_p = new v8::String::Utf8Value(encOpt->ToString());
+            encoding = **encoding_p;
+        }
+    }
+
     v8::Local<v8::Array> errors = v8::Array::New();
     xmlResetLastError();
     xmlSetStructuredErrorFunc(reinterpret_cast<void *>(*errors),
@@ -142,15 +168,15 @@ XmlDocument::FromHtml(const v8::Arguments& args)
 
     htmlDocPtr doc;
     if (!node::Buffer::HasInstance(args[0])) {
-      // Parse a string
-      v8::String::Utf8Value str(args[0]->ToString());
-      doc = htmlReadMemory(*str, str.length(), NULL, NULL, 0);
+        // Parse a string
+        v8::String::Utf8Value str(args[0]->ToString());
+        doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, 0);
     }
     else {
-      // Parse a buffer
-      v8::Local<v8::Object> buf = args[0]->ToObject();
-      doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
-                           NULL, NULL, 0);
+        // Parse a buffer
+        v8::Local<v8::Object> buf = args[0]->ToObject();
+        doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
+                            baseUrl, encoding, 0);
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);
@@ -162,6 +188,15 @@ XmlDocument::FromHtml(const v8::Arguments& args)
         }
         return v8::ThrowException(v8::Exception::Error(
                     v8::String::New("Could not parse XML string")));
+    }
+
+    if (baseUrl_p != NULL){
+      delete baseUrl_p;
+      baseUrl_p = NULL;
+    }
+    if (encoding_p != NULL){
+      delete encoding_p;
+      encoding_p = NULL;
     }
 
     v8::Handle<v8::Object> doc_handle = XmlDocument::New(doc);
