@@ -5,8 +5,6 @@
 #include <v8.h>
 #include <node.h>
 
-#define LIBXMLJS_VERSION "0.6.1"
-
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                          \
   if (!arg->type()) {                                                         \
     v8::Local<v8::Value> exception = v8::Exception::TypeError(                \

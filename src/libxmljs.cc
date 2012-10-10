@@ -125,9 +125,6 @@ init(v8::Handle<v8::Object> target)
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
 
-      target->Set(v8::String::NewSymbol("version"),
-                  v8::String::New(LIBXMLJS_VERSION));
-
       target->Set(v8::String::NewSymbol("libxml_version"),
                   v8::String::New(LIBXML_DOTTED_VERSION));
 

@@ -13,7 +13,7 @@ module.exports.parseXml = Document.fromXml;
 module.exports.parseHtml = Document.fromHtml;
 
 // constants
-module.exports.version = bindings.version;
+module.exports.version = require('./package.json').version;
 module.exports.libxml_version = bindings.libxml_version;
 module.exports.libxml_parser_version = bindings.libxml_parser_version;
 module.exports.libxml_debug_enabled = bindings.libxml_debug_enabled;
