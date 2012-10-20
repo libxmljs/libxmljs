@@ -12,7 +12,7 @@ $(target): build/ src/*.cc src/*.h
 clean:
 	rm -rf build
 
-test: $(target)
+check test: $(target)
 	npm test
 
 .PHONY: test clean
