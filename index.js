@@ -32,3 +32,4 @@ var sax_parser = require('./lib/sax_parser');
 module.exports.SaxParser = sax_parser.SaxParser;
 module.exports.SaxPushParser = sax_parser.SaxPushParser;
 
+module.exports.TextWriter = require('./lib/textwriter.js');
