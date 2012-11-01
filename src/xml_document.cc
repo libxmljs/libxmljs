@@ -3,6 +3,8 @@
 #include <node.h>
 #include <node_buffer.h>
 
+#include <cstring>
+
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
 
