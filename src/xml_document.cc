@@ -87,6 +87,42 @@ XmlDocument::Root(const v8::Arguments& args)
 }
 
 v8::Handle<v8::Value>
+XmlDocument::SetDtd(const v8::Arguments& args)
+{
+    v8::HandleScope scope;
+
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    assert(document);
+
+    v8::String::Utf8Value name_(args[0]->ToString());
+    v8::String::Utf8Value externalId_(args[1]->ToString());
+    v8::String::Utf8Value systemId_(args[2]->ToString());
+
+    //No good way of unsetting the doctype if it is previously set...this allows us to.
+    xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
+
+    xmlUnlinkNode((xmlNodePtr) dtd);
+    xmlFreeNode((xmlNodePtr) dtd);
+
+    if (name_.length() == 0 || !args[0]->IsString())
+        return ThrowException(v8::Exception::Error(
+                    v8::String::New("Name must be filled out, and must be a String")));
+    char* name = strdup(*name_);
+    char* externalId = NULL;
+    if (args.Length() > 1 && args[1]->IsString() && externalId_.length() > 0) externalId = strdup(*externalId_);
+    char* systemId = NULL;
+    if (args.Length() > 2 && args[2]->IsString() && systemId_.length() > 0) systemId = strdup(*systemId_);
+
+    xmlCreateIntSubset(document->xml_obj, (const xmlChar *)name, (const xmlChar *)externalId, (const xmlChar *)systemId);
+
+    if (name != NULL) free(name);
+    if (externalId != NULL) free(externalId);
+    if (systemId != NULL) free(systemId);
+
+    return scope.Close(args.Holder());
+}
+
+v8::Handle<v8::Value>
 XmlDocument::ToString(const v8::Arguments& args)
 {
     v8::HandleScope scope;
@@ -332,6 +368,10 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_validate",
             XmlDocument::Validate);
+    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+            "setDtd",
+            XmlDocument::SetDtd);
+
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
     NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
