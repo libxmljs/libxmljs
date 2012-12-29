@@ -39,10 +39,13 @@ XmlElement::New(const v8::Arguments& args) {
   v8::String::Utf8Value contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
                                 (const xmlChar*)*name,
-                                (const xmlChar*)content);
+                                encoded);
+  if (encoded)
+      xmlFree(encoded);
 
   XmlElement* element = new XmlElement(elem);
   elem->_private = element;
