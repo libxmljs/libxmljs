@@ -15,8 +15,8 @@ module.exports.setters = function(assert) {
 
     // change content
     assert.equal('', elem.text());
-    elem.text('content');
-    assert.equal('content', elem.text());
+    elem.text('content && more content <>');
+    assert.equal('content && more content <>', elem.text());
 
     // change name
     assert.equal('name1', elem.name());
