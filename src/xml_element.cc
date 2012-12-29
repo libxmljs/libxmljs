@@ -246,7 +246,7 @@ XmlElement::AddPrevSibling(const v8::Arguments& args) {
 
   XmlElement* new_sibling = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
   assert(new_sibling);
-  
+
   new_sibling = element->import_element(new_sibling);
 
   element->add_prev_sibling(new_sibling);
@@ -262,7 +262,7 @@ XmlElement::AddNextSibling(const v8::Arguments& args) {
 
   XmlElement* new_sibling = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
   assert(new_sibling);
-  
+
   new_sibling = element->import_element(new_sibling);
 
   element->add_next_sibling(new_sibling);
@@ -393,7 +393,9 @@ XmlElement::get_path() {
 
 void
 XmlElement::set_content(const char* content) {
-  xmlNodeSetContent(xml_obj, (const xmlChar*)content);
+  xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
+  xmlNodeSetContent(xml_obj, encoded);
+  xmlFree(encoded);
 }
 
 v8::Handle<v8::Value>
