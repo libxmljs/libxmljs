@@ -9,6 +9,16 @@ module.exports.new = function(assert) {
     assert.done();
 };
 
+module.exports.newWithContent = function(assert) {
+    var doc = libxml.Document();
+    var elem = libxml.Element(doc, 'name1', 'content && more content <>');
+    doc.root(elem);
+    assert.equal('name1', elem.name());
+    assert.equal('name1', doc.root().name());
+    assert.equal('content && more content <>', elem.text());
+    assert.done();
+};
+
 module.exports.setters = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');

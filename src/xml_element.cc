@@ -38,12 +38,15 @@ XmlElement::New(const v8::Arguments& args) {
       content = strdup(*content_);
   }
 
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
                                 (const xmlChar*)*name,
-                                (const xmlChar*)content);
+                                encoded);
   if(content)
       free(content);
+  if(encoded)
+      xmlFree(encoded);
 
   XmlElement* element = new XmlElement(elem);
   elem->_private = element;
