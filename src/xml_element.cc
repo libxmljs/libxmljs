@@ -30,7 +30,11 @@ XmlElement::New(const v8::Arguments& args) {
   XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
   assert(document);
 
-  v8::String::Utf8Value name(args[1]);
+  char* name = NULL;
+  if(args[1]->IsString()) {
+      v8::String::Utf8Value name_(args[1]);
+      name = strdup(*name_);
+  }
 
   char* content = NULL;
   if(args[2]->IsString()) {
@@ -38,10 +42,19 @@ XmlElement::New(const v8::Arguments& args) {
       content = strdup(*content_);
   }
 
-  xmlNode* elem = xmlNewDocNode(document->xml_obj,
-                                NULL,
-                                (const xmlChar*)*name,
-                                (const xmlChar*)content);
+  xmlNode* elem = NULL;
+  if (name)
+      elem = xmlNewDocNode(document->xml_obj,
+                           NULL,
+                           (const xmlChar*)name,
+                           (const xmlChar*)content);
+  else
+      elem = xmlNewDocText(document->xml_obj,
+                           (const xmlChar*)content);
+
+  if(name)
+      free(name);
+
   if(content)
       free(content);
 
