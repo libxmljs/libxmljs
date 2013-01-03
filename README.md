@@ -26,26 +26,6 @@ var child = children[0];
 console.log(child.attr('foo').value()); // prints "bar"
 ```
 
-CDATA Example:
-
-```javascript
-var libxml = require('libxmljs');
-
-var doc = libxml.Document();
-var elem = doc.node('name1');
-var newChild = libxml.Element(doc, 'new-child');
-elem.addChild(newChild);
-
-var child1 = elem.node('child1');
-var child2 = elem.node('child2', 'second');
-var newChild = libxml.Element(doc, 'new-child');
-var name2 = elem.node('name2');
-name2.addChild(newChild);
-child2.cdata('<h1>cdata test</h1>').cdata('<p>It\'s worked</p>').cdata('<hr/>All done');
-
-console.log('Document with CDATA: %s', doc.toString());
-```
-
 ## Basics
 
 * Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
@@ -53,7 +33,9 @@ console.log('Document with CDATA: %s', doc.toString());
 
 ## API and Examples
 
-Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki).
+
+See the [examples](https://github.com/polotek/libxmljs/tree/master/examples) folder.
 
 ## Requirements
 
