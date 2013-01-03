@@ -73,7 +73,7 @@ npm install libxmljs
 
 **source**
 
-To build with node waf:
+To build with node-gyp:
 
 ```shell
 node-gyp configure
