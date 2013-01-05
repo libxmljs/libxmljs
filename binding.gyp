@@ -1,8 +1,7 @@
 {
   'targets': [
     {
-      # have to specify 'liblib' here since gyp will remove the first one :\
-      'target_name': 'liblibxmljs',
+      'target_name': 'xmljs',
       'sources': [
         'src/libxmljs.cc',
         'src/xml_attribute.cc',
