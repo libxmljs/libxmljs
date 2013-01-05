@@ -137,4 +137,6 @@ init(v8::Handle<v8::Object> target)
       target->Set(v8::String::NewSymbol("libxml"), target);
 }
 
+NODE_MODULE(xmljs, init)
+
 }  // namespace libxmljs
