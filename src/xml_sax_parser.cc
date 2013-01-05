@@ -8,11 +8,11 @@
 
 #include "xml_sax_parser.h"
 
-#define LXJS_GET_PARSER_FROM_CONTEXT(context)                                 \
-({                                                                            \
-  _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);        \
-  static_cast<libxmljs::XmlSaxParser*>(the_context->_private);                \
-})
+libxmljs::XmlSaxParser* LXJS_GET_PARSER_FROM_CONTEXT(void *context)
+{
+    _xmlParserCtxt* the_context = static_cast<_xmlParserCtxt*>(context);
+    return static_cast<libxmljs::XmlSaxParser*>(the_context->_private);
+}
 
 namespace {
     using namespace v8; // node 0.4.7 fails to use v8:: in NODE_PSYMBOL
