@@ -15,12 +15,12 @@ module.exports.setDtd = function(assert) {
     doc.setDtd(5);
   });
   assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n', doc.toString());
+  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
   assert.throws(function() {
     doc.setDtd();
   });
   assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n', doc.toString());
+  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
   assert.done();
 };
 

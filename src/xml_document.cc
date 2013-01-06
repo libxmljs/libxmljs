@@ -96,9 +96,18 @@ XmlDocument::SetDtd(const v8::Arguments& args)
     XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
-    v8::String::Utf8Value name_(args[0]->ToString());
-    v8::String::Utf8Value externalId_(args[1]->ToString());
-    v8::String::Utf8Value systemId_(args[2]->ToString());
+    v8::String::Utf8Value name(args[0]->ToString());
+		//must be set to null in order for xmlCreateIntSubset to ignore them
+		char* externalId = NULL;
+		if (args.Length() > 1 && args[1]->IsString()) {
+			v8::String::Utf8Value externalId_(args[1]->ToString());
+			externalId = strdup(*externalId_);
+		}
+		char* systemId = NULL;
+		if (args.Length() > 2 && args[2]->IsString()) {
+			v8::String::Utf8Value systemId_(args[2]->ToString());
+			systemId = strdup(*systemId_);
+		}
 
     //No good way of unsetting the doctype if it is previously set...this allows us to.
     xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
@@ -106,20 +115,15 @@ XmlDocument::SetDtd(const v8::Arguments& args)
     xmlUnlinkNode((xmlNodePtr) dtd);
     xmlFreeNode((xmlNodePtr) dtd);
 
-    if (name_.length() == 0 || !args[0]->IsString())
-        return ThrowException(v8::Exception::Error(
-                    v8::String::New("Name must be filled out, and must be a String")));
-    char* name = strdup(*name_);
-    char* externalId = NULL;
-    if (args.Length() > 1 && args[1]->IsString() && externalId_.length() > 0) externalId = strdup(*externalId_);
-    char* systemId = NULL;
-    if (args.Length() > 2 && args[2]->IsString() && systemId_.length() > 0) systemId = strdup(*systemId_);
 
-    xmlCreateIntSubset(document->xml_obj, (const xmlChar *)name, (const xmlChar *)externalId, (const xmlChar *)systemId);
+    xmlCreateIntSubset(document->xml_obj, (const xmlChar *) *name, (const xmlChar *) externalId, (const xmlChar *) systemId);
 
-    if (name != NULL) free(name);
-    if (externalId != NULL) free(externalId);
-    if (systemId != NULL) free(systemId);
+		if (externalId != NULL) {
+			free(externalId);
+		}
+		if (systemId != NULL) {
+			free(systemId);
+		}
 
     return scope.Close(args.Holder());
 }
@@ -371,7 +375,7 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
             "_validate",
             XmlDocument::Validate);
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
-            "setDtd",
+            "_setDtd",
             XmlDocument::SetDtd);
 
 
