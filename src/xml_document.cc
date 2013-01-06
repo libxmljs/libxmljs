@@ -96,18 +96,23 @@ XmlDocument::SetDtd(const v8::Arguments& args)
     XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
-    v8::String::Utf8Value name(args[0]->ToString());
-		//must be set to null in order for xmlCreateIntSubset to ignore them
-		char* externalId = NULL;
-		if (args.Length() > 1 && args[1]->IsString()) {
-			v8::String::Utf8Value externalId_(args[1]->ToString());
-			externalId = strdup(*externalId_);
-		}
-		char* systemId = NULL;
-		if (args.Length() > 2 && args[2]->IsString()) {
-			v8::String::Utf8Value systemId_(args[2]->ToString());
-			systemId = strdup(*systemId_);
-		}
+    v8::String::Utf8Value name(args[0]); 
+    
+    v8::Handle<v8::Value> extIdOpt;
+    v8::Handle<v8::Value> sysIdOpt;
+    if (args.Length() > 1 && args[1]->IsString()) {
+      extIdOpt = args[1];
+    }
+    if (args.Length() > 2 && args[2]->IsString()) {
+      sysIdOpt = args[2];
+    }
+
+    v8::String::Utf8Value extIdRaw(extIdOpt);
+    v8::String::Utf8Value sysIdRaw(sysIdOpt);
+
+    //must be set to null in order for xmlCreateIntSubset to ignore them
+    const char* extId = (extIdRaw.length()) ? *extIdRaw : NULL;
+    const char* sysId = (sysIdRaw.length()) ? *sysIdRaw : NULL;
 
     //No good way of unsetting the doctype if it is previously set...this allows us to.
     xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
@@ -115,15 +120,7 @@ XmlDocument::SetDtd(const v8::Arguments& args)
     xmlUnlinkNode((xmlNodePtr) dtd);
     xmlFreeNode((xmlNodePtr) dtd);
 
-
-    xmlCreateIntSubset(document->xml_obj, (const xmlChar *) *name, (const xmlChar *) externalId, (const xmlChar *) systemId);
-
-		if (externalId != NULL) {
-			free(externalId);
-		}
-		if (systemId != NULL) {
-			free(systemId);
-		}
+    xmlCreateIntSubset(document->xml_obj, (const xmlChar *) *name, (const xmlChar *) extId, (const xmlChar *) sysId);
 
     return scope.Close(args.Holder());
 }
