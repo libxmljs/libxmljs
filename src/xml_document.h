@@ -42,6 +42,7 @@ protected:
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
     static v8::Handle<v8::Value> FromHtml(const v8::Arguments& args);
     static v8::Handle<v8::Value> FromXml(const v8::Arguments& args);
+    static v8::Handle<v8::Value> SetDtd(const v8::Arguments& args);
 
     // document handle methods
     static v8::Handle<v8::Value> Root(const v8::Arguments& args);

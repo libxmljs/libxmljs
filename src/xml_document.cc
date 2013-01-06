@@ -3,6 +3,8 @@
 #include <node.h>
 #include <node_buffer.h>
 
+#include <cstring>
+
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
 
@@ -84,6 +86,43 @@ XmlDocument::Root(const v8::Arguments& args)
     assert(element);
     xmlDocSetRootElement(document->xml_obj, element->xml_obj);
     return scope.Close(args[0]);
+}
+
+v8::Handle<v8::Value>
+XmlDocument::SetDtd(const v8::Arguments& args)
+{
+    v8::HandleScope scope;
+
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    assert(document);
+
+    v8::String::Utf8Value name(args[0]); 
+    
+    v8::Handle<v8::Value> extIdOpt;
+    v8::Handle<v8::Value> sysIdOpt;
+    if (args.Length() > 1 && args[1]->IsString()) {
+      extIdOpt = args[1];
+    }
+    if (args.Length() > 2 && args[2]->IsString()) {
+      sysIdOpt = args[2];
+    }
+
+    v8::String::Utf8Value extIdRaw(extIdOpt);
+    v8::String::Utf8Value sysIdRaw(sysIdOpt);
+
+    //must be set to null in order for xmlCreateIntSubset to ignore them
+    const char* extId = (extIdRaw.length()) ? *extIdRaw : NULL;
+    const char* sysId = (sysIdRaw.length()) ? *sysIdRaw : NULL;
+
+    //No good way of unsetting the doctype if it is previously set...this allows us to.
+    xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
+
+    xmlUnlinkNode((xmlNodePtr) dtd);
+    xmlFreeNode((xmlNodePtr) dtd);
+
+    xmlCreateIntSubset(document->xml_obj, (const xmlChar *) *name, (const xmlChar *) extId, (const xmlChar *) sysId);
+
+    return scope.Close(args.Holder());
 }
 
 v8::Handle<v8::Value>
@@ -332,6 +371,10 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_validate",
             XmlDocument::Validate);
+    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+            "_setDtd",
+            XmlDocument::SetDtd);
+
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
     NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
