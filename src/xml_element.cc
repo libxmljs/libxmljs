@@ -32,18 +32,17 @@ XmlElement::New(const v8::Arguments& args) {
 
   v8::String::Utf8Value name(args[1]);
 
-  char* content = NULL;
+  v8::Handle<v8::Value> contentOpt;
   if(args[2]->IsString()) {
-      v8::String::Utf8Value content_(args[2]);
-      content = strdup(*content_);
+      contentOpt = args[2];
   }
+  v8::String::Utf8Value contentRaw(contentOpt);
+  const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
                                 (const xmlChar*)*name,
                                 (const xmlChar*)content);
-  if(content)
-      free(content);
 
   XmlElement* element = new XmlElement(elem);
   elem->_private = element;
@@ -124,16 +123,16 @@ XmlElement::AddCData(const v8::Arguments& args) {
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
-  v8::String::Utf8Value content_(args[0]->ToString());
-  char* content = NULL;
-  content = strdup(*content_);
+  v8::Handle<v8::Value> contentOpt;
+  if(args[0]->IsString()) {
+      contentOpt = args[0];
+  }
+  v8::String::Utf8Value contentRaw(contentOpt);
+  const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode* elem = xmlNewCDataBlock(element->xml_obj->doc,
                                   (const xmlChar*)content,
                                   xmlStrlen((const xmlChar*)content));
-
-  if(content)
-        free(content);
 
   element->add_cdata(elem);
   return scope.Close(args.Holder());
