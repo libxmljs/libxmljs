@@ -1,27 +1,27 @@
 var libxml = require('../index');
 
 module.exports.setDtd = function(assert) {
-  var doc = libxml.Document();
-  doc.setDtd("html");
-  assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
-  doc.setDtd("html", "bacon", "bacon");
-  assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "bacon" "bacon">\n', doc.toString());
-  doc.setDtd("html", null);
-  assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
-  assert.throws(function() {
-    doc.setDtd(5);
-  });
-  assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
-  assert.throws(function() {
-    doc.setDtd();
-  });
-  assert.ok(doc);
-  assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
-  assert.done();
+    var doc = libxml.Document();
+    doc.setDtd("html");
+    assert.ok(doc);
+    assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
+    doc.setDtd("html", "bacon", "bacon");
+    assert.ok(doc);
+    assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "bacon" "bacon">\n', doc.toString());
+    doc.setDtd("html", null);
+    assert.ok(doc);
+    assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
+    assert.throws(function() {
+      doc.setDtd(5);
+    });
+    assert.ok(doc);
+    assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
+    assert.throws(function() {
+      doc.setDtd();
+    });
+    assert.ok(doc);
+    assert.equal('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n', doc.toString());
+    assert.done();
 };
 
 module.exports.blank = function(assert) {
