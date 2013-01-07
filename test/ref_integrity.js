@@ -25,26 +25,3 @@ module.exports.references = function(assert) {
     assert.equal("child", nodes[1].name());
     assert.done();
 };
-
-// test that double-freeing XmlNode's doesn't cause a segfault
-module.exports.double_free = function(assert) {
-    var children = null;
-
-    // stick this portion of code into a self-executing function so
-    // its internal variables can be garbage collected
-    (function(){
-        var html = '<html><body><div><span></span></div></body></html>';
-        var doc = libxml.parseHtml(html);
-
-        doc.find('//div').forEach(function(tag){
-            // provide a reference to childNodes so they are exposed as XmlNodes
-            // and therefore subject to V8's garbage collection
-            children = tag.childNodes();
-            tag.remove();
-        });
-    })();
-
-    global.gc();
-    assert.ok(children[0].attrs());
-    assert.done();
-};
