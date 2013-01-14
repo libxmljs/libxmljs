@@ -510,8 +510,9 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
             XmlElement::AddChild);
 
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
-			"addCData",
-			XmlElement::AddCData);
+            "addCData",
+            XmlElement::AddCData);
+
     NODE_SET_PROTOTYPE_METHOD(constructor_template,
             "_attr",
             XmlElement::Attr);
