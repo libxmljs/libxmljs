@@ -99,7 +99,12 @@ module.exports.xpath_child = function(assert) {
 module.exports.toString = function(assert) {
     var control = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"><grandchild from="julie numar">with love</grandchild></child><sibling>with content!</sibling></root>',
+      '<root>',
+      '  <child to="wongfoo">',
+      '    <grandchild from="julie numar">with love</grandchild>',
+      '  </child>',
+      '  <sibling>with content!</sibling>',
+      '</root>',
       ''
     ].join("\n");
 
@@ -140,7 +145,9 @@ module.exports.add_cdata_nodes = function(assert) {
 
     var expected_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child></root>',
+      '<root>',
+      '  <child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child>',
+      '</root>',
       '' /* Why?!? */
     ].join("\n");
 
@@ -177,8 +184,8 @@ module.exports.cloned_node = function(assert) {
 
     gchild.remove();
 
-    assert.equal(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
-    assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
+    assert.equal(doc2_string, doc1.toString(false)); //doc1 should be the same as doc2 str (raw output)
+    assert.equal(doc1_string, doc2.toString(false)); //doc2 should be the same as doc1 str (raw output)
     assert.done();
 };
 
@@ -186,11 +193,11 @@ module.exports.validate = function(assert) {
     var xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
     var xml_valid = '<?xml version="1.0"?><comment>A comment</comment>';
     var xml_invalid = '<?xml version="1.0"?><commentt>A comment</commentt>';
-    
+
     var xsdDoc = libxml.parseXml(xsd);
     var xmlDocValid = libxml.parseXml(xml_valid);
     var xmlDocInvalid = libxml.parseXml(xml_invalid);
-    
+
     assert.equal(xmlDocValid.validate(xsdDoc), true);
     assert.equal(xmlDocInvalid.validate(xsdDoc), false);
 
