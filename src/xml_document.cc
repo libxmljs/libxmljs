@@ -96,8 +96,8 @@ XmlDocument::SetDtd(const v8::Arguments& args)
     XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     assert(document);
 
-    v8::String::Utf8Value name(args[0]); 
-    
+    v8::String::Utf8Value name(args[0]);
+
     v8::Handle<v8::Value> extIdOpt;
     v8::Handle<v8::Value> sysIdOpt;
     if (args.Length() > 1 && args[1]->IsString()) {
@@ -135,7 +135,7 @@ XmlDocument::ToString(const v8::Arguments& args)
 
     xmlChar* buffer = NULL;
     int len = 0;
-    xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", 0);
+    xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", args[0]->BooleanValue() ? 1 : 0);
     v8::Local<v8::String> str = v8::String::New((const char*)buffer, len);
     xmlFree(buffer);
 
