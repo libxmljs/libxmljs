@@ -28,6 +28,7 @@ protected:
     static v8::Handle<v8::Value> Parent(const v8::Arguments& args);
     static v8::Handle<v8::Value> NextSibling(const v8::Arguments& args);
     static v8::Handle<v8::Value> PrevSibling(const v8::Arguments& args);
+    static v8::Handle<v8::Value> LineNumber(const v8::Arguments& args);
     static v8::Handle<v8::Value> Type(const v8::Arguments& args);
     static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
     static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
@@ -42,6 +43,7 @@ protected:
     v8::Handle<v8::Value> get_parent();
     v8::Handle<v8::Value> get_prev_sibling();
     v8::Handle<v8::Value> get_next_sibling();
+    v8::Handle<v8::Value> get_line_number();
     v8::Handle<v8::Value> clone(bool recurse);
     v8::Handle<v8::Value> get_type();
     v8::Handle<v8::Value> to_string();
