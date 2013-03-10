@@ -121,6 +121,15 @@ XmlNode::NextSibling(const v8::Arguments& args) {
 }
 
 v8::Handle<v8::Value>
+XmlNode::LineNumber(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  assert(node);
+
+  return scope.Close(node->get_line_number());
+}
+
+v8::Handle<v8::Value>
 XmlNode::Type(const v8::Arguments& args) {
   v8::HandleScope scope;
   XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
@@ -293,6 +302,12 @@ XmlNode::get_next_sibling() {
 }
 
 v8::Handle<v8::Value>
+XmlNode::get_line_number() {
+  v8::HandleScope scope;
+  return scope.Close(v8::Integer::New(xmlGetLineNo(xml_obj)));
+}
+
+v8::Handle<v8::Value>
 XmlNode::clone(bool recurse) {
   v8::HandleScope scope;
 
@@ -414,6 +429,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "nextSibling",
                         XmlNode::NextSibling);
+
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
+                        "line",
+                        XmlNode::LineNumber);
 
   NODE_SET_PROTOTYPE_METHOD(constructor_template,
                         "type",
