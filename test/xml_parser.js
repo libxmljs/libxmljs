@@ -14,6 +14,8 @@ module.exports.parse = function(assert) {
     assert.equal('grandchild', doc.get('child').get('grandchild').name());
     assert.equal('with love', doc.get('child/grandchild').text());
     assert.equal('sibling', doc.get('sibling').name());
+    assert.equal(6, doc.get('sibling').line());
+    assert.equal(3, doc.get('child').attr('to').line());
     assert.equal('with content!', doc.get('sibling').text());
     assert.equal(str, doc.toString());
     assert.done();
