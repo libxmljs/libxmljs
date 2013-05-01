@@ -346,6 +346,36 @@ XmlSaxParser::cdata_block(void* context, const xmlChar* value,
     parser->Callback("cdata", 1, argv);
 }
 
+#ifdef WIN32
+//https://github.com/json-c/json-c/blob/master/printbuf.c
+//Copyright (c) 2004, 2005 Metaparadigm Pte Ltd
+static int vasprintf(char **buf, const char *fmt, va_list ap)
+{
+    int chars;
+    char *b;
+
+    if(!buf) {
+        return -1;
+    }
+
+    chars = _vscprintf(fmt, ap)+1;
+
+    b = (char*)malloc(sizeof(char)*chars);
+    if(!b) {
+        return -1;
+    }
+
+    if((chars = vsprintf(b, fmt, ap)) < 0)
+    {
+        free(b);
+    } else {
+        *buf = b;
+    }
+
+    return chars;
+}
+#endif /* WIN32 */
+
 void
 XmlSaxParser::warning(void* context, const char* msg, ...)
 {
