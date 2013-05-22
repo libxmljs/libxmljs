@@ -30,8 +30,6 @@ XmlElement::New(const v8::Arguments& args) {
   XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
   assert(document);
 
-  v8::String::Utf8Value name(args[1]);
-
   v8::Handle<v8::Value> contentOpt;
   if(args[2]->IsString()) {
       contentOpt = args[2];
@@ -40,10 +38,19 @@ XmlElement::New(const v8::Arguments& args) {
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlChar* encoded = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
-  xmlNode* elem = xmlNewDocNode(document->xml_obj,
-                                NULL,
-                                (const xmlChar*)*name,
-                                encoded);
+
+  xmlNode* elem;
+
+  if (args[1]->IsString()) {
+    v8::String::Utf8Value name(args[1]);
+    elem = xmlNewDocNode(document->xml_obj,
+                         NULL,
+                         (const xmlChar*)*name,
+                         encoded);
+  } else
+    elem = xmlNewDocText(document->xml_obj,
+                         encoded);
+
   if (encoded)
       xmlFree(encoded);
 
