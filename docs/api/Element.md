@@ -34,13 +34,22 @@ The Element class represents an element node in the XML tree.
 >**returns** - the Element object
 
 
-### element.text()
+### element.value()
 
 >Get the text content of the element
 
 >**returns** - a string representing the content of the Element
-  including the text() of all child Nodes
+  including the value() of all child Nodes
 
+
+### element.value(new_name)
+
+>Set the text content of the element
+
+>**args**
+*new_name* - a string representing the new value of the element
+
+>**returns** - the Element object
 
 ### element.attr(name)
 
