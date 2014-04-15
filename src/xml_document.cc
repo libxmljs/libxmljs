@@ -332,6 +332,9 @@ NAN_METHOD(XmlDocument::Validate)
     }
     bool valid = xmlSchemaValidateDoc(valid_ctxt, document->xml_obj) == 0;
 
+    xmlSetStructuredErrorFunc(NULL, NULL);
+    args.Holder()->Set(v8::String::New("validationErrors"), errors);
+
     NanReturnValue(NanNew<v8::Boolean>(valid));
 }
 
