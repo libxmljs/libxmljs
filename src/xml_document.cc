@@ -135,6 +135,8 @@ XmlDocument::ToString(const v8::Arguments& args)
 
     xmlChar* buffer = NULL;
     int len = 0;
+
+    xmlKeepBlanksDefault(0);
     xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", args[0]->BooleanValue() ? 1 : 0);
     v8::Local<v8::String> str = v8::String::New((const char*)buffer, len);
     xmlFree(buffer);
