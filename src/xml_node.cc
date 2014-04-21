@@ -8,6 +8,7 @@
 #include "xml_document.h"
 #include "xml_namespace.h"
 #include "xml_element.h"
+#include "xml_comment.h"
 #include "xml_attribute.h"
 
 namespace libxmljs {
@@ -451,6 +452,7 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
                         XmlNode::ToString);
 
   XmlElement::Initialize(target);
+  XmlComment::Initialize(target);
   XmlAttribute::Initialize(target);
 }
 }  // namespace libxmljs
