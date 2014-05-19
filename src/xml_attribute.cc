@@ -5,98 +5,94 @@ namespace libxmljs {
 
 v8::Persistent<v8::FunctionTemplate> XmlAttribute::constructor_template;
 
-v8::Handle<v8::Value>
-XmlAttribute::New(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlAttribute::New) {
+  NanScope();
 
-  return scope.Close(args.Holder());
+  NanReturnValue(args.Holder());
 }
 
-v8::Handle<v8::Object>
+v8::Local<v8::Object>
 XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
 {
     xmlAttr* attr = xmlSetProp(xml_obj, name, value);
 
     if (attr->_private) {
-        return static_cast<XmlNode*>(xml_obj->_private)->handle_;
+        return NanObjectWrapHandle(static_cast<XmlNode*>(xml_obj->_private));
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
-    v8::Local<v8::Object> obj = constructor_template->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = NanNew(constructor_template)->GetFunction()->NewInstance();
     attribute->Wrap(obj);
     return obj;
 }
 
-v8::Handle<v8::Object>
+v8::Local<v8::Object>
 XmlAttribute::New(xmlAttr* attr)
 {
     assert(attr->type == XML_ATTRIBUTE_NODE);
 
     if (attr->_private) {
-        return static_cast<XmlNode*>(attr->_private)->handle_;
+        return NanObjectWrapHandle(static_cast<XmlNode*>(attr->_private));
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
-    v8::Local<v8::Object> obj = constructor_template->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = NanNew(constructor_template)->GetFunction()->NewInstance();
     attribute->Wrap(obj);
     return obj;
 }
 
-v8::Handle<v8::Value>
-XmlAttribute::Name(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlAttribute::Name) {
+  NanScope();
   XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
-  return scope.Close(attr->get_name());
+  NanReturnValue(attr->get_name());
 }
 
-v8::Handle<v8::Value>
-XmlAttribute::Value(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlAttribute::Value) {
+  NanScope();
   XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
   // attr.value('new value');
   if (args.Length() > 0) {
     attr->set_value(*v8::String::Utf8Value(args[0]));
-    return scope.Close(args.Holder());
+    NanReturnValue(args.Holder());
   }
 
   // attr.value();
-  return scope.Close(attr->get_value());
+  NanReturnValue(attr->get_value());
 }
 
-v8::Handle<v8::Value>
-XmlAttribute::Node(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlAttribute::Node) {
+  NanScope();
   XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
   assert(attr);
 
-  return scope.Close(attr->get_element());
+  NanReturnValue(attr->get_element());
 }
 
-v8::Handle<v8::Value>
+v8::Local<v8::Value>
 XmlAttribute::get_name() {
   if (xml_obj->name)
-    return v8::String::New((const char*)xml_obj->name,
+    return NanNew<v8::String>((const char*)xml_obj->name,
                            xmlStrlen(xml_obj->name));
 
-  return v8::Null();
+  return NanNull();
 }
 
-v8::Handle<v8::Value>
+v8::Local<v8::Value>
 XmlAttribute::get_value() {
-  v8::HandleScope scope;
+  NanEscapableScope();
   xmlChar* value = xmlNodeGetContent(xml_obj);
   if (value != NULL) {
-    v8::Handle<v8::String> ret_value = v8::String::New((const char*)value,
+    v8::Local<v8::String> ret_value = NanNew<v8::String>((const char*)value,
                                                        xmlStrlen(value));
     xmlFree(value);
-    return scope.Close(ret_value);
+    return NanEscapeScope(ret_value);
   }
 
-  return v8::Null();
+  return NanNull();
 }
 
 void
@@ -129,26 +125,26 @@ XmlAttribute::set_value(const char* value) {
   }
 }
 
-v8::Handle<v8::Value>
+v8::Local<v8::Value>
 XmlAttribute::get_element() {
     return XmlElement::New(xml_obj->parent);
 }
 
 void
 XmlAttribute::Initialize(v8::Handle<v8::Object> target) {
-  v8::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t =
-    v8::FunctionTemplate::New(XmlAttribute::New);
-  constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
-  constructor_template->Inherit(XmlNode::constructor_template);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+  NanScope();
+  v8::Local<v8::FunctionTemplate> tmpl =
+   NanNew<v8::FunctionTemplate, NanFunctionCallback>(XmlAttribute::New);
+  NanAssignPersistent(constructor_template, tmpl);
+  tmpl->Inherit(NanNew(XmlNode::constructor_template));
+  tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "name", XmlAttribute::Name);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "value", XmlAttribute::Value);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "node", XmlAttribute::Node);
+  NODE_SET_PROTOTYPE_METHOD(tmpl, "name", XmlAttribute::Name);
+  NODE_SET_PROTOTYPE_METHOD(tmpl, "value", XmlAttribute::Value);
+  NODE_SET_PROTOTYPE_METHOD(tmpl, "node", XmlAttribute::Node);
 
-  target->Set(v8::String::NewSymbol("Attribute"),
-              constructor_template->GetFunction());
+  target->Set(NanNew<v8::String>("Attribute"),
+              tmpl->GetFunction());
 }
 
 }  // namespace libxmljs

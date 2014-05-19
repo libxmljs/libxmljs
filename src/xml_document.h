@@ -24,7 +24,7 @@ public:
 
     // create a new document handle initalized with the
     // given xmlDoc object, intended for use in c++ space
-    static v8::Handle<v8::Object> New(xmlDoc* doc);
+    static v8::Local<v8::Object> New(xmlDoc* doc);
 
     void ref() {
         Ref();
@@ -39,19 +39,19 @@ protected:
     // initialize a new document
     explicit XmlDocument(xmlDoc* doc);
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> FromHtml(const v8::Arguments& args);
-    static v8::Handle<v8::Value> FromXml(const v8::Arguments& args);
-    static v8::Handle<v8::Value> SetDtd(const v8::Arguments& args);
+    static NAN_METHOD(New);
+    static NAN_METHOD(FromHtml);
+    static NAN_METHOD(FromXml);
+    static NAN_METHOD(SetDtd);
 
     // document handle methods
-    static v8::Handle<v8::Value> Root(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Encoding(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Version(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Doc(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Errors(const v8::Arguments& args);
-    static v8::Handle<v8::Value> ToString(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Validate(const v8::Arguments& args);
+    static NAN_METHOD(Root);
+    static NAN_METHOD(Encoding);
+    static NAN_METHOD(Version);
+    static NAN_METHOD(Doc);
+    static NAN_METHOD(Errors);
+    static NAN_METHOD(ToString);
+    static NAN_METHOD(Validate);
 };
 
 }  // namespace libxmljs
