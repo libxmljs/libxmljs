@@ -14,15 +14,14 @@ namespace libxmljs {
 v8::Persistent<v8::FunctionTemplate> XmlComment::constructor_template;
 
 // doc, content
-v8::Handle<v8::Value>
-XmlComment::New(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlComment::New) {
+  NanScope();
 
   // if we were created for an existing xml node, then we don't need
   // to create a new node on the document
   if (args.Length() == 0)
   {
-      return scope.Close(args.Holder());
+      NanReturnValue(args.Holder());
   }
 
   XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
@@ -46,24 +45,23 @@ XmlComment::New(const v8::Arguments& args) {
   comment->Wrap(args.Holder());
 
   // this prevents the document from going away
-  args.Holder()->Set(v8::String::NewSymbol("document"), args[0]);
+  args.Holder()->Set(NanNew<v8::String>("document"), args[0]);
 
-  return scope.Close(args.Holder());
+  NanReturnValue(args.Holder());
 }
 
-v8::Handle<v8::Value>
-XmlComment::Text(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlComment::Text) {
+  NanScope();
   XmlComment *comment = ObjectWrap::Unwrap<XmlComment>(args.Holder());
   assert(comment);
 
   if (args.Length() == 0) {
-    return scope.Close(comment->get_content());
+    NanReturnValue(comment->get_content());
   } else {
     comment->set_content(*v8::String::Utf8Value(args[0]));
   }
 
-  return scope.Close(args.Holder());
+  NanReturnValue(args.Holder());
 }
 
 void
@@ -75,29 +73,31 @@ XmlComment::set_content(const char* content) {
 
 v8::Handle<v8::Value>
 XmlComment::get_content() {
+  NanEscapableScope();
   xmlChar* content = xmlNodeGetContent(xml_obj);
   if (content) {
-    v8::Handle<v8::String> ret_content =
-      v8::String::New((const char *)content);
+    v8::Local<v8::String> ret_content =
+      NanNew<v8::String>((const char *)content);
     xmlFree(content);
-    return ret_content;
+    return NanEscapeScope(ret_content);
   }
 
-  return v8::String::Empty();
+  return NanEscapeScope(NanNew<v8::String>());
 }
 
 
 v8::Handle<v8::Object>
 XmlComment::New(xmlNode* node)
 {
+    NanEscapableScope();
     if (node->_private) {
-        return static_cast<XmlNode*>(node->_private)->handle_;
+        return NanEscapeScope(NanObjectWrapHandle(static_cast<XmlNode*>(node->_private)));
     }
 
     XmlComment* comment = new XmlComment(node);
-    v8::Local<v8::Object> obj = constructor_template->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = NanNew(constructor_template)->GetFunction()->NewInstance();
     comment->Wrap(obj);
-    return obj;
+    return NanEscapeScope(obj);
 }
 
 XmlComment::XmlComment(xmlNode* node)
@@ -108,18 +108,18 @@ XmlComment::XmlComment(xmlNode* node)
 void
 XmlComment::Initialize(v8::Handle<v8::Object> target)
 {
-    v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(New);
-    constructor_template = v8::Persistent<v8::FunctionTemplate>::New(t);
-    constructor_template->Inherit(XmlNode::constructor_template);
-    constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+    NanScope();
+    v8::Local<v8::FunctionTemplate> t = NanNew<v8::FunctionTemplate>(New);
+    t->Inherit(NanNew(XmlNode::constructor_template));
+    t->InstanceTemplate()->SetInternalFieldCount(1);
+    NanAssignPersistent(constructor_template, t);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor_template,
+    NODE_SET_PROTOTYPE_METHOD(t,
             "text",
             XmlComment::Text);
 
-    target->Set(v8::String::NewSymbol("Comment"),
-            constructor_template->GetFunction());
+    target->Set(NanNew<v8::String>("Comment"),
+            t->GetFunction());
 }
 
 }  // namespace libxmljs

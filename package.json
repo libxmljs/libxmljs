@@ -22,7 +22,8 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "bindings": "1.0.0"
+    "bindings": "1.1.1",
+    "nan": "1.1.2"
   },
   "devDependencies": {
     "nodeunit": "*"

@@ -15,22 +15,17 @@ class XmlSaxParser : public node::ObjectWrap {
   static void
   Initialize(v8::Handle<v8::Object> target);
 
-  static v8::Handle<v8::Value>
-  NewParser(const v8::Arguments& args);
+  static NAN_METHOD(NewParser);
 
-  static v8::Handle<v8::Value>
-  NewPushParser(const v8::Arguments& args);
+  static NAN_METHOD(NewPushParser);
 
-  static v8::Handle<v8::Value>
-  ParseString(const v8::Arguments& args);
-
-  static v8::Handle<v8::Value>
-  Push(const v8::Arguments& args);
+  static NAN_METHOD(ParseString);
+  static NAN_METHOD(Push);
 
   void
   Callback(const char* what,
            int argc = 0,
-           v8::Handle<v8::Value> argv[] = NULL);
+           v8::Local<v8::Value> argv[] = NULL);
 
   void
   parse_string(const char* str,

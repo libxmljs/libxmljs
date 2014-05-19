@@ -20,9 +20,9 @@ public:
 
 protected:
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Text(const v8::Arguments& args);
-    
+    static NAN_METHOD(New);
+    static NAN_METHOD(Text);
+
     void set_content(const char* content);
     v8::Handle<v8::Value> get_content();
 };
