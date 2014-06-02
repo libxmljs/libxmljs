@@ -26,6 +26,6 @@
     "nan": "1.1.2"
   },
   "devDependencies": {
-    "nodeunit": "*"
+    "nodeunit": "0.9.0"
   }
 }
