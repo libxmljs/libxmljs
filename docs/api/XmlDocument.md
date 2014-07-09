@@ -106,3 +106,17 @@ See Element#get for more information
 
 >**returns**  a string representation of the document version
 
+### doc.validate(xsd)
+
+>Performs XSD validation of the document.
+
+> This function sets *validationErrors* property in the document to an array which contains all  validation errors.
+
+> Please note, that warnings also go into this array. So a case when doc.validate() function returns true,
+but array will not be empty is possible.
+
+>**args**
+*xsd* - content of XSD file
+
+>**returns** true if document is valid or false otherwise
+

@@ -199,7 +199,10 @@ module.exports.validate = function(assert) {
     var xmlDocInvalid = libxml.parseXml(xml_invalid);
 
     assert.equal(xmlDocValid.validate(xsdDoc), true);
+    assert.equal(xmlDocValid.validationErrors.length, 0);
+
     assert.equal(xmlDocInvalid.validate(xsdDoc), false);
+    assert.equal(xmlDocInvalid.validationErrors.length, 1);
 
     assert.done();
 }
