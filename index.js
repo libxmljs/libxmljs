@@ -21,6 +21,7 @@ module.exports.libxml_debug_enabled = bindings.libxml_debug_enabled;
 // lib exports
 module.exports.Document = Document;
 module.exports.Element = require('./lib/element');
+module.exports.Comment = require('./lib/comment');
 
 // Compatibility synonyms
 Document.fromXmlString = Document.fromXml;
