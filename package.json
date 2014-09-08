@@ -21,7 +21,7 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "bindings": "1.1.1",
+    "bindings": "1.2.0",
     "nan": "1.1.2"
   },
   "devDependencies": {

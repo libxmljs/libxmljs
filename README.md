@@ -51,3 +51,4 @@ Start by checking out the [open issues](https://github.com/polotek/libxmljs/issu
 
 Make sure you have met the requirements for [node-gyp](https://github.com/TooTallNate/node-gyp#installation). You DO NOT need to manually install node-gyp; it comes bundled with node.
 
+Latest version of libxmljs requires a node-gyp version superior or equal to 0.13. If you encounter some errors while requiring libxmljs then it was probably built against an older version. To update the bundled node-gyp please [follow the instructions](https://github.com/TooTallNate/node-gyp/wiki/Updating-npm's-bundled-node-gyp). After updating you will need to run 'npm install' again.
