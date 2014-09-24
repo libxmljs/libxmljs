@@ -46,6 +46,7 @@ protected:
 
     // document handle methods
     static NAN_METHOD(Root);
+    static NAN_METHOD(GetDtd);
     static NAN_METHOD(Encoding);
     static NAN_METHOD(Version);
     static NAN_METHOD(Doc);

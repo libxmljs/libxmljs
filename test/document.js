@@ -1,5 +1,28 @@
 var libxml = require('../index');
 
+module.exports.getDtd = function(assert) {
+    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
+    var dtd = doc.getDtd();
+    assert.equal(null, dtd);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<root></root>');
+    assert.ok(doc);
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal(null, dtd.externalId);
+    assert.equal(null, dtd.systemId);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html SYSTEM "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>');
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal(null, dtd.externalId);
+    assert.equal('http://www.w3.org/TR/html4/strict.dtd', dtd.systemId);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>');
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal('-//W3C//DTD HTML 4.01//EN', dtd.externalId);
+    assert.equal('http://www.w3.org/TR/html4/strict.dtd', dtd.systemId);
+    assert.done();
+};
+
 module.exports.setDtd = function(assert) {
     var doc = libxml.Document();
     doc.setDtd("html");

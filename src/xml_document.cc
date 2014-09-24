@@ -84,6 +84,50 @@ NAN_METHOD(XmlDocument::Root)
     NanReturnValue(args[0]);
 }
 
+NAN_METHOD(XmlDocument::GetDtd)
+{
+    NanScope();
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    assert(document);
+
+    xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
+
+    if (!dtd) {
+        NanReturnNull();
+    }
+
+    const char* name = (const char *)dtd->name;
+    const char* extId = (const char *)dtd->ExternalID;
+    const char* sysId = (const char *)dtd->SystemID;
+
+    v8::Local<v8::Object> dtdObj = NanNew<v8::Object>();
+    v8::Handle<v8::Value> nameValue = (v8::Handle<v8::Value>)NanNull();
+    v8::Handle<v8::Value> extValue = (v8::Handle<v8::Value>)NanNull();
+    v8::Handle<v8::Value> sysValue = (v8::Handle<v8::Value>)NanNull();
+
+    if (name != NULL) {
+        nameValue = (v8::Handle<v8::Value>)NanNew<v8::String>(name, strlen(name));
+    }
+
+    if (extId != NULL) {
+        extValue = (v8::Handle<v8::Value>)NanNew<v8::String>(extId, strlen(extId));
+    }
+
+    if (sysId != NULL) {
+        sysValue = (v8::Handle<v8::Value>)NanNew<v8::String>(sysId, strlen(sysId));
+    }
+
+
+    dtdObj->Set(NanNew<v8::String>("name"), nameValue);
+
+    dtdObj->Set(NanNew<v8::String>("externalId"), extValue);
+
+    dtdObj->Set(NanNew<v8::String>("systemId"), sysValue);
+
+    NanReturnValue(dtdObj);
+
+}
+
 NAN_METHOD(XmlDocument::SetDtd)
 {
     NanScope();
@@ -400,6 +444,9 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "_setDtd",
             XmlDocument::SetDtd);
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "_getDtd",
+            XmlDocument::GetDtd);
 
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
