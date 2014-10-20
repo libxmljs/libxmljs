@@ -115,6 +115,28 @@ NAN_METHOD(XmlElement::AddChild) {
   NanReturnValue(args.Holder());
 }
 
+NAN_METHOD(XmlElement::AddText) {
+  NanScope();
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
+  assert(element);
+
+  v8::Local<v8::Value> contentOpt;
+  if(args[0]->IsString()) {
+      contentOpt = args[0];
+  }
+  v8::String::Utf8Value contentRaw(contentOpt);
+  const char* content = (contentRaw.length()) ? *contentRaw : NULL;
+
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(element->xml_obj->doc, (const xmlChar*)content) : NULL;
+  xmlNode* text = xmlNewDocText(element->xml_obj->doc, encoded);
+
+  if (encoded)
+      xmlFree(encoded);
+
+  element->add_text(text);
+  NanReturnValue(args.Holder());
+}
+
 NAN_METHOD(XmlElement::AddCData) {
   NanScope();
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
@@ -324,6 +346,11 @@ XmlElement::add_child(XmlElement* child) {
 }
 
 void
+XmlElement::add_text(xmlNode* text) {
+  xmlAddChild(xml_obj, text);
+}
+
+void
 XmlElement::add_cdata(xmlNode* cdata) {
   xmlAddChild(xml_obj, cdata);
 }
@@ -500,6 +527,10 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "addChild",
             XmlElement::AddChild);
+
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "addText",
+            XmlElement::AddText);
 
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "addCData",

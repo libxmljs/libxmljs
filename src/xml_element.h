@@ -31,6 +31,7 @@ protected:
     static NAN_METHOD(Child);
     static NAN_METHOD(ChildNodes);
     static NAN_METHOD(AddChild);
+    static NAN_METHOD(AddText);
     static NAN_METHOD(AddCData);
     static NAN_METHOD(NextElement);
     static NAN_METHOD(PrevElement);
@@ -47,6 +48,7 @@ protected:
     v8::Local<v8::Value> get_attrs();
     void set_attr(const char* name, const char* value);
     void add_child(XmlElement* child);
+    void add_text(xmlNode* text);
     void add_cdata(xmlNode* cdata);
     void set_content(const char* content);
     v8::Local<v8::Value> get_content();

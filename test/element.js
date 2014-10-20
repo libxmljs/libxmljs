@@ -99,6 +99,34 @@ module.exports.addChild = function(assert) {
     assert.done();
 };
 
+module.exports.addText = function(assert) {
+    var doc = libxml.Document();
+    var elem = doc.node('name1');
+
+    assert.equal('', elem.text());
+    elem.addText('text content');
+    assert.equal('text content', elem.text());
+
+    elem.addText(' more content');
+    assert.equal('text content more content', elem.text()
+        , 'subsequent calls are additive');
+
+    var children = elem.childNodes();
+    assert.equal(1, children.length
+        , 'multiple adjacent text nodes are merged');
+    assert.equal('text', children[0].type()
+        , 'nodes are of type text');
+
+    elem.node('name2');
+    elem.addText('content after element');
+    children = elem.childNodes();
+    assert.equal(3, children.length
+        , 'text separated by elements yields multiple text nodes');
+    assert.equal('content after element', children[2].text());
+
+    assert.done();
+};
+
 module.exports.add_prev_sibling = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');
