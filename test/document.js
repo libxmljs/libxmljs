@@ -228,4 +228,38 @@ module.exports.validate = function(assert) {
     assert.equal(xmlDocInvalid.validationErrors.length, 1);
 
     assert.done();
-}
+};
+
+module.exports.errors = {
+    empty_html_doc: function(assert) {
+        function assertDocRootError(func, msg) {
+            assert.throws(func, /Document has no root element/, msg);
+        }
+
+        var xml_only_comments = '<!-- empty -->';
+        var doc = libxml.parseHtmlString(xml_only_comments);
+        assert.equal(null, doc.root());
+
+        assertDocRootError(function() {
+            doc.get('*');
+        }, 'get method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.find('*');
+        }, 'find method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.child(1);
+        }, 'child method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.childNodes();
+        }, 'childNodes method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.namespaces();
+        }, 'namespaces method throws correct error on empty doc');
+
+        assert.done();
+    }
+};
