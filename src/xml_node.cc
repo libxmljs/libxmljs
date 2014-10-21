@@ -196,8 +196,9 @@ XmlNode::~XmlNode() {
 
     // We do not free the xmlNode here if it is linked to a document
     // It will be freed when the doc is freed
-    if (xml_obj->parent == NULL)
-      xmlFreeNode(xml_obj);
+    if (xml_obj->parent == NULL) {
+      XmlNode::free_untracked_child_nodes(xml_obj);
+    }
 }
 
 v8::Local<v8::Value>
@@ -337,6 +338,21 @@ XmlNode::to_string() {
 void
 XmlNode::remove() {
   xmlUnlinkNode(xml_obj);
+}
+
+void
+XmlNode::free_untracked_child_nodes(xmlNode * const root) {
+  // we first unlink the node from its parent
+  // if this is a GC-tracked node, it will become an owner
+  xmlUnlinkNode(root);
+
+  // if _not_ GC tracked, then free self and children
+  if (!root->_private) {
+    for (xmlNode * cur = root->children; cur != NULL; cur = cur->next) {
+      XmlNode::free_untracked_child_nodes(cur);
+    }
+    xmlFreeNode(root);
+  }
 }
 
 v8::Local<v8::Value>
