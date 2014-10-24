@@ -15,6 +15,7 @@ v8::Local<v8::Object>
 XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
 {
     xmlAttr* attr = xmlSetProp(xml_obj, name, value);
+    assert(attr);
 
     if (attr->_private) {
         return NanObjectWrapHandle(static_cast<XmlNode*>(xml_obj->_private));
