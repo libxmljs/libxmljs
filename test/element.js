@@ -157,6 +157,38 @@ module.exports.add_next_sibling = function(assert) {
     assert.done();
 };
 
+module.exports.add_prev_text = function(assert) {
+    var doc = libxml.Document();
+    var elem = doc.node('name1');
+
+    var child1 = elem.node('child1');
+    var child2 = elem.node('child2');
+    assert.equal(elem.childNodes().length, 2);
+
+    child2.addPrevText('previous text');
+    var children = elem.childNodes();
+    assert.equal(3, children.length);
+    assert.equal('text', children[1].type());
+    assert.equal('previous text', children[1].toString());
+    assert.done();
+};
+
+module.exports.add_next_text = function(assert) {
+    var doc = libxml.Document();
+    var elem = doc.node('name1');
+
+    var child1 = elem.node('child1');
+    var child2 = elem.node('child2');
+    assert.equal(elem.childNodes().length, 2);
+
+    child2.addNextText('next text');
+    var children = elem.childNodes();
+    assert.equal(3, children.length);
+    assert.equal('text', children[2].type());
+    assert.equal('next text', children[2].toString());
+    assert.done();
+};
+
 module.exports.import = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');

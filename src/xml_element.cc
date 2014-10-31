@@ -280,6 +280,36 @@ NAN_METHOD(XmlElement::AddNextSibling) {
   NanReturnValue(args[0]);
 }
 
+NAN_METHOD(XmlElement::AddPrevText) {
+  NanScope();
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
+  assert(element);
+
+  v8::String::Utf8Value contentRaw(args[0]);
+  if(contentRaw.length() == 0) {
+    return NanThrowError("This method requires valid text.");
+  }
+
+  element->add_prev_text(*contentRaw);
+
+  NanReturnValue(args.Holder());
+}
+
+NAN_METHOD(XmlElement::AddNextText) {
+  NanScope();
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
+  assert(element);
+
+  v8::String::Utf8Value contentRaw(args[0]);
+  if(contentRaw.length() == 0) {
+    return NanThrowError("This method requires valid text.");
+  }
+
+  element->add_next_text(*contentRaw);
+
+  NanReturnValue(args.Holder());
+}
+
 void
 XmlElement::set_name(const char* name) {
   xmlNodeSetName(xml_obj, (const xmlChar*)name);
@@ -492,6 +522,32 @@ XmlElement::add_next_sibling(XmlElement* element) {
   xmlAddNextSibling(xml_obj, element->xml_obj);
 }
 
+void
+XmlElement::add_prev_text(const char* content) {
+  // v8::String::Utf8Value contentRaw(contentOpt);
+  // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
+
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content) : NULL;
+  xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
+
+  if(encoded) {
+    xmlAddPrevSibling(xml_obj, text_child);
+  }
+}
+
+void
+XmlElement::add_next_text(const char* content) {
+  // v8::String::Utf8Value contentRaw(contentOpt);
+  // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
+
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content) : NULL;
+  xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
+
+  if(encoded) {
+    xmlAddNextSibling(xml_obj, text_child);
+  }
+}
+
 XmlElement *
 XmlElement::import_element(XmlElement *element) {
 
@@ -583,6 +639,14 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "addNextSibling",
             XmlElement::AddNextSibling);
+
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "addPrevText",
+            XmlElement::AddPrevText);
+
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "addNextText",
+            XmlElement::AddNextText);
 
     target->Set(NanNew<v8::String>("Element"),
             tmpl->GetFunction());

@@ -37,6 +37,8 @@ protected:
     static NAN_METHOD(PrevElement);
     static NAN_METHOD(AddPrevSibling);
     static NAN_METHOD(AddNextSibling);
+    static NAN_METHOD(AddPrevText);
+    static NAN_METHOD(AddNextText);
 
     void set_name(const char* name);
 
@@ -56,6 +58,9 @@ protected:
     v8::Local<v8::Value> get_prev_element();
     void add_prev_sibling(XmlElement* element);
     void add_next_sibling(XmlElement* element);
+    void add_prev_text(const char* content);
+    void add_next_text(const char* content);
+
     XmlElement *import_element(XmlElement* element);
 };
 
