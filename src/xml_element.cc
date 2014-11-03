@@ -290,9 +290,9 @@ NAN_METHOD(XmlElement::AddPrevText) {
     return NanThrowError("This method requires valid text.");
   }
 
-  element->add_prev_text(*contentRaw);
+  xmlNode* text_child = element->add_prev_text(*contentRaw);
 
-  NanReturnValue(args.Holder());
+  return NanEscapeScope(XmlNode::New(text_child));
 }
 
 NAN_METHOD(XmlElement::AddNextText) {
@@ -305,9 +305,9 @@ NAN_METHOD(XmlElement::AddNextText) {
     return NanThrowError("This method requires valid text.");
   }
 
-  element->add_next_text(*contentRaw);
+  xmlNode* text_child = element->add_next_text(*contentRaw);
 
-  NanReturnValue(args.Holder());
+  return NanEscapeScope(XmlNode::New(text_child));
 }
 
 void
@@ -522,7 +522,7 @@ XmlElement::add_next_sibling(XmlElement* element) {
   xmlAddNextSibling(xml_obj, element->xml_obj);
 }
 
-void
+xmlNode*
 XmlElement::add_prev_text(const char* content) {
   // v8::String::Utf8Value contentRaw(contentOpt);
   // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
@@ -531,11 +531,13 @@ XmlElement::add_prev_text(const char* content) {
   xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
 
   if(encoded) {
-    xmlAddPrevSibling(xml_obj, text_child);
+    text_child = xmlAddPrevSibling(xml_obj, text_child);
   }
+
+  return text_child;
 }
 
-void
+xmlNode*
 XmlElement::add_next_text(const char* content) {
   // v8::String::Utf8Value contentRaw(contentOpt);
   // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
@@ -544,8 +546,10 @@ XmlElement::add_next_text(const char* content) {
   xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
 
   if(encoded) {
-    xmlAddNextSibling(xml_obj, text_child);
+    text_child = xmlAddNextSibling(xml_obj, text_child);
   }
+
+  return text_child;
 }
 
 XmlElement *

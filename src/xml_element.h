@@ -58,8 +58,8 @@ protected:
     v8::Local<v8::Value> get_prev_element();
     void add_prev_sibling(XmlElement* element);
     void add_next_sibling(XmlElement* element);
-    void add_prev_text(const char* content);
-    void add_next_text(const char* content);
+    xmlNode* add_prev_text(const char* content);
+    xmlNode* add_next_text(const char* content);
 
     XmlElement *import_element(XmlElement* element);
 };

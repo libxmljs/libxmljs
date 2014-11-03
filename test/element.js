@@ -165,8 +165,9 @@ module.exports.add_prev_text = function(assert) {
     var child2 = elem.node('child2');
     assert.equal(elem.childNodes().length, 2);
 
-    child2.addPrevText('previous text');
+    var node = child2.addPrevText('previous text');
     var children = elem.childNodes();
+    assert.equal(children[1], node, 'addPrevText returns the added text node');
     assert.equal(3, children.length);
     assert.equal('text', children[1].type());
     assert.equal('previous text', children[1].toString());
@@ -181,8 +182,9 @@ module.exports.add_next_text = function(assert) {
     var child2 = elem.node('child2');
     assert.equal(elem.childNodes().length, 2);
 
-    child2.addNextText('next text');
+    var node = child2.addNextText('next text');
     var children = elem.childNodes();
+    assert.equal(children[2], node, 'addNextText returns the added text node.');
     assert.equal(3, children.length);
     assert.equal('text', children[2].type());
     assert.equal('next text', children[2].toString());
