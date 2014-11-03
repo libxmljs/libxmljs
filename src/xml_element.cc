@@ -117,23 +117,21 @@ NAN_METHOD(XmlElement::AddChild) {
 
 NAN_METHOD(XmlElement::AddText) {
   NanScope();
+
+  if(args.Length() == 0 || args[0]->IsNull() || args[0]->IsUndefined()) {
+      return NanThrowError("Bad argument: This method requires valid text.");
+  }
+
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
-  v8::Local<v8::Value> contentOpt;
-  if(args[0]->IsString()) {
-      contentOpt = args[0];
+  v8::String::Utf8Value contentRaw(args[0]);
+  if(contentRaw.length() == 0) {
+    return NanThrowError("Bad argument: This method requires valid text.");
   }
-  v8::String::Utf8Value contentRaw(contentOpt);
-  const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
-  xmlChar* encoded = content ? xmlEncodeSpecialChars(element->xml_obj->doc, (const xmlChar*)content) : NULL;
-  xmlNode* text = xmlNewDocText(element->xml_obj->doc, encoded);
+  element->add_text(*contentRaw);
 
-  if (encoded)
-      xmlFree(encoded);
-
-  element->add_text(text);
   NanReturnValue(args.Holder());
 }
 
@@ -282,32 +280,42 @@ NAN_METHOD(XmlElement::AddNextSibling) {
 
 NAN_METHOD(XmlElement::AddPrevText) {
   NanScope();
+
+  if(args.Length() == 0 || args[0]->IsNull() || args[0]->IsUndefined()) {
+      return NanThrowError("Bad argument: This method requires valid text.");
+  }
+
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   v8::String::Utf8Value contentRaw(args[0]);
   if(contentRaw.length() == 0) {
-    return NanThrowError("This method requires valid text.");
+    return NanThrowError("Bad argument: This method requires valid text.");
   }
 
   xmlNode* text_child = element->add_prev_text(*contentRaw);
 
-  return NanEscapeScope(XmlNode::New(text_child));
+  NanReturnValue(XmlNode::New(text_child));
 }
 
 NAN_METHOD(XmlElement::AddNextText) {
   NanScope();
+
+  if(args.Length() == 0 || args[0]->IsNull() || args[0]->IsUndefined()) {
+      return NanThrowError("Bad argument: This method requires valid text.");
+  }
+
   XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
   assert(element);
 
   v8::String::Utf8Value contentRaw(args[0]);
   if(contentRaw.length() == 0) {
-    return NanThrowError("This method requires valid text.");
+    return NanThrowError("Bad argument: This method requires valid text.");
   }
 
   xmlNode* text_child = element->add_next_text(*contentRaw);
 
-  return NanEscapeScope(XmlNode::New(text_child));
+  NanReturnValue(XmlNode::New(text_child));
 }
 
 void
@@ -376,8 +384,14 @@ XmlElement::add_child(XmlElement* child) {
 }
 
 void
-XmlElement::add_text(xmlNode* text) {
-  xmlAddChild(xml_obj, text);
+XmlElement::add_text(const char* content) {
+  xmlChar* encoded = content ? xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content) : NULL;
+  xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
+
+  if(encoded) {
+    xmlAddChild(xml_obj, text_child);
+    xmlFree(encoded);
+  }
 }
 
 void
@@ -524,14 +538,12 @@ XmlElement::add_next_sibling(XmlElement* element) {
 
 xmlNode*
 XmlElement::add_prev_text(const char* content) {
-  // v8::String::Utf8Value contentRaw(contentOpt);
-  // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
-
   xmlChar* encoded = content ? xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content) : NULL;
   xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
 
   if(encoded) {
     text_child = xmlAddPrevSibling(xml_obj, text_child);
+    xmlFree(encoded);
   }
 
   return text_child;
@@ -539,14 +551,12 @@ XmlElement::add_prev_text(const char* content) {
 
 xmlNode*
 XmlElement::add_next_text(const char* content) {
-  // v8::String::Utf8Value contentRaw(contentOpt);
-  // const char* content = (contentRaw.length()) ? *contentRaw : NULL;
-
   xmlChar* encoded = content ? xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content) : NULL;
   xmlNode* text_child = xmlNewDocText(xml_obj->doc, encoded);
 
   if(encoded) {
     text_child = xmlAddNextSibling(xml_obj, text_child);
+    xmlFree(encoded);
   }
 
   return text_child;
