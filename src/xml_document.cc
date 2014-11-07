@@ -382,6 +382,40 @@ NAN_METHOD(XmlDocument::Validate)
     NanReturnValue(NanNew<v8::Boolean>(valid));
 }
 
+NAN_METHOD(XmlDocument::RngValidate)
+{
+    NanScope();
+
+    v8::Local<v8::Array> errors = NanNew<v8::Array>();
+    xmlResetLastError();
+    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
+            XmlSyntaxError::PushToArray);
+
+    XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
+    XmlDocument* documentSchema = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
+
+	xmlRelaxNGParserCtxtPtr parser_ctxt = xmlRelaxNGNewDocParserCtxt(documentSchema->xml_obj);
+    if (parser_ctxt == NULL) {
+        return NanThrowError("Could not create context for RELAX NG schema parser");
+    }
+
+	xmlRelaxNGPtr schema = xmlRelaxNGParse(parser_ctxt);
+    if (schema == NULL) {
+        return NanThrowError("Invalid RELAX NG schema");
+    }
+
+	xmlRelaxNGValidCtxtPtr valid_ctxt = xmlRelaxNGNewValidCtxt(schema);
+    if (valid_ctxt == NULL) {
+        return NanThrowError("Unable to create a validation context for the RELAX NG schema");
+    }
+	bool valid = xmlRelaxNGValidateDoc(valid_ctxt, document->xml_obj) == 0;
+
+    xmlSetStructuredErrorFunc(NULL, NULL);
+    args.Holder()->Set(NanNew<v8::String>("validationErrors"), errors);
+
+    NanReturnValue(NanNew<v8::Boolean>(valid));
+}
+
 /// this is a blank object with prototype methods
 /// not exposed to the user and not called from js
 NAN_METHOD(XmlDocument::New)
@@ -441,6 +475,9 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "_validate",
             XmlDocument::Validate);
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "_rngValidate",
+            XmlDocument::RngValidate);
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "_setDtd",
             XmlDocument::SetDtd);
