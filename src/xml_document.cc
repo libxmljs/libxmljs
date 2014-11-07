@@ -7,6 +7,7 @@
 
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
+#include <libxml/relaxng.h>
 
 #include "xml_document.h"
 #include "xml_element.h"
