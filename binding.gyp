@@ -2,8 +2,6 @@
   'targets': [
     {
       'target_name': 'xmljs',
-      'product_extension': 'node',
-      'type': 'shared_library',
       'include_dirs': ["<!(node -e \"require('nan')\")"],
       'sources': [
         'src/libxmljs.cc',
