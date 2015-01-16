@@ -82,7 +82,7 @@ XmlComment::get_content() {
     return NanEscapeScope(ret_content);
   }
 
-  return NanEscapeScope(NanNew<v8::String>());
+  return NanEscapeScope(NanNew<v8::String>(""));
 }
 
 
@@ -109,7 +109,7 @@ void
 XmlComment::Initialize(v8::Handle<v8::Object> target)
 {
     NanScope();
-    v8::Local<v8::FunctionTemplate> t = NanNew<v8::FunctionTemplate>(New);
+    v8::Local<v8::FunctionTemplate> t = NanNew<v8::FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
     t->Inherit(NanNew(XmlNode::constructor_template));
     t->InstanceTemplate()->SetInternalFieldCount(1);
     NanAssignPersistent(constructor_template, t);

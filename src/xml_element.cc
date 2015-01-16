@@ -397,7 +397,7 @@ XmlElement::get_content() {
     return ret_content;
   }
 
-  return NanNew<v8::String>();
+  return NanNew<v8::String>("");
 }
 
 v8::Local<v8::Value>

@@ -47,6 +47,12 @@ void xmlMemFreeWrap(void* p)
     // our cleanup routines for libxml will be called (freeing memory)
     // but v8 is already offline and does not need to be informed
     // trying to adjust after shutdown will result in a fatal error
+#if (NODE_MODULE_VERSION > 0x000B)
+    if (v8::Isolate::GetCurrent() == 0)
+    {
+        return;
+    }
+#endif
     if (v8::V8::IsDead())
     {
         return;
