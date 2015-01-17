@@ -294,7 +294,7 @@ XmlNode::get_next_sibling() {
 v8::Local<v8::Value>
 XmlNode::get_line_number() {
   NanEscapableScope();
-  return NanEscapeScope(NanNew<v8::Integer>(xmlGetLineNo(xml_obj)));
+  return NanEscapeScope(NanNew<v8::Integer>(uint32_t(xmlGetLineNo(xml_obj))));
 }
 
 v8::Local<v8::Value>
