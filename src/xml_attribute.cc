@@ -151,7 +151,7 @@ void
 XmlAttribute::Initialize(v8::Handle<v8::Object> target) {
   NanScope();
   v8::Local<v8::FunctionTemplate> tmpl =
-   NanNew<v8::FunctionTemplate, NanFunctionCallback>(XmlAttribute::New);
+   NanNew<v8::FunctionTemplate>(XmlAttribute::New);
   NanAssignPersistent(constructor_template, tmpl);
   tmpl->Inherit(NanNew(XmlNode::constructor_template));
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
