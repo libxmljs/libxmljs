@@ -3,7 +3,6 @@ node_js:
     - "0.8"
     - "0.10"
     - "0.11"
+
 before_install:
-  - npm install npm
-  - mv node_modules npm
-  - npm/.bin/npm install
+  - npm update -g npm
