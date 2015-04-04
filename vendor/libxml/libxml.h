@@ -58,13 +58,6 @@ int vfprintf(FILE *, const char *, va_list);
 #include "trio.h"
 #endif
 
-#ifdef WIN32
-#define snprintf _snprintf
-#undef HAVE_UNISTD_H
-#undef HAVE_RAND_R
-#undef HAVE_ZLIB_H
-#endif
-
 /*
  * Internal variable indicating if a callback has been registered for
  * node creation/destruction. It avoids spending a lot of time in locking
