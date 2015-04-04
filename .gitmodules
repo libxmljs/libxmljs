@@ -1,0 +1,3 @@
+[submodule "vendor/libxml"]
+	path = vendor/libxml
+	url = git://git.gnome.org/libxml2

@@ -18,7 +18,7 @@
         'src/xml_xpath_context.cc',
       ],
       'dependencies': [
-        './vendor/libxml/libxml.gyp:libxml'
+        './vendor/libxml.gyp:libxml'
       ]
     }
   ]
