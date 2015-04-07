@@ -9,6 +9,10 @@
 #include "xml_node.h"
 #include "xml_sax_parser.h"
 
+#if NAUV_UVVERSION < 0xb0b
+#include "uvcompat.h"
+#endif
+
 namespace libxmljs {
 
 bool tlsInitialized = false;
