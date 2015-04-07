@@ -133,7 +133,7 @@ char* memStrdup(const char* str)
 {
     size_t size = strlen(str) + 1;
     char* res = static_cast<char*>(memMalloc(size));
-    if (res) strcpy(res, str);
+    if (res) memcpy(res, str, size);
     return res;
 }
 
