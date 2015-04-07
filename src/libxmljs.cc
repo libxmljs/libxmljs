@@ -157,65 +157,42 @@ LibXMLJS::~LibXMLJS()
 
 v8::Local<v8::Object> listFeatures() {
     v8::Local<v8::Object> target = NanNew<v8::Object>();
-    // list taken from xmllint.c
-    target->Set(NanNew<v8::String>("thread"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_THREAD)));
-    target->Set(NanNew<v8::String>("tree"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_TREE)));
-    target->Set(NanNew<v8::String>("output"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_OUTPUT)));
-    target->Set(NanNew<v8::String>("push"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_PUSH)));
-    target->Set(NanNew<v8::String>("reader"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_READER)));
-    target->Set(NanNew<v8::String>("writer"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_WRITER)));
-    target->Set(NanNew<v8::String>("sax1"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_SAX1)));
-    target->Set(NanNew<v8::String>("ftp"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_FTP)));
-    target->Set(NanNew<v8::String>("http"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_HTTP)));
-    target->Set(NanNew<v8::String>("legacy"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_LEGACY)));
-    target->Set(NanNew<v8::String>("c14n"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_C14N)));
-    target->Set(NanNew<v8::String>("catalog"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_CATALOG)));
-    target->Set(NanNew<v8::String>("xpath"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_XPATH)));
-    target->Set(NanNew<v8::String>("xptr"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_XPTR)));
-    target->Set(NanNew<v8::String>("xinclude"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_XINCLUDE)));
-    target->Set(NanNew<v8::String>("iconv"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ICONV)));
-    target->Set(NanNew<v8::String>("iso8859x"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ISO8859X)));
-    target->Set(NanNew<v8::String>("unicode"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_UNICODE)));
-    target->Set(NanNew<v8::String>("regexp"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_REGEXP)));
-    target->Set(NanNew<v8::String>("automata"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_AUTOMATA)));
-    target->Set(NanNew<v8::String>("expr"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_EXPR)));
-    target->Set(NanNew<v8::String>("schemas"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_SCHEMAS)));
-    target->Set(NanNew<v8::String>("schematron"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_SCHEMATRON)));
-    target->Set(NanNew<v8::String>("modules"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_MODULES)));
-    target->Set(NanNew<v8::String>("debug"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_DEBUG)));
-    target->Set(NanNew<v8::String>("debug_mem"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_DEBUG_MEM)));
-    target->Set(NanNew<v8::String>("debug_run"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_DEBUG_RUN)));
-    target->Set(NanNew<v8::String>("zlib"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ZLIB)));
-    target->Set(NanNew<v8::String>("LZMA"),
-                NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_LZMA)));
+#define FEAT(x) target->Set(NanNew<v8::String>(# x), \
+                    NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
+    // See enum xmlFeature in parser.h
+    FEAT(THREAD);
+    FEAT(TREE);
+    FEAT(OUTPUT);
+    FEAT(PUSH);
+    FEAT(READER);
+    FEAT(PATTERN);
+    FEAT(WRITER);
+    FEAT(SAX1);
+    FEAT(FTP);
+    FEAT(HTTP);
+    FEAT(VALID);
+    FEAT(HTML);
+    FEAT(LEGACY);
+    FEAT(C14N);
+    FEAT(CATALOG);
+    FEAT(XPATH);
+    FEAT(XPTR);
+    FEAT(XINCLUDE);
+    FEAT(ICONV);
+    FEAT(ISO8859X);
+    FEAT(UNICODE);
+    FEAT(REGEXP);
+    FEAT(AUTOMATA);
+    FEAT(EXPR);
+    FEAT(SCHEMAS);
+    FEAT(SCHEMATRON);
+    FEAT(MODULES);
+    FEAT(DEBUG);
+    FEAT(DEBUG_MEM);
+    FEAT(DEBUG_RUN);
+    FEAT(ZLIB);
+    FEAT(ICU);
+    FEAT(LZMA);
     return target;
 }
 
