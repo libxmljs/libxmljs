@@ -230,6 +230,60 @@ module.exports.validate = function(assert) {
     assert.done();
 };
 
+module.exports.rngValidate = function(assert) {
+	// see http://relaxng.org/ for more infos about RELAX NG
+
+	var rng =
+		'<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">'+
+			'<zeroOrMore>'+
+				'<element name="card">'+
+					'<element name="name">'+
+						'<text/>'+
+					'</element>'+
+					'<element name="email">'+
+						'<text/>'+
+					'</element>'+
+				'</element>'+
+			'</zeroOrMore>'+
+		'</element>';
+
+	var xml_valid = 
+		'<addressBook>'+
+			'<card>'+
+				'<name>John Smith</name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+	var xml_invalid = 
+		'<addressBook>'+
+			'<card>'+
+				'<Name>John Smith</Name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+    var rngDoc = libxml.parseXml(rng);
+    var xmlDocValid = libxml.parseXml(xml_valid);
+    var xmlDocInvalid = libxml.parseXml(xml_invalid);
+	
+    assert.equal(xmlDocValid.rngValidate(rngDoc), true);
+    assert.equal(xmlDocValid.validationErrors.length, 0);
+
+    assert.equal(xmlDocInvalid.rngValidate(rngDoc), false);
+    assert.equal(xmlDocInvalid.validationErrors.length, 1);
+
+    assert.done();
+};
+
 module.exports.errors = {
     empty_html_doc: function(assert) {
         function assertDocRootError(func, msg) {

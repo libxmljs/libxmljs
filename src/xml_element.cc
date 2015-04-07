@@ -397,7 +397,7 @@ XmlElement::get_content() {
     return ret_content;
   }
 
-  return NanNew<v8::String>();
+  return NanNew<v8::String>("");
 }
 
 v8::Local<v8::Value>
@@ -492,7 +492,7 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
 {
     NanScope();
     v8::Local<v8::FunctionTemplate> tmpl =
-      NanNew<v8::FunctionTemplate, NanFunctionCallback>(New);
+      NanNew<v8::FunctionTemplate>(New);
     NanAssignPersistent(constructor_template, tmpl);
     tmpl->Inherit(NanNew(XmlNode::constructor_template));
     tmpl->InstanceTemplate()->SetInternalFieldCount(1);

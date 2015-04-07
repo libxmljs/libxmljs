@@ -5,7 +5,7 @@
     "Jeff Smick"
   ],
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "scripts": {
     "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
   },
@@ -21,8 +21,8 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "bindings": "1.1.1",
-    "nan": "1.1.2"
+    "bindings": "1.2.1",
+    "nan": "1.7.0"
   },
   "devDependencies": {
     "nodeunit": "0.9.0"

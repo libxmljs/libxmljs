@@ -53,6 +53,7 @@ protected:
     static NAN_METHOD(Errors);
     static NAN_METHOD(ToString);
     static NAN_METHOD(Validate);
+    static NAN_METHOD(RngValidate);	
 };
 
 }  // namespace libxmljs
