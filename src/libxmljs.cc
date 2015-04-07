@@ -84,11 +84,13 @@ void adjustMem(ssize_t diff)
 #if (NODE_MODULE_VERSION > 0x000B)
     if (v8::Isolate::GetCurrent() == 0)
     {
+        assert(diff <= 0);
         return;
     }
 #endif
     if (v8::V8::IsDead())
     {
+        assert(diff <= 0);
         return;
     }
     NanAdjustExternalMemory(diff);
