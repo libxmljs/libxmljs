@@ -17,7 +17,7 @@
         'src/xml_syntax_error.cc',
         'src/xml_xpath_context.cc',
       ],
-      'dependencies': [
+      'dependencies':  [
         './vendor/libxml/libxml.gyp:libxml'
       ]
     }
