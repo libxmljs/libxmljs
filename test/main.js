@@ -10,3 +10,7 @@ module.exports.constants = function(assert) {
     assert.done();
 };
 
+module.exports.threading = function(assert) {
+    assert.equal(libxml.features.thread, true);
+    assert.done();
+};
