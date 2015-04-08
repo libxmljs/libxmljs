@@ -351,6 +351,91 @@ NAN_METHOD(XmlDocument::FromXml)
     NanReturnValue(doc_handle);
 }
 
+class FromXmlWorker : public NanAsyncWorker
+{
+    char *data;
+    size_t length;
+    xmlDocPtr doc;
+    xmlParserOption opts;
+    WorkerParent parent;
+public:
+    FromXmlWorker(NanCallback* callback,
+                  v8::Local<v8::Object>& buf,
+                  v8::Local<v8::Object>& opt);
+    void Execute();
+    void WorkComplete();
+};
+
+FromXmlWorker::FromXmlWorker(NanCallback* callback,
+                             v8::Local<v8::Object>& buf,
+                             v8::Local<v8::Object>& opt)
+    : NanAsyncWorker(callback)
+{
+    NanScope();
+    // Only ever parse a buffer
+    data = node::Buffer::Data(buf);
+    length = node::Buffer::Length(buf);
+    opts = getXmlParserOption(opt);
+    SaveToPersistent("buf", buf);
+    SaveToPersistent("opt", opt);
+    //v8::Local<v8::Array> errors = NanNew<v8::Array>();
+}
+
+void FromXmlWorker::Execute()
+{
+    WorkerSentinel sentinel(parent);
+    // TODO: Store errors somewhere we don't need V8 for.
+    /*
+      xmlResetLastError();
+      xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
+      XmlSyntaxError::PushToArray);
+    */
+    doc = xmlReadMemory(data, length, NULL, NULL, opts);
+    // xmlSetStructuredErrorFunc(NULL, NULL);
+}
+
+void FromXmlWorker::WorkComplete()
+{
+    NanScope();
+    if (!doc) {
+        /*
+          xmlError* error = xmlGetLastError();
+          if (error) {
+          return NanThrowError(XmlSyntaxError::BuildSyntaxError(error));
+          }
+        */
+        v8::Local<v8::Value> argv[] = {
+            v8::Exception::Error(NanNew<v8::String>
+                                 ("Could not parse XML string"))
+        };
+        callback->Call(1, argv);
+    }
+    else {
+        v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);
+        // doc_handle->Set(NanNew<v8::String>("errors"), errors);
+        /*
+          xmlNode* root_node = xmlDocGetRootElement(doc);
+          if (root_node == NULL) {
+          return NanThrowError("parsed document has no root element");
+          }
+        */
+        v8::Local<v8::Value> argv[] = {
+            NanNull(),
+            doc_handle
+        };
+        callback->Call(2, argv);
+    }
+}
+
+NAN_METHOD(XmlDocument::FromXmlAsync) {
+    NanScope();
+    v8::Local<v8::Object> buf = args[0]->ToObject();
+    v8::Local<v8::Object> opt = args[1]->ToObject();
+    NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+    NanAsyncQueueWorker(new FromXmlWorker(callback, buf, opt));
+    NanReturnUndefined();
+}
+
 NAN_METHOD(XmlDocument::Validate)
 {
     NanScope();
@@ -488,6 +573,7 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
 
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
+    NODE_SET_METHOD(target, "fromXmlAsync", XmlDocument::FromXmlAsync);
     NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
 
     // used to create new document handles
