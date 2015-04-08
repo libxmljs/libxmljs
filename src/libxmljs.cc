@@ -25,6 +25,7 @@ WorkerParent::WorkerParent() : memAdjustments(0) {
     if (!tlsInitialized)
     {
         uv_key_create(&tlsKey);
+        tlsInitialized = true;
     }
     if (numWorkers++ == 0)
     {
