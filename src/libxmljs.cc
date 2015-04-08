@@ -2,6 +2,7 @@
 
 #include <v8.h>
 #include <uv.h>
+#include "uv-compat.h"
 
 #include <libxml/xmlmemory.h>
 
