@@ -8,6 +8,7 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/relaxng.h>
+#include <libxml/xinclude.h>
 
 #include "xml_document.h"
 #include "xml_element.h"
@@ -337,6 +338,12 @@ NAN_METHOD(XmlDocument::FromXml)
             return NanThrowError(XmlSyntaxError::BuildSyntaxError(error));
         }
         return NanThrowError("Could not parse XML string");
+    }
+
+    if (opts & XML_PARSE_XINCLUDE) {
+      if (xmlXIncludeProcessFlags(doc, opts) < 0) {
+        return NanThrowError("Could not process XIncludes");
+      }
     }
 
     v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);

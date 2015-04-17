@@ -17,6 +17,7 @@
         'HTMLtree.c',
         'legacy.c',
         'list.c',
+        'nanohttp.c',
         'parser.c',
         'parserInternals.c',
         'pattern.c',
@@ -51,6 +52,7 @@
           'include/',
         ],
       },
+      'defines': ['LIBXML_XINCLUDE_ENABLED', 'LIBXML_HTTP_ENABLED'],
     }
   ]
 }
