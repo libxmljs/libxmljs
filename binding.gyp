@@ -19,7 +19,8 @@
       ],
       'dependencies': [
         './vendor/libxml/libxml.gyp:libxml'
-      ]
+      ],
+      'defines': ['LIBXML_XINCLUDE_ENABLED']
     }
   ]
 }
