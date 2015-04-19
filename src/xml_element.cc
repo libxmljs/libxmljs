@@ -258,6 +258,26 @@ NAN_METHOD(XmlElement::AddNextSibling) {
   NanReturnValue(args[0]);
 }
 
+NAN_METHOD(XmlElement::Replace) {
+  NanScope();
+  XmlElement* element = ObjectWrap::Unwrap<XmlElement>(args.Holder());
+  assert(element);
+
+  if (args[0]->IsString())
+  {
+    element->replace_text(*v8::String::Utf8Value(args[0]));
+  } else {
+    XmlElement* new_sibling = ObjectWrap::Unwrap<XmlElement>(args[0]->ToObject());
+    assert(new_sibling);
+
+    new_sibling = element->import_element(new_sibling);
+
+    element->replace_element(new_sibling);
+  }
+
+  NanReturnValue(args[0]);
+}
+
 void
 XmlElement::set_name(const char* name) {
   xmlNodeSetName(xml_obj, (const xmlChar*)name);
@@ -465,6 +485,17 @@ XmlElement::add_next_sibling(XmlElement* element) {
   xmlAddNextSibling(xml_obj, element->xml_obj);
 }
 
+void
+XmlElement::replace_element(XmlElement* element) {
+  xmlReplaceNode(xml_obj, element->xml_obj);
+}
+
+void
+XmlElement::replace_text(const char* content) {
+  xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
+  xmlReplaceNode(xml_obj, txt);
+}
+
 XmlElement *
 XmlElement::import_element(XmlElement *element) {
 
@@ -552,6 +583,10 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     NODE_SET_PROTOTYPE_METHOD(tmpl,
             "addNextSibling",
             XmlElement::AddNextSibling);
+
+    NODE_SET_PROTOTYPE_METHOD(tmpl,
+            "replace",
+            XmlElement::Replace);
 
     target->Set(NanNew<v8::String>("Element"),
             tmpl->GetFunction());
