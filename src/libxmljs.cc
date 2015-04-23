@@ -9,14 +9,10 @@
 #include "xml_node.h"
 #include "xml_sax_parser.h"
 
-#if NAUV_UVVERSION < 0xb0b
-#include "uvcompat.h"
-#endif
-
 namespace libxmljs {
 
 bool tlsInitialized = false;
-uv_key_t tlsKey;
+nauv_key_t tlsKey;
 bool isAsync = false; // Only set on V8 thread when no workers are running
 int numWorkers = 0; // Only access from V8 thread
 
@@ -24,7 +20,7 @@ int numWorkers = 0; // Only access from V8 thread
 WorkerParent::WorkerParent() : memAdjustments(0) {
     if (!tlsInitialized)
     {
-        uv_key_create(&tlsKey);
+        nauv_key_create(&tlsKey);
         tlsInitialized = true;
     }
     if (numWorkers++ == 0)
@@ -44,12 +40,12 @@ WorkerParent::~WorkerParent() {
 
 // Set up in worker thread
 WorkerSentinel::WorkerSentinel(WorkerParent& parent) : parent(parent) {
-    uv_key_set(&tlsKey, this);
+    nauv_key_set(&tlsKey, this);
 }
 
 // Tear down in worker thread
 WorkerSentinel::~WorkerSentinel() {
-    uv_key_set(&tlsKey, NULL);
+    nauv_key_set(&tlsKey, NULL);
 }
 
 struct memHdr {
@@ -74,7 +70,7 @@ void adjustMem(ssize_t diff)
     if (isAsync)
     {
         WorkerSentinel* worker =
-            static_cast<WorkerSentinel*>(uv_key_get(&tlsKey));
+            static_cast<WorkerSentinel*>(nauv_key_get(&tlsKey));
         if (worker)
         {
             worker->parent.memAdjustments += diff;
