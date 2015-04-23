@@ -52,7 +52,7 @@ v8::Local<v8::Object>
 XmlNamespace::New(xmlNs* node)
 {
     if (node->_private) {
-        return NanObjectWrapHandle(static_cast<XmlNamespace*>(node->_private));
+        return NanObjectWrapHandle(*static_cast<XmlNamespace*>(node->_private));
     }
 
     XmlNamespace* ns = new XmlNamespace(node);

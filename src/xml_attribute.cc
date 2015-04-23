@@ -18,7 +18,7 @@ XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
     assert(attr);
 
     if (attr->_private) {
-        return NanObjectWrapHandle(static_cast<XmlNode*>(xml_obj->_private));
+        return NanObjectWrapHandle(*static_cast<XmlNode*>(xml_obj->_private));
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
@@ -33,7 +33,7 @@ XmlAttribute::New(xmlAttr* attr)
     assert(attr->type == XML_ATTRIBUTE_NODE);
 
     if (attr->_private) {
-        return NanObjectWrapHandle(static_cast<XmlNode*>(attr->_private));
+        return NanObjectWrapHandle(*static_cast<XmlNode*>(attr->_private));
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
