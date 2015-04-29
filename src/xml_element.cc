@@ -441,7 +441,7 @@ v8::Local<v8::Object>
 XmlElement::New(xmlNode* node)
 {
     if (node->_private) {
-        return NanObjectWrapHandle(*static_cast<XmlNode*>(node->_private));
+        return NanObjectWrapHandle(static_cast<XmlNode*>(node->_private));
     }
 
     XmlElement* element = new XmlElement(node);

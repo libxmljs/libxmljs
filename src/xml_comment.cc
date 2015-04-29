@@ -91,7 +91,7 @@ XmlComment::New(xmlNode* node)
 {
     NanEscapableScope();
     if (node->_private) {
-        return NanEscapeScope(NanObjectWrapHandle(*static_cast<XmlNode*>(node->_private)));
+        return NanEscapeScope(NanObjectWrapHandle(static_cast<XmlNode*>(node->_private)));
     }
 
     XmlComment* comment = new XmlComment(node);

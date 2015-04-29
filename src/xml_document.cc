@@ -189,7 +189,7 @@ XmlDocument::New(xmlDoc* doc)
     NanEscapableScope();
 
     if (doc->_private) {
-        return NanEscapeScope(NanObjectWrapHandle(*static_cast<XmlDocument*>(doc->_private)));
+        return NanEscapeScope(NanObjectWrapHandle(static_cast<XmlDocument*>(doc->_private)));
     }
 
     v8::Local<v8::Object> obj = NanNew(constructor_template)->GetFunction()->NewInstance();
