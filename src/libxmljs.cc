@@ -50,12 +50,10 @@ WorkerSentinel::~WorkerSentinel() {
 
 struct memHdr {
     size_t size;
+    double data;
 };
 
-// When we move to C++11 one day, the following would become constexpr,
-// and SLIGN_SIZE could perhaps become sizeof(std::max_align_t).
-#define ALIGN_SIZE sizeof(double)
-#define HDR_SIZE (((sizeof(memHdr) + (ALIGN_SIZE - 1))/ALIGN_SIZE)*ALIGN_SIZE)
+#define HDR_SIZE offsetof(memHdr, data)
 
 inline void* hdr2client(memHdr* hdr) {
     return static_cast<void*>(reinterpret_cast<char*>(hdr) + HDR_SIZE);
