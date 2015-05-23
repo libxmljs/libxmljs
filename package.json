@@ -17,6 +17,7 @@
     "url": "http://github.com/polotek/libxmljs/issues"
   },
   "main": "./index",
+  "license": "MIT",
   "engines": {
     "node": ">=0.8.0"
   },
