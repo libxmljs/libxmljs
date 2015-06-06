@@ -16,38 +16,6 @@ nauv_key_t tlsKey;
 bool isAsync = false; // Only set on V8 thread when no workers are running
 int numWorkers = 0; // Only access from V8 thread
 
-// Set up in V8 thread
-WorkerParent::WorkerParent() : memAdjustments(0) {
-    if (!tlsInitialized)
-    {
-        nauv_key_create(&tlsKey);
-        tlsInitialized = true;
-    }
-    if (numWorkers++ == 0)
-    {
-        isAsync = true;
-    }
-}
-
-// Tear down in V8 thread
-WorkerParent::~WorkerParent() {
-    NanAdjustExternalMemory(memAdjustments);
-    if (--numWorkers == 0)
-    {
-        isAsync = false;
-    }
-}
-
-// Set up in worker thread
-WorkerSentinel::WorkerSentinel(WorkerParent& parent) : parent(parent) {
-    nauv_key_set(&tlsKey, this);
-}
-
-// Tear down in worker thread
-WorkerSentinel::~WorkerSentinel() {
-    nauv_key_set(&tlsKey, NULL);
-}
-
 struct memHdr {
     size_t size;
     double data;
@@ -130,6 +98,39 @@ char* memStrdup(const char* str)
     char* res = static_cast<char*>(memMalloc(size));
     if (res) memcpy(res, str, size);
     return res;
+}
+
+// Set up in V8 thread
+WorkerParent::WorkerParent() : memAdjustments(0) {
+    if (!tlsInitialized)
+    {
+        nauv_key_create(&tlsKey);
+        tlsInitialized = true;
+    }
+    if (numWorkers++ == 0)
+    {
+        isAsync = true;
+    }
+}
+
+// Tear down in V8 thread
+WorkerParent::~WorkerParent() {
+    NanAdjustExternalMemory(memAdjustments);
+    if (--numWorkers == 0)
+    {
+        isAsync = false;
+    }
+}
+
+// Set up in worker thread
+WorkerSentinel::WorkerSentinel(WorkerParent& parent) : parent(parent) {
+    nauv_key_set(&tlsKey, this);
+    xmlMemSetup(memFree, memMalloc, memRealloc, memStrdup);
+}
+
+// Tear down in worker thread
+WorkerSentinel::~WorkerSentinel() {
+    nauv_key_set(&tlsKey, NULL);
 }
 
 // ensure destruction at exit time
