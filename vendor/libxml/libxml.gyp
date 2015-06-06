@@ -51,6 +51,18 @@
           'include/',
         ],
       },
+      'conditions': [
+        ['OS=="win"', {
+          'defines': [
+            'HAVE_WIN32_THREADS',
+          ],
+        }, {
+          'defines': [
+            'HAVE_LIBPTHREAD',
+            'HAVE_PTHREAD_H',
+          ],
+        }],
+      ]
     }
   ]
 }
