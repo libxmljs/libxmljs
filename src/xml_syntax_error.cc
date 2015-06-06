@@ -23,8 +23,18 @@ void set_numeric_field(v8::Local<v8::Object> obj,
 
 namespace libxmljs {
 
+XmlSyntaxErrorsSync::XmlSyntaxErrorsSync() {
+    errors = NanNew<v8::Array>();
+    xmlResetLastError();
+    xmlSetStructuredErrorFunc(this, ErrorFunc);
+}
+
+XmlSyntaxErrorsSync::~XmlSyntaxErrorsSync() {
+    xmlSetStructuredErrorFunc(NULL, NULL);
+}
+
 v8::Local<v8::Value>
-XmlSyntaxError::BuildSyntaxError(xmlError* error) {
+XmlSyntaxErrorsSync::BuildSyntaxError(xmlError* error) {
     v8::Local<v8::Value> err = v8::Exception::Error(
             NanNew<v8::String>(error->message));
     v8::Local<v8::Object> out = v8::Local<v8::Object>::Cast(err);
@@ -48,13 +58,55 @@ XmlSyntaxError::BuildSyntaxError(xmlError* error) {
 }
 
 void
-XmlSyntaxError::PushToArray(void* errs, xmlError* error) {
-    v8::Local<v8::Array> errors = *reinterpret_cast<v8::Local<v8::Array>*>(errs);
-    // push method for array
-    v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(NanNew<v8::String>("push")));
+XmlSyntaxErrorsSync::ErrorFunc(void* errs, xmlError* error) {
+    XmlSyntaxErrorsSync* self = static_cast<XmlSyntaxErrorsSync*>(errs);
+    self->errors->Set(self->errors->Length(), BuildSyntaxError(error));
+}
 
-    v8::Local<v8::Value> argv[1] = { XmlSyntaxError::BuildSyntaxError(error) };
-    push->Call(errors, 1, argv);
+XmlSyntaxErrorsStore::~XmlSyntaxErrorsStore() {
+    typedef std::vector<xmlError*>::reverse_iterator iter;
+    for (iter i = errors.rbegin(), e = errors.rend(); i != e; ++i)
+        FreeError(*i);
+}
+
+v8::Local<v8::Array>
+XmlSyntaxErrorsStore::ToArray() {
+    v8::Local<v8::Array> array = NanNew<v8::Array>(errors.size());
+    for (uint32_t i = 0; i != errors.size(); ++i)
+        array->Set(i, XmlSyntaxErrorsSync::BuildSyntaxError(errors[i]));
+    return array;
+}
+
+void
+XmlSyntaxErrorsStore::ErrorFunc(void* errs, xmlError* error) {
+    XmlSyntaxErrorsStore* self = static_cast<XmlSyntaxErrorsStore*>(errs);
+    xmlError* clone = CloneError(error);
+    if (clone)
+        self->errors.push_back(clone);
+}
+
+xmlError*
+XmlSyntaxErrorsStore::CloneError(xmlError* err1) {
+    if (!err1) return NULL;
+    xmlError* err2 = static_cast<xmlError*>(xmlMemMalloc(sizeof(xmlError)));
+    if (!err2) return NULL;
+    *err2 = *err1;
+    if(err1->message) err2->message = xmlMemStrdup(err1->message);
+    if(err1->file   ) err2->file    = xmlMemStrdup(err1->file   );
+    if(err1->str1   ) err2->str1    = xmlMemStrdup(err1->str1   );
+    if(err1->str2   ) err2->str2    = xmlMemStrdup(err1->str2   );
+    if(err1->str3   ) err2->str3    = xmlMemStrdup(err1->str3   );
+    return err2;
+}
+
+void
+XmlSyntaxErrorsStore::FreeError(xmlError* err) {
+    if (err->message) xmlMemFree(err->message);
+    if (err->file) xmlMemFree(err->file);
+    if (err->str1) xmlMemFree(err->str1);
+    if (err->str2) xmlMemFree(err->str2);
+    if (err->str3) xmlMemFree(err->str3);
+    xmlMemFree(err);
 }
 
 }  // namespace libxmljs
