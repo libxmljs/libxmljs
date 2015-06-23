@@ -3,7 +3,7 @@
     {
       'target_name': 'xmljs',
       'product_extension': 'node',
-      'type': 'shared_library',
+      'type': 'loadable_module',
       'include_dirs': ["<!(node -e \"require('nan')\")"],
       'sources': [
         'src/libxmljs.cc',
