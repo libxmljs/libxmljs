@@ -49,6 +49,13 @@ protected:
     v8::Local<v8::Value> get_type();
     v8::Local<v8::Value> to_string();
     void remove();
+
+private:
+    // by convention, any XmlNode * which has no parent is currently _owning_ its subtree
+    //
+    // This method should be called on destruction of such subtree-owner nodes, which will then
+    // promote new subtree owners by selecting the 'highest' nodes from all its children
+    static void free_untracked_child_nodes(xmlNode * const root);
 };
 
 }  // namespace libxmljs
