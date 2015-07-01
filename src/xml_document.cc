@@ -351,6 +351,42 @@ NAN_METHOD(XmlDocument::FromXml)
     NanReturnValue(doc_handle);
 }
 
+NAN_METHOD(XmlDocument::FromXmlFile)
+{
+    NanScope();
+
+    v8::Local<v8::Array> errors = NanNew<v8::Array>();
+    xmlResetLastError();
+    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
+            XmlSyntaxError::PushToArray);
+
+    v8::String::Utf8Value filename(args[0]->ToString());
+    xmlParserOption opts = getXmlParserOption(args[1]->ToObject());
+
+    xmlDocPtr doc = xmlReadFile(*filename, NULL, opts);
+
+    xmlSetStructuredErrorFunc(NULL, NULL);
+
+    if (!doc) {
+        xmlError* error = xmlGetLastError();
+        if (error) {
+            return NanThrowError(XmlSyntaxError::BuildSyntaxError(error));
+        }
+        return NanThrowError("Could not parse XML file");
+    }
+
+    v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);
+    doc_handle->Set(NanNew<v8::String>("errors"), errors);
+
+    xmlNode* root_node = xmlDocGetRootElement(doc);
+    if (root_node == NULL) {
+        return NanThrowError("parsed document has no root element");
+    }
+
+    // create the xml document handle to return
+    NanReturnValue(doc_handle);
+}
+
 NAN_METHOD(XmlDocument::Validate)
 {
     NanScope();
@@ -488,6 +524,7 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
 
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
+    NODE_SET_METHOD(target, "fromXmlFile", XmlDocument::FromXmlFile);
     NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
 
     // used to create new document handles

@@ -42,6 +42,7 @@ protected:
     static NAN_METHOD(New);
     static NAN_METHOD(FromHtml);
     static NAN_METHOD(FromXml);
+    static NAN_METHOD(FromXmlFile);
     static NAN_METHOD(SetDtd);
 
     // document handle methods

@@ -37,6 +37,24 @@ module.exports.parse_synonym = function(assert) {
     assert.done();
 }
 
+module.exports.parse_file = function(assert) {
+    var filename = __dirname + '/fixtures/parser.xml';
+
+    var doc = libxml.parseXmlFile(filename);
+    assert.equal('1.0', doc.version());
+    assert.equal('UTF-8', doc.encoding());
+    assert.equal('root', doc.root().name());
+    assert.equal('child', doc.get('child').name());
+    assert.equal('grandchild', doc.get('child').get('grandchild').name());
+    assert.equal('with love', doc.get('child/grandchild').text());
+    assert.equal('sibling', doc.get('sibling').name());
+    assert.equal(6, doc.get('sibling').line());
+    assert.equal(3, doc.get('child').attr('to').line());
+    assert.equal('with content!', doc.get('sibling').text());
+    assert.equal(fs.readFileSync(filename, 'utf8'), doc.toString());
+    assert.done();
+};
+
 module.exports.recoverable_parse = function(assert) {
     var filename = __dirname + '/fixtures/warnings/ent9.xml';
     var str = fs.readFileSync(filename, 'utf8');
