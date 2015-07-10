@@ -3,6 +3,7 @@ node_js:
     - "0.8"
     - "0.10"
     - "0.12"
+    - iojs
 
 before_install:
-  - npm update -g npm
+    - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm update -g npm ;; esac
