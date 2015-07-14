@@ -1,4 +1,5 @@
 var libxml = require('../index');
+var process = require('process');
 
 module.exports.setDtd = function(assert) {
     var doc = libxml.Document();
@@ -201,5 +202,24 @@ module.exports.validate = function(assert) {
     assert.equal(xmlDocValid.validate(xsdDoc), true);
     assert.equal(xmlDocInvalid.validate(xsdDoc), false);
 
+    assert.done();
+}
+
+module.exports.validate_memory_usage = function(assert) {
+    var xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
+    var xml = '<?xml version="1.0"?><comment>A comment</comment>';
+
+    var xsdDoc = libxml.parseXml(xsd);
+    var xmlDoc = libxml.parseXml(xml);
+
+    var initialMemory = process.memoryUsage();
+
+    for(var i = 0; i < 10000; i++) {
+        xmlDoc.validate(xsdDoc);
+    }
+
+    global.gc();
+      
+    assert.ok(process.memoryUsage().rss - initialMemory.rss < 1000000);
     assert.done();
 }

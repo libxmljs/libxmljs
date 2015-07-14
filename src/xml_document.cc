@@ -347,6 +347,10 @@ XmlDocument::Validate(const v8::Arguments& args)
             v8::String::New("Unable to create a validation context for the schema")));
     }
     bool valid = xmlSchemaValidateDoc(valid_ctxt, document->xml_obj) == 0;
+    
+    xmlSchemaFreeValidCtxt(valid_ctxt);
+    xmlSchemaFree(schema);
+    xmlSchemaFreeParserCtxt(parser_ctxt);
 
     return scope.Close(v8::Boolean::New(valid));
 }

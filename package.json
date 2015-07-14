@@ -25,6 +25,7 @@
     "bindings": "1.0.0"
   },
   "devDependencies": {
-    "nodeunit": "*"
+    "nodeunit": "*",
+    "process": "~0.11.1"
   }
 }
