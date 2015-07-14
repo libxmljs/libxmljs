@@ -15,6 +15,7 @@ v8::Local<v8::Object>
 XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
 {
     xmlAttr* attr = xmlSetProp(xml_obj, name, value);
+    assert(attr);
 
     if (attr->_private) {
         return NanObjectWrapHandle(static_cast<XmlNode*>(xml_obj->_private));
@@ -70,6 +71,14 @@ NAN_METHOD(XmlAttribute::Node) {
   assert(attr);
 
   NanReturnValue(attr->get_element());
+}
+
+NAN_METHOD(XmlAttribute::Namespace) {
+  NanScope();
+  XmlAttribute *attr = ObjectWrap::Unwrap<XmlAttribute>(args.Holder());
+  assert(attr);
+
+  NanReturnValue(attr->get_namespace());
 }
 
 v8::Local<v8::Value>
@@ -130,11 +139,19 @@ XmlAttribute::get_element() {
     return XmlElement::New(xml_obj->parent);
 }
 
+v8::Local<v8::Value>
+XmlAttribute::get_namespace() {
+    if (!xml_obj->ns) {
+        return NanNull();
+    }
+    return XmlNamespace::New(xml_obj->ns);
+}
+
 void
 XmlAttribute::Initialize(v8::Handle<v8::Object> target) {
   NanScope();
   v8::Local<v8::FunctionTemplate> tmpl =
-   NanNew<v8::FunctionTemplate, NanFunctionCallback>(XmlAttribute::New);
+   NanNew<v8::FunctionTemplate>(XmlAttribute::New);
   NanAssignPersistent(constructor_template, tmpl);
   tmpl->Inherit(NanNew(XmlNode::constructor_template));
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -142,6 +159,7 @@ XmlAttribute::Initialize(v8::Handle<v8::Object> target) {
   NODE_SET_PROTOTYPE_METHOD(tmpl, "name", XmlAttribute::Name);
   NODE_SET_PROTOTYPE_METHOD(tmpl, "value", XmlAttribute::Value);
   NODE_SET_PROTOTYPE_METHOD(tmpl, "node", XmlAttribute::Node);
+  NODE_SET_PROTOTYPE_METHOD(tmpl, "namespace", XmlAttribute::Namespace);
 
   target->Set(NanNew<v8::String>("Attribute"),
               tmpl->GetFunction());

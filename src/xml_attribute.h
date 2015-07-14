@@ -28,11 +28,13 @@ protected:
     static NAN_METHOD(Name);
     static NAN_METHOD(Value);
     static NAN_METHOD(Node);
+    static NAN_METHOD(Namespace);
 
     v8::Local<v8::Value> get_name();
     v8::Local<v8::Value> get_value();
     void set_value(const char* value);
     v8::Local<v8::Value> get_element();
+    v8::Local<v8::Value> get_namespace();
 };
 
 }  // namespace libxmljs

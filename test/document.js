@@ -228,4 +228,92 @@ module.exports.validate = function(assert) {
     assert.equal(xmlDocInvalid.validationErrors.length, 1);
 
     assert.done();
-}
+};
+
+module.exports.rngValidate = function(assert) {
+	// see http://relaxng.org/ for more infos about RELAX NG
+
+	var rng =
+		'<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">'+
+			'<zeroOrMore>'+
+				'<element name="card">'+
+					'<element name="name">'+
+						'<text/>'+
+					'</element>'+
+					'<element name="email">'+
+						'<text/>'+
+					'</element>'+
+				'</element>'+
+			'</zeroOrMore>'+
+		'</element>';
+
+	var xml_valid = 
+		'<addressBook>'+
+			'<card>'+
+				'<name>John Smith</name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+	var xml_invalid = 
+		'<addressBook>'+
+			'<card>'+
+				'<Name>John Smith</Name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+    var rngDoc = libxml.parseXml(rng);
+    var xmlDocValid = libxml.parseXml(xml_valid);
+    var xmlDocInvalid = libxml.parseXml(xml_invalid);
+	
+    assert.equal(xmlDocValid.rngValidate(rngDoc), true);
+    assert.equal(xmlDocValid.validationErrors.length, 0);
+
+    assert.equal(xmlDocInvalid.rngValidate(rngDoc), false);
+    assert.equal(xmlDocInvalid.validationErrors.length, 1);
+
+    assert.done();
+};
+
+module.exports.errors = {
+    empty_html_doc: function(assert) {
+        function assertDocRootError(func, msg) {
+            assert.throws(func, /Document has no root element/, msg);
+        }
+
+        var xml_only_comments = '<!-- empty -->';
+        var doc = libxml.parseHtmlString(xml_only_comments);
+        assert.equal(null, doc.root());
+
+        assertDocRootError(function() {
+            doc.get('*');
+        }, 'get method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.find('*');
+        }, 'find method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.child(1);
+        }, 'child method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.childNodes();
+        }, 'childNodes method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.namespaces();
+        }, 'namespaces method throws correct error on empty doc');
+
+        assert.done();
+    }
+};

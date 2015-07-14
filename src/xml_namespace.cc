@@ -127,7 +127,7 @@ void
 XmlNamespace::Initialize(v8::Handle<v8::Object> target) {
   NanScope();
   v8::Local<v8::FunctionTemplate> tmpl =
-    NanNew<v8::FunctionTemplate, NanFunctionCallback>(New);
+    NanNew<v8::FunctionTemplate>(New);
   NanAssignPersistent(constructor_template, tmpl);
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
