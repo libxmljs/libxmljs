@@ -12,6 +12,12 @@ public:
 
     xmlNode* xml_obj;
 
+    // boolean value to check if `xml_obj` was already freed
+    bool freed;
+
+    // backup reference to the doc in case `xml_obj` was already freed
+    xmlDoc* doc;
+
     explicit XmlNode(xmlNode* node);
     virtual ~XmlNode();
 
