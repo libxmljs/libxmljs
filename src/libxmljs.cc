@@ -97,8 +97,24 @@ char* xmlMemoryStrdupWrap(const char* str)
     return res;
 }
 
+// callback function for `xmlDeregisterNodeDefault`
+void flagNode(xmlNode* xml_obj) {
+  if (xml_obj->_private) {
+    XmlNode* node = static_cast<XmlNode*>(xml_obj->_private);
+
+    // flag the XmlNode object as freed
+    node->isFree = true;
+
+    // save a reference to the doc so we can still `unref` it
+    node->doc = xml_obj->doc;
+  }
+  return;
+}
+
 LibXMLJS::LibXMLJS()
 {
+    // set the callback for when a node is about to be freed
+    xmlDeregisterNodeDefault(flagNode);
 
     // populated debugMemSize (see xmlmemory.h/c) and makes the call to
     // xmlMemUsed work, this must happen first!

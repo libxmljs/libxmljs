@@ -179,6 +179,7 @@ XmlNode::New(xmlNode* node)
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
+    this->isFree = false;
     xml_obj->_private = this;
 
     // this will prevent the document from being cleaned up
@@ -188,6 +189,23 @@ XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
 }
 
 XmlNode::~XmlNode() {
+
+    // check if `xml_obj` has been freed so we don't access bad memory
+    if (this->isFree) {
+
+        // unref the doc using the doc reference we saved in the `flagNode` callback
+        if (this->doc) {
+          XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
+          doc->unref();
+        }
+
+        // set doc to null for good measure?
+        // this->doc = NULL;
+
+        // return so we don't attempt to use `xml_obj`
+        return;
+    }
+
     xml_obj->_private = NULL;
 
     // release the hold and allow the document to be freed
