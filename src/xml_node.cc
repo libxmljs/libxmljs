@@ -186,6 +186,14 @@ XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
     // we keep the document if any of the nodes attached to it are still alive
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->ref();
+
+    // check that there's a parent node with a _private pointer
+    // also check that the parent node isn't the doc since we already Ref() the doc once
+    if (xml_obj->parent != NULL &&
+        xml_obj->parent->_private != NULL &&
+        (void*)xml_obj->doc != (void*)xml_obj->parent) {
+        static_cast<XmlNode*>(xml_obj->parent->_private)->Ref();
+    }
 }
 
 XmlNode::~XmlNode() {
@@ -207,7 +215,6 @@ XmlNode::~XmlNode() {
     }
 
     xml_obj->_private = NULL;
-
     // release the hold and allow the document to be freed
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->unref();
@@ -216,6 +223,18 @@ XmlNode::~XmlNode() {
     // It will be freed when the doc is freed
     if (xml_obj->parent == NULL)
       xmlFreeNode(xml_obj);
+
+    // if there's a parent then Unref() it
+    else if (xml_obj->parent->_private != NULL &&
+            (void*)xml_obj->doc != (void*)xml_obj->parent) {
+
+            XmlNode* parent = static_cast<XmlNode*>(xml_obj->parent->_private);
+
+            // make sure Unref() is necessary
+            if (parent->refs_ > 0 && !parent->handle_.IsWeak()) {
+                parent->Unref();
+            }
+    }
 }
 
 v8::Local<v8::Value>
