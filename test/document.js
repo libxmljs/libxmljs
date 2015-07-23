@@ -1,5 +1,28 @@
 var libxml = require('../index');
 
+module.exports.getDtd = function(assert) {
+    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
+    var dtd = doc.getDtd();
+    assert.equal(null, dtd);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<root></root>');
+    assert.ok(doc);
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal(null, dtd.externalId);
+    assert.equal(null, dtd.systemId);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html SYSTEM "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>');
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal(null, dtd.externalId);
+    assert.equal('http://www.w3.org/TR/html4/strict.dtd', dtd.systemId);
+    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>');
+    dtd = doc.getDtd();
+    assert.equal('html', dtd.name);
+    assert.equal('-//W3C//DTD HTML 4.01//EN', dtd.externalId);
+    assert.equal('http://www.w3.org/TR/html4/strict.dtd', dtd.systemId);
+    assert.done();
+};
+
 module.exports.setDtd = function(assert) {
     var doc = libxml.Document();
     doc.setDtd("html");
@@ -99,7 +122,12 @@ module.exports.xpath_child = function(assert) {
 module.exports.toString = function(assert) {
     var control = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"><grandchild from="julie numar">with love</grandchild></child><sibling>with content!</sibling></root>',
+      '<root>',
+      '  <child to="wongfoo">',
+      '    <grandchild from="julie numar">with love</grandchild>',
+      '  </child>',
+      '  <sibling>with content!</sibling>',
+      '</root>',
       ''
     ].join("\n");
 
@@ -140,7 +168,9 @@ module.exports.add_cdata_nodes = function(assert) {
 
     var expected_string = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<root><child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child></root>',
+      '<root>',
+      '  <child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child>',
+      '</root>',
       '' /* Why?!? */
     ].join("\n");
 
@@ -177,8 +207,8 @@ module.exports.cloned_node = function(assert) {
 
     gchild.remove();
 
-    assert.equal(doc2_string, doc1.toString()); //doc1 should be the same as doc2 str
-    assert.equal(doc1_string, doc2.toString()); //doc2 should be the same as doc1 str
+    assert.equal(doc2_string, doc1.toString(false)); //doc1 should be the same as doc2 str (raw output)
+    assert.equal(doc1_string, doc2.toString(false)); //doc2 should be the same as doc1 str (raw output)
     assert.done();
 };
 
@@ -186,13 +216,104 @@ module.exports.validate = function(assert) {
     var xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
     var xml_valid = '<?xml version="1.0"?><comment>A comment</comment>';
     var xml_invalid = '<?xml version="1.0"?><commentt>A comment</commentt>';
-    
+
     var xsdDoc = libxml.parseXml(xsd);
     var xmlDocValid = libxml.parseXml(xml_valid);
     var xmlDocInvalid = libxml.parseXml(xml_invalid);
-    
+
     assert.equal(xmlDocValid.validate(xsdDoc), true);
+    assert.equal(xmlDocValid.validationErrors.length, 0);
+
     assert.equal(xmlDocInvalid.validate(xsdDoc), false);
+    assert.equal(xmlDocInvalid.validationErrors.length, 1);
 
     assert.done();
-}
+};
+
+module.exports.rngValidate = function(assert) {
+	// see http://relaxng.org/ for more infos about RELAX NG
+
+	var rng =
+		'<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">'+
+			'<zeroOrMore>'+
+				'<element name="card">'+
+					'<element name="name">'+
+						'<text/>'+
+					'</element>'+
+					'<element name="email">'+
+						'<text/>'+
+					'</element>'+
+				'</element>'+
+			'</zeroOrMore>'+
+		'</element>';
+
+	var xml_valid = 
+		'<addressBook>'+
+			'<card>'+
+				'<name>John Smith</name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+	var xml_invalid = 
+		'<addressBook>'+
+			'<card>'+
+				'<Name>John Smith</Name>'+
+				'<email>js@example.com</email>'+
+			'</card>'+
+			'<card>'+
+				'<name>Fred Bloggs</name>'+
+				'<email>fb@example.net</email>'+
+			'</card>'+
+		'</addressBook>';
+
+    var rngDoc = libxml.parseXml(rng);
+    var xmlDocValid = libxml.parseXml(xml_valid);
+    var xmlDocInvalid = libxml.parseXml(xml_invalid);
+	
+    assert.equal(xmlDocValid.rngValidate(rngDoc), true);
+    assert.equal(xmlDocValid.validationErrors.length, 0);
+
+    assert.equal(xmlDocInvalid.rngValidate(rngDoc), false);
+    assert.equal(xmlDocInvalid.validationErrors.length, 1);
+
+    assert.done();
+};
+
+module.exports.errors = {
+    empty_html_doc: function(assert) {
+        function assertDocRootError(func, msg) {
+            assert.throws(func, /Document has no root element/, msg);
+        }
+
+        var xml_only_comments = '<!-- empty -->';
+        var doc = libxml.parseHtmlString(xml_only_comments);
+        assert.equal(null, doc.root());
+
+        assertDocRootError(function() {
+            doc.get('*');
+        }, 'get method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.find('*');
+        }, 'find method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.child(1);
+        }, 'child method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.childNodes();
+        }, 'childNodes method throws correct error on empty doc');
+
+        assertDocRootError(function() {
+            doc.namespaces();
+        }, 'namespaces method throws correct error on empty doc');
+
+        assert.done();
+    }
+};

@@ -9,14 +9,24 @@ module.exports.new = function(assert) {
     assert.done();
 };
 
+module.exports.newWithContent = function(assert) {
+    var doc = libxml.Document();
+    var elem = libxml.Element(doc, 'name1', 'content && more content <>');
+    doc.root(elem);
+    assert.equal('name1', elem.name());
+    assert.equal('name1', doc.root().name());
+    assert.equal('content && more content <>', elem.text());
+    assert.done();
+};
+
 module.exports.setters = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');
 
     // change content
     assert.equal('', elem.text());
-    elem.text('content');
-    assert.equal('content', elem.text());
+    elem.text('content && more content <>');
+    assert.equal('content && more content <>', elem.text());
 
     // change name
     assert.equal('name1', elem.name());
@@ -145,5 +155,27 @@ module.exports.clone = function(assert) {
     assert.equal(elem.name(), elem2.name());
     assert.equal(elem.text(), elem2.text());
     assert.equal(elem.toString(), elem2.toString());
+    assert.done();
+};
+
+module.exports.namespace = function(assert) {
+    var str = '<?xml version="1.0" encoding="UTF-8"?>\n'+
+            '<root xmlns:bacon="http://www.example.com/fake/uri"><node bacon:attr-with-ns="attr-with-ns-value" attr-without-ns="attr-withoug-ns-vavlue" /></root>';
+    var doc = new libxml.parseXml(str);
+    var node = doc.get('node');
+    var attrs = node.attrs();
+
+    attrs.forEach(function(attr) {
+        var name = attr.name();
+        var ns = attr.namespace();
+
+        if (name === 'attr-with-ns') {
+            assert.equal(ns.prefix(), 'bacon');
+            assert.equal(ns.href(), 'http://www.example.com/fake/uri');
+        } else {
+            assert.equal(name, 'attr-without-ns');
+            assert.equal(ns, null);
+        }
+    });
     assert.done();
 };

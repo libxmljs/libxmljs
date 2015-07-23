@@ -32,7 +32,7 @@ void* xmlMemMallocWrap(size_t size)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    NanAdjustExternalMemory(diff);
     return res;
 }
 
@@ -47,6 +47,12 @@ void xmlMemFreeWrap(void* p)
     // our cleanup routines for libxml will be called (freeing memory)
     // but v8 is already offline and does not need to be informed
     // trying to adjust after shutdown will result in a fatal error
+#if (NODE_MODULE_VERSION > 0x000B)
+    if (v8::Isolate::GetCurrent() == 0)
+    {
+        return;
+    }
+#endif
     if (v8::V8::IsDead())
     {
         return;
@@ -54,7 +60,7 @@ void xmlMemFreeWrap(void* p)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    NanAdjustExternalMemory(diff);
 }
 
 // wrapper for xmlMemRealloc to update v8's knowledge of memory used
@@ -70,7 +76,7 @@ void* xmlMemReallocWrap(void* ptr, size_t size)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    NanAdjustExternalMemory(diff);
     return res;
 }
 
@@ -87,17 +93,28 @@ char* xmlMemoryStrdupWrap(const char* str)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(diff);
+    NanAdjustExternalMemory(diff);
     return res;
 }
 
-v8::Handle<v8::Value> ThrowError(const char* msg)
-{
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
+// callback function for `xmlDeregisterNodeDefault`
+void flagNode(xmlNode* xml_obj) {
+  if (xml_obj->_private) {
+    XmlNode* node = static_cast<XmlNode*>(xml_obj->_private);
+
+    // flag the XmlNode object as freed
+    node->isFree = true;
+
+    // save a reference to the doc so we can still `unref` it
+    node->doc = xml_obj->doc;
+  }
+  return;
 }
 
 LibXMLJS::LibXMLJS()
 {
+    // set the callback for when a node is about to be freed
+    xmlDeregisterNodeDefault(flagNode);
 
     // populated debugMemSize (see xmlmemory.h/c) and makes the call to
     // xmlMemUsed work, this must happen first!
@@ -116,25 +133,68 @@ LibXMLJS::~LibXMLJS()
     xmlCleanupParser();
 }
 
+v8::Local<v8::Object> listFeatures() {
+    v8::Local<v8::Object> target = NanNew<v8::Object>();
+#define FEAT(x) target->Set(NanNew<v8::String>(# x), \
+                    NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
+    // See enum xmlFeature in parser.h
+    FEAT(THREAD);
+    FEAT(TREE);
+    FEAT(OUTPUT);
+    FEAT(PUSH);
+    FEAT(READER);
+    FEAT(PATTERN);
+    FEAT(WRITER);
+    FEAT(SAX1);
+    FEAT(FTP);
+    FEAT(HTTP);
+    FEAT(VALID);
+    FEAT(HTML);
+    FEAT(LEGACY);
+    FEAT(C14N);
+    FEAT(CATALOG);
+    FEAT(XPATH);
+    FEAT(XPTR);
+    FEAT(XINCLUDE);
+    FEAT(ICONV);
+    FEAT(ISO8859X);
+    FEAT(UNICODE);
+    FEAT(REGEXP);
+    FEAT(AUTOMATA);
+    FEAT(EXPR);
+    FEAT(SCHEMAS);
+    FEAT(SCHEMATRON);
+    FEAT(MODULES);
+    FEAT(DEBUG);
+    FEAT(DEBUG_MEM);
+    FEAT(DEBUG_RUN);
+    FEAT(ZLIB);
+    FEAT(ICU);
+    FEAT(LZMA);
+    return target;
+}
+
 // used by node.js to initialize libraries
 extern "C" void
 init(v8::Handle<v8::Object> target)
 {
-      v8::HandleScope scope;
+      NanScope();
 
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
 
-      target->Set(v8::String::NewSymbol("libxml_version"),
-                  v8::String::New(LIBXML_DOTTED_VERSION));
+      target->Set(NanNew<v8::String>("libxml_version"),
+                  NanNew<v8::String>(LIBXML_DOTTED_VERSION));
 
-      target->Set(v8::String::NewSymbol("libxml_parser_version"),
-                  v8::String::New(xmlParserVersion));
+      target->Set(NanNew<v8::String>("libxml_parser_version"),
+                  NanNew<v8::String>(xmlParserVersion));
 
-      target->Set(v8::String::NewSymbol("libxml_debug_enabled"),
-                  v8::Boolean::New(debugging));
+      target->Set(NanNew<v8::String>("libxml_debug_enabled"),
+                  NanNew<v8::Boolean>(debugging));
 
-      target->Set(v8::String::NewSymbol("libxml"), target);
+      target->Set(NanNew<v8::String>("features"), listFeatures());
+
+      target->Set(NanNew<v8::String>("libxml"), target);
 }
 
 NODE_MODULE(xmljs, init)

@@ -17,22 +17,24 @@ public:
     static void Initialize(v8::Handle<v8::Object> target);
     static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-    static v8::Handle<v8::Object> New(xmlNode* xml_obj,
+    static v8::Local<v8::Object> New(xmlNode* xml_obj,
             const xmlChar* name, const xmlChar* value);
 
-    static v8::Handle<v8::Object> New(xmlAttr* attr);
+    static v8::Local<v8::Object> New(xmlAttr* attr);
 
 protected:
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Name(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Value(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Node(const v8::Arguments& args);
+    static NAN_METHOD(New);
+    static NAN_METHOD(Name);
+    static NAN_METHOD(Value);
+    static NAN_METHOD(Node);
+    static NAN_METHOD(Namespace);
 
-    v8::Handle<v8::Value> get_name();
-    v8::Handle<v8::Value> get_value();
+    v8::Local<v8::Value> get_name();
+    v8::Local<v8::Value> get_value();
     void set_value(const char* value);
-    v8::Handle<v8::Value> get_element();
+    v8::Local<v8::Value> get_element();
+    v8::Local<v8::Value> get_namespace();
 };
 
 }  // namespace libxmljs

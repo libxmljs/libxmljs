@@ -138,3 +138,33 @@ module.exports.nested = function(assert) {
 
     assert.done();
 };
+
+module.exports.xmlns = function(assert) {
+  var str = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><div>BACON</div><div>ROCKS</div><p>WUT?</p></body></html>';
+  var doc = libxml.parseXmlString(str);
+
+  var divs = doc.find('//xmlns:div', 'http://www.w3.org/1999/xhtml');
+  assert.equal(divs.length, 2);
+
+  var div = doc.get('//xmlns:div', 'http://www.w3.org/1999/xhtml');
+  assert.ok(div != null);
+  var exp = doc.root().child(1).child(0);
+  assert.ok(exp != null);
+  assert.equal(div.toString(), exp.toString());
+  assert.done();
+}
+
+module.exports.custom_ns = function(assert) {
+  var str = '<html xmlns:bacon="http://www.example.com/fake/uri"><head></head><body><bacon:div>BACON</bacon:div><bacon:div>ROCKS</bacon:div><p>WUT?</p></body></html>';
+  var doc = libxml.parseXmlString(str);
+
+  var divs = doc.find('//bacon:div', {'bacon': 'http://www.example.com/fake/uri'});
+  assert.equal(divs.length, 2);
+
+  var div = doc.get('//bacon:div', {'bacon': 'http://www.example.com/fake/uri'});
+  assert.ok(div != null);
+  var exp = doc.root().child(1).child(0);
+  assert.ok(exp != null);
+  assert.equal(div.toString(), exp.toString());
+  assert.done();
+}

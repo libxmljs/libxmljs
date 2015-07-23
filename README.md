@@ -1,5 +1,5 @@
 # Libxmljs
-[![Build Status](https://secure.travis-ci.org/polotek/libxmljs.png?branch=master)](http://travis-ci.org/polotek/libxmljs)
+[![Build Status](https://secure.travis-ci.org/polotek/libxmljs.svg?branch=master)](http://travis-ci.org/polotek/libxmljs)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
@@ -26,7 +26,7 @@ var child = children[0];
 console.log(child.attr('foo').value()); // prints "bar"
 ```
 
-## Basics
+## Support
 
 * Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
 * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
@@ -37,35 +37,17 @@ Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/p
 
 See the [examples](https://github.com/polotek/libxmljs/tree/master/examples) folder.
 
-## Requirements
-
-* [libxml2](http://www.xmlsoft.org/)
-
-You will need have the libxml2 library installed and also the libxml2-devel (libxml2-dev on debian systems)
-package. This comes with the `xml2-config` utility that is needed for
-compiling.  **This command must be in your path.**
-
-## Installation
-
-**npm**
+## Installation via [npm](https://npmjs.org)
 
 ```shell
 npm install libxmljs
 ```
 
-**source**
+## Contribute
 
-To build with node-gyp:
+Start by checking out the [open issues](https://github.com/polotek/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/polotek/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
 
-```shell
-node-gyp configure
-node-gyp build
-```
+### Requirements
 
-Alternatively, run `make`.
+Make sure you have met the requirements for [node-gyp](https://github.com/TooTallNate/node-gyp#installation). You DO NOT need to manually install node-gyp; it comes bundled with node.
 
-**tests**
-
-```shell
-npm test
-```

@@ -17,10 +17,12 @@ module.exports.version = require('./package.json').version;
 module.exports.libxml_version = bindings.libxml_version;
 module.exports.libxml_parser_version = bindings.libxml_parser_version;
 module.exports.libxml_debug_enabled = bindings.libxml_debug_enabled;
+module.exports.features = bindings.features;
 
 // lib exports
 module.exports.Document = Document;
 module.exports.Element = require('./lib/element');
+module.exports.Comment = require('./lib/comment');
 
 // Compatibility synonyms
 Document.fromXmlString = Document.fromXml;

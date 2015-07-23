@@ -14,6 +14,8 @@ module.exports.parse = function(assert) {
     assert.equal('grandchild', doc.get('child').get('grandchild').name());
     assert.equal('with love', doc.get('child/grandchild').text());
     assert.equal('sibling', doc.get('sibling').name());
+    assert.equal(6, doc.get('sibling').line());
+    assert.equal(3, doc.get('child').attr('to').line());
     assert.equal('with content!', doc.get('sibling').text());
     assert.equal(str, doc.toString());
     assert.done();
@@ -79,3 +81,19 @@ module.exports.fatal_error = function(assert) {
     assert.done();
 };
 
+module.exports.parse_options = function(assert) {
+    function test_parser_option(input, options, expected) {
+        var output = libxml.parseXml(input, options).toString();
+        output = output.replace(/^<\?xml version="1.0" encoding="UTF-8"\?>\n/, '');
+        output = output.replace(/\n$/, '');
+        assert.equal(output, expected);
+    }
+
+    test_parser_option("<x>&</x>", { recover: true }, "<x/>") // without this option, this document would raise an exception during parsing
+    test_parser_option("<!DOCTYPE x [ <!ENTITY foo 'bar'> ]> <x>&foo;</x>", { noent: true }, '<!DOCTYPE x [\n<!ENTITY foo "bar">\n]>\n<x>bar</x>') // foo => bar
+    test_parser_option("<x> <a>123</a> </x>", { }, "<x> <a>123</a> </x>") // no indentation even though the toString() default called for formatting
+    test_parser_option("<x> <a>123</a> </x>", { noblanks: true }, "<x>\n  <a>123</a>\n</x>") // ah, now we have indentation!
+    test_parser_option("<x><![CDATA[hi]]></x>", {  }, "<x><![CDATA[hi]]></x>") // normally CDATA stays as CDATA
+    test_parser_option("<x><![CDATA[hi]]></x>", { nocdata: true }, "<x>hi</x>") // but here CDATA is removed!
+    assert.done();
+};

@@ -33,18 +33,18 @@ module.exports.double_free = function(assert) {
     // stick this portion of code into a self-executing function so
     // its internal variables can be garbage collected
     (function(){
-        var html = '<html><body><div><span></span></div></body></html>';
-        var doc = libxml.parseHtml(html);
+      var html = '<html><body><div><span></span></div></body></html>';
+      var doc = libxml.parseHtml(html);
 
-        doc.find('//div').forEach(function(tag){
-            // provide a reference to childNodes so they are exposed as XmlNodes
-            // and therefore subject to V8's garbage collection
-            children = tag.childNodes();
-            tag.remove();
-        });
+      doc.find('//div').forEach(function(tag){
+        // provide a reference to childNodes so they are exposed as XmlNodes
+        // and therefore subject to V8's garbage collection
+        children = tag.childNodes();
+        tag.remove();
+      });
     })();
 
     global.gc();
-    assert.ok(children[0].attrs());
+    assert.ok( children[0].attrs() );
     assert.done();
 };

@@ -2,36 +2,33 @@
   'targets': [
     {
       'target_name': 'xmljs',
+      'product_extension': 'node',
+      'type': 'shared_library',
+      'include_dirs': ["<!(node -e \"require('nan')\")"],
       'sources': [
         'src/libxmljs.cc',
         'src/xml_attribute.cc',
         'src/xml_document.cc',
         'src/xml_element.cc',
+        'src/xml_comment.cc',
         'src/xml_namespace.cc',
         'src/xml_node.cc',
         'src/xml_sax_parser.cc',
         'src/xml_syntax_error.cc',
         'src/xml_xpath_context.cc',
       ],
+      'dependencies': [
+        './vendor/libxml/libxml.gyp:libxml'
+      ],
       'conditions': [
-        ['OS=="win"', {
-          # no Windows support yet...
-        }, {
-          'libraries': [
-            '<!@(xml2-config --libs)'
-          ],
-        }],
         ['OS=="mac"', {
-          # cflags on OS X are stupid and have to be defined like this
+          # node-gyp 2.x doesn't add this anymore
+          # https://github.com/TooTallNate/node-gyp/pull/612
           'xcode_settings': {
-            'OTHER_CFLAGS': [
-              '<!@(xml2-config --cflags)'
-            ]
-          }
-        }, {
-          'cflags': [
-            '<!@(xml2-config --cflags)'
-          ],
+            'OTHER_LDFLAGS': [
+              '-undefined dynamic_lookup'
+            ],
+          },
         }]
       ]
     }
