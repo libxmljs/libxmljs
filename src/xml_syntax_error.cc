@@ -88,7 +88,7 @@ XmlSyntaxErrorsStore::ErrorFunc(void* errs, xmlError* error) {
 xmlError*
 XmlSyntaxErrorsStore::CloneError(xmlError* err1) {
     if (!err1) return NULL;
-    xmlError* err2 = static_cast<xmlError*>(xmlMemMalloc(sizeof(xmlError)));
+    xmlError* err2 = static_cast<xmlError*>(xmlMalloc(sizeof(xmlError)));
     if (!err2) return NULL;
     *err2 = *err1;
     if(err1->message) err2->message = xmlMemStrdup(err1->message);
@@ -101,12 +101,12 @@ XmlSyntaxErrorsStore::CloneError(xmlError* err1) {
 
 void
 XmlSyntaxErrorsStore::FreeError(xmlError* err) {
-    if (err->message) xmlMemFree(err->message);
-    if (err->file) xmlMemFree(err->file);
-    if (err->str1) xmlMemFree(err->str1);
-    if (err->str2) xmlMemFree(err->str2);
-    if (err->str3) xmlMemFree(err->str3);
-    xmlMemFree(err);
+    if (err->message) xmlFree(err->message);
+    if (err->file) xmlFree(err->file);
+    if (err->str1) xmlFree(err->str1);
+    if (err->str2) xmlFree(err->str2);
+    if (err->str3) xmlFree(err->str3);
+    xmlFree(err);
 }
 
 }  // namespace libxmljs
