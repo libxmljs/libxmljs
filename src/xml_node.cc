@@ -136,7 +136,14 @@ NAN_METHOD(XmlNode::ToString) {
   XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
-  NanReturnValue(node->to_string());
+  int options = 0;
+
+  // format by default since that is the default behaviour of Document.toString()
+  if (args.Length() == 0 || (args[0]->IsBoolean() && args[0]->ToBoolean()->BooleanValue() == true)) {
+          options |= XML_SAVE_FORMAT;
+  }
+
+  NanReturnValue(node->to_string(options));
 }
 
 NAN_METHOD(XmlNode::Remove) {
@@ -347,13 +354,13 @@ XmlNode::clone(bool recurse) {
 }
 
 v8::Local<v8::Value>
-XmlNode::to_string() {
+XmlNode::to_string(int options) {
   NanEscapableScope();
 
   xmlBuffer* buf = xmlBufferCreate();
   const char* enc = "UTF-8";
 
-  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, 0);
+  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, options);
   xmlSaveTree(savectx, xml_obj);
   xmlSaveFlush(savectx);
 
