@@ -234,9 +234,7 @@ NAN_METHOD(XmlDocument::FromHtml)
         encoding = NULL;
     }
 
-    v8::Local<v8::Array> errors = NanNew<v8::Array>();
-    xmlResetLastError();
-    xmlSetStructuredErrorFunc(reinterpret_cast<void*>(&errors), XmlSyntaxError::PushToArray);
+    XmlSyntaxErrorsSync errors; // RAII sentinel
 
     htmlDocPtr doc;
     if (!node::Buffer::HasInstance(args[0])) {
@@ -251,18 +249,16 @@ NAN_METHOD(XmlDocument::FromHtml)
                             baseUrl, encoding, 0);
     }
 
-    xmlSetStructuredErrorFunc(NULL, NULL);
-
     if (!doc) {
         xmlError* error = xmlGetLastError();
         if (error) {
-            return NanThrowError(XmlSyntaxError::BuildSyntaxError(error));
+            return NanThrowError(XmlSyntaxErrorsSync::BuildSyntaxError(error));
         }
         return NanThrowError("Could not parse XML string");
     }
 
     v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);
-    doc_handle->Set(NanNew<v8::String>("errors"), errors);
+    doc_handle->Set(NanNew<v8::String>("errors"), errors.ToArray());
 
     // create the xml document handle to return
     NanReturnValue(doc_handle);
@@ -308,11 +304,7 @@ xmlParserOption getXmlParserOption(v8::Local<v8::Object> props) {
 NAN_METHOD(XmlDocument::FromXml)
 {
     NanScope();
-
-    v8::Local<v8::Array> errors = NanNew<v8::Array>();
-    xmlResetLastError();
-    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
-            XmlSyntaxError::PushToArray);
+    XmlSyntaxErrorsSync errors; // RAII sentinel
 
     xmlParserOption opts = getXmlParserOption(args[1]->ToObject());
 
@@ -329,18 +321,16 @@ NAN_METHOD(XmlDocument::FromXml)
                           NULL, NULL, opts);
     }
 
-    xmlSetStructuredErrorFunc(NULL, NULL);
-
     if (!doc) {
         xmlError* error = xmlGetLastError();
         if (error) {
-            return NanThrowError(XmlSyntaxError::BuildSyntaxError(error));
+            return NanThrowError(XmlSyntaxErrorsSync::BuildSyntaxError(error));
         }
         return NanThrowError("Could not parse XML string");
     }
 
     v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);
-    doc_handle->Set(NanNew<v8::String>("errors"), errors);
+    doc_handle->Set(NanNew<v8::String>("errors"), errors.ToArray());
 
     xmlNode* root_node = xmlDocGetRootElement(doc);
     if (root_node == NULL) {
@@ -351,15 +341,97 @@ NAN_METHOD(XmlDocument::FromXml)
     NanReturnValue(doc_handle);
 }
 
+class FromXmlWorker : public NanAsyncWorker
+{
+    char *data;
+    size_t length;
+    xmlDocPtr doc;
+    xmlParserOption opts;
+    WorkerParent parent;
+public:
+    FromXmlWorker(NanCallback* callback,
+                  v8::Local<v8::Object>& buf,
+                  v8::Local<v8::Object>& opt);
+    void Execute();
+    void WorkComplete();
+    XmlSyntaxErrorsStore errors;
+    xmlError* lastError;
+};
+
+FromXmlWorker::FromXmlWorker(NanCallback* callback,
+                             v8::Local<v8::Object>& buf,
+                             v8::Local<v8::Object>& opt)
+    : NanAsyncWorker(callback), lastError(NULL)
+{
+    NanScope();
+    // Only ever parse a buffer
+    data = node::Buffer::Data(buf);
+    length = node::Buffer::Length(buf);
+    opts = getXmlParserOption(opt);
+    SaveToPersistent("buf", buf);
+    SaveToPersistent("opt", opt);
+}
+
+void FromXmlWorker::Execute()
+{
+    WorkerSentinel workerSentinel(parent);
+    XmlSyntaxErrorsAsync errorsSentinel(errors);
+    doc = xmlReadMemory(data, length, NULL, NULL, opts);
+    if (!doc)
+        lastError = XmlSyntaxErrorsStore::CloneError(xmlGetLastError());
+}
+
+void FromXmlWorker::WorkComplete()
+{
+    NanScope();
+    if (!doc) {
+        v8::Local<v8::Value> argv[1];
+        if (lastError) {
+            v8::Local<v8::Value> error =
+                XmlSyntaxErrorsSync::BuildSyntaxError(lastError);
+            XmlSyntaxErrorsStore::FreeError(lastError);
+            argv[0] = error;
+        }
+        else {
+            argv[0] = v8::Exception::Error(NanNew<v8::String>
+                                           ("Could not parse XML string"));
+        }
+        callback->Call(1, argv);
+    }
+    else {
+        xmlNode* root_node = xmlDocGetRootElement(doc);
+        if (root_node == NULL) {
+            v8::Local<v8::Value> argv[1] = {
+                v8::Exception::Error(NanNew<v8::String>
+                                     ("parsed document has no root element"))
+            };
+            callback->Call(1, argv);
+            return;
+        }
+        v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);
+        doc_handle->Set(NanNew<v8::String>("errors"), errors.ToArray());
+        v8::Local<v8::Value> argv[2] = {
+            NanNull(),
+            doc_handle
+        };
+        callback->Call(2, argv);
+    }
+}
+
+NAN_METHOD(XmlDocument::FromXmlAsync) {
+    NanScope();
+    v8::Local<v8::Object> buf = args[0]->ToObject();
+    v8::Local<v8::Object> opt = args[1]->ToObject();
+    NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+    NanAsyncQueueWorker(new FromXmlWorker(callback, buf, opt));
+    NanReturnUndefined();
+}
+
 NAN_METHOD(XmlDocument::Validate)
 {
     NanScope();
 
-    v8::Local<v8::Array> errors = NanNew<v8::Array>();
-    xmlResetLastError();
-    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
-            XmlSyntaxError::PushToArray);
-
+    XmlSyntaxErrorsSync errors;
     XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     XmlDocument* documentSchema = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
 
@@ -377,8 +449,7 @@ NAN_METHOD(XmlDocument::Validate)
     }
     bool valid = xmlSchemaValidateDoc(valid_ctxt, document->xml_obj) == 0;
 
-    xmlSetStructuredErrorFunc(NULL, NULL);
-    args.Holder()->Set(NanNew<v8::String>("validationErrors"), errors);
+    args.Holder()->Set(NanNew<v8::String>("validationErrors"), errors.ToArray());
 
     NanReturnValue(NanNew<v8::Boolean>(valid));
 }
@@ -387,10 +458,7 @@ NAN_METHOD(XmlDocument::RngValidate)
 {
     NanScope();
 
-    v8::Local<v8::Array> errors = NanNew<v8::Array>();
-    xmlResetLastError();
-    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
-            XmlSyntaxError::PushToArray);
+    XmlSyntaxErrorsSync errors;
 
     XmlDocument* document = ObjectWrap::Unwrap<XmlDocument>(args.Holder());
     XmlDocument* documentSchema = ObjectWrap::Unwrap<XmlDocument>(args[0]->ToObject());
@@ -411,8 +479,7 @@ NAN_METHOD(XmlDocument::RngValidate)
     }
 	bool valid = xmlRelaxNGValidateDoc(valid_ctxt, document->xml_obj) == 0;
 
-    xmlSetStructuredErrorFunc(NULL, NULL);
-    args.Holder()->Set(NanNew<v8::String>("validationErrors"), errors);
+     args.Holder()->Set(NanNew<v8::String>("validationErrors"), errors.ToArray());
 
     NanReturnValue(NanNew<v8::Boolean>(valid));
 }
@@ -488,6 +555,7 @@ XmlDocument::Initialize(v8::Handle<v8::Object> target)
 
 
     NODE_SET_METHOD(target, "fromXml", XmlDocument::FromXml);
+    NODE_SET_METHOD(target, "fromXmlAsync", XmlDocument::FromXmlAsync);
     NODE_SET_METHOD(target, "fromHtml", XmlDocument::FromHtml);
 
     // used to create new document handles
