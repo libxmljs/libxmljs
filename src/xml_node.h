@@ -53,7 +53,7 @@ protected:
     v8::Local<v8::Value> get_line_number();
     v8::Local<v8::Value> clone(bool recurse);
     v8::Local<v8::Value> get_type();
-    v8::Local<v8::Value> to_string();
+    v8::Local<v8::Value> to_string(int options = 0);
     void remove();
 };
 

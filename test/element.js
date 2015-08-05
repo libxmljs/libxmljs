@@ -62,6 +62,10 @@ module.exports.toString = function(assert) {
     assert.equal('<name1/>', elem.toString());
     elem.node('child');
     assert.equal('<name1><child/></name1>', elem.toString());
+    assert.equal('<name1><child></child></name1>', elem.toString({ selfCloseEmpty: false }));
+    assert.equal('<name1><child></child></name1>', elem.toString({ type: 'html' }));
+    assert.equal('<name1\n  ><child\n  /></name1\n>', elem.toString({ whitespace: true }));
+    assert.equal('<name1>\n  <child/>\n</name1>', elem.toString({ format: true }));
     assert.done();
 };
 
