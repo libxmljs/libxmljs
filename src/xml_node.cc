@@ -179,17 +179,45 @@ XmlNode::New(xmlNode* node)
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
+    this->freed = false;
     xml_obj->_private = this;
 
     // this will prevent the document from being cleaned up
     // we keep the document if any of the nodes attached to it are still alive
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->ref();
+
+    // check that there's a parent node with a _private pointer
+    // also check that the parent node isn't the doc since we already Ref() the doc once
+    if (xml_obj->parent != NULL &&
+        xml_obj->parent->_private != NULL &&
+        (void*)xml_obj->doc != (void*)xml_obj->parent)
+    {
+        static_cast<XmlNode*>(xml_obj->parent->_private)->Ref();
+    }
 }
 
 XmlNode::~XmlNode() {
-    xml_obj->_private = NULL;
 
+    // check if `xml_obj` has been freed so we don't access bad memory
+    if (this->freed)
+    {
+
+        // unref the doc using the doc reference we saved in the `flagNode` callback
+        if (this->doc)
+        {
+            XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
+            doc->unref();
+        }
+
+        // set doc to null for good measure?
+        // this->doc = NULL;
+
+        // return so we don't attempt to use `xml_obj`
+        return;
+    }
+
+    xml_obj->_private = NULL;
     // release the hold and allow the document to be freed
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->unref();
@@ -198,6 +226,19 @@ XmlNode::~XmlNode() {
     // It will be freed when the doc is freed
     if (xml_obj->parent == NULL)
       xmlFreeNode(xml_obj);
+
+    // if there's a parent then Unref() it
+    else if (xml_obj->parent->_private != NULL &&
+            (void*)xml_obj->doc != (void*)xml_obj->parent)
+    {
+        XmlNode* parent = static_cast<XmlNode*>(xml_obj->parent->_private);
+
+        // make sure Unref() is necessary
+        if (parent->refs_ > 0)
+        {
+            parent->Unref();
+        }
+    }
 }
 
 v8::Local<v8::Value>
