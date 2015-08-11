@@ -168,3 +168,31 @@ module.exports.custom_ns = function(assert) {
   assert.equal(div.toString(), exp.toString());
   assert.done();
 }
+
+module.exports.decls = function(assert) {
+  var str = '<html xmlns="urn:example" xmlns:ex1="urn:example:1"><body/></html>';
+  var doc = libxml.parseXmlString(str);
+  assert.ok(doc);
+  var root = doc.root();
+  assert.ok(root);
+  var decls = root.nsDecls()
+  assert.ok(decls);
+  assert.equal(2, decls.length);
+  decls.forEach(function(n) {
+    if (n.prefix()==null) {
+      assert.equal("urn:example", n.href());
+    }
+    else if (n.prefix() == "ex1") {
+      assert.equal("urn:example:1", n.href());
+    }
+    else {
+      assert.ok(false);
+    }
+  });
+  // body has a namespace, from the default declaration on html.
+  var body = root.get('ex:body', {ex: 'urn:example'});
+  assert.ok(body);
+  decls = body.nsDecls();
+  assert.equal(0, decls.length);
+  assert.done();
+};

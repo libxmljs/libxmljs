@@ -32,6 +32,7 @@ protected:
     static NAN_METHOD(Doc);
     static NAN_METHOD(Namespace);
     static NAN_METHOD(Namespaces);
+    static NAN_METHOD(NamespaceDeclarations);
     static NAN_METHOD(Parent);
     static NAN_METHOD(NextSibling);
     static NAN_METHOD(PrevSibling);
@@ -47,6 +48,7 @@ protected:
     void set_namespace(xmlNs* ns);
     xmlNs * find_namespace(const char * search_str);
     v8::Local<v8::Value> get_all_namespaces();
+    v8::Local<v8::Value> get_nsdefs();
     v8::Local<v8::Value> get_parent();
     v8::Local<v8::Value> get_prev_sibling();
     v8::Local<v8::Value> get_next_sibling();

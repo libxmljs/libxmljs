@@ -91,6 +91,14 @@ NAN_METHOD(XmlNode::Namespaces) {
   NanReturnValue(node->get_all_namespaces());
 }
 
+NAN_METHOD(XmlNode::NamespaceDeclarations) {
+  NanScope();
+  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  assert(node);
+
+  NanReturnValue(node->get_nsdefs());
+}
+
 NAN_METHOD(XmlNode::Parent) {
   NanScope();
   XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
@@ -302,6 +310,21 @@ XmlNode::get_all_namespaces() {
 }
 
 v8::Local<v8::Value>
+XmlNode::get_nsdefs() {
+  NanEscapableScope();
+  xmlNs* nsDef = xml_obj->nsDef;
+
+  v8::Local<v8::Array> defs = NanNew<v8::Array>();
+  for(int i=0; nsDef; i++, nsDef = nsDef->next) {
+      v8::Local<v8::Number> index = NanNew<v8::Number>(i);
+      v8::Local<v8::Object> ns = XmlNamespace::New(nsDef);
+      defs->Set(index, ns);
+  }
+
+  return NanEscapeScope(defs);
+}
+
+v8::Local<v8::Value>
 XmlNode::get_parent() {
   NanEscapableScope();
 
@@ -452,6 +475,10 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   NODE_SET_PROTOTYPE_METHOD(tmpl,
                         "namespaces",
                         XmlNode::Namespaces);
+
+  NODE_SET_PROTOTYPE_METHOD(tmpl,
+                      "nsDecls",
+                      XmlNode::NamespaceDeclarations);
 
   NODE_SET_PROTOTYPE_METHOD(tmpl,
                         "prevSibling",
