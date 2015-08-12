@@ -179,3 +179,26 @@ module.exports.namespace = function(assert) {
     });
     assert.done();
 };
+
+module.exports.replace = function(assert) {
+  var str = "<foo>some <bar/> evening</foo>";
+  var doc = libxml.parseXml(str);
+  var bar = doc.get('bar');
+  bar.replace('enchanted');
+  assert.equal(doc.root().text(), 'some enchanted evening');
+
+  doc = libxml.parseXml(str);
+  bar = doc.get('bar');
+  bar.replace('<>');
+  assert.equal(doc.root().toString(), '<foo>some &lt;&gt; evening</foo>')
+
+  doc = libxml.parseXml(str);
+  bar = doc.get('bar');
+  enchant = libxml.parseXml('<enchanted/>');
+  bar.replace(enchant.root());
+  assert.equal(doc.root().toString(), '<foo>some <enchanted/> evening</foo>')
+  assert.equal(doc.root().childNodes().length, 3);
+  assert.equal(doc.root().childNodes()[1].name(), 'enchanted');
+
+  assert.done();
+}
