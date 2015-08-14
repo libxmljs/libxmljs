@@ -90,11 +90,20 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the thread support is configured in
  */
-#if 0
+#if 1
 #if defined(_REENTRANT) || defined(__MT__) || \
     (defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE - 0 >= 199506L))
 #define LIBXML_THREAD_ENABLED
 #endif
+#endif
+
+/**
+ * LIBXML_THREAD_ALLOC_ENABLED:
+ *
+ * Whether the allocation hooks are per-thread
+ */
+#if 0
+#define LIBXML_THREAD_ALLOC_ENABLED
 #endif
 
 /**
