@@ -61,7 +61,7 @@ module.exports.toString = function(assert) {
     var elem = doc.node('name1');
     assert.equal('<name1/>', elem.toString());
     elem.node('child');
-    assert.equal('<name1><child/></name1>', elem.toString(false));
+    assert.equal('<name1><child/></name1>', elem.toString());
     assert.done();
 };
 
