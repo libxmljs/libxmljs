@@ -136,7 +136,47 @@ NAN_METHOD(XmlNode::ToString) {
   XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
   assert(node);
 
-  NanReturnValue(node->to_string());
+  int options = 0;
+
+  if (args.Length() > 0) {
+      if (args[0]->IsBoolean()) {
+          if (args[0]->ToBoolean()->BooleanValue() == true)
+            options |= XML_SAVE_FORMAT;
+      }else if (args[0]->IsObject()) {
+          v8::Local<v8::Object> obj = args[0]->ToObject();
+          // drop the xml declaration
+          if (obj->Get(NanNew<v8::String>("declaration"))->IsFalse()) {
+              options |= XML_SAVE_NO_DECL;
+          }
+          // format save output
+          if (obj->Get(NanNew<v8::String>("format"))->IsTrue()) {
+              options |= XML_SAVE_FORMAT;
+          }
+          // no empty tags (only works with XML) ex: <title></title> becomes <title/>
+          if (obj->Get(NanNew<v8::String>("selfCloseEmpty"))->IsFalse()) {
+              options |= XML_SAVE_NO_EMPTY;
+          }
+          // format with non-significant whitespace
+          if (obj->Get(NanNew<v8::String>("whitespace"))->IsTrue()) {
+              options |= XML_SAVE_WSNONSIG;
+          }
+          v8::Local<v8::Value> type = obj->Get(NanNew<v8::String>("type"));
+          if (type->Equals(NanNew<v8::String>("XML")) || type->Equals(NanNew<v8::String>("xml"))) {
+              options |= XML_SAVE_AS_XML;    // force XML serialization on HTML doc
+          }else if (type->Equals(NanNew<v8::String>("HTML")) || type->Equals(NanNew<v8::String>("html"))) {
+              options |= XML_SAVE_AS_HTML;   // force HTML serialization on XML doc
+
+              // if the document is XML and we want formatted HTML output
+              // we must use the XHTML serializer because the default HTML
+              // serializer only formats node->type = HTML_NODE and not XML_NODEs
+              if ((options & XML_SAVE_FORMAT) && (options & XML_SAVE_XHTML) == false)
+                  options |= XML_SAVE_XHTML;
+          }else if (type->Equals(NanNew<v8::String>("XHTML")) || type->Equals(NanNew<v8::String>("xhtml"))) {
+              options |= XML_SAVE_XHTML;    // force XHTML serialization
+          }
+      }
+  }
+  NanReturnValue(node->to_string(options));
 }
 
 NAN_METHOD(XmlNode::Remove) {
@@ -347,13 +387,13 @@ XmlNode::clone(bool recurse) {
 }
 
 v8::Local<v8::Value>
-XmlNode::to_string() {
+XmlNode::to_string(int options) {
   NanEscapableScope();
 
   xmlBuffer* buf = xmlBufferCreate();
   const char* enc = "UTF-8";
 
-  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, 0);
+  xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, enc, options);
   xmlSaveTree(savectx, xml_obj);
   xmlSaveFlush(savectx);
 
