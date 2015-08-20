@@ -99,6 +99,63 @@ module.exports.addChild = function(assert) {
     assert.done();
 };
 
+module.exports.addText = {
+    features: function(assert) {
+        var doc = libxml.Document();
+        var elem = doc.node('name1');
+
+        assert.equal('', elem.text());
+        elem.addText('text content');
+        assert.equal('text content', elem.text());
+
+        elem.addText(' more content');
+        assert.equal('text content more content', elem.text()
+            , 'subsequent calls are additive');
+
+        var children = elem.childNodes();
+        assert.equal(1, children.length
+            , 'multiple adjacent text nodes are merged');
+        assert.equal('text', children[0].type()
+            , 'nodes are of type text');
+
+        elem.node('name2');
+        elem.addText('content after element');
+        children = elem.childNodes();
+        assert.equal(3, children.length
+            , 'text separated by elements yields multiple text nodes');
+        assert.equal('content after element', children[2].text());
+
+        assert.done();
+    },
+    errors: function(assert) {
+        function assertBadArgError(func, msg) {
+            assert.throws(func, /^Bad argument/, msg);
+        }
+
+        var doc = libxml.parseXml('<doc><child1/><child2/></doc>');
+        var child = doc.get('//child1');
+
+        assertBadArgError(function() {
+            child.addText();
+        }, 'throws correct error on empty args');
+
+        assertBadArgError(function() {
+            child.addText('');
+
+        }, 'throws correct error on empty string');
+
+        assertBadArgError(function() {
+            child.addText(null);
+        }, 'throws correct error on null');
+
+        assertBadArgError(function() {
+            child.addText(undefined);
+        }, 'throws correct error on undefined');
+
+        assert.done();
+    }
+};
+
 module.exports.add_prev_sibling = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');
@@ -127,6 +184,98 @@ module.exports.add_next_sibling = function(assert) {
     assert.equal(3, children.length);
     assert.equal('next-sibling', children[1].name());
     assert.done();
+};
+
+module.exports.add_prev_text = {
+    features: function(assert) {
+        var doc = libxml.Document();
+        var elem = doc.node('name1');
+
+        var child1 = elem.node('child1');
+        var child2 = elem.node('child2');
+        assert.equal(elem.childNodes().length, 2);
+
+        var node = child2.addPrevText('previous text');
+        var children = elem.childNodes();
+        assert.equal(children[1], node, 'addPrevText returns the added text node');
+        assert.equal(3, children.length);
+        assert.equal('text', children[1].type());
+        assert.equal('previous text', children[1].toString());
+
+        assert.done();
+    },
+    errors: function(assert) {
+        function assertBadArgError(func, msg) {
+            assert.throws(func, /^Bad argument/, msg);
+        }
+
+        var doc = libxml.parseXml('<doc><child1/><child2/></doc>');
+        var child = doc.get('//child1');
+
+        assertBadArgError(function() {
+            child.addPrevText();
+        }, 'throws correct error on empty args');
+
+        assertBadArgError(function() {
+            child.addPrevText('');
+        }, 'throws correct error on empty string');
+
+        assertBadArgError(function() {
+            child.addPrevText(null);
+        }, 'throws correct error on null');
+
+        assertBadArgError(function() {
+            child.addPrevText(undefined);
+        }, 'throws correct error on undefined');
+
+        assert.done();
+    }
+};
+
+module.exports.add_next_text = {
+    features: function(assert) {
+        var doc = libxml.Document();
+        var elem = doc.node('name1');
+
+        var child1 = elem.node('child1');
+        var child2 = elem.node('child2');
+        assert.equal(elem.childNodes().length, 2);
+
+        var node = child2.addNextText('next text');
+        var children = elem.childNodes();
+        assert.equal(children[2], node, 'addNextText returns the added text node.');
+        assert.equal(3, children.length);
+        assert.equal('text', children[2].type());
+        assert.equal('next text', children[2].toString());
+
+        assert.done();
+    },
+    errors: function(assert) {
+        function assertBadArgError(func, msg) {
+            assert.throws(func, /^Bad argument/, msg);
+        }
+
+        var doc = libxml.parseXml('<doc><child1/><child2/></doc>');
+        var child = doc.get('//child1');
+
+        assertBadArgError(function() {
+            child.addNextText();
+        }, 'throws correct error on empty args');
+
+        assertBadArgError(function() {
+            child.addNextText('');
+        }, 'throws correct error on empty string');
+
+        assertBadArgError(function() {
+            child.addNextText(null);
+        }, 'throws correct error on null');
+
+        assertBadArgError(function() {
+            child.addNextText(undefined);
+        }, 'throws correct error on undefined');
+
+        assert.done();
+    }
 };
 
 module.exports.import = function(assert) {
