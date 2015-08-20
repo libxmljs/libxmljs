@@ -9,6 +9,9 @@ var Document = require('./lib/document');
 /// parse an xml string and return a Document
 module.exports.parseXml = Document.fromXml;
 
+/// parse an xml file and return a Document
+module.exports.parseXmlFile = Document.fromXmlFile;
+
 /// parse an html string and return a Document
 module.exports.parseHtml = Document.fromHtml;
 
