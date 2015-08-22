@@ -6,7 +6,7 @@
 
 namespace libxmljs {
 
-class XmlSaxParser : public node::ObjectWrap {
+class XmlSaxParser : public Nan::ObjectWrap {
   public:
 
   XmlSaxParser();

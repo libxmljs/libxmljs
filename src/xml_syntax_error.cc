@@ -11,12 +11,12 @@ void set_string_field(v8::Local<v8::Object> obj,
     if (!value) {
         return;
     }
-    obj->Set(NanNew<v8::String>(name), NanNew<v8::String>(value, strlen(value)));
+    Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::String>(value, strlen(value)).ToLocalChecked());
 }
 
 void set_numeric_field(v8::Local<v8::Object> obj,
         const char* name, const int value) {
-    obj->Set(NanNew<v8::String>(name), NanNew<v8::Int32>(value));
+    Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::Int32>(value));
 }
 
 } // anonymous namespace
@@ -26,7 +26,7 @@ namespace libxmljs {
 v8::Local<v8::Value>
 XmlSyntaxError::BuildSyntaxError(xmlError* error) {
     v8::Local<v8::Value> err = v8::Exception::Error(
-            NanNew<v8::String>(error->message));
+            Nan::New<v8::String>(error->message).ToLocalChecked());
     v8::Local<v8::Object> out = v8::Local<v8::Object>::Cast(err);
 
     set_numeric_field(out, "domain", error->domain);
@@ -51,7 +51,7 @@ void
 XmlSyntaxError::PushToArray(void* errs, xmlError* error) {
     v8::Local<v8::Array> errors = *reinterpret_cast<v8::Local<v8::Array>*>(errs);
     // push method for array
-    v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(NanNew<v8::String>("push")));
+    v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(Nan::New<v8::String>("push").ToLocalChecked()));
 
     v8::Local<v8::Value> argv[1] = { XmlSyntaxError::BuildSyntaxError(error) };
     push->Call(errors, 1, argv);

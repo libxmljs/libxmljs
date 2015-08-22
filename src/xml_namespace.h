@@ -9,13 +9,13 @@
 
 namespace libxmljs {
 
-class XmlNamespace : public node::ObjectWrap {
+class XmlNamespace : public Nan::ObjectWrap {
 public:
 
     xmlNs* xml_obj;
 
     static void Initialize(v8::Handle<v8::Object> target);
-    static v8::Persistent<v8::FunctionTemplate> constructor_template;
+    static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
     explicit XmlNamespace(xmlNs* ns);
     XmlNamespace(xmlNs* node, const char* prefix, const char* href);

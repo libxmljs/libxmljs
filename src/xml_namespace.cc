@@ -8,32 +8,32 @@
 
 namespace libxmljs {
 
-v8::Persistent<v8::FunctionTemplate> XmlNamespace::constructor_template;
+Nan::Persistent<v8::FunctionTemplate> XmlNamespace::constructor_template;
 
 NAN_METHOD(XmlNamespace::New) {
-  NanScope();
+  Nan::HandleScope scope;
 
   // created for an already existing namespace
-  if (args.Length() == 0)
+  if (info.Length() == 0)
   {
-      NanReturnValue(args.Holder());
+      info.GetReturnValue().Set(info.Holder());
   }
 
   // TODO(sprsquish): ensure this is an actual Node object
-  if (!args[0]->IsObject())
-    return NanThrowError("You must provide a node to attach this namespace to");
+  if (!info[0]->IsObject())
+    return Nan::ThrowError("You must provide a node to attach this namespace to");
 
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args[0].As<v8::Object>());
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info[0].As<v8::Object>());
 
   v8::String::Utf8Value* prefix = 0;
   v8::String::Utf8Value* href = 0;
 
-  if (args[1]->IsString())
+  if (info[1]->IsString())
   {
-      prefix = new v8::String::Utf8Value(args[1]);
+      prefix = new v8::String::Utf8Value(info[1]);
   }
 
-  href = new v8::String::Utf8Value(args[2]);
+  href = new v8::String::Utf8Value(info[2]);
 
   xmlNs* ns = xmlNewNs(node->xml_obj,
           (const xmlChar*)(href->operator*()),
@@ -43,20 +43,20 @@ NAN_METHOD(XmlNamespace::New) {
   delete href;
 
   XmlNamespace* namesp = new XmlNamespace(ns);
-  namesp->Wrap(args.Holder());
+  namesp->Wrap(info.Holder());
 
-  NanReturnValue(args.Holder());
+  info.GetReturnValue().Set(info.Holder());
 }
 
 v8::Local<v8::Object>
 XmlNamespace::New(xmlNs* node)
 {
     if (node->_private) {
-        return NanObjectWrapHandle(static_cast<XmlNamespace*>(node->_private));
+        return static_cast<XmlNamespace*>(node->_private)->handle();
     }
 
     XmlNamespace* ns = new XmlNamespace(node);
-    v8::Local<v8::Object> obj = NanNew(constructor_template)->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
     ns->Wrap(obj);
     return obj;
 }
@@ -90,56 +90,56 @@ XmlNamespace::~XmlNamespace()
 }
 
 NAN_METHOD(XmlNamespace::Href) {
-  NanScope();
-  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNamespace *ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(info.Holder());
   assert(ns);
-  NanReturnValue(ns->get_href());
+  info.GetReturnValue().Set(ns->get_href());
 }
 
 NAN_METHOD(XmlNamespace::Prefix) {
-  NanScope();
-  XmlNamespace *ns = ObjectWrap::Unwrap<XmlNamespace>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNamespace *ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(info.Holder());
   assert(ns);
-  NanReturnValue(ns->get_prefix());
+  info.GetReturnValue().Set(ns->get_prefix());
 }
 
 v8::Local<v8::Value>
 XmlNamespace::get_href() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   if (xml_obj->href)
-    return NanEscapeScope(NanNew<v8::String>((const char*)xml_obj->href,
-                           xmlStrlen(xml_obj->href)));
+    return scope.Escape(Nan::New<v8::String>((const char*)xml_obj->href,
+                           xmlStrlen(xml_obj->href)).ToLocalChecked());
 
-  return NanEscapeScope(NanNull());
+  return scope.Escape(Nan::Null());
 }
 
 v8::Local<v8::Value>
 XmlNamespace::get_prefix() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   if (xml_obj->prefix)
-    return NanEscapeScope(NanNew<v8::String>((const char*)xml_obj->prefix,
-                           xmlStrlen(xml_obj->prefix)));
+    return scope.Escape(Nan::New<v8::String>((const char*)xml_obj->prefix,
+                           xmlStrlen(xml_obj->prefix)).ToLocalChecked());
 
-  return NanEscapeScope(NanNull());
+  return scope.Escape(Nan::Null());
 }
 
 void
 XmlNamespace::Initialize(v8::Handle<v8::Object> target) {
-  NanScope();
+  Nan::HandleScope scope;
   v8::Local<v8::FunctionTemplate> tmpl =
-    NanNew<v8::FunctionTemplate>(New);
-  NanAssignPersistent(constructor_template, tmpl);
+    Nan::New<v8::FunctionTemplate>(New);
+  constructor_template.Reset( tmpl);
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "href",
                         XmlNamespace::Href);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "prefix",
                         XmlNamespace::Prefix);
 
-  target->Set(NanNew<v8::String>("Namespace"),
+  Nan::Set(target, Nan::New<v8::String>("Namespace").ToLocalChecked(),
               tmpl->GetFunction());
 }
 }  // namespace libxmljs

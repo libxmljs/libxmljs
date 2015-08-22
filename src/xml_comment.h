@@ -13,7 +13,7 @@ public:
 
     static void Initialize(v8::Handle<v8::Object> target);
 
-    static v8::Persistent<v8::FunctionTemplate> constructor_template;
+    static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
     // create new xml comment to wrap the node
     static v8::Handle<v8::Object> New(xmlNode* node);
