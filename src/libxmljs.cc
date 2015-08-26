@@ -176,9 +176,7 @@ v8::Local<v8::Object> listFeatures() {
     return target;
 }
 
-// used by node.js to initialize libraries
-extern "C" void
-init(v8::Handle<v8::Object> target)
+NAN_MODULE_INIT(init)
 {
       Nan::HandleScope scope;
 

@@ -27,7 +27,7 @@ NAN_METHOD(XmlComment::New) {
   XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
   assert(document);
 
-  v8::Handle<v8::Value> contentOpt;
+  v8::Local<v8::Value> contentOpt;
   if(info[1]->IsString()) {
       contentOpt = info[1];
   }
@@ -71,7 +71,7 @@ XmlComment::set_content(const char* content) {
   xmlFree(encoded);
 }
 
-v8::Handle<v8::Value>
+v8::Local<v8::Value>
 XmlComment::get_content() {
   Nan::EscapableHandleScope scope;
   xmlChar* content = xmlNodeGetContent(xml_obj);
@@ -86,7 +86,7 @@ XmlComment::get_content() {
 }
 
 
-v8::Handle<v8::Object>
+v8::Local<v8::Object>
 XmlComment::New(xmlNode* node)
 {
     Nan::EscapableHandleScope scope;

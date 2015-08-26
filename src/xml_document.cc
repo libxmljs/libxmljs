@@ -102,20 +102,20 @@ NAN_METHOD(XmlDocument::GetDtd)
     const char* sysId = (const char *)dtd->SystemID;
 
     v8::Local<v8::Object> dtdObj = Nan::New<v8::Object>();
-    v8::Handle<v8::Value> nameValue = (v8::Handle<v8::Value>)Nan::Null();
-    v8::Handle<v8::Value> extValue = (v8::Handle<v8::Value>)Nan::Null();
-    v8::Handle<v8::Value> sysValue = (v8::Handle<v8::Value>)Nan::Null();
+    v8::Local<v8::Value> nameValue = (v8::Local<v8::Value>)Nan::Null();
+    v8::Local<v8::Value> extValue = (v8::Local<v8::Value>)Nan::Null();
+    v8::Local<v8::Value> sysValue = (v8::Local<v8::Value>)Nan::Null();
 
     if (name != NULL) {
-        nameValue = (v8::Handle<v8::Value>)Nan::New<v8::String>(name, strlen(name)).ToLocalChecked();
+        nameValue = (v8::Local<v8::Value>)Nan::New<v8::String>(name, strlen(name)).ToLocalChecked();
     }
 
     if (extId != NULL) {
-        extValue = (v8::Handle<v8::Value>)Nan::New<v8::String>(extId, strlen(extId)).ToLocalChecked();
+        extValue = (v8::Local<v8::Value>)Nan::New<v8::String>(extId, strlen(extId)).ToLocalChecked();
     }
 
     if (sysId != NULL) {
-        sysValue = (v8::Handle<v8::Value>)Nan::New<v8::String>(sysId, strlen(sysId)).ToLocalChecked();
+        sysValue = (v8::Local<v8::Value>)Nan::New<v8::String>(sysId, strlen(sysId)).ToLocalChecked();
     }
 
 
