@@ -20,7 +20,7 @@ NAN_METHOD(XmlNode::Doc) {
   XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_doc());
+  return info.GetReturnValue().Set(node->get_doc());
 }
 
 NAN_METHOD(XmlNode::Namespace) {
@@ -30,11 +30,11 @@ NAN_METHOD(XmlNode::Namespace) {
 
   // #namespace() Get the node's namespace
   if (info.Length() == 0) {
-      info.GetReturnValue().Set(node->get_namespace());
+      return info.GetReturnValue().Set(node->get_namespace());
   }
 
   if (info[0]->IsNull())
-      info.GetReturnValue().Set(node->remove_namespace());
+      return info.GetReturnValue().Set(node->remove_namespace());
 
   XmlNamespace* ns = NULL;
 
@@ -80,7 +80,7 @@ NAN_METHOD(XmlNode::Namespace) {
   }
 
   node->set_namespace(ns->xml_obj);
-  info.GetReturnValue().Set(node->get_namespace());
+  return info.GetReturnValue().Set(node->get_namespace());
 }
 
 NAN_METHOD(XmlNode::Namespaces) {
@@ -88,7 +88,7 @@ NAN_METHOD(XmlNode::Namespaces) {
   XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_all_namespaces());
+  return info.GetReturnValue().Set(node->get_all_namespaces());
 }
 
 NAN_METHOD(XmlNode::Parent) {
@@ -96,7 +96,7 @@ NAN_METHOD(XmlNode::Parent) {
   XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_parent());
+  return info.GetReturnValue().Set(node->get_parent());
 }
 
 NAN_METHOD(XmlNode::PrevSibling) {
@@ -104,7 +104,7 @@ NAN_METHOD(XmlNode::PrevSibling) {
   XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_prev_sibling());
+  return info.GetReturnValue().Set(node->get_prev_sibling());
 }
 
 NAN_METHOD(XmlNode::NextSibling) {
@@ -112,7 +112,7 @@ NAN_METHOD(XmlNode::NextSibling) {
   XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_next_sibling());
+  return info.GetReturnValue().Set(node->get_next_sibling());
 }
 
 NAN_METHOD(XmlNode::LineNumber) {
@@ -120,7 +120,7 @@ NAN_METHOD(XmlNode::LineNumber) {
   XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_line_number());
+  return info.GetReturnValue().Set(node->get_line_number());
 }
 
 NAN_METHOD(XmlNode::Type) {
@@ -128,7 +128,7 @@ NAN_METHOD(XmlNode::Type) {
   XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->get_type());
+  return info.GetReturnValue().Set(node->get_type());
 }
 
 NAN_METHOD(XmlNode::ToString) {
@@ -136,7 +136,7 @@ NAN_METHOD(XmlNode::ToString) {
   XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  info.GetReturnValue().Set(node->to_string());
+  return info.GetReturnValue().Set(node->to_string());
 }
 
 NAN_METHOD(XmlNode::Remove) {
@@ -146,7 +146,7 @@ NAN_METHOD(XmlNode::Remove) {
 
   node->remove();
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlNode::Clone) {
@@ -159,7 +159,7 @@ NAN_METHOD(XmlNode::Clone) {
   if (info.Length() == 1 && info[0]->IsBoolean())
       recurse = info[0]->ToBoolean()->BooleanValue();
 
-  info.GetReturnValue().Set(node->clone(recurse));
+  return info.GetReturnValue().Set(node->clone(recurse));
 }
 
 v8::Local<v8::Value>

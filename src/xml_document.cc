@@ -27,11 +27,11 @@ NAN_METHOD(XmlDocument::Encoding)
     // if no args, get the encoding
     if (info.Length() == 0 || info[0]->IsUndefined()) {
         if (document->xml_obj->encoding)
-            info.GetReturnValue().Set(Nan::New<v8::String>(
+            return info.GetReturnValue().Set(Nan::New<v8::String>(
                         (const char *)document->xml_obj->encoding,
                         xmlStrlen((const xmlChar*)document->xml_obj->encoding)).ToLocalChecked());
 
-        info.GetReturnValue().Set(Nan::Null());
+        return info.GetReturnValue().Set(Nan::Null());
     }
 
     // set the encoding otherwise
@@ -41,7 +41,7 @@ NAN_METHOD(XmlDocument::Encoding)
     }
 
     document->xml_obj->encoding = xmlStrdup((const xmlChar*)*encoding);
-    info.GetReturnValue().Set(info.Holder());
+    return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlDocument::Version)
@@ -51,10 +51,10 @@ NAN_METHOD(XmlDocument::Version)
     assert(document);
 
     if (document->xml_obj->version)
-        info.GetReturnValue().Set(Nan::New<v8::String>((const char *)document->xml_obj->version,
+        return info.GetReturnValue().Set(Nan::New<v8::String>((const char *)document->xml_obj->version,
                     xmlStrlen((const xmlChar*)document->xml_obj->version)).ToLocalChecked());
 
-    info.GetReturnValue().Set(Nan::Null());
+    return info.GetReturnValue().Set(Nan::Null());
 }
 
 NAN_METHOD(XmlDocument::Root)
@@ -68,9 +68,9 @@ NAN_METHOD(XmlDocument::Root)
     if (info.Length() == 0 || info[0]->IsUndefined())
     {
         if (!root) {
-            info.GetReturnValue().Set(Nan::Null());
+            return info.GetReturnValue().Set(Nan::Null());
         }
-        info.GetReturnValue().Set(XmlElement::New(root));
+        return info.GetReturnValue().Set(XmlElement::New(root));
     }
 
     if (root != NULL) {
@@ -82,7 +82,7 @@ NAN_METHOD(XmlDocument::Root)
     XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
     assert(element);
     xmlDocSetRootElement(document->xml_obj, element->xml_obj);
-    info.GetReturnValue().Set(info[0]);
+    return info.GetReturnValue().Set(info[0]);
 }
 
 NAN_METHOD(XmlDocument::GetDtd)
@@ -94,7 +94,7 @@ NAN_METHOD(XmlDocument::GetDtd)
     xmlDtdPtr dtd = xmlGetIntSubset(document->xml_obj);
 
     if (!dtd) {
-        info.GetReturnValue().Set(Nan::Null());
+        return info.GetReturnValue().Set(Nan::Null());
     }
 
     const char* name = (const char *)dtd->name;
@@ -125,7 +125,7 @@ NAN_METHOD(XmlDocument::GetDtd)
 
     Nan::Set(dtdObj, Nan::New<v8::String>("systemId").ToLocalChecked(), sysValue);
 
-    info.GetReturnValue().Set(dtdObj);
+    return info.GetReturnValue().Set(dtdObj);
 
 }
 
@@ -162,7 +162,7 @@ NAN_METHOD(XmlDocument::SetDtd)
 
     xmlCreateIntSubset(document->xml_obj, (const xmlChar *) *name, (const xmlChar *) extId, (const xmlChar *) sysId);
 
-    info.GetReturnValue().Set(info.Holder());
+    return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlDocument::ToString)
@@ -178,7 +178,7 @@ NAN_METHOD(XmlDocument::ToString)
     v8::Local<v8::String> str = Nan::New<v8::String>((const char*)buffer, len).ToLocalChecked();
     xmlFree(buffer);
 
-    info.GetReturnValue().Set(str);
+    return info.GetReturnValue().Set(str);
 }
 
 // not called from node
@@ -265,7 +265,7 @@ NAN_METHOD(XmlDocument::FromHtml)
     Nan::Set(doc_handle, Nan::New<v8::String>("errors").ToLocalChecked(), errors);
 
     // create the xml document handle to return
-    info.GetReturnValue().Set(doc_handle);
+    return info.GetReturnValue().Set(doc_handle);
 }
 
 int getXmlParserOption2(v8::Local<v8::Object> props, const char *key, int value) {
@@ -348,7 +348,7 @@ NAN_METHOD(XmlDocument::FromXml)
     }
 
     // create the xml document handle to return
-    info.GetReturnValue().Set(doc_handle);
+    return info.GetReturnValue().Set(doc_handle);
 }
 
 NAN_METHOD(XmlDocument::Validate)
@@ -380,7 +380,7 @@ NAN_METHOD(XmlDocument::Validate)
     xmlSetStructuredErrorFunc(NULL, NULL);
     info.Holder()->Set(Nan::New<v8::String>("validationErrors").ToLocalChecked(), errors);
 
-    info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
+    return info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
 }
 
 NAN_METHOD(XmlDocument::RngValidate)
@@ -414,7 +414,7 @@ NAN_METHOD(XmlDocument::RngValidate)
     xmlSetStructuredErrorFunc(NULL, NULL);
     info.Holder()->Set(Nan::New<v8::String>("validationErrors").ToLocalChecked(), errors);
 
-    info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
+    return info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
 }
 
 /// this is a blank object with prototype methods
@@ -429,7 +429,7 @@ NAN_METHOD(XmlDocument::New)
     XmlDocument* document = new XmlDocument(doc);
     document->Wrap(info.Holder());
 
-    info.GetReturnValue().Set(info.Holder());
+    return info.GetReturnValue().Set(info.Holder());
 }
 
 XmlDocument::XmlDocument(xmlDoc* doc)

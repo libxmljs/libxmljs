@@ -23,7 +23,7 @@ NAN_METHOD(XmlElement::New) {
   // to create a new node on the document
   if (info.Length() == 0)
   {
-      info.GetReturnValue().Set(info.Holder());
+      return info.GetReturnValue().Set(info.Holder());
   }
 
   XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
@@ -53,7 +53,7 @@ NAN_METHOD(XmlElement::New) {
   // this prevents the document from going away
   info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::Name) {
@@ -62,11 +62,11 @@ NAN_METHOD(XmlElement::Name) {
   assert(element);
 
   if (info.Length() == 0)
-      info.GetReturnValue().Set(element->get_name());
+      return info.GetReturnValue().Set(element->get_name());
 
   v8::String::Utf8Value name(info[0]->ToString());
   element->set_name(*name);
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::Attr) {
@@ -78,7 +78,7 @@ NAN_METHOD(XmlElement::Attr) {
   if (info.Length() == 1)
   {
       v8::String::Utf8Value name(info[0]);
-      info.GetReturnValue().Set(element->get_attr(*name));
+      return info.GetReturnValue().Set(element->get_attr(*name));
   }
 
   // setter
@@ -86,7 +86,7 @@ NAN_METHOD(XmlElement::Attr) {
   v8::String::Utf8Value value(info[1]->ToString());
   element->set_attr(*name, *value);
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::Attrs) {
@@ -94,7 +94,7 @@ NAN_METHOD(XmlElement::Attrs) {
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  info.GetReturnValue().Set(element->get_attrs());
+  return info.GetReturnValue().Set(element->get_attrs());
 }
 
 NAN_METHOD(XmlElement::AddChild) {
@@ -112,7 +112,7 @@ NAN_METHOD(XmlElement::AddChild) {
   }
 
   element->add_child(child);
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::AddCData) {
@@ -132,7 +132,7 @@ NAN_METHOD(XmlElement::AddCData) {
                                   xmlStrlen((const xmlChar*)content));
 
   element->add_cdata(elem);
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::Find) {
@@ -162,7 +162,7 @@ NAN_METHOD(XmlElement::Find) {
     }
   }
 
-  info.GetReturnValue().Set(ctxt.evaluate((const xmlChar*)*xpath));
+  return info.GetReturnValue().Set(ctxt.evaluate((const xmlChar*)*xpath));
 }
 
 NAN_METHOD(XmlElement::NextElement) {
@@ -170,7 +170,7 @@ NAN_METHOD(XmlElement::NextElement) {
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  info.GetReturnValue().Set(element->get_next_element());
+  return info.GetReturnValue().Set(element->get_next_element());
 }
 
 NAN_METHOD(XmlElement::PrevElement) {
@@ -178,7 +178,7 @@ NAN_METHOD(XmlElement::PrevElement) {
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  info.GetReturnValue().Set(element->get_prev_element());
+  return info.GetReturnValue().Set(element->get_prev_element());
 }
 
 NAN_METHOD(XmlElement::Text) {
@@ -187,12 +187,12 @@ NAN_METHOD(XmlElement::Text) {
   assert(element);
 
   if (info.Length() == 0) {
-    info.GetReturnValue().Set(element->get_content());
+    return info.GetReturnValue().Set(element->get_content());
   } else {
     element->set_content(*v8::String::Utf8Value(info[0]));
   }
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlElement::Child) {
@@ -206,7 +206,7 @@ NAN_METHOD(XmlElement::Child) {
   }
 
   const int32_t idx = info[0]->Int32Value();
-  info.GetReturnValue().Set(element->get_child(idx));
+  return info.GetReturnValue().Set(element->get_child(idx));
 }
 
 NAN_METHOD(XmlElement::ChildNodes) {
@@ -215,9 +215,9 @@ NAN_METHOD(XmlElement::ChildNodes) {
   assert(element);
 
   if (info[0]->IsInt32())
-      info.GetReturnValue().Set(element->get_child(info[0]->Int32Value()));
+      return info.GetReturnValue().Set(element->get_child(info[0]->Int32Value()));
 
-  info.GetReturnValue().Set(element->get_child_nodes());
+  return info.GetReturnValue().Set(element->get_child_nodes());
 }
 
 NAN_METHOD(XmlElement::Path) {
@@ -225,7 +225,7 @@ NAN_METHOD(XmlElement::Path) {
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  info.GetReturnValue().Set(element->get_path());
+  return info.GetReturnValue().Set(element->get_path());
 }
 
 NAN_METHOD(XmlElement::AddPrevSibling) {
@@ -240,7 +240,7 @@ NAN_METHOD(XmlElement::AddPrevSibling) {
 
   element->add_prev_sibling(new_sibling);
 
-  info.GetReturnValue().Set(info[0]);
+  return info.GetReturnValue().Set(info[0]);
 }
 
 NAN_METHOD(XmlElement::AddNextSibling) {
@@ -255,7 +255,7 @@ NAN_METHOD(XmlElement::AddNextSibling) {
 
   element->add_next_sibling(new_sibling);
 
-  info.GetReturnValue().Set(info[0]);
+  return info.GetReturnValue().Set(info[0]);
 }
 
 void

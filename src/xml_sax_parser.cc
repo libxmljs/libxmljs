@@ -96,7 +96,7 @@ NAN_METHOD(XmlSaxParser::NewParser) {
   XmlSaxParser* parser = new XmlSaxParser();
   parser->Wrap(info.Holder());
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlSaxParser::NewPushParser) {
@@ -105,7 +105,7 @@ NAN_METHOD(XmlSaxParser::NewPushParser) {
   parser->initialize_push_parser();
   parser->Wrap(info.Holder());
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 void
@@ -146,7 +146,7 @@ NAN_METHOD(XmlSaxParser::Push) {
 
   parser->push(*parsable, parsable.length(), terminate);
 
-  info.GetReturnValue().Set(Nan::True());
+  return info.GetReturnValue().Set(Nan::True());
 }
 
 void
@@ -175,7 +175,7 @@ NAN_METHOD(XmlSaxParser::ParseString) {
   parser->parse_string(*parsable, parsable.length());
 
   // TODO(sprsquish): return based on the parser
-  info.GetReturnValue().Set(Nan::True());
+  return info.GetReturnValue().Set(Nan::True());
 }
 
 void

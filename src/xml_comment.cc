@@ -21,7 +21,7 @@ NAN_METHOD(XmlComment::New) {
   // to create a new node on the document
   if (info.Length() == 0)
   {
-      info.GetReturnValue().Set(info.Holder());
+      return info.GetReturnValue().Set(info.Holder());
   }
 
   XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
@@ -47,7 +47,7 @@ NAN_METHOD(XmlComment::New) {
   // this prevents the document from going away
   info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlComment::Text) {
@@ -56,12 +56,12 @@ NAN_METHOD(XmlComment::Text) {
   assert(comment);
 
   if (info.Length() == 0) {
-    info.GetReturnValue().Set(comment->get_content());
+    return info.GetReturnValue().Set(comment->get_content());
   } else {
     comment->set_content(*v8::String::Utf8Value(info[0]));
   }
 
-  info.GetReturnValue().Set(info.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 void
