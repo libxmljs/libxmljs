@@ -23,7 +23,7 @@ NAN_METHOD(XmlNamespace::New) {
   if (!info[0]->IsObject())
     return Nan::ThrowError("You must provide a node to attach this namespace to");
 
-  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info[0].As<v8::Object>());
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
 
   v8::String::Utf8Value* prefix = 0;
   v8::String::Utf8Value* href = 0;
