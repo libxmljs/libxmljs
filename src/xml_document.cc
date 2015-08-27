@@ -380,6 +380,10 @@ NAN_METHOD(XmlDocument::Validate)
     xmlSetStructuredErrorFunc(NULL, NULL);
     info.Holder()->Set(Nan::New<v8::String>("validationErrors").ToLocalChecked(), errors);
 
+    xmlSchemaFreeValidCtxt(valid_ctxt);
+    xmlSchemaFree(schema);
+    xmlSchemaFreeParserCtxt(parser_ctxt);
+
     return info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
 }
 
