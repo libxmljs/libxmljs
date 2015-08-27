@@ -13,45 +13,45 @@
 
 namespace libxmljs {
 
-v8::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
+Nan::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
 
 NAN_METHOD(XmlNode::Doc) {
-  NanScope();
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_doc());
+  return info.GetReturnValue().Set(node->get_doc());
 }
 
 NAN_METHOD(XmlNode::Namespace) {
-  NanScope();
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
   // #namespace() Get the node's namespace
-  if (args.Length() == 0) {
-      NanReturnValue(node->get_namespace());
+  if (info.Length() == 0) {
+      return info.GetReturnValue().Set(node->get_namespace());
   }
 
-  if (args[0]->IsNull())
-      NanReturnValue(node->remove_namespace());
+  if (info[0]->IsNull())
+      return info.GetReturnValue().Set(node->remove_namespace());
 
   XmlNamespace* ns = NULL;
 
   // #namespace(ns) libxml.Namespace object was provided
   // TODO(sprsquish): check that it was actually given a namespace obj
-  if (args[0]->IsObject())
-    ns = ObjectWrap::Unwrap<XmlNamespace>(args[0]->ToObject());
+  if (info[0]->IsObject())
+    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(info[0]->ToObject());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
-  if (args[0]->IsString()) {
-    v8::String::Utf8Value ns_to_find(args[0]->ToString());
+  if (info[0]->IsString()) {
+    v8::String::Utf8Value ns_to_find(info[0]->ToString());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns) {
         // maybe build
         v8::Local<v8::Object> existing = XmlNamespace::New(found_ns);
-        ns = ObjectWrap::Unwrap<XmlNamespace>(existing);
+        ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(existing);
     }
   }
 
@@ -59,107 +59,107 @@ NAN_METHOD(XmlNode::Namespace) {
   if (!ns) {
       const unsigned int argc = 3;
       v8::Local<v8::Value> argv[argc];
-      argv[0] = args.Holder();
+      argv[0] = info.Holder();
 
-      if (args.Length() == 1) {
-          argv[1] = NanNull();
-          argv[2] = args[0];
+      if (info.Length() == 1) {
+          argv[1] = Nan::Null();
+          argv[2] = info[0];
       } else {
-          argv[1] = args[0];
-          argv[2] = args[1];
+          argv[1] = info[0];
+          argv[2] = info[1];
       }
 
       v8::Local<v8::Function> define_namespace =
-          NanNew(XmlNamespace::constructor_template)->GetFunction();
+          Nan::New(XmlNamespace::constructor_template)->GetFunction();
 
       // will create a new namespace attached to this node
       // since we keep the document around, the namespace, like the node, won't be
       // garbage collected
       v8::Local<v8::Value> new_ns = define_namespace->NewInstance(argc, argv);
-      ns = ObjectWrap::Unwrap<XmlNamespace>(new_ns->ToObject());
+      ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(new_ns->ToObject());
   }
 
   node->set_namespace(ns->xml_obj);
-  NanReturnValue(node->get_namespace());
+  return info.GetReturnValue().Set(node->get_namespace());
 }
 
 NAN_METHOD(XmlNode::Namespaces) {
-  NanScope();
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_all_namespaces());
+  return info.GetReturnValue().Set(node->get_all_namespaces());
 }
 
 NAN_METHOD(XmlNode::Parent) {
-  NanScope();
-  XmlNode* node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_parent());
+  return info.GetReturnValue().Set(node->get_parent());
 }
 
 NAN_METHOD(XmlNode::PrevSibling) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_prev_sibling());
+  return info.GetReturnValue().Set(node->get_prev_sibling());
 }
 
 NAN_METHOD(XmlNode::NextSibling) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_next_sibling());
+  return info.GetReturnValue().Set(node->get_next_sibling());
 }
 
 NAN_METHOD(XmlNode::LineNumber) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_line_number());
+  return info.GetReturnValue().Set(node->get_line_number());
 }
 
 NAN_METHOD(XmlNode::Type) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->get_type());
+  return info.GetReturnValue().Set(node->get_type());
 }
 
 NAN_METHOD(XmlNode::ToString) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  NanReturnValue(node->to_string());
+  return info.GetReturnValue().Set(node->to_string());
 }
 
 NAN_METHOD(XmlNode::Remove) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
   node->remove();
 
-  NanReturnValue(args.Holder());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlNode::Clone) {
-  NanScope();
-  XmlNode *node = ObjectWrap::Unwrap<XmlNode>(args.Holder());
+  Nan::HandleScope scope;
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
   bool recurse = true;
 
-  if (args.Length() == 1 && args[0]->IsBoolean())
-      recurse = args[0]->ToBoolean()->BooleanValue();
+  if (info.Length() == 1 && info[0]->IsBoolean())
+      recurse = info[0]->ToBoolean()->BooleanValue();
 
-  NanReturnValue(node->clone(recurse));
+  return info.GetReturnValue().Set(node->clone(recurse));
 }
 
 v8::Local<v8::Value>
@@ -249,18 +249,18 @@ XmlNode::get_doc() {
 v8::Local<v8::Value>
 XmlNode::remove_namespace() {
   xml_obj->ns = NULL;
-  return NanNull();
+  return Nan::Null();
 }
 
 v8::Local<v8::Value>
 XmlNode::get_namespace() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   if (!xml_obj->ns)
   {
-      return NanEscapeScope(NanNull());
+      return scope.Escape(Nan::Null());
   }
 
-  return NanEscapeScope(XmlNamespace::New(xml_obj->ns));
+  return scope.Escape(XmlNamespace::New(xml_obj->ns));
 }
 
 void
@@ -285,70 +285,70 @@ XmlNode::find_namespace(const char* search_str) {
 
 v8::Local<v8::Value>
 XmlNode::get_all_namespaces() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
 
   // Iterate through namespaces
-  v8::Local<v8::Array> namespaces = NanNew<v8::Array>();
+  v8::Local<v8::Array> namespaces = Nan::New<v8::Array>();
   xmlNs** nsList = xmlGetNsList(xml_obj->doc, xml_obj);
   if (nsList != NULL) {
     for (int i = 0; nsList[i] != NULL; i++) {
-      v8::Local<v8::Number> index = NanNew<v8::Number>(i);
+      v8::Local<v8::Number> index = Nan::New<v8::Number>(i);
       v8::Local<v8::Object> ns = XmlNamespace::New(nsList[i]);
-      namespaces->Set(index, ns);
+      Nan::Set(namespaces, index, ns);
     }
   }
 
-  return NanEscapeScope(namespaces);
+  return scope.Escape(namespaces);
 }
 
 v8::Local<v8::Value>
 XmlNode::get_parent() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
 
   if (xml_obj->parent) {
-      return NanEscapeScope(XmlElement::New(xml_obj->parent));
+      return scope.Escape(XmlElement::New(xml_obj->parent));
   }
 
-  return NanEscapeScope(XmlDocument::New(xml_obj->doc));
+  return scope.Escape(XmlDocument::New(xml_obj->doc));
 }
 
 v8::Local<v8::Value>
 XmlNode::get_prev_sibling() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   if (xml_obj->prev) {
-      return NanEscapeScope(XmlNode::New(xml_obj->prev));
+      return scope.Escape(XmlNode::New(xml_obj->prev));
   }
 
-  return NanEscapeScope(NanNull());
+  return scope.Escape(Nan::Null());
 }
 
 v8::Local<v8::Value>
 XmlNode::get_next_sibling() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   if (xml_obj->next) {
-      return NanEscapeScope(XmlNode::New(xml_obj->next));
+      return scope.Escape(XmlNode::New(xml_obj->next));
   }
 
-  return NanEscapeScope(NanNull());
+  return scope.Escape(Nan::Null());
 }
 
 v8::Local<v8::Value>
 XmlNode::get_line_number() {
-  NanEscapableScope();
-  return NanEscapeScope(NanNew<v8::Integer>(uint32_t(xmlGetLineNo(xml_obj))));
+  Nan::EscapableHandleScope scope;
+  return scope.Escape(Nan::New<v8::Integer>(uint32_t(xmlGetLineNo(xml_obj))));
 }
 
 v8::Local<v8::Value>
 XmlNode::clone(bool recurse) {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
 
   xmlNode* new_xml_obj = xmlDocCopyNode(xml_obj, xml_obj->doc, recurse);
-  return NanEscapeScope(XmlNode::New(new_xml_obj));
+  return scope.Escape(XmlNode::New(new_xml_obj));
 }
 
 v8::Local<v8::Value>
 XmlNode::to_string() {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
 
   xmlBuffer* buf = xmlBufferCreate();
   const char* enc = "UTF-8";
@@ -360,18 +360,18 @@ XmlNode::to_string() {
   const xmlChar* xmlstr = xmlBufferContent(buf);
 
   if(xmlstr) {
-      v8::Local<v8::String> str = NanNew<v8::String>((char*)xmlstr, xmlBufferLength(buf));
+      v8::Local<v8::String> str = Nan::New<v8::String>((char*)xmlstr, xmlBufferLength(buf)).ToLocalChecked();
       xmlSaveClose(savectx);
 
       xmlBufferFree(buf);
 
-      return NanEscapeScope(str);
+      return scope.Escape(str);
   } else {
       xmlSaveClose(savectx);
 
       xmlBufferFree(buf);
 
-      return NanEscapeScope(NanNull());
+      return scope.Escape(Nan::Null());
   }
 }
 
@@ -384,100 +384,100 @@ v8::Local<v8::Value>
 XmlNode::get_type() {
   switch (xml_obj->type) {
   case  XML_ELEMENT_NODE:
-    return NanNew<v8::String>("element");
+    return Nan::New<v8::String>("element").ToLocalChecked();
   case XML_ATTRIBUTE_NODE:
-    return NanNew<v8::String>("attribute");
+    return Nan::New<v8::String>("attribute").ToLocalChecked();
   case XML_TEXT_NODE:
-    return NanNew<v8::String>("text");
+    return Nan::New<v8::String>("text").ToLocalChecked();
   case XML_CDATA_SECTION_NODE:
-    return NanNew<v8::String>("cdata");
+    return Nan::New<v8::String>("cdata").ToLocalChecked();
   case XML_ENTITY_REF_NODE:
-    return NanNew<v8::String>("entity_ref");
+    return Nan::New<v8::String>("entity_ref").ToLocalChecked();
   case XML_ENTITY_NODE:
-    return NanNew<v8::String>("entity");
+    return Nan::New<v8::String>("entity").ToLocalChecked();
   case XML_PI_NODE:
-    return NanNew<v8::String>("pi");
+    return Nan::New<v8::String>("pi").ToLocalChecked();
   case XML_COMMENT_NODE:
-    return NanNew<v8::String>("comment");
+    return Nan::New<v8::String>("comment").ToLocalChecked();
   case XML_DOCUMENT_NODE:
-    return NanNew<v8::String>("document");
+    return Nan::New<v8::String>("document").ToLocalChecked();
   case XML_DOCUMENT_TYPE_NODE:
-    return NanNew<v8::String>("document_type");
+    return Nan::New<v8::String>("document_type").ToLocalChecked();
   case XML_DOCUMENT_FRAG_NODE:
-    return NanNew<v8::String>("document_frag");
+    return Nan::New<v8::String>("document_frag").ToLocalChecked();
   case XML_NOTATION_NODE:
-    return NanNew<v8::String>("notation");
+    return Nan::New<v8::String>("notation").ToLocalChecked();
   case XML_HTML_DOCUMENT_NODE:
-    return NanNew<v8::String>("html_document");
+    return Nan::New<v8::String>("html_document").ToLocalChecked();
   case XML_DTD_NODE:
-    return NanNew<v8::String>("dtd");
+    return Nan::New<v8::String>("dtd").ToLocalChecked();
   case XML_ELEMENT_DECL:
-    return NanNew<v8::String>("element_decl");
+    return Nan::New<v8::String>("element_decl").ToLocalChecked();
   case XML_ATTRIBUTE_DECL:
-    return NanNew<v8::String>("attribute_decl");
+    return Nan::New<v8::String>("attribute_decl").ToLocalChecked();
   case XML_ENTITY_DECL:
-    return NanNew<v8::String>("entity_decl");
+    return Nan::New<v8::String>("entity_decl").ToLocalChecked();
   case XML_NAMESPACE_DECL:
-    return NanNew<v8::String>("namespace_decl");
+    return Nan::New<v8::String>("namespace_decl").ToLocalChecked();
   case XML_XINCLUDE_START:
-    return NanNew<v8::String>("xinclude_start");
+    return Nan::New<v8::String>("xinclude_start").ToLocalChecked();
   case XML_XINCLUDE_END:
-    return NanNew<v8::String>("xinclude_end");
+    return Nan::New<v8::String>("xinclude_end").ToLocalChecked();
   case XML_DOCB_DOCUMENT_NODE:
-    return NanNew<v8::String>("docb_document");
+    return Nan::New<v8::String>("docb_document").ToLocalChecked();
   }
 
-  return NanNull();
+  return Nan::Null();
 }
 
 void
 XmlNode::Initialize(v8::Handle<v8::Object> target) {
-  NanScope();
-  v8::Local<v8::FunctionTemplate> tmpl = NanNew<v8::FunctionTemplate>();
-  NanAssignPersistent(constructor_template, tmpl);
+  Nan::HandleScope scope;
+  v8::Local<v8::FunctionTemplate> tmpl = Nan::New<v8::FunctionTemplate>();
+  constructor_template.Reset( tmpl);
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "doc",
                         XmlNode::Doc);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "parent",
                         XmlNode::Parent);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "namespace",
                         XmlNode::Namespace);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "namespaces",
                         XmlNode::Namespaces);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "prevSibling",
                         XmlNode::PrevSibling);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "nextSibling",
                         XmlNode::NextSibling);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "line",
                         XmlNode::LineNumber);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "type",
                         XmlNode::Type);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "remove",
                         XmlNode::Remove);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "clone",
                         XmlNode::Clone);
 
-  NODE_SET_PROTOTYPE_METHOD(tmpl,
+  Nan::SetPrototypeMethod(tmpl,
                         "toString",
                         XmlNode::ToString);
 

@@ -8,7 +8,7 @@
 
 #define LIBXMLJS_ARGUMENT_TYPE_CHECK(arg, type, err)                          \
   if (!arg->type()) {                                                         \
-    return NanThrowTypeError(err);                                            \
+    return Nan::ThrowTypeError(err);                                            \
   }
 
 namespace libxmljs {

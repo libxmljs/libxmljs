@@ -8,10 +8,10 @@
 
 namespace libxmljs {
 
-class XmlDocument : public node::ObjectWrap {
+class XmlDocument : public Nan::ObjectWrap {
 
     // used to create new instanced of a document handle
-    static v8::Persistent<v8::FunctionTemplate> constructor_template;
+    static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
 public:
     // TODO make private with accessor

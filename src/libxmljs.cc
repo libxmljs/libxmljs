@@ -32,7 +32,7 @@ void* xmlMemMallocWrap(size_t size)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    NanAdjustExternalMemory(diff);
+    Nan::AdjustExternalMemory(diff);
     return res;
 }
 
@@ -60,7 +60,7 @@ void xmlMemFreeWrap(void* p)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    NanAdjustExternalMemory(diff);
+    Nan::AdjustExternalMemory(diff);
 }
 
 // wrapper for xmlMemRealloc to update v8's knowledge of memory used
@@ -76,7 +76,7 @@ void* xmlMemReallocWrap(void* ptr, size_t size)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    NanAdjustExternalMemory(diff);
+    Nan::AdjustExternalMemory(diff);
     return res;
 }
 
@@ -93,7 +93,7 @@ char* xmlMemoryStrdupWrap(const char* str)
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
-    NanAdjustExternalMemory(diff);
+    Nan::AdjustExternalMemory(diff);
     return res;
 }
 
@@ -136,9 +136,9 @@ LibXMLJS::~LibXMLJS()
 }
 
 v8::Local<v8::Object> listFeatures() {
-    v8::Local<v8::Object> target = NanNew<v8::Object>();
-#define FEAT(x) target->Set(NanNew<v8::String>(# x), \
-                    NanNew<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
+    v8::Local<v8::Object> target = Nan::New<v8::Object>();
+#define FEAT(x) Nan::Set(target, Nan::New<v8::String>(# x).ToLocalChecked(), \
+                    Nan::New<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
     // See enum xmlFeature in parser.h
     FEAT(THREAD);
     FEAT(TREE);
@@ -176,27 +176,25 @@ v8::Local<v8::Object> listFeatures() {
     return target;
 }
 
-// used by node.js to initialize libraries
-extern "C" void
-init(v8::Handle<v8::Object> target)
+NAN_MODULE_INIT(init)
 {
-      NanScope();
+      Nan::HandleScope scope;
 
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
 
-      target->Set(NanNew<v8::String>("libxml_version"),
-                  NanNew<v8::String>(LIBXML_DOTTED_VERSION));
+      Nan::Set(target, Nan::New<v8::String>("libxml_version").ToLocalChecked(),
+                  Nan::New<v8::String>(LIBXML_DOTTED_VERSION).ToLocalChecked());
 
-      target->Set(NanNew<v8::String>("libxml_parser_version"),
-                  NanNew<v8::String>(xmlParserVersion));
+      Nan::Set(target, Nan::New<v8::String>("libxml_parser_version").ToLocalChecked(),
+                  Nan::New<v8::String>(xmlParserVersion).ToLocalChecked());
 
-      target->Set(NanNew<v8::String>("libxml_debug_enabled"),
-                  NanNew<v8::Boolean>(debugging));
+      Nan::Set(target, Nan::New<v8::String>("libxml_debug_enabled").ToLocalChecked(),
+                  Nan::New<v8::Boolean>(debugging));
 
-      target->Set(NanNew<v8::String>("features"), listFeatures());
+      Nan::Set(target, Nan::New<v8::String>("features").ToLocalChecked(), listFeatures());
 
-      target->Set(NanNew<v8::String>("libxml"), target);
+      Nan::Set(target, Nan::New<v8::String>("libxml").ToLocalChecked(), target);
 }
 
 NODE_MODULE(xmljs, init)

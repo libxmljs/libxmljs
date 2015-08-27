@@ -25,7 +25,7 @@ XmlXpathContext::register_ns(const xmlChar* prefix,
 
 v8::Local<v8::Value>
 XmlXpathContext::evaluate(const xmlChar* xpath) {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   xmlXPathObject* xpathobj = xmlXPathEval(xpath, ctxt);
   v8::Local<v8::Value> res;
 
@@ -33,13 +33,13 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
     switch (xpathobj->type) {
     case XPATH_NODESET: {
       if (xmlXPathNodeSetIsEmpty(xpathobj->nodesetval)) {
-        res = NanNew<v8::Array>(0);
+        res = Nan::New<v8::Array>(0);
         break;
       }
 
-      v8::Local<v8::Array> nodes = NanNew<v8::Array>(xpathobj->nodesetval->nodeNr);
+      v8::Local<v8::Array> nodes = Nan::New<v8::Array>(xpathobj->nodesetval->nodeNr);
       for (int i = 0; i != xpathobj->nodesetval->nodeNr; ++i) {
-        nodes->Set(i, XmlNode::New(xpathobj->nodesetval->nodeTab[i]));
+        Nan::Set(nodes, i, XmlNode::New(xpathobj->nodesetval->nodeTab[i]));
       }
 
       res = nodes;
@@ -47,26 +47,26 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
     }
 
     case XPATH_BOOLEAN:
-      res = NanNew<v8::Boolean>(xpathobj->boolval);
+      res = Nan::New<v8::Boolean>(xpathobj->boolval);
       break;
 
     case XPATH_NUMBER:
-      res = NanNew<v8::Number>(xpathobj->floatval);
+      res = Nan::New<v8::Number>(xpathobj->floatval);
       break;
 
     case XPATH_STRING:
-      res = NanNew<v8::String>((const char *)xpathobj->stringval,
-                            xmlStrlen(xpathobj->stringval));
+      res = Nan::New<v8::String>((const char *)xpathobj->stringval,
+                            xmlStrlen(xpathobj->stringval)).ToLocalChecked();
       break;
 
     default:
-      res = NanNull();
+      res = Nan::Null();
       break;
     }
   }
 
   xmlXPathFreeObject(xpathobj);
-  return NanEscapeScope(res);
+  return scope.Escape(res);
 }
 
 }  // namespace libxmljs

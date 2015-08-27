@@ -1,10 +1,25 @@
 language: node_js
+
+env:
+    - CXX=g++-4.8
+
 node_js:
     - "0.8"
     - "0.10"
     - "0.12"
-    - iojs-2.0
+    - iojs-1
     - iojs-2
+    - iojs-3
+
+addons:
+    apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-4.8
+
+sudo: false
 
 before_install:
+    - $CXX --version
     - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm update -g npm ;; esac

@@ -13,10 +13,10 @@ public:
 
     static void Initialize(v8::Handle<v8::Object> target);
 
-    static v8::Persistent<v8::FunctionTemplate> constructor_template;
+    static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
     // create new xml comment to wrap the node
-    static v8::Handle<v8::Object> New(xmlNode* node);
+    static v8::Local<v8::Object> New(xmlNode* node);
 
 protected:
 
@@ -24,7 +24,7 @@ protected:
     static NAN_METHOD(Text);
 
     void set_content(const char* content);
-    v8::Handle<v8::Value> get_content();
+    v8::Local<v8::Value> get_content();
 };
 
 }  // namespace libxmljs
