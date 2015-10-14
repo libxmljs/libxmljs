@@ -178,7 +178,7 @@ NAN_METHOD(XmlDocument::ToString)
     int len = 0;
     if (document->xml_obj->type == XML_HTML_DOCUMENT_NODE) {
         htmlDocDumpMemoryFormat(document->xml_obj, &buffer, &len, info[0]->BooleanValue() ? 1 : 0);
-    }else{
+    } else {
         xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", info[0]->BooleanValue() ? 1 : 0);
     }
     v8::Local<v8::String> str = Nan::New<v8::String>((const char*)buffer, len).ToLocalChecked();
