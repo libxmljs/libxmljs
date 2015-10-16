@@ -333,6 +333,7 @@ module.exports.validate_memory_usage = function(assert) {
 
     global.gc();
 
-    assert.ok(process.memoryUsage().rss - initialMemory.rss < 2000000);
+    var maxRssDelta = /^v0\.8/.test(process.version) ? (initialMemory.rss / 2) : 2000000;
+    assert.ok(process.memoryUsage().rss - initialMemory.rss < maxRssDelta);
     assert.done();
 };

@@ -5,6 +5,8 @@
 
 #include <cstring>
 
+//#include <libxml/tree.h>
+#include <libxml/HTMLtree.h>
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/relaxng.h>
@@ -174,7 +176,11 @@ NAN_METHOD(XmlDocument::ToString)
 
     xmlChar* buffer = NULL;
     int len = 0;
-    xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", info[0]->BooleanValue() ? 1 : 0);
+    if (document->xml_obj->type == XML_HTML_DOCUMENT_NODE) {
+        htmlDocDumpMemoryFormat(document->xml_obj, &buffer, &len, info[0]->BooleanValue() ? 1 : 0);
+    } else {
+        xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", info[0]->BooleanValue() ? 1 : 0);
+    }
     v8::Local<v8::String> str = Nan::New<v8::String>((const char*)buffer, len).ToLocalChecked();
     xmlFree(buffer);
 
