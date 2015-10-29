@@ -136,6 +136,7 @@ LibXMLJS::~LibXMLJS()
 }
 
 v8::Local<v8::Object> listFeatures() {
+    Nan::EscapableHandleScope scope;
     v8::Local<v8::Object> target = Nan::New<v8::Object>();
 #define FEAT(x) Nan::Set(target, Nan::New<v8::String>(# x).ToLocalChecked(), \
                     Nan::New<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
@@ -173,7 +174,7 @@ v8::Local<v8::Object> listFeatures() {
     FEAT(ZLIB);
     FEAT(ICU);
     FEAT(LZMA);
-    return target;
+    return scope.Escape(target);
 }
 
 NAN_MODULE_INIT(init)
