@@ -405,24 +405,28 @@ NAN_METHOD(XmlDocument::RngValidate)
     XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info.Holder());
     XmlDocument* documentSchema = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
 
-	xmlRelaxNGParserCtxtPtr parser_ctxt = xmlRelaxNGNewDocParserCtxt(documentSchema->xml_obj);
+    xmlRelaxNGParserCtxtPtr parser_ctxt = xmlRelaxNGNewDocParserCtxt(documentSchema->xml_obj);
     if (parser_ctxt == NULL) {
         return Nan::ThrowError("Could not create context for RELAX NG schema parser");
     }
 
-	xmlRelaxNGPtr schema = xmlRelaxNGParse(parser_ctxt);
+    xmlRelaxNGPtr schema = xmlRelaxNGParse(parser_ctxt);
     if (schema == NULL) {
         return Nan::ThrowError("Invalid RELAX NG schema");
     }
 
-	xmlRelaxNGValidCtxtPtr valid_ctxt = xmlRelaxNGNewValidCtxt(schema);
+    xmlRelaxNGValidCtxtPtr valid_ctxt = xmlRelaxNGNewValidCtxt(schema);
     if (valid_ctxt == NULL) {
         return Nan::ThrowError("Unable to create a validation context for the RELAX NG schema");
     }
-	bool valid = xmlRelaxNGValidateDoc(valid_ctxt, document->xml_obj) == 0;
+    bool valid = xmlRelaxNGValidateDoc(valid_ctxt, document->xml_obj) == 0;
 
     xmlSetStructuredErrorFunc(NULL, NULL);
     info.Holder()->Set(Nan::New<v8::String>("validationErrors").ToLocalChecked(), errors);
+
+    xmlRelaxNGFreeValidCtxt(valid_ctxt);
+    xmlRelaxNGFree(schema);
+    xmlRelaxNGFreeParserCtxt(parser_ctxt);
 
     return info.GetReturnValue().Set(Nan::New<v8::Boolean>(valid));
 }
