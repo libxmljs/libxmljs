@@ -10,3 +10,8 @@ module.exports.constants = function(assert) {
     assert.done();
 };
 
+module.exports.xmlMemUsed = function(assert) {
+    assert.ok(typeof libxml.xmlMemUsed() === 'number');
+    assert.done();
+};
+
