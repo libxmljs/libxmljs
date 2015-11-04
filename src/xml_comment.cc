@@ -19,8 +19,7 @@ NAN_METHOD(XmlComment::New) {
 
   // if we were created for an existing xml node, then we don't need
   // to create a new node on the document
-  if (info.Length() == 0)
-  {
+  if (info.Length() == 0) {
       return info.GetReturnValue().Set(info.Holder());
   }
 
@@ -28,17 +27,13 @@ NAN_METHOD(XmlComment::New) {
   assert(document);
 
   v8::Local<v8::Value> contentOpt;
-  if(info[1]->IsString()) {
+  if (info[1]->IsString()) {
       contentOpt = info[1];
   }
   v8::String::Utf8Value contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
-  xmlChar* encoded = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
-  xmlNode* comm = xmlNewDocComment(document->xml_obj,
-                                   encoded);
-  if (encoded)
-      xmlFree(encoded);
+  xmlNode* comm = xmlNewDocComment(document->xml_obj, (xmlChar *) content);
 
   XmlComment* comment = new XmlComment(comm);
   comm->_private = comment;
@@ -66,9 +61,7 @@ NAN_METHOD(XmlComment::Text) {
 
 void
 XmlComment::set_content(const char* content) {
-  xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
-  xmlNodeSetContent(xml_obj, encoded);
-  xmlFree(encoded);
+  xmlNodeSetContent(xml_obj, (xmlChar*) content);
 }
 
 v8::Local<v8::Value>
@@ -84,7 +77,6 @@ XmlComment::get_content() {
 
   return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
 }
-
 
 v8::Local<v8::Object>
 XmlComment::New(xmlNode* node)

@@ -16,3 +16,21 @@ module.exports.text = function(assert) {
     assert.done();
 };
 
+
+module.exports.textWithSpecialCharacters = function(assert) {
+    var doc = libxml.Document();
+    var comm = libxml.Comment(doc);
+    var theText = 'my comment <has> special ch&r&cters';
+    comm.text(theText);
+    assert.equal(theText, comm.text());
+    assert.done();
+};
+
+module.exports.toStringWithSpecialCharacters = function(assert) {
+    var doc = libxml.Document();
+    var comm = libxml.Comment(doc);
+    var theText = 'my comment <has> special ch&r&cters';
+    comm.text(theText);
+    assert.equal("<!--" + theText + "-->", comm.toString());
+    assert.done();
+};
