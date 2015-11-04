@@ -275,6 +275,7 @@ NAN_METHOD(XmlDocument::FromHtml)
 }
 
 int getXmlParserOption2(v8::Local<v8::Object> props, const char *key, int value) {
+    Nan::HandleScope scope;
     v8::Local<v8::String> key2 = Nan::New<v8::String>(key).ToLocalChecked();
     v8::Local<v8::Boolean> val = props->Get(key2)->ToBoolean();
     return val->BooleanValue() ? value : 0;
