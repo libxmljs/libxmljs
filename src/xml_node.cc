@@ -229,64 +229,243 @@ XmlNode::New(xmlNode* node)
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
-    this->freed = false;
     xml_obj->_private = this;
 
     // this will prevent the document from being cleaned up
     // we keep the document if any of the nodes attached to it are still alive
-    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
+    this->doc = xml_obj->doc;
+    XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
     doc->ref();
+}
 
-    // check that there's a parent node with a _private pointer
-    // also check that the parent node isn't the doc since we already Ref() the doc once
-    if (xml_obj->parent != NULL &&
-        xml_obj->parent->_private != NULL &&
-        (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        static_cast<XmlNode*>(xml_obj->parent->_private)->Ref();
+/*
+ * Return the (non-document) root, or a proxied ancestor: whichever is closest
+ */
+xmlNode*
+findProxiedAncestorOrRoot(xmlNode *xml_obj) {
+    while ((xml_obj->parent != NULL) &&
+           (static_cast<void*>(xml_obj->doc) != static_cast<void*>(xml_obj->parent))  &&
+           (xml_obj->parent->_private == NULL)) {
+        xml_obj = xml_obj->parent;
     }
+    return ((xml_obj->parent != NULL) &&
+            (static_cast<void*>(xml_obj->doc) != static_cast<void*>(xml_obj->parent))) ?
+        xml_obj->parent : xml_obj;
+}
+
+
+/*
+ * Search linked list for javascript proxy, ignoring given node.
+ */
+xmlAttr*
+findProxiedAttrInList(xmlAttr *xml_obj, void *skip_xml_obj) {
+    xmlAttr *proxied_attr = NULL;
+    while (xml_obj != NULL) {
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            proxied_attr = xml_obj;
+            xml_obj = NULL;
+        }
+        else {
+            xml_obj = xml_obj->next;
+        }
+    }
+    return proxied_attr;
+}
+
+xmlNs*
+findProxiedNsInList(xmlNs *xml_obj, void *skip_xml_obj) {
+    xmlNs *proxied_ns = NULL;
+    while (xml_obj != NULL) {
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            proxied_ns = xml_obj;
+            xml_obj = NULL;
+        }
+        else {
+            xml_obj = xml_obj->next;
+        }
+    }
+    return proxied_ns;
+}
+
+xmlNode* findProxiedNodeInChildren(xmlNode *xml_obj, void *skip_xml_obj);
+
+/*
+ * Search document for javascript proxy, ignoring given node.
+ * Based on xmlFreeDoc.
+ */
+xmlNode*
+findProxiedNodeInDocument(xmlDoc *xml_obj, void *skip_xml_obj) {
+    xmlNode *proxied_node = NULL;
+    if ((xml_obj->extSubset != NULL) &&
+        (xml_obj->extSubset->_private != NULL) &&
+        (static_cast<void*>(xml_obj->extSubset) != skip_xml_obj)) {
+        proxied_node = reinterpret_cast<xmlNode*>(xml_obj->extSubset);
+    }
+    if ((proxied_node == NULL) &&
+        (xml_obj->intSubset != NULL) &&
+        (xml_obj->intSubset->_private != NULL) &&
+        (static_cast<void*>(xml_obj->intSubset) != skip_xml_obj)) {
+        proxied_node = reinterpret_cast<xmlNode*>(xml_obj->intSubset);
+    }
+    if ((proxied_node == NULL) && (xml_obj->children != NULL)) {
+        proxied_node =
+            findProxiedNodeInChildren(xml_obj->children, skip_xml_obj);
+    }
+    if ((proxied_node == NULL) && (xml_obj->oldNs != NULL)) {
+        proxied_node =
+            reinterpret_cast<xmlNode*>(findProxiedNsInList(xml_obj->oldNs, skip_xml_obj));
+
+    }
+    return proxied_node;
+}
+
+/*
+ * Search children of node for javascript proxy, ignoring given node.
+ * Based on xmlFreeNodeList.
+ */
+xmlNode*
+findProxiedNodeInChildren(xmlNode *xml_obj, xmlNode *skip_xml_obj) {
+
+    xmlNode* proxied_node = NULL;
+
+    if (xml_obj->type == XML_NAMESPACE_DECL) {
+        return reinterpret_cast<xmlNode*>(
+            findProxiedNsInList(reinterpret_cast<xmlNs*>(xml_obj), skip_xml_obj)
+        );
+    }
+
+    if ((xml_obj->type == XML_DOCUMENT_NODE) ||
+#ifdef LIBXML_DOCB_ENABLED
+        (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
+#endif
+        (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
+        return findProxiedNodeInDocument(reinterpret_cast<xmlDoc*>(xml_obj), skip_xml_obj);
+    }
+
+    xmlNode *next;
+    while (xml_obj != NULL) {
+        next = xml_obj->next;
+
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            proxied_node = xml_obj;
+        }
+        else {
+
+            if ((xml_obj->children != NULL) && (xml_obj->type != XML_ENTITY_REF_NODE)) {
+                proxied_node = findProxiedNodeInChildren(xml_obj->children, skip_xml_obj);
+            }
+
+            if ((proxied_node == NULL) &&
+                ((xml_obj->type == XML_ELEMENT_NODE) ||
+                 (xml_obj->type == XML_XINCLUDE_START) ||
+                 (xml_obj->type == XML_XINCLUDE_END))) {
+
+                if ((proxied_node == NULL) && (xml_obj->properties != NULL)) {
+                    proxied_node =
+                        reinterpret_cast<xmlNode*>(findProxiedAttrInList(xml_obj->properties, skip_xml_obj));
+                }
+
+                if ((proxied_node == NULL) && (xml_obj->nsDef != NULL)) {
+                    proxied_node =
+                        reinterpret_cast<xmlNode*>(findProxiedNsInList(xml_obj->nsDef, skip_xml_obj));
+                }
+            }
+
+        }
+
+        if (proxied_node != NULL) {
+            break;
+        }
+
+        xml_obj = next;
+    }
+
+    return proxied_node;
+}
+
+/*
+ * Search descendants of node to find javascript proxy,
+ * optionally ignoring given node. Based on xmlFreeNode.
+ */
+xmlNode*
+findProxiedDescendant(xmlNode *xml_obj, xmlNode *skip_xml_obj=NULL) {
+
+    xmlNode* proxied_descendant = NULL;
+
+    if (xml_obj->type == XML_DTD_NODE) {
+        return (xml_obj->children == NULL) ?
+            NULL : findProxiedNodeInChildren(xml_obj->children, skip_xml_obj);
+    }
+
+    if (xml_obj->type == XML_NAMESPACE_DECL) {
+        return NULL;
+    }
+
+    if (xml_obj->type == XML_ATTRIBUTE_NODE) {
+        return (xml_obj->children == NULL) ?
+            NULL : findProxiedNodeInChildren(xml_obj->children, skip_xml_obj);
+    }
+
+    if ((xml_obj->children != NULL) && (xml_obj->type != XML_ENTITY_REF_NODE)) {
+        proxied_descendant =
+            findProxiedNodeInChildren(xml_obj->children, skip_xml_obj);
+    }
+
+    if ((xml_obj->type == XML_ELEMENT_NODE) ||
+        (xml_obj->type == XML_XINCLUDE_START) ||
+        (xml_obj->type == XML_XINCLUDE_END)) {
+
+        if ((proxied_descendant == NULL) && (xml_obj->properties != NULL)) {
+            proxied_descendant =
+                reinterpret_cast<xmlNode*>(findProxiedAttrInList(xml_obj->properties, skip_xml_obj));
+        }
+
+        if ((proxied_descendant == NULL) && (xml_obj->nsDef != NULL)) {
+            proxied_descendant =
+                reinterpret_cast<xmlNode*>(findProxiedNsInList(xml_obj->nsDef, skip_xml_obj));
+        }
+    }
+
+    return proxied_descendant;
 }
 
 XmlNode::~XmlNode() {
 
     // check if `xml_obj` has been freed so we don't access bad memory
-    if (this->freed)
+    if (!this->xml_obj)
     {
 
-        // unref the doc using the doc reference we saved in the `flagNode` callback
-        if (this->doc)
+        // unref the doc
+        if ((this->doc) && (this->doc->_private != NULL))
         {
             XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
             doc->unref();
+            this->doc = NULL;
         }
-
-        // set doc to null for good measure?
-        // this->doc = NULL;
 
         // return so we don't attempt to use `xml_obj`
         return;
     }
 
     xml_obj->_private = NULL;
-    // release the hold and allow the document to be freed
-    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
-    doc->unref();
 
-    // We do not free the xmlNode here if it is linked to a document
-    // It will be freed when the doc is freed
-    if (xml_obj->parent == NULL)
-      xmlFreeNode(xml_obj);
+    if ((this->doc) && (this->doc->_private != NULL)) {
+        XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
+        doc->unref();
+        this->doc = NULL;
+    }
 
-    // if there's a parent then Unref() it
-    else if (xml_obj->parent->_private != NULL &&
-            (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        XmlNode* parent = static_cast<XmlNode*>(xml_obj->parent->_private);
-
-        // make sure Unref() is necessary
-        if (parent->refs_ > 0)
-        {
-            parent->Unref();
+    if (xml_obj->parent == NULL) {
+        if (findProxiedDescendant(xml_obj) == NULL) {
+            xmlFreeNode(xml_obj);
+        }
+    }
+    else {
+        xmlNode *ancestor = findProxiedAncestorOrRoot(xml_obj);
+        if ((ancestor->_private == NULL) &&
+            (ancestor->parent == NULL) &&
+            (findProxiedDescendant(ancestor, xml_obj) == NULL)) {
+            xmlFreeNode(ancestor);
         }
     }
 }

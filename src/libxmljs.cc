@@ -148,12 +148,8 @@ void xmlDeregisterNodeCallback(xmlNode* xml_obj)
     if (xml_obj->_private)
     {
         XmlNode* node = static_cast<XmlNode*>(xml_obj->_private);
-
-        // flag the XmlNode object as freed
-        node->freed = true;
-
-        // save a reference to the doc so we can still `unref` it
-        node->doc = xml_obj->doc;
+        node->xml_obj = NULL;
+        xml_obj->_private = NULL;
     }
     return;
 }

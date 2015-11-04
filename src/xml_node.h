@@ -12,10 +12,7 @@ public:
 
     xmlNode* xml_obj;
 
-    // boolean value to check if `xml_obj` was already freed
-    bool freed;
-
-    // backup reference to the doc in case `xml_obj` was already freed
+    // the doc ref'd by this proxy
     xmlDoc* doc;
 
     explicit XmlNode(xmlNode* node);
