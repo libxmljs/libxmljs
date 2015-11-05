@@ -22,7 +22,7 @@ public:
     // setup the document handle bindings and internal constructor
     static void Initialize(v8::Handle<v8::Object> target);
 
-    // create a new document handle initalized with the
+    // create a new document handle initialized with the
     // given xmlDoc object, intended for use in c++ space
     static v8::Local<v8::Object> New(xmlDoc* doc);
 

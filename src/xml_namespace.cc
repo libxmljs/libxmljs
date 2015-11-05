@@ -51,14 +51,15 @@ NAN_METHOD(XmlNamespace::New) {
 v8::Local<v8::Object>
 XmlNamespace::New(xmlNs* node)
 {
+    Nan::EscapableHandleScope scope;
     if (node->_private) {
-        return static_cast<XmlNamespace*>(node->_private)->handle();
+        return scope.Escape(static_cast<XmlNamespace*>(node->_private)->handle());
     }
 
     XmlNamespace* ns = new XmlNamespace(node);
     v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
     ns->Wrap(obj);
-    return obj;
+    return scope.Escape(obj);
 }
 
 XmlNamespace::XmlNamespace(xmlNs* node) : xml_obj(node)

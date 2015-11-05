@@ -337,3 +337,47 @@ module.exports.validate_memory_usage = function(assert) {
     assert.ok(process.memoryUsage().rss - initialMemory.rss < maxRssDelta);
     assert.done();
 };
+
+module.exports.validate_rng_memory_usage = function(assert) {
+  var rng =
+    '<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">'+
+      '<zeroOrMore>'+
+        '<element name="card">'+
+          '<element name="name">'+
+            '<text/>'+
+          '</element>'+
+          '<element name="email">'+
+            '<text/>'+
+          '</element>'+
+        '</element>'+
+      '</zeroOrMore>'+
+    '</element>';
+
+  var xml_valid =
+    '<addressBook>'+
+      '<card>'+
+        '<name>John Smith</name>'+
+        '<email>js@example.com</email>'+
+      '</card>'+
+      '<card>'+
+        '<name>Fred Bloggs</name>'+
+        '<email>fb@example.net</email>'+
+      '</card>'+
+    '</addressBook>';
+
+    var rngDoc = libxml.parseXml(rng);
+    var xmlDoc = libxml.parseXml(xml_valid);
+
+    var initialMemory = process.memoryUsage();
+
+    for (var i = 0; i < 10000; ++i) {
+        xmlDoc.rngValidate(rngDoc);
+    }
+
+    global.gc();
+
+    var maxRssDelta = /^v0\.8/.test(process.version) ? (initialMemory.rss / 2) : 2000000;
+    assert.ok(process.memoryUsage().rss - initialMemory.rss < maxRssDelta);
+    assert.done();
+};
+

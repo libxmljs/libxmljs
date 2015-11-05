@@ -14,32 +14,34 @@ NAN_METHOD(XmlAttribute::New) {
 v8::Local<v8::Object>
 XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
 {
+    Nan::EscapableHandleScope scope;
     xmlAttr* attr = xmlSetProp(xml_obj, name, value);
     assert(attr);
 
     if (attr->_private) {
-        return static_cast<XmlNode*>(xml_obj->_private)->handle();
+        return scope.Escape(static_cast<XmlNode*>(xml_obj->_private)->handle());
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
     v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
     attribute->Wrap(obj);
-    return obj;
+    return scope.Escape(obj);
 }
 
 v8::Local<v8::Object>
 XmlAttribute::New(xmlAttr* attr)
 {
+    Nan::EscapableHandleScope scope;
     assert(attr->type == XML_ATTRIBUTE_NODE);
 
     if (attr->_private) {
-        return static_cast<XmlNode*>(attr->_private)->handle();
+        return scope.Escape(static_cast<XmlNode*>(attr->_private)->handle());
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
     v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
     attribute->Wrap(obj);
-    return obj;
+    return scope.Escape(obj);
 }
 
 NAN_METHOD(XmlAttribute::Name) {
@@ -83,11 +85,12 @@ NAN_METHOD(XmlAttribute::Namespace) {
 
 v8::Local<v8::Value>
 XmlAttribute::get_name() {
+  Nan::EscapableHandleScope scope;
   if (xml_obj->name)
-    return Nan::New<v8::String>((const char*)xml_obj->name,
-                           xmlStrlen(xml_obj->name)).ToLocalChecked();
+    return scope.Escape(Nan::New<v8::String>((const char*)xml_obj->name,
+                           xmlStrlen(xml_obj->name)).ToLocalChecked());
 
-  return Nan::Null();
+  return scope.Escape(Nan::Null());
 }
 
 v8::Local<v8::Value>
@@ -101,7 +104,7 @@ XmlAttribute::get_value() {
     return scope.Escape(ret_value);
   }
 
-  return Nan::Null();
+  return scope.Escape(Nan::Null());
 }
 
 void
@@ -136,15 +139,17 @@ XmlAttribute::set_value(const char* value) {
 
 v8::Local<v8::Value>
 XmlAttribute::get_element() {
-    return XmlElement::New(xml_obj->parent);
+    Nan::EscapableHandleScope scope;
+    return scope.Escape(XmlElement::New(xml_obj->parent));
 }
 
 v8::Local<v8::Value>
 XmlAttribute::get_namespace() {
+    Nan::EscapableHandleScope scope;
     if (!xml_obj->ns) {
-        return Nan::Null();
+        return scope.Escape(Nan::Null());
     }
-    return XmlNamespace::New(xml_obj->ns);
+    return scope.Escape(XmlNamespace::New(xml_obj->ns));
 }
 
 void

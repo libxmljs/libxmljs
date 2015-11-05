@@ -8,6 +8,7 @@ namespace {
 
 void set_string_field(v8::Local<v8::Object> obj,
         const char* name, const char* value) {
+    Nan::HandleScope scope;
     if (!value) {
         return;
     }
@@ -16,6 +17,7 @@ void set_string_field(v8::Local<v8::Object> obj,
 
 void set_numeric_field(v8::Local<v8::Object> obj,
         const char* name, const int value) {
+    Nan::HandleScope scope;
     Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::Int32>(value));
 }
 
@@ -25,6 +27,8 @@ namespace libxmljs {
 
 v8::Local<v8::Value>
 XmlSyntaxError::BuildSyntaxError(xmlError* error) {
+    Nan::EscapableHandleScope scope;
+
     v8::Local<v8::Value> err = v8::Exception::Error(
             Nan::New<v8::String>(error->message).ToLocalChecked());
     v8::Local<v8::Object> out = v8::Local<v8::Object>::Cast(err);
@@ -44,11 +48,12 @@ XmlSyntaxError::BuildSyntaxError(xmlError* error) {
     if (error->int1) {
         set_numeric_field(out, "int1", error->int1);
     }
-    return err;
+    return scope.Escape(err);
 }
 
 void
 XmlSyntaxError::PushToArray(void* errs, xmlError* error) {
+    Nan::HandleScope scope;
     v8::Local<v8::Array> errors = *reinterpret_cast<v8::Local<v8::Array>*>(errs);
     // push method for array
     v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(Nan::New<v8::String>("push").ToLocalChecked()));
