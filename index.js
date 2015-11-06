@@ -11,6 +11,7 @@ module.exports.parseXml = Document.fromXml;
 
 /// parse an html string and return a Document
 module.exports.parseHtml = Document.fromHtml;
+module.exports.parseHtmlFragment = Document.fromHtmlFragment;
 
 // constants
 module.exports.version = require('./package.json').version;
@@ -26,7 +27,7 @@ module.exports.Comment = require('./lib/comment');
 
 // Compatibility synonyms
 Document.fromXmlString = Document.fromXml;
-Document.fromHtmlString = Document.fromHtmlString;
+Document.fromHtmlString = Document.fromHtml;
 module.exports.parseXmlString = module.exports.parseXml;
 module.exports.parseHtmlString = module.exports.parseHtml;
 

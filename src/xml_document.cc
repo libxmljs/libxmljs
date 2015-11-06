@@ -18,6 +18,10 @@
 
 namespace libxmljs {
 
+// Static member initialization
+const int XmlDocument::DEFAULT_PARSING_OPTS = 0;
+const int XmlDocument::EXCLUDE_IMPLIED_ELEMENTS = HTML_PARSE_NOIMPLIED | HTML_PARSE_NODEFDTD;
+
 Nan::Persistent<v8::FunctionTemplate> XmlDocument::constructor_template;
 
 NAN_METHOD(XmlDocument::Encoding)
@@ -223,6 +227,8 @@ NAN_METHOD(XmlDocument::FromHtml)
         Nan::New<v8::String>("baseUrl").ToLocalChecked());
     v8::Local<v8::Value>  encodingOpt = options->Get(
         Nan::New<v8::String>("encoding").ToLocalChecked());
+    v8::Local<v8::Value> excludeImpliedElementsOpt = options->Get(
+        Nan::New<v8::String>("excludeImpliedElements").ToLocalChecked());
 
     // the base URL that will be used for this HTML parsed document
     v8::String::Utf8Value baseUrl_(baseUrlOpt->ToString());
@@ -244,17 +250,21 @@ NAN_METHOD(XmlDocument::FromHtml)
     xmlResetLastError();
     xmlSetStructuredErrorFunc(reinterpret_cast<void*>(&errors), XmlSyntaxError::PushToArray);
 
+    const int parsingOptions = excludeImpliedElementsOpt->ToBoolean()->Value()
+        ? EXCLUDE_IMPLIED_ELEMENTS
+        : DEFAULT_PARSING_OPTS;
+
     htmlDocPtr doc;
     if (!node::Buffer::HasInstance(info[0])) {
         // Parse a string
         v8::String::Utf8Value str(info[0]->ToString());
-        doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, 0);
+        doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, parsingOptions);
     }
     else {
         // Parse a buffer
         v8::Local<v8::Object> buf = info[0]->ToObject();
         doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
-                            baseUrl, encoding, 0);
+                            baseUrl, encoding, parsingOptions);
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);

@@ -344,6 +344,24 @@ module.exports.validate_memory_usage = function(assert) {
     assert.done();
 };
 
+module.exports.fromHtml = function(assert) {
+    var html = "<p>A paragraph with <span>inline tags</span></p>";
+    var header = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n<html><body>';
+    var footer = "</body></html>\n";
+    var parsedHtml = libxml.Document.fromHtml(html);
+    assert.equal(header + html + footer, parsedHtml.toString());
+    assert.done();
+};
+
+module.exports.fromHtmlFragment = function(assert) {
+    var html = "<p>A paragraph with <span>inline tags</span></p>";
+    var parsedHtml = libxml.Document.fromHtmlFragment(html);
+
+    assert.equal(html + "\n", parsedHtml.toString());
+    assert.done();
+
+};
+
 module.exports.validate_rng_memory_usage = function(assert) {
   var rng =
     '<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">'+
