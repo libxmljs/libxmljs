@@ -38,13 +38,13 @@ NAN_METHOD(XmlElement::New) {
   v8::String::Utf8Value contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
-  xmlChar* encoded = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
+  xmlChar* encodedContent = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
   xmlNode* elem = xmlNewDocNode(document->xml_obj,
                                 NULL,
-                                (const xmlChar*)*name,
-                                encoded);
-  if (encoded)
-      xmlFree(encoded);
+                                (const xmlChar*) *name,
+                                encodedContent);
+  if (encodedContent)
+      xmlFree(encodedContent);
 
   XmlElement* element = new XmlElement(elem);
   elem->_private = element;

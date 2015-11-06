@@ -15,6 +15,7 @@
         'src/xml_node.cc',
         'src/xml_sax_parser.cc',
         'src/xml_syntax_error.cc',
+        'src/xml_text.cc',
         'src/xml_xpath_context.cc',
       ],
       'dependencies': [

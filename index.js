@@ -20,9 +20,10 @@ module.exports.libxml_debug_enabled = bindings.libxml_debug_enabled;
 module.exports.features = bindings.features;
 
 // lib exports
+module.exports.Comment = require('./lib/comment');
 module.exports.Document = Document;
 module.exports.Element = require('./lib/element');
-module.exports.Comment = require('./lib/comment');
+module.exports.Text = require('./lib/text');
 
 // Compatibility synonyms
 Document.fromXmlString = Document.fromXml;
