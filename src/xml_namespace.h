@@ -14,6 +14,8 @@ public:
 
     xmlNs* xml_obj;
 
+    xmlDoc* context; // reference-managed context
+
     static void Initialize(v8::Handle<v8::Object> target);
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 

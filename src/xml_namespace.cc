@@ -66,28 +66,49 @@ XmlNamespace::XmlNamespace(xmlNs* node) : xml_obj(node)
 {
     xml_obj->_private = this;
 
-    if (xml_obj->context)
+    /*
+     * If a context is present and wrapped, increment its refcount to ensure
+     * that it is considered accessible from javascript for as long as the
+     * namespace is accessible.
+     */
+    if ((xml_obj->context) && (xml_obj->context->_private != NULL))
     {
+        this->context = xml_obj->context;
         // a namespace must be created on a given node
         XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->context->_private);
         doc->ref();
+    }
+    else {
+        this->context = NULL;
     }
 }
 
 XmlNamespace::~XmlNamespace()
 {
-    xml_obj->_private = NULL;
+    /*
+     * `xml_obj` may have been nulled by `xmlDeregisterNodeCallback` when
+     * the `xmlNs` was freed along with an attached node or document.
+     */
+    if (xml_obj != NULL) {
+        xml_obj->_private = NULL;
+    }
 
-    if (xml_obj->context)
+    /*
+     * The context pointer is only set if this wrapper has incremented the
+     * refcount of the context wrapper.
+     */
+    if (this->context != NULL)
     {
-        // release the hold and allow the document to be freed
-        XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->context->_private);
-        doc->unref();
+        if (this->context->_private != NULL) {
+            // release the hold and allow the document to be freed
+            XmlDocument* doc = static_cast<XmlDocument*>(this->context->_private);
+            doc->unref();
+        }
+        this->context = NULL;
     }
 
     // We do not free the xmlNode here. It could still be part of a document
     // It will be freed when the doc is freed
-    // xmlFree(xml_obj);
 }
 
 NAN_METHOD(XmlNamespace::Href) {
