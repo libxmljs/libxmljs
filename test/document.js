@@ -63,6 +63,12 @@ module.exports.version = function(assert) {
     assert.done();
 };
 
+module.exports.type = function(assert) {
+    var doc = libxml.Document('2.0');
+    assert.equal('document', doc.type());
+    assert.done();
+};
+
 module.exports.full = function(assert) {
     var doc = libxml.Document('2.0', 'UTF-8');
     assert.ok(doc);
