@@ -347,6 +347,7 @@ XmlNode::get_all_namespaces() {
       v8::Local<v8::Object> ns = XmlNamespace::New(nsList[i]);
       Nan::Set(namespaces, index, ns);
     }
+    xmlFree(nsList);
   }
 
   return scope.Escape(namespaces);
