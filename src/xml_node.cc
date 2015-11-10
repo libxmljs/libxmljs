@@ -80,7 +80,7 @@ NAN_METHOD(XmlNode::Namespace) {
   }
 
   node->set_namespace(ns->xml_obj);
-  return info.GetReturnValue().Set(node->get_namespace());
+  return info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_METHOD(XmlNode::Namespaces) {

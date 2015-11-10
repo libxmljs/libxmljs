@@ -102,7 +102,7 @@ module.exports.namespace = {
         children.push(root.node('child'));
         children.push(root.node('child'));
 
-        var ns = children[0].namespace(uri);
+        var ns = children[0].namespace(uri).namespace();
         children[1].namespace(ns);
 
         var results = doc.find('xmlns:child', uri);
@@ -141,7 +141,7 @@ module.exports.prefixed_namespace = {
         children.push(root.node('child'));
         children.push(root.node('child'));
 
-        var ns = children[0].namespace(prefix, uri);
+        var ns = children[0].namespace(prefix, uri).namespace();
         children[1].namespace(ns);
 
         var ns_params = {
