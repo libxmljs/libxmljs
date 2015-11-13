@@ -104,7 +104,7 @@ NAN_METHOD(XmlElement::AddChild) {
   XmlElement* child = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
   assert(child);
 
-  xmlNode *imported_child = element->import_element(child);
+  xmlNode *imported_child = element->import_node(child);
   if (imported_child == NULL) {
       return Nan::ThrowError("Could not add child. Failed to copy node to new Document.");
   }
@@ -163,36 +163,6 @@ NAN_METHOD(XmlElement::Find) {
   return info.GetReturnValue().Set(ctxt.evaluate((const xmlChar*)*xpath));
 }
 
-NAN_METHOD(XmlElement::NextElement) {
-  Nan::HandleScope scope;
-  XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  return info.GetReturnValue().Set(element->get_next_element());
-}
-
-NAN_METHOD(XmlElement::PrevElement) {
-  Nan::HandleScope scope;
-  XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  return info.GetReturnValue().Set(element->get_prev_element());
-}
-
-NAN_METHOD(XmlElement::Text) {
-  Nan::HandleScope scope;
-  XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  if (info.Length() == 0) {
-    return info.GetReturnValue().Set(element->get_content());
-  } else {
-    element->set_content(*v8::String::Utf8Value(info[0]));
-  }
-
-  return info.GetReturnValue().Set(info.Holder());
-}
-
 NAN_METHOD(XmlElement::Child) {
   Nan::HandleScope scope;
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
@@ -224,58 +194,6 @@ NAN_METHOD(XmlElement::Path) {
   assert(element);
 
   return info.GetReturnValue().Set(element->get_path());
-}
-
-NAN_METHOD(XmlElement::AddPrevSibling) {
-  XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
-  assert(new_sibling);
-
-  xmlNode *imported_sibling = element->import_element(new_sibling);
-  if (imported_sibling == NULL) {
-      return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
-  }
-  element->add_prev_sibling(imported_sibling);
-
-  return info.GetReturnValue().Set(info[0]);
-}
-
-NAN_METHOD(XmlElement::AddNextSibling) {
-  XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
-  assert(new_sibling);
-
-  xmlNode *imported_sibling = element->import_element(new_sibling);
-  if (imported_sibling == NULL) {
-      return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
-  }
-  element->add_next_sibling(imported_sibling);
-
-  return info.GetReturnValue().Set(info[0]);
-}
-
-NAN_METHOD(XmlElement::Replace) {
-  XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  if (info[0]->IsString()) {
-    element->replace_text(*v8::String::Utf8Value(info[0]));
-  } else {
-    XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
-    assert(new_sibling);
-
-    xmlNode *imported_sibling = element->import_element(new_sibling);
-    if (imported_sibling == NULL) {
-        return Nan::ThrowError("Could not replace. Failed to copy node to new Document.");
-    }
-    element->replace_element(imported_sibling);
-  }
-
-  return info.GetReturnValue().Set(info[0]);
 }
 
 void
@@ -396,64 +314,6 @@ XmlElement::get_path() {
   return scope.Escape(js_obj);
 }
 
-void
-XmlElement::set_content(const char* content) {
-  xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
-  xmlNodeSetContent(xml_obj, encoded);
-  xmlFree(encoded);
-}
-
-v8::Local<v8::Value>
-XmlElement::get_content() {
-  Nan::EscapableHandleScope scope;
-  xmlChar* content = xmlNodeGetContent(xml_obj);
-  if (content) {
-    v8::Local<v8::String> ret_content =
-      Nan::New<v8::String>((const char *)content).ToLocalChecked();
-    xmlFree(content);
-    return scope.Escape(ret_content);
-  }
-
-  return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
-}
-
-v8::Local<v8::Value>
-XmlElement::get_next_element() {
-  Nan::EscapableHandleScope scope;
-
-  xmlNode* sibling = xml_obj->next;
-  if (!sibling)
-    return scope.Escape(Nan::Null());
-
-  while (sibling && sibling->type != XML_ELEMENT_NODE)
-    sibling = sibling->next;
-
-  if (sibling) {
-      return scope.Escape(XmlElement::New(sibling));
-  }
-
-  return scope.Escape(Nan::Null());
-}
-
-v8::Local<v8::Value>
-XmlElement::get_prev_element() {
-  Nan::EscapableHandleScope scope;
-
-  xmlNode* sibling = xml_obj->prev;
-  if (!sibling)
-    return scope.Escape(Nan::Null());
-
-  while (sibling && sibling->type != XML_ELEMENT_NODE) {
-    sibling = sibling->prev;
-  }
-
-  if (sibling) {
-      return scope.Escape(XmlElement::New(sibling));
-  }
-
-  return scope.Escape(Nan::Null());
-}
-
 v8::Local<v8::Object>
 XmlElement::New(xmlNode* node)
 {
@@ -469,35 +329,8 @@ XmlElement::New(xmlNode* node)
 }
 
 XmlElement::XmlElement(xmlNode* node)
-    : XmlNode(node)
+    : XmlFraternalNode(node)
 {
-}
-
-void
-XmlElement::add_prev_sibling(xmlNode* element) {
-  xmlAddPrevSibling(xml_obj, element);
-}
-
-void
-XmlElement::add_next_sibling(xmlNode* element) {
-  xmlAddNextSibling(xml_obj, element);
-}
-
-void
-XmlElement::replace_element(xmlNode* element) {
-  xmlReplaceNode(xml_obj, element);
-}
-
-void
-XmlElement::replace_text(const char* content) {
-  xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
-  xmlReplaceNode(xml_obj, txt);
-}
-
-xmlNode*
-XmlElement::import_element(XmlElement *element) {
-  return (xml_obj->doc == element->xml_obj->doc) ?
-        element->xml_obj : xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
 }
 
 void
@@ -507,7 +340,7 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     v8::Local<v8::FunctionTemplate> tmpl =
       Nan::New<v8::FunctionTemplate>(New);
     constructor_template.Reset( tmpl);
-    tmpl->Inherit(Nan::New(XmlNode::constructor_template));
+    tmpl->Inherit(Nan::New(XmlFraternalNode::constructor_template));
     tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     Nan::SetPrototypeMethod(tmpl,
@@ -539,36 +372,12 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
             XmlElement::Find);
 
     Nan::SetPrototypeMethod(tmpl,
-            "nextElement",
-            XmlElement::NextElement);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "prevElement",
-            XmlElement::PrevElement);
-
-    Nan::SetPrototypeMethod(tmpl,
             "name",
             XmlElement::Name);
 
     Nan::SetPrototypeMethod(tmpl,
             "path",
             XmlElement::Path);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "text",
-            XmlElement::Text);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "addPrevSibling",
-            XmlElement::AddPrevSibling);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "addNextSibling",
-            XmlElement::AddNextSibling);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "replace",
-            XmlElement::Replace);
 
     Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
             tmpl->GetFunction());
