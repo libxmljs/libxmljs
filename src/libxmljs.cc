@@ -148,12 +148,8 @@ void xmlDeregisterNodeCallback(xmlNode* xml_obj)
     if (xml_obj->_private)
     {
         XmlNode* node = static_cast<XmlNode*>(xml_obj->_private);
-
-        // flag the XmlNode object as freed
-        node->freed = true;
-
-        // save a reference to the doc so we can still `unref` it
-        node->doc = xml_obj->doc;
+        node->xml_obj = NULL;
+        xml_obj->_private = NULL;
     }
     return;
 }
@@ -222,6 +218,12 @@ v8::Local<v8::Object> listFeatures() {
     return scope.Escape(target);
 }
 
+NAN_METHOD(XmlMemUsed)
+{
+  Nan::HandleScope scope;
+  return info.GetReturnValue().Set(Nan::New<v8::Int32>(xmlMemUsed()));
+}
+
 NAN_MODULE_INIT(init)
 {
       Nan::HandleScope scope;
@@ -241,6 +243,8 @@ NAN_MODULE_INIT(init)
       Nan::Set(target, Nan::New<v8::String>("features").ToLocalChecked(), listFeatures());
 
       Nan::Set(target, Nan::New<v8::String>("libxml").ToLocalChecked(), target);
+
+      Nan::SetMethod(target, "xmlMemUsed", XmlMemUsed);
 }
 
 NODE_MODULE(xmljs, init)
