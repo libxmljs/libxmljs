@@ -222,6 +222,12 @@ v8::Local<v8::Object> listFeatures() {
     return scope.Escape(target);
 }
 
+NAN_METHOD(XmlMemUsed)
+{
+  Nan::HandleScope scope;
+  return info.GetReturnValue().Set(Nan::New<v8::Int32>(xmlMemUsed()));
+}
+
 NAN_MODULE_INIT(init)
 {
       Nan::HandleScope scope;
@@ -241,6 +247,8 @@ NAN_MODULE_INIT(init)
       Nan::Set(target, Nan::New<v8::String>("features").ToLocalChecked(), listFeatures());
 
       Nan::Set(target, Nan::New<v8::String>("libxml").ToLocalChecked(), target);
+
+      Nan::SetMethod(target, "xmlMemUsed", XmlMemUsed);
 }
 
 NODE_MODULE(xmljs, init)
