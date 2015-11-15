@@ -129,7 +129,7 @@ NAN_METHOD(XmlElement::AddCData) {
                                   (const xmlChar*)content,
                                   xmlStrlen((const xmlChar*)content));
 
-  element->add_cdata(elem);
+  element->add_child(elem);
   return info.GetReturnValue().Set(info.Holder());
 }
 
@@ -253,14 +253,9 @@ XmlElement::get_attrs() {
 
 void
 XmlElement::add_child(xmlNode* child) {
+  // FIXME: will be merged and freed if added and last child are text
   xmlAddChild(xml_obj, child);
 }
-
-void
-XmlElement::add_cdata(xmlNode* cdata) {
-  xmlAddChild(xml_obj, cdata);
-}
-
 
 v8::Local<v8::Value>
 XmlElement::get_child(int32_t idx) {
