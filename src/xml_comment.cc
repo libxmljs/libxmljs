@@ -91,7 +91,7 @@ XmlComment::New(xmlNode* node)
 {
     Nan::EscapableHandleScope scope;
     if (node->_private) {
-        return scope.Escape(static_cast<XmlNode*>(node->_private)->handle());
+        return scope.Escape(static_cast<XmlComment*>(node->_private)->handle());
     }
 
     XmlComment* comment = new XmlComment(node);

@@ -319,7 +319,7 @@ XmlElement::New(xmlNode* node)
 {
     Nan::EscapableHandleScope scope;
     if (node->_private) {
-        return scope.Escape(static_cast<XmlNode*>(node->_private)->handle());
+        return scope.Escape(static_cast<XmlElement*>(node->_private)->handle());
     }
 
     XmlElement* element = new XmlElement(node);
