@@ -36,9 +36,6 @@ protected:
     void set_content(const char* content);
     void replace_text(const char* content);
     void replace_element(xmlNode* element);
-    xmlNode *import_element(XmlText* element);
-    void add_prev_sibling(xmlNode* element);
-    void add_next_sibling(xmlNode* element);
 };
 
 }  // namespace libxmljs

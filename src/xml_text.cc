@@ -180,20 +180,6 @@ XmlText::XmlText(xmlNode* node)
 }
 
 void
-XmlText::add_prev_sibling(xmlNode* element) {
-  xmlAddPrevSibling(xml_obj, element);
-  if (element->_private != NULL)
-    ref();
-}
-
-void
-XmlText::add_next_sibling(xmlNode* element) {
-  xmlAddNextSibling(xml_obj, element);
-  if (element->_private != NULL)
-    ref();
-}
-
-void
 XmlText::replace_element(xmlNode* element) {
   xmlReplaceNode(xml_obj, element);
 }
@@ -202,12 +188,6 @@ void
 XmlText::replace_text(const char* content) {
   xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
   xmlReplaceNode(xml_obj, txt);
-}
-
-xmlNode*
-XmlText::import_element(XmlText *element) {
-  return (xml_obj->doc == element->xml_obj->doc) ?
-        element->xml_obj : xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
 }
 
 void

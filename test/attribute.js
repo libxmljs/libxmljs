@@ -11,9 +11,6 @@ module.exports.new = function(assert) {
     node.attr({'new-attr-key': 'new-attr-value'});
     assert.equal('new-attr-value', node.attr('new-attr-key').value());
     assert.done();
-    node = null;
-    doc = null;
-    global.gc();
 };
 
 module.exports.create_with_namespace = function(assert) {
