@@ -2,12 +2,13 @@
   "name": "libxmljs",
   "author": "Marco Rogers",
   "contributors": [
-    "Jeff Smick"
+    "Jeff Smick",
+    "Martin von Gagern <Martin.vGagern@gmx.net>"
   ],
   "description": "libxml bindings for v8 javascript engine",
   "version": "0.15.0",
   "scripts": {
-    "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
+    "test": "node --expose_gc node_modules/nodeunit/bin/nodeunit test"
   },
   "repository": {
     "type": "git",
