@@ -29,12 +29,12 @@ public:
     // expose ObjectWrap::Ref
     void ref() {
         Ref();
-    };
+    }
 
     // expose ObjectWrap::Unref
     void unref() {
         Unref();
-    };
+    }
 
     // expose ObjectWrap::refs_ (for testing)
     int refs() {
