@@ -68,6 +68,9 @@ NAN_METHOD(XmlFraternalNode::AddPrevSibling) {
   if (imported_sibling == NULL) {
       return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
   }
+  else if ((new_sibling->xml_obj == imported_sibling) && node->prev_sibling_will_merge(imported_sibling)) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0); // merged sibling is freed, so copy it
+  }
   node->add_prev_sibling(imported_sibling);
 
   return info.GetReturnValue().Set(info[0]);
@@ -83,6 +86,9 @@ NAN_METHOD(XmlFraternalNode::AddNextSibling) {
   xmlNode *imported_sibling = node->import_node(new_sibling);
   if (imported_sibling == NULL) {
       return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
+  }
+  else if ((new_sibling->xml_obj == imported_sibling) && node->next_sibling_will_merge(imported_sibling)) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0);
   }
   node->add_next_sibling(imported_sibling);
 
@@ -169,6 +175,24 @@ void
 XmlFraternalNode::replace_text(const char* content) {
   xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
   xmlReplaceNode(xml_obj, txt);
+}
+
+bool
+XmlFraternalNode::next_sibling_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE) &&
+          ((xml_obj->type == XML_TEXT_NODE) ||
+           ((xml_obj->next != NULL) &&
+            (xml_obj->next->type == XML_TEXT_NODE) &&
+            (xml_obj->name == xml_obj->next->name)))); // libxml2 bug?
+}
+
+bool
+XmlFraternalNode::prev_sibling_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE) &&
+          ((xml_obj->type == XML_TEXT_NODE) ||
+           ((xml_obj->prev != NULL) &&
+            (xml_obj->prev->type == XML_TEXT_NODE) &&
+            (xml_obj->name == xml_obj->prev->name))));
 }
 
 XmlFraternalNode::XmlFraternalNode(xmlNode* node)

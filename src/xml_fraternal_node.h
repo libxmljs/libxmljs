@@ -33,6 +33,8 @@ protected:
     void replace_node(xmlNode* node);
     void add_prev_sibling(xmlNode* node);
     void add_next_sibling(xmlNode* node);
+    bool prev_sibling_will_merge(xmlNode* node);
+    bool next_sibling_will_merge(xmlNode* node);
 };
 
 }  // namespace libxmljs
