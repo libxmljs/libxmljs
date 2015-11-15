@@ -101,12 +101,16 @@ NAN_METHOD(XmlElement::AddChild) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlElement* child = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
+  XmlNode* child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
   assert(child);
 
   xmlNode *imported_child = element->import_node(child);
   if (imported_child == NULL) {
       return Nan::ThrowError("Could not add child. Failed to copy node to new Document.");
+  }
+  if ((child->xml_obj == imported_child) && element->child_will_merge(imported_child)) {
+      // merged child will be free, so ensure it is a copy
+      imported_child = xmlCopyNode(imported_child, 0);
   }
   element->add_child(imported_child);
 
@@ -253,8 +257,16 @@ XmlElement::get_attrs() {
 
 void
 XmlElement::add_child(xmlNode* child) {
-  // FIXME: will be merged and freed if added and last child are text
   xmlAddChild(xml_obj, child);
+}
+
+bool
+XmlElement::child_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE)         &&
+          (xml_obj->last != NULL)                &&
+          (xml_obj->last->type == XML_TEXT_NODE) &&
+          (xml_obj->last->name == child->name)   &&
+          (xml_obj->last != child));
 }
 
 v8::Local<v8::Value>

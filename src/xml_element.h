@@ -42,6 +42,7 @@ protected:
     v8::Local<v8::Value> get_attrs();
     void set_attr(const char* name, const char* value);
     void add_child(xmlNode* child);
+    bool child_will_merge(xmlNode* child);
 };
 
 }  // namespace libxmljs

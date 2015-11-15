@@ -434,6 +434,12 @@ XmlNode::remove() {
   xmlUnlinkNode(xml_obj);
 }
 
+xmlNode*
+XmlNode::import_node(XmlNode *node) {
+  return (xml_obj->doc == node->xml_obj->doc) ?
+        node->xml_obj : xmlDocCopyNode(node->xml_obj, xml_obj->doc, 1);
+}
+
 v8::Local<v8::Value>
 XmlNode::get_type() {
   Nan::EscapableHandleScope scope;

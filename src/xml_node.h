@@ -55,6 +55,8 @@ protected:
     v8::Local<v8::Value> get_type();
     v8::Local<v8::Value> to_string(int options = 0);
     void remove();
+
+    xmlNode *import_node(XmlNode* node);
 };
 
 }  // namespace libxmljs

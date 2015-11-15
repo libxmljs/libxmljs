@@ -171,12 +171,6 @@ XmlFraternalNode::replace_text(const char* content) {
   xmlReplaceNode(xml_obj, txt);
 }
 
-xmlNode*
-XmlFraternalNode::import_node(XmlFraternalNode *node) {
-  return (xml_obj->doc == node->xml_obj->doc) ?
-        node->xml_obj : xmlDocCopyNode(node->xml_obj, xml_obj->doc, 1);
-}
-
 XmlFraternalNode::XmlFraternalNode(xmlNode* node)
     : XmlNode(node)
 {
