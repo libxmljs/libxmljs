@@ -17,7 +17,7 @@ module.exports.set = function(assert) {
     var elem = doc.node('name1');
 
     // this will set a namespace on the node
-    var ns = elem.namespace('http://my-namespace.com').namespace();
+    var ns = elem.namespace('http://my-namespace.com');
     assert.ok(ns);
     assert.equal(ns, elem.namespace());
     assert.equal(null, elem.namespace().prefix());
@@ -35,7 +35,7 @@ module.exports.with_prefix = function(assert) {
     assert.equal('http://my-namespace.com', ns.href());
 
     // this should detect existing namespace object
-    var ns2 = elem.namespace('pref', 'http://my-namespace.com').namespace();
+    var ns2 = elem.namespace('pref', 'http://my-namespace.com');
     assert.ok(ns2);
     assert.equal(ns, ns2);
     assert.equal(ns, elem.namespace());
@@ -88,7 +88,7 @@ module.exports.existing = function(assert) {
 module.exports.remove = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');
-    var ns = elem.namespace('http://my-namespace.com').namespace();
+    var ns = elem.namespace('http://my-namespace.com');
     assert.ok(ns);
     assert.ok(ns == elem.namespace());
     elem.namespace(null);
@@ -101,9 +101,9 @@ module.exports.all = function(assert) {
     var root = document.node('root');
     var list = [];
 
-    list.push(root.namespace('com', 'http://example.com').namespace());
-    list.push(root.namespace('net', 'http://example.net').namespace());
-    list.push(root.namespace('http://example.org').namespace());
+    list.push(root.namespace('com', 'http://example.com'));
+    list.push(root.namespace('net', 'http://example.net'));
+    list.push(root.namespace('http://example.org'));
 
     assert.ok(root.namespaces().every(function(ns, index) {
         return ns.href() === list[index].href() && ns.prefix() === list[index].prefix();

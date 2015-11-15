@@ -182,11 +182,15 @@ XmlText::XmlText(xmlNode* node)
 void
 XmlText::add_prev_sibling(xmlNode* element) {
   xmlAddPrevSibling(xml_obj, element);
+  if (element->_private != NULL)
+    ref();
 }
 
 void
 XmlText::add_next_sibling(xmlNode* element) {
   xmlAddNextSibling(xml_obj, element);
+  if (element->_private != NULL)
+    ref();
 }
 
 void

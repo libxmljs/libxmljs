@@ -15,4 +15,3 @@ module.exports.text = function(assert) {
     assert.equal('comment2', comm.text());
     assert.done();
 };
-

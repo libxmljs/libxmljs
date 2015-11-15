@@ -19,6 +19,9 @@ LibXMLJS LibXMLJS::instance;
 // track how much memory libxml2 is using
 int xml_memory_used = 0;
 
+// track how many nodes haven't been freed
+int nodeCount = 0;
+
 // wrapper for xmlMemMalloc to update v8's knowledge of memory used
 // the GC relies on this information
 void* xmlMemMallocWrap(size_t size)
@@ -142,24 +145,40 @@ void deregisterNodeNamespaces(xmlNode* xml_obj)
  * wrapped, it is necessary to update any wrappers (`XmlNamespace`) which have
  * been created for attached namespaces.
  */
+
 void xmlDeregisterNodeCallback(xmlNode* xml_obj)
 {
-    deregisterNodeNamespaces(xml_obj);
-    if (xml_obj->_private)
+    if (xml_obj->_private && xml_obj->type != XML_DOCUMENT_NODE && xml_obj->type != XML_HTML_DOCUMENT_NODE)
     {
         XmlNode* node = static_cast<XmlNode*>(xml_obj->_private);
 
-        // flag the XmlNode object as freed
-        node->freed = true;
+        // keep a copy of the doc so we can free it in the `XmlNode` destructor
+        node->doc = xml_obj->doc->_private;
 
-        // save a reference to the doc so we can still `unref` it
-        node->doc = xml_obj->doc;
+        // set xml_obj to NULL so the `XmlNode` destructor knows not to use it
+        node->xml_obj = NULL;
     }
-    return;
+
+    // decrease the node count
+    if (nodeCount > 0)
+        nodeCount--;
+    // NOTE: nodeCount can go below 0 in some cases involving HTML documents
+    //       creating certain document nodes that don't call xmlRegisterNode
+
+    deregisterNodeNamespaces(xml_obj);
+}
+
+// this is called for any created nodes
+void xmlRegisterNodeCallback(xmlNode* xml_obj)
+{
+    nodeCount++;
 }
 
 LibXMLJS::LibXMLJS()
 {
+    // set the callback for when a node is created
+    xmlRegisterNodeDefault(xmlRegisterNodeCallback);
+
     // set the callback for when a node is about to be freed
     xmlDeregisterNodeDefault(xmlDeregisterNodeCallback);
 
@@ -228,6 +247,12 @@ NAN_METHOD(XmlMemUsed)
   return info.GetReturnValue().Set(Nan::New<v8::Int32>(xmlMemUsed()));
 }
 
+NAN_METHOD(XmlNodeCount)
+{
+  Nan::HandleScope scope;
+  return info.GetReturnValue().Set(Nan::New<v8::Int32>(nodeCount));
+}
+
 NAN_MODULE_INIT(init)
 {
       Nan::HandleScope scope;
@@ -249,6 +274,8 @@ NAN_MODULE_INIT(init)
       Nan::Set(target, Nan::New<v8::String>("libxml").ToLocalChecked(), target);
 
       Nan::SetMethod(target, "xmlMemUsed", XmlMemUsed);
+
+      Nan::SetMethod(target, "xmlNodeCount", XmlNodeCount);
 }
 
 NODE_MODULE(xmljs, init)

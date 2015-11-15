@@ -103,6 +103,33 @@ module.exports.addChild = function(assert) {
     assert.done();
 };
 
+module.exports.clones_added_nodes = function(assert) {
+    var doc = libxml.parseXml('<root><child1/><child2/></root>');
+    var child1 = doc.get('child1');
+    var child2 = doc.get('child2');
+    var inner = libxml.Element(doc, 'inner', 'original');
+    child1.addChild(inner);
+    child2.addChild(inner); // addChild should clone inner
+    inner.text('modified');
+    assert.ok(doc.get('//child1').text() == 'modified');
+    assert.ok(doc.get('//child2').text() == 'original');
+
+    var next = libxml.Element(doc, 'nextSibling', 'original');
+    child1.addNextSibling(next);
+    child2.addNextSibling(next); // addNextSibling should clone next
+    next.text('modified');
+    assert.ok(child1.nextSibling().text() == 'modified');
+    assert.ok(child2.nextSibling().text() == 'original');
+
+    var prev = libxml.Element(doc, 'prevSibling', 'original');
+    child1.addPrevSibling(prev);
+    child2.addPrevSibling(prev); // addNextSibling should clone next
+    prev.text('modified');
+    assert.ok(child1.prevSibling().text() == 'modified');
+    assert.ok(child2.prevSibling().text() == 'original');
+    assert.done();
+};
+
 module.exports.add_prev_sibling = function(assert) {
     var doc = libxml.Document();
     var elem = doc.node('name1');
