@@ -37,11 +37,6 @@ module.exports.setters = function(assert) {
 module.exports.getters = function(assert) {
     var doc = libxml.Document();
     var elem = libxml.Text(doc, 'getters');
-
-    assert.throws(function() {
-        elem.name();
-    }, "text nodes should NOT expose a name");
-
     assert.equal('text', elem.type());
     assert.done();
 };
@@ -92,3 +87,44 @@ module.exports.addSiblings = function(assert) {
 
     assert.done();
 };
+
+module.exports.add_prev_sibling_merge_text = function(assert) {
+  var str = '<foo>bar<baz/></foo>';
+  var doc = libxml.parseXml(str);
+  var bar = doc.root().childNodes()[0];
+
+  var qux = new libxml.Text(doc, 'qux');
+  bar.addPrevSibling(qux);
+  // added text is merged into existing child node
+
+  var children = doc.root().childNodes();
+  assert.strictEqual(children.length, 2);
+  assert.strictEqual('quxbar', children[0].text());
+  assert.ok(children[0] != qux);
+
+  // passed node is not changed
+  assert.strictEqual(doc, qux.parent());
+  assert.strictEqual('qux', qux.text());
+
+  assert.done();
+};
+
+module.exports.add_next_sibling_merge_text = function(assert) {
+  var str = '<foo>bar<baz/></foo>';
+  var doc = libxml.parseXml(str);
+  var bar = doc.root().childNodes()[0];
+
+  var qux = new libxml.Text(doc, 'qux');
+  bar.addNextSibling(qux);
+
+  var children = doc.root().childNodes();
+  assert.strictEqual(children.length, 2);
+  assert.strictEqual('barqux', children[0].text());
+  assert.ok(children[0] != qux);
+
+  assert.strictEqual(doc, qux.parent());
+  assert.strictEqual('qux', qux.text());
+
+  assert.done();
+};
+

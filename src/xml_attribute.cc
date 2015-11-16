@@ -19,7 +19,7 @@ XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
     assert(attr);
 
     if (attr->_private) {
-        return scope.Escape(static_cast<XmlNode*>(xml_obj->_private)->handle());
+        return scope.Escape(static_cast<XmlAttribute*>(xml_obj->_private)->handle());
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
@@ -35,7 +35,7 @@ XmlAttribute::New(xmlAttr* attr)
     assert(attr->type == XML_ATTRIBUTE_NODE);
 
     if (attr->_private) {
-        return scope.Escape(static_cast<XmlNode*>(attr->_private)->handle());
+        return scope.Escape(static_cast<XmlAttribute*>(attr->_private)->handle());
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);

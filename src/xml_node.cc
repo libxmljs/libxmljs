@@ -7,6 +7,7 @@
 #include "xml_node.h"
 #include "xml_document.h"
 #include "xml_namespace.h"
+#include "xml_non_attribute_node.h"
 #include "xml_element.h"
 #include "xml_comment.h"
 #include "xml_text.h"
@@ -217,14 +218,28 @@ XmlNode::New(xmlNode* node)
 {
   Nan::EscapableHandleScope scope;
   switch (node->type) {
+
   case XML_ATTRIBUTE_NODE:
     return scope.Escape(XmlAttribute::New(reinterpret_cast<xmlAttr *>(node)));
 
+  case XML_TEXT_NODE:
+    return scope.Escape(XmlText::New(node));
+
+  case XML_COMMENT_NODE:
+    return scope.Escape(XmlComment::New(node));
+
+  case XML_DOCUMENT_NODE:
+  case XML_HTML_DOCUMENT_NODE:
+#ifdef LIBXML_DOCB_ENABLED
+  case XML_DOCB_DOCUMENT_NODE:
+#endif
+    return scope.Escape(XmlDocument::New(reinterpret_cast<xmlDoc *>(node)));
+
+  case XML_NAMESPACE_DECL:
+    return scope.Escape(XmlNamespace::New(reinterpret_cast<xmlNs *>(node)));
+
+  case XML_ELEMENT_NODE:
   default:
-    // if we don't know how to convert to specific libxmljs wrapper,
-    // wrap in an XmlElement.  There should probably be specific
-    // wrapper types for text nodes etc., but this is what existing
-    // code expects.
     return scope.Escape(XmlElement::New(node));
   }
 }
@@ -359,7 +374,7 @@ XmlNode::get_parent() {
   Nan::EscapableHandleScope scope;
 
   if (xml_obj->parent) {
-      return scope.Escape(XmlElement::New(xml_obj->parent));
+      return scope.Escape(XmlNode::New(xml_obj->parent));
   }
 
   return scope.Escape(XmlDocument::New(xml_obj->doc));
@@ -431,6 +446,12 @@ XmlNode::to_string(int options) {
 void
 XmlNode::remove() {
   xmlUnlinkNode(xml_obj);
+}
+
+xmlNode*
+XmlNode::import_node(XmlNode *node) {
+  return (xml_obj->doc == node->xml_obj->doc) ?
+        node->xml_obj : xmlDocCopyNode(node->xml_obj, xml_obj->doc, 1);
 }
 
 v8::Local<v8::Value>
@@ -535,6 +556,7 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
                         "toString",
                         XmlNode::ToString);
 
+  XmlNonAttributeNode::Initialize();
   XmlElement::Initialize(target);
   XmlText::Initialize(target);
   XmlComment::Initialize(target);
