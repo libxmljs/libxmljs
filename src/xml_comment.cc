@@ -65,7 +65,7 @@ XmlComment::New(xmlNode* node)
 }
 
 XmlComment::XmlComment(xmlNode* node)
-    : XmlFraternalNode(node)
+    : XmlNonAttributeNode(node)
 {
 }
 
@@ -74,7 +74,7 @@ XmlComment::Initialize(v8::Handle<v8::Object> target)
 {
     Nan::HandleScope scope;
     v8::Local<v8::FunctionTemplate> t = Nan::New<v8::FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
-    t->Inherit(Nan::New(XmlFraternalNode::constructor_template));
+    t->Inherit(Nan::New(XmlNonAttributeNode::constructor_template));
     t->InstanceTemplate()->SetInternalFieldCount(1);
     constructor_template.Reset( t);
 

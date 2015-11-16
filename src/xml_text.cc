@@ -67,7 +67,7 @@ XmlText::New(xmlNode* node)
 }
 
 XmlText::XmlText(xmlNode* node)
-    : XmlFraternalNode(node)
+    : XmlNonAttributeNode(node)
 {
 }
 
@@ -80,7 +80,7 @@ XmlText::Initialize(v8::Handle<v8::Object> target)
 
     constructor_template.Reset(tmpl);
 
-    tmpl->Inherit(Nan::New(XmlFraternalNode::constructor_template));
+    tmpl->Inherit(Nan::New(XmlNonAttributeNode::constructor_template));
     tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     Nan::Set(target, Nan::New<v8::String>("Text").ToLocalChecked(),

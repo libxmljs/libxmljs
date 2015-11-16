@@ -1,15 +1,15 @@
-#ifndef SRC_XML_FRATERNAL_NODE_H_
-#define SRC_XML_FRATERNAL_NODE_H_
+#ifndef SRC_XML_NON_ATTRIBUTE_NODE_H_
+#define SRC_XML_NON_ATTRIBUTE_NODE_H_
 
 #include "libxmljs.h"
 #include "xml_node.h"
 
 namespace libxmljs {
 
-class XmlFraternalNode : public XmlNode {
+class XmlNonAttributeNode : public XmlNode {
 public:
 
-    explicit XmlFraternalNode(xmlNode* node);
+    explicit XmlNonAttributeNode(xmlNode* node);
 
     static void Initialize();
 
@@ -42,5 +42,5 @@ protected:
 
 }  // namespace libxmljs
 
-#endif  // SRC_XML_FRATERNAL_NODE_H_
+#endif  // SRC_XML_NON_ATTRIBUTE_NODE_H_
 

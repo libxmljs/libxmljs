@@ -7,7 +7,7 @@
 #include "xml_node.h"
 #include "xml_document.h"
 #include "xml_namespace.h"
-#include "xml_fraternal_node.h"
+#include "xml_non_attribute_node.h"
 #include "xml_element.h"
 #include "xml_comment.h"
 #include "xml_text.h"
@@ -556,7 +556,7 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
                         "toString",
                         XmlNode::ToString);
 
-  XmlFraternalNode::Initialize();
+  XmlNonAttributeNode::Initialize();
   XmlElement::Initialize(target);
   XmlText::Initialize(target);
   XmlComment::Initialize(target);

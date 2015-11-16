@@ -1,31 +1,31 @@
 
 #include "libxmljs.h"
-#include "xml_fraternal_node.h"
+#include "xml_non_attribute_node.h"
 #include "xml_element.h"
 
 namespace libxmljs {
 
-Nan::Persistent<v8::FunctionTemplate> XmlFraternalNode::constructor_template;
+Nan::Persistent<v8::FunctionTemplate> XmlNonAttributeNode::constructor_template;
 
-NAN_METHOD(XmlFraternalNode::NextElement) {
+NAN_METHOD(XmlNonAttributeNode::NextElement) {
   Nan::HandleScope scope;
-  XmlFraternalNode *node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+  XmlNonAttributeNode *node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
   return info.GetReturnValue().Set(node->get_next_element());
 }
 
-NAN_METHOD(XmlFraternalNode::PrevElement) {
+NAN_METHOD(XmlNonAttributeNode::PrevElement) {
   Nan::HandleScope scope;
-  XmlFraternalNode *node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+  XmlNonAttributeNode *node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
   return info.GetReturnValue().Set(node->get_prev_element());
 }
 
-NAN_METHOD(XmlFraternalNode::Text) {
+NAN_METHOD(XmlNonAttributeNode::Text) {
   Nan::HandleScope scope;
-  XmlFraternalNode *node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+  XmlNonAttributeNode *node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
   if (info.Length() == 0) {
@@ -37,14 +37,14 @@ NAN_METHOD(XmlFraternalNode::Text) {
   return info.GetReturnValue().Set(info.Holder());
 }
 
-NAN_METHOD(XmlFraternalNode::Replace) {
-  XmlFraternalNode* node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+NAN_METHOD(XmlNonAttributeNode::Replace) {
+  XmlNonAttributeNode* node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
   if (info[0]->IsString()) {
     node->replace_text(*v8::String::Utf8Value(info[0]));
   } else {
-    XmlFraternalNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info[0]->ToObject());
+    XmlNonAttributeNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info[0]->ToObject());
     assert(new_sibling);
 
     xmlNode *imported_sibling = node->import_node(new_sibling);
@@ -57,11 +57,11 @@ NAN_METHOD(XmlFraternalNode::Replace) {
   return info.GetReturnValue().Set(info[0]);
 }
 
-NAN_METHOD(XmlFraternalNode::AddPrevSibling) {
-  XmlFraternalNode* node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+NAN_METHOD(XmlNonAttributeNode::AddPrevSibling) {
+  XmlNonAttributeNode* node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
-  XmlFraternalNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info[0]->ToObject());
+  XmlNonAttributeNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info[0]->ToObject());
   assert(new_sibling);
 
   xmlNode *imported_sibling = node->import_node(new_sibling);
@@ -76,11 +76,11 @@ NAN_METHOD(XmlFraternalNode::AddPrevSibling) {
   return info.GetReturnValue().Set(info[0]);
 }
 
-NAN_METHOD(XmlFraternalNode::AddNextSibling) {
-  XmlFraternalNode* node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+NAN_METHOD(XmlNonAttributeNode::AddNextSibling) {
+  XmlNonAttributeNode* node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
-  XmlFraternalNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info[0]->ToObject());
+  XmlNonAttributeNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info[0]->ToObject());
   assert(new_sibling);
 
   xmlNode *imported_sibling = node->import_node(new_sibling);
@@ -95,23 +95,23 @@ NAN_METHOD(XmlFraternalNode::AddNextSibling) {
   return info.GetReturnValue().Set(info[0]);
 }
 
-NAN_METHOD(XmlFraternalNode::Path) {
+NAN_METHOD(XmlNonAttributeNode::Path) {
   Nan::HandleScope scope;
-  XmlFraternalNode *node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+  XmlNonAttributeNode *node = Nan::ObjectWrap::Unwrap<XmlNonAttributeNode>(info.Holder());
   assert(node);
 
   return info.GetReturnValue().Set(node->get_path());
 }
 
 void
-XmlFraternalNode::set_content(const char* content) {
+XmlNonAttributeNode::set_content(const char* content) {
   xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
   xmlNodeSetContent(xml_obj, encoded);
   xmlFree(encoded);
 }
 
 v8::Local<v8::Value>
-XmlFraternalNode::get_content() {
+XmlNonAttributeNode::get_content() {
   Nan::EscapableHandleScope scope;
   xmlChar* content = xmlNodeGetContent(xml_obj);
   if (content) {
@@ -125,7 +125,7 @@ XmlFraternalNode::get_content() {
 }
 
 v8::Local<v8::Value>
-XmlFraternalNode::get_next_element() {
+XmlNonAttributeNode::get_next_element() {
   Nan::EscapableHandleScope scope;
 
   xmlNode* sibling = xml_obj->next;
@@ -143,7 +143,7 @@ XmlFraternalNode::get_next_element() {
 }
 
 v8::Local<v8::Value>
-XmlFraternalNode::get_prev_element() {
+XmlNonAttributeNode::get_prev_element() {
   Nan::EscapableHandleScope scope;
 
   xmlNode* sibling = xml_obj->prev;
@@ -162,7 +162,7 @@ XmlFraternalNode::get_prev_element() {
 }
 
 void
-XmlFraternalNode::add_prev_sibling(xmlNode* node) {
+XmlNonAttributeNode::add_prev_sibling(xmlNode* node) {
   xmlAddPrevSibling(xml_obj, node);
   // if both are text, xml_obj is appended and node is FREED!
   // if adjacent sibling is text, should merge, but name bug if elem is non-named non-text
@@ -170,23 +170,23 @@ XmlFraternalNode::add_prev_sibling(xmlNode* node) {
 }
 
 void
-XmlFraternalNode::add_next_sibling(xmlNode* node) {
+XmlNonAttributeNode::add_next_sibling(xmlNode* node) {
   xmlAddNextSibling(xml_obj, node);
 }
 
 void
-XmlFraternalNode::replace_node(xmlNode* node) {
+XmlNonAttributeNode::replace_node(xmlNode* node) {
   xmlReplaceNode(xml_obj, node);
 }
 
 void
-XmlFraternalNode::replace_text(const char* content) {
+XmlNonAttributeNode::replace_text(const char* content) {
   xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
   xmlReplaceNode(xml_obj, txt);
 }
 
 bool
-XmlFraternalNode::next_sibling_will_merge(xmlNode *child) {
+XmlNonAttributeNode::next_sibling_will_merge(xmlNode *child) {
   return ((child->type == XML_TEXT_NODE) &&
           ((xml_obj->type == XML_TEXT_NODE) ||
            ((xml_obj->next != NULL) &&
@@ -195,7 +195,7 @@ XmlFraternalNode::next_sibling_will_merge(xmlNode *child) {
 }
 
 bool
-XmlFraternalNode::prev_sibling_will_merge(xmlNode *child) {
+XmlNonAttributeNode::prev_sibling_will_merge(xmlNode *child) {
   return ((child->type == XML_TEXT_NODE) &&
           ((xml_obj->type == XML_TEXT_NODE) ||
            ((xml_obj->prev != NULL) &&
@@ -204,7 +204,7 @@ XmlFraternalNode::prev_sibling_will_merge(xmlNode *child) {
 }
 
 v8::Local<v8::Value>
-XmlFraternalNode::get_path() {
+XmlNonAttributeNode::get_path() {
   Nan::EscapableHandleScope scope;
   xmlChar* path = xmlGetNodePath(xml_obj);
   const char* return_path = path ? reinterpret_cast<char*>(path) : "";
@@ -214,13 +214,13 @@ XmlFraternalNode::get_path() {
   return scope.Escape(js_obj);
 }
 
-XmlFraternalNode::XmlFraternalNode(xmlNode* node)
+XmlNonAttributeNode::XmlNonAttributeNode(xmlNode* node)
     : XmlNode(node)
 {
 }
 
 void
-XmlFraternalNode::Initialize()
+XmlNonAttributeNode::Initialize()
 {
     Nan::HandleScope scope;
     v8::Local<v8::FunctionTemplate> tmpl =
@@ -230,31 +230,31 @@ XmlFraternalNode::Initialize()
 
     Nan::SetPrototypeMethod(tmpl,
             "nextElement",
-            XmlFraternalNode::NextElement);
+            XmlNonAttributeNode::NextElement);
 
     Nan::SetPrototypeMethod(tmpl,
             "prevElement",
-            XmlFraternalNode::PrevElement);
+            XmlNonAttributeNode::PrevElement);
 
     Nan::SetPrototypeMethod(tmpl,
             "text",
-            XmlFraternalNode::Text);
+            XmlNonAttributeNode::Text);
 
     Nan::SetPrototypeMethod(tmpl,
             "replace",
-            XmlFraternalNode::Replace);
+            XmlNonAttributeNode::Replace);
 
     Nan::SetPrototypeMethod(tmpl,
             "addPrevSibling",
-            XmlFraternalNode::AddPrevSibling);
+            XmlNonAttributeNode::AddPrevSibling);
 
     Nan::SetPrototypeMethod(tmpl,
             "addNextSibling",
-            XmlFraternalNode::AddNextSibling);
+            XmlNonAttributeNode::AddNextSibling);
 
     Nan::SetPrototypeMethod(tmpl,
             "path",
-            XmlFraternalNode::Path);
+            XmlNonAttributeNode::Path);
 
 }
 

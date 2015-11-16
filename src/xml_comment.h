@@ -2,11 +2,11 @@
 #define SRC_XML_COMMENT_H_
 
 #include "libxmljs.h"
-#include "xml_fraternal_node.h"
+#include "xml_non_attribute_node.h"
 
 namespace libxmljs {
 
-class XmlComment : public XmlFraternalNode {
+class XmlComment : public XmlNonAttributeNode {
 public:
 
     explicit XmlComment(xmlNode* node);

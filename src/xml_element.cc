@@ -317,7 +317,7 @@ XmlElement::New(xmlNode* node)
 }
 
 XmlElement::XmlElement(xmlNode* node)
-    : XmlFraternalNode(node)
+    : XmlNonAttributeNode(node)
 {
 }
 
@@ -328,7 +328,7 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     v8::Local<v8::FunctionTemplate> tmpl =
       Nan::New<v8::FunctionTemplate>(New);
     constructor_template.Reset( tmpl);
-    tmpl->Inherit(Nan::New(XmlFraternalNode::constructor_template));
+    tmpl->Inherit(Nan::New(XmlNonAttributeNode::constructor_template));
     tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     Nan::SetPrototypeMethod(tmpl,
