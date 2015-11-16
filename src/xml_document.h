@@ -39,7 +39,7 @@ public:
     // expose ObjectWrap::refs_ (for testing)
     int refs() {
         return refs_;
-    };
+    }
 
 protected:
 

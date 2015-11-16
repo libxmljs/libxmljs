@@ -465,8 +465,8 @@ XmlDocument::XmlDocument(xmlDoc* doc)
 
 XmlDocument::~XmlDocument()
 {
-    xmlFreeDoc(xml_obj);
     xml_obj->_private = NULL;
+    xmlFreeDoc(xml_obj);
 }
 
 void
