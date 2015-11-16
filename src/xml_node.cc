@@ -330,14 +330,14 @@ void
 XmlNode::add_prev_sibling(xmlNode* node) {
   xmlAddPrevSibling(xml_obj, node);
   if (node->_private != NULL)
-    ref();
+    ref(node->refs);
 }
 
 void
 XmlNode::add_next_sibling(xmlNode* node) {
   xmlAddNextSibling(xml_obj, node);
   if (node->_private != NULL)
-    ref();
+    ref(node->refs);
 }
 
 xmlNode*
@@ -357,7 +357,6 @@ XmlNode::import_element(XmlNode *element) {
           return node;
     }else{
         node = xmlDocCopyNode(node, xml_obj->doc, 1);
-        node->_private = NULL; // reset _private on the new node
         return node;
      }
 }
@@ -466,7 +465,6 @@ XmlNode::clone(bool recurse) {
   Nan::EscapableHandleScope scope;
 
   xmlNode* new_xml_obj = xmlDocCopyNode(xml_obj, xml_obj->doc, recurse);
-  new_xml_obj->refs += xml_obj->refs;
   return scope.Escape(XmlNode::New(new_xml_obj));
 }
 
