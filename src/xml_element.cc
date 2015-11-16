@@ -192,14 +192,6 @@ NAN_METHOD(XmlElement::ChildNodes) {
   return info.GetReturnValue().Set(element->get_child_nodes());
 }
 
-NAN_METHOD(XmlElement::Path) {
-  Nan::HandleScope scope;
-  XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
-  assert(element);
-
-  return info.GetReturnValue().Set(element->get_path());
-}
-
 void
 XmlElement::set_name(const char* name) {
   xmlNodeSetName(xml_obj, (const xmlChar*)name);
@@ -310,17 +302,6 @@ XmlElement::get_child_nodes() {
     return scope.Escape(children);
 }
 
-v8::Local<v8::Value>
-XmlElement::get_path() {
-  Nan::EscapableHandleScope scope;
-  xmlChar* path = xmlGetNodePath(xml_obj);
-  const char* return_path = path ? reinterpret_cast<char*>(path) : "";
-  int str_len = xmlStrlen((const xmlChar*)return_path);
-  v8::Local<v8::String> js_obj = Nan::New<v8::String>(return_path, str_len).ToLocalChecked();
-  xmlFree(path);
-  return scope.Escape(js_obj);
-}
-
 v8::Local<v8::Object>
 XmlElement::New(xmlNode* node)
 {
@@ -381,10 +362,6 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
     Nan::SetPrototypeMethod(tmpl,
             "name",
             XmlElement::Name);
-
-    Nan::SetPrototypeMethod(tmpl,
-            "path",
-            XmlElement::Path);
 
     Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
             tmpl->GetFunction());

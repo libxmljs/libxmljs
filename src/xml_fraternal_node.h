@@ -24,6 +24,8 @@ protected:
     static NAN_METHOD(AddPrevSibling);
     static NAN_METHOD(AddNextSibling);
 
+    static NAN_METHOD(Path);
+
     v8::Local<v8::Value> get_next_element();
     v8::Local<v8::Value> get_prev_element();
     v8::Local<v8::Value> get_content();
@@ -35,6 +37,7 @@ protected:
     void add_next_sibling(xmlNode* node);
     bool prev_sibling_will_merge(xmlNode* node);
     bool next_sibling_will_merge(xmlNode* node);
+    v8::Local<v8::Value> get_path();
 };
 
 }  // namespace libxmljs

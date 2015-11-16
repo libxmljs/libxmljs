@@ -95,6 +95,14 @@ NAN_METHOD(XmlFraternalNode::AddNextSibling) {
   return info.GetReturnValue().Set(info[0]);
 }
 
+NAN_METHOD(XmlFraternalNode::Path) {
+  Nan::HandleScope scope;
+  XmlFraternalNode *node = Nan::ObjectWrap::Unwrap<XmlFraternalNode>(info.Holder());
+  assert(node);
+
+  return info.GetReturnValue().Set(node->get_path());
+}
+
 void
 XmlFraternalNode::set_content(const char* content) {
   xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
@@ -195,6 +203,17 @@ XmlFraternalNode::prev_sibling_will_merge(xmlNode *child) {
             (xml_obj->name == xml_obj->prev->name))));
 }
 
+v8::Local<v8::Value>
+XmlFraternalNode::get_path() {
+  Nan::EscapableHandleScope scope;
+  xmlChar* path = xmlGetNodePath(xml_obj);
+  const char* return_path = path ? reinterpret_cast<char*>(path) : "";
+  int str_len = xmlStrlen((const xmlChar*)return_path);
+  v8::Local<v8::String> js_obj = Nan::New<v8::String>(return_path, str_len).ToLocalChecked();
+  xmlFree(path);
+  return scope.Escape(js_obj);
+}
+
 XmlFraternalNode::XmlFraternalNode(xmlNode* node)
     : XmlNode(node)
 {
@@ -232,6 +251,10 @@ XmlFraternalNode::Initialize()
     Nan::SetPrototypeMethod(tmpl,
             "addNextSibling",
             XmlFraternalNode::AddNextSibling);
+
+    Nan::SetPrototypeMethod(tmpl,
+            "path",
+            XmlFraternalNode::Path);
 
 }
 
