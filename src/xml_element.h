@@ -54,6 +54,9 @@ protected:
     v8::Local<v8::Value> get_prev_element();
     void replace_element(xmlNode* element);
     void replace_text(const char* content);
+    bool child_will_merge(xmlNode* child);
+    bool prev_sibling_will_merge(xmlNode* node);
+    bool next_sibling_will_merge(xmlNode* node);
 };
 
 }  // namespace libxmljs

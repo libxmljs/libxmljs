@@ -82,6 +82,44 @@ NAN_METHOD(XmlText::Text) {
   return info.GetReturnValue().Set(info.Holder());
 }
 
+NAN_METHOD(XmlText::AddPrevSibling) {
+  XmlText* text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
+  assert(text);
+
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  assert(new_sibling);
+
+  xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
+  if (imported_sibling == NULL) {
+      return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
+  }
+  else if ((new_sibling->xml_obj == imported_sibling) && text->prev_sibling_will_merge(imported_sibling)) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0);
+  }
+  text->add_prev_sibling(imported_sibling);
+
+  return info.GetReturnValue().Set(info[0]);
+}
+
+NAN_METHOD(XmlText::AddNextSibling) {
+  XmlText* text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
+  assert(text);
+
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  assert(new_sibling);
+
+  xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
+  if (imported_sibling == NULL) {
+      return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
+  }
+  else if ((new_sibling->xml_obj == imported_sibling) && text->next_sibling_will_merge(imported_sibling)) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0);
+  }
+  text->add_next_sibling(imported_sibling);
+
+  return info.GetReturnValue().Set(info[0]);
+}
+
 NAN_METHOD(XmlText::Replace) {
   XmlText* element = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(element);
@@ -92,7 +130,7 @@ NAN_METHOD(XmlText::Replace) {
     XmlText* new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(info[0]->ToObject());
     assert(new_sibling);
 
-    xmlNode *imported_sibling = element->import_element(new_sibling);
+    xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
     if (imported_sibling == NULL) {
         return Nan::ThrowError("Could not replace. Failed to copy node to new Document.");
     }
@@ -200,10 +238,14 @@ XmlText::replace_text(const char* content) {
   xmlReplaceNode(xml_obj, txt);
 }
 
-xmlNode*
-XmlText::import_element(XmlText *element) {
-  return (xml_obj->doc == element->xml_obj->doc) ?
-        element->xml_obj : xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
+bool
+XmlText::next_sibling_will_merge(xmlNode *child) {
+  return (child->type == XML_TEXT_NODE);
+}
+
+bool
+XmlText::prev_sibling_will_merge(xmlNode *child) {
+  return (child->type == XML_TEXT_NODE);
 }
 
 void

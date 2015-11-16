@@ -463,7 +463,7 @@ XmlNode::get_wrapped_ancestor() {
 
 void
 XmlNode::ref_wrapped_ancestor() {
-    xmlNode* ancestor = get_wrapped_ancestor();
+    xmlNode* ancestor = this->get_wrapped_ancestor();
 
     // if our closest wrapped ancestor has changed then we either
     // got removed, added, or a closer ancestor was wrapped
@@ -631,37 +631,27 @@ XmlNode::remove() {
 void
 XmlNode::add_child(xmlNode* child) {
   xmlAddChild(xml_obj, child);
-  // if the child is wrapped then we have to ref its parents
-  if (child->_private != NULL) {
-      XmlNode* node = static_cast<XmlNode*>(child->_private);
-      node->ref_wrapped_ancestor();
-  }
 }
 
 void
 XmlNode::add_prev_sibling(xmlNode* node) {
   xmlAddPrevSibling(xml_obj, node);
-  if (node->_private != NULL)
-    static_cast<XmlNode*>(node->_private)->ref_wrapped_ancestor();
 }
 
 void
 XmlNode::add_next_sibling(xmlNode* node) {
   xmlAddNextSibling(xml_obj, node);
-  if (node->_private != NULL)
-    static_cast<XmlNode*>(node->_private)->ref_wrapped_ancestor();
 }
 
 xmlNode*
-XmlNode::import_element(XmlNode *element) {
-  if (xml_obj->doc == element->xml_obj->doc) {
-      // remove the child from its parent
-      // (alternatively, we could clone and keep the original in place)
-      if (element->xml_obj->parent != NULL)
-        element->remove();
-      return element->xml_obj;
+XmlNode::import_node(xmlNode *node) {
+  if (xml_obj->doc == node->doc) {
+      if ((node->parent != NULL) && (node->_private != NULL)) {
+        static_cast<XmlNode*>(node->_private)->remove();
+      }
+      return node;
   }else{
-      return xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
+      return xmlDocCopyNode(node, xml_obj->doc, 1);
   }
 }
 

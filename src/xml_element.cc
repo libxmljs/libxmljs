@@ -101,14 +101,25 @@ NAN_METHOD(XmlElement::AddChild) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlElement* child = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
+  XmlNode* child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
   assert(child);
 
-  xmlNode *imported_child = element->import_element(child);
+  xmlNode *imported_child = element->import_node(child->xml_obj);
   if (imported_child == NULL) {
       return Nan::ThrowError("Could not add child. Failed to copy node to new Document.");
   }
+
+  bool will_merge = element->child_will_merge(imported_child);
+  if ((child->xml_obj == imported_child) && will_merge) {
+      // merged child will be free, so ensure it is a copy
+      imported_child = xmlCopyNode(imported_child, 0);
+  }
+
   element->add_child(imported_child);
+
+  if (!will_merge && (imported_child->_private != NULL)) {
+      static_cast<XmlNode*>(imported_child->_private)->ref_wrapped_ancestor();
+  }
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -230,14 +241,23 @@ NAN_METHOD(XmlElement::AddPrevSibling) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
   assert(new_sibling);
 
-  xmlNode *imported_sibling = element->import_element(new_sibling);
+  xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
   if (imported_sibling == NULL) {
       return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
   }
+
+  bool will_merge = element->prev_sibling_will_merge(imported_sibling);
+  if ((new_sibling->xml_obj == imported_sibling) && will_merge) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0); // merged sibling is freed, so copy it
+  }
   element->add_prev_sibling(imported_sibling);
+
+  if (!will_merge && (imported_sibling->_private != NULL)) {
+      static_cast<XmlNode*>(imported_sibling->_private)->ref_wrapped_ancestor();
+  }
 
   return info.GetReturnValue().Set(info[0]);
 }
@@ -246,14 +266,23 @@ NAN_METHOD(XmlElement::AddNextSibling) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
   assert(new_sibling);
 
-  xmlNode *imported_sibling = element->import_element(new_sibling);
+  xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
   if (imported_sibling == NULL) {
       return Nan::ThrowError("Could not add sibling. Failed to copy node to new Document.");
   }
+
+  bool will_merge = element->next_sibling_will_merge(imported_sibling);
+  if ((new_sibling->xml_obj == imported_sibling) && will_merge) {
+      imported_sibling = xmlCopyNode(imported_sibling, 0);
+  }
   element->add_next_sibling(imported_sibling);
+
+  if (!will_merge && (imported_sibling->_private != NULL)) {
+      static_cast<XmlNode*>(imported_sibling->_private)->ref_wrapped_ancestor();
+  }
 
   return info.GetReturnValue().Set(info[0]);
 }
@@ -268,7 +297,7 @@ NAN_METHOD(XmlElement::Replace) {
     XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
     assert(new_sibling);
 
-    xmlNode *imported_sibling = element->import_element(new_sibling);
+    xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
     if (imported_sibling == NULL) {
         return Nan::ThrowError("Could not replace. Failed to copy node to new Document.");
     }
@@ -337,7 +366,6 @@ void
 XmlElement::add_cdata(xmlNode* cdata) {
   xmlAddChild(xml_obj, cdata);
 }
-
 
 v8::Local<v8::Value>
 XmlElement::get_child(int32_t idx) {
@@ -481,6 +509,33 @@ void
 XmlElement::replace_text(const char* content) {
   xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
   xmlReplaceNode(xml_obj, txt);
+}
+
+bool
+XmlElement::child_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE)         &&
+          (xml_obj->last != NULL)                &&
+          (xml_obj->last->type == XML_TEXT_NODE) &&
+          (xml_obj->last->name == child->name)   &&
+          (xml_obj->last != child));
+}
+
+bool
+XmlElement::next_sibling_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE) &&
+          ((xml_obj->type == XML_TEXT_NODE) ||
+           ((xml_obj->next != NULL) &&
+            (xml_obj->next->type == XML_TEXT_NODE) &&
+            (xml_obj->name == xml_obj->next->name)))); // libxml2 bug?
+}
+
+bool
+XmlElement::prev_sibling_will_merge(xmlNode *child) {
+  return ((child->type == XML_TEXT_NODE) &&
+          ((xml_obj->type == XML_TEXT_NODE) ||
+           ((xml_obj->prev != NULL) &&
+            (xml_obj->prev->type == XML_TEXT_NODE) &&
+            (xml_obj->name == xml_obj->prev->name))));
 }
 
 void
