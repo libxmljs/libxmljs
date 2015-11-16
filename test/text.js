@@ -37,11 +37,6 @@ module.exports.setters = function(assert) {
 module.exports.getters = function(assert) {
     var doc = libxml.Document();
     var elem = libxml.Text(doc, 'getters');
-
-    assert.throws(function() {
-        elem.name();
-    }, "text nodes should NOT expose a name");
-
     assert.equal('text', elem.type());
     assert.done();
 };

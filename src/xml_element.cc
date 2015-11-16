@@ -275,7 +275,7 @@ XmlElement::get_child(int32_t idx) {
   if (!child)
     return scope.Escape(Nan::Null());
 
-  return scope.Escape(XmlElement::New(child));
+  return scope.Escape(XmlNode::New(child));
 }
 
 v8::Local<v8::Value>
