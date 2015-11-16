@@ -504,6 +504,8 @@ struct _xmlNode {
     void            *psvi;	/* for type/PSVI informations */
     unsigned short   line;	/* line number */
     unsigned short   extra;	/* extra data for XPath/XSLT */
+    
+    int              refs; /* reference count for v8 garbage collection */
 };
 
 /**

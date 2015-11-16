@@ -59,5 +59,3 @@ module.exports.freed_namespace_unwrappable = function(assert) {
     global.gc();
     assert.done();
 };
-
-

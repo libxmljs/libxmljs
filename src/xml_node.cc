@@ -230,66 +230,135 @@ XmlNode::New(xmlNode* node)
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
-    this->freed = false;
     xml_obj->_private = this;
 
-    // this will prevent the document from being cleaned up
-    // we keep the document if any of the nodes attached to it are still alive
+    // increase the ref count of each parent
+    this->ref();
+
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
     doc->ref();
-
-    // check that there's a parent node with a _private pointer
-    // also check that the parent node isn't the doc since we already Ref() the doc once
-    if (xml_obj->parent != NULL &&
-        xml_obj->parent->_private != NULL &&
-        (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        static_cast<XmlNode*>(xml_obj->parent->_private)->Ref();
-    }
 }
 
 XmlNode::~XmlNode() {
 
-    // check if `xml_obj` has been freed so we don't access bad memory
-    if (this->freed)
-    {
+    // if we already freed xml_obj,
+    // then unref() the doc with this->doc
 
-        // unref the doc using the doc reference we saved in the `flagNode` callback
-        if (this->doc)
-        {
-            XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
-            doc->unref();
-        }
-
-        // set doc to null for good measure?
-        // this->doc = NULL;
-
-        // return so we don't attempt to use `xml_obj`
+    if (xml_obj == NULL) {
+        XmlDocument* doc = static_cast<XmlDocument*>(this->doc);
+        doc->unref();
         return;
     }
 
-    xml_obj->_private = NULL;
-    // release the hold and allow the document to be freed
+    // this->unref() may cause `xml_obj` to be freed
+    // so we create a reference to the document now
     XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
+
+    // decrease the ref count of each parent
+    this->unref();
+
+    // doc->unref() may cause `xml_obj` to be freed
+    // so we unref the document _after_ we unref each parent
     doc->unref();
 
-    // We do not free the xmlNode here if it is linked to a document
-    // It will be freed when the doc is freed
-    if (xml_obj->parent == NULL)
-      xmlFreeNode(xml_obj);
+    // unref() may have already set _private to NULL
+    // so we check that `xml_obj` is still available
+    if (xml_obj != NULL)
+        xml_obj->_private = NULL;
+}
 
-    // if there's a parent then Unref() it
-    else if (xml_obj->parent->_private != NULL &&
-            (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        XmlNode* parent = static_cast<XmlNode*>(xml_obj->parent->_private);
+// recursively ref each parent
+void XmlNode::ref(int count) {
+    // make sure count > 0
+    if (count < 1)
+        count = 1;
 
-        // make sure Unref() is necessary
-        if (parent->refs_ > 0)
-        {
-            parent->Unref();
-        }
+    // loop through each parent and increase the ref count
+    xmlNode* node = xml_obj;
+    while (node->parent != NULL) {
+        node = node->parent;
+        if (node->type == XML_DOCUMENT_NODE || node->type == XML_HTML_DOCUMENT_NODE)
+            break;
+        node->refs += count;
     }
+}
+
+// recursively unref each parent
+void XmlNode::unref(int count) {
+    // make sure count > 0
+    if (count < 1)
+        count = 1;
+
+    // loop through each parent and decrease the ref count
+    xmlNode* node = xml_obj;
+    while (node->parent != NULL) {
+        node = node->parent;
+        if (node->type == XML_DOCUMENT_NODE || node->type == XML_HTML_DOCUMENT_NODE)
+            break;
+        node->refs -= count;
+    }
+    /*
+     * At this point `node` is now the top-most parent.
+     *
+     * If `node` is NOT a document, then we know that it is
+     * detached from the document since it has no parent.
+     *
+     */
+
+    /*
+     * Here we free the top-most parent node IF:
+     * 1. it's not a document
+     * 2. it has no refs
+     *
+     */
+    if (node->type != XML_DOCUMENT_NODE && node->type != XML_HTML_DOCUMENT_NODE && node->refs == 0) {
+        xmlFreeNode(node);
+    }
+}
+
+void
+XmlNode::add_child(xmlNode* child) {
+  xmlAddChild(xml_obj, child);
+  // if the child is wrapped then we have to ref its parents
+  if (child->_private != NULL) {
+      XmlNode* node = static_cast<XmlNode*>(child->_private);
+      node->ref(child->refs);
+  }
+}
+
+void
+XmlNode::add_prev_sibling(xmlNode* node) {
+  xmlAddPrevSibling(xml_obj, node);
+  if (node->_private != NULL)
+    ref(node->refs);
+}
+
+void
+XmlNode::add_next_sibling(xmlNode* node) {
+  xmlAddNextSibling(xml_obj, node);
+  if (node->_private != NULL)
+    ref(node->refs);
+}
+
+xmlNode*
+XmlNode::import_element(XmlNode *element) {
+    /*
+    * We must clone the node if it has a parent (even if it is in the same document)
+    *
+    * Unless the node is a free-standing orphan without a document
+    * then we must clone it or there will be refcount issues.
+    *
+    */
+    xmlNode* node = element->xml_obj;
+    if (xml_obj->doc == node->doc &&
+      node->parent == NULL &&
+      node->type != XML_DOCUMENT_NODE &&
+      node->type != XML_HTML_DOCUMENT_NODE) {
+          return node;
+    }else{
+        node = xmlDocCopyNode(node, xml_obj->doc, 1);
+        return node;
+     }
 }
 
 v8::Local<v8::Value>
@@ -430,7 +499,16 @@ XmlNode::to_string(int options) {
 
 void
 XmlNode::remove() {
-  xmlUnlinkNode(xml_obj);
+    /*
+     * Here we unref each parent before removing the node
+     *
+     * We must unref each parent with the number of refs
+     * the current node has, because the current node may
+     * have children that need unref'ed as well.
+     *
+     */
+    this->unref(xml_obj->refs);
+    xmlUnlinkNode(xml_obj);
 }
 
 v8::Local<v8::Value>

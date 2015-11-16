@@ -12,11 +12,15 @@ public:
 
     xmlNode* xml_obj;
 
-    // boolean value to check if `xml_obj` was already freed
-    bool freed;
-
     // backup reference to the doc in case `xml_obj` was already freed
-    xmlDoc* doc;
+    void* doc;
+
+    // recursive referencing functions
+    void ref(int count = 1);
+    void unref(int count = 1);
+    int refs() {
+        return refs_;
+    };
 
     explicit XmlNode(xmlNode* node);
     virtual ~XmlNode();
@@ -55,6 +59,10 @@ protected:
     v8::Local<v8::Value> get_type();
     v8::Local<v8::Value> to_string(int options = 0);
     void remove();
+    xmlNode *import_element(XmlNode* element);
+    void add_child(xmlNode* child);
+    void add_prev_sibling(xmlNode* element);
+    void add_next_sibling(xmlNode* element);
 };
 
 }  // namespace libxmljs

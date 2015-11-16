@@ -24,4 +24,3 @@ module.exports.cdata = function(assert) {
     assert.equal(undefined, doc.child(0).name());
     assert.done();
 };
-

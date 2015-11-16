@@ -9,6 +9,49 @@ module.exports.setUp = function(done) {
     done();
 };
 
+module.exports.inaccessible_document_freed = function(assert) {
+    var xml_memory_before_document = libxml.memoryUsage();
+    for (var i=0; i<10; i++) {
+      makeDocument();
+    }
+    collectGarbage();
+    assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
+    assert.done();
+};
+
+module.exports.inaccessible_document_freed_when_node_freed = function(assert) {
+    var xml_memory_before_document = libxml.memoryUsage();
+    var nodes = [];
+    for (var i=0; i<10; i++) {
+      nodes.push(makeDocument().get('//center'));
+    }
+    nodes = null;
+    collectGarbage();
+    assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
+    assert.done();
+};
+
+module.exports.inaccessible_document_freed_after_middle_nodes_proxied = function(assert) {
+    var xml_memory_before_document = libxml.memoryUsage();
+    var doc = makeDocument();
+    var middle = doc.get('//middle');
+    var inner = doc.get('//inner');
+    inner.remove(); // v0.14.3, v0.15: proxy ref'd parent but can't unref when destroyed
+    doc = middle = inner = null;
+    collectGarbage();
+    assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
+    assert.done();
+};
+
+module.exports.inaccessible_tree_freed = function(assert) {
+    var doc = makeDocument();
+    var xml_memory_after_document = libxml.memoryUsage();
+    doc.get('//middle').remove();;
+    collectGarbage();
+    assert.ok(libxml.memoryUsage() < xml_memory_after_document);
+    assert.done();
+};
+
 module.exports.namespace_list_freed = function(assert) {
     var doc = makeDocument();
     var el = doc.get('//center');
@@ -48,4 +91,3 @@ function collectGarbage(minCycles, maxCycles) {
 
     return usage;
 }
-

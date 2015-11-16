@@ -26,12 +26,19 @@ public:
     // given xmlDoc object, intended for use in c++ space
     static v8::Local<v8::Object> New(xmlDoc* doc);
 
+    // expose ObjectWrap::Ref
     void ref() {
         Ref();
     }
 
+    // expose ObjectWrap::Unref
     void unref() {
         Unref();
+    }
+
+    // expose ObjectWrap::refs_ (for testing)
+    int refs() {
+        return refs_;
     }
 
 protected:
