@@ -47,6 +47,7 @@ protected:
     void set_namespace(xmlNs* ns);
     xmlNs * find_namespace(const char * search_str);
     v8::Local<v8::Value> get_all_namespaces();
+    v8::Local<v8::Value> get_local_namespaces();
     v8::Local<v8::Value> get_parent();
     v8::Local<v8::Value> get_prev_sibling();
     v8::Local<v8::Value> get_next_sibling();
