@@ -198,7 +198,7 @@ module.exports.replace = function(assert) {
 
   doc = libxml.parseXml(str);
   bar = doc.get('bar');
-  enchant = libxml.parseXml('<enchanted/>');
+  var enchant = libxml.parseXml('<enchanted/>');
   bar.replace(enchant.root());
   assert.equal(doc.root().toString(), '<foo>some <enchanted/> evening</foo>')
   assert.equal(doc.root().childNodes().length, 3);

@@ -230,66 +230,79 @@ XmlNode::New(xmlNode* node)
 }
 
 XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
-    this->freed = false;
     xml_obj->_private = this;
+    this->ancestor = NULL;
 
-    // this will prevent the document from being cleaned up
-    // we keep the document if any of the nodes attached to it are still alive
-    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
-    doc->ref();
+    // Ref the doc
+    (static_cast<XmlDocument*>(xml_obj->doc->_private))->Ref();
 
-    // check that there's a parent node with a _private pointer
-    // also check that the parent node isn't the doc since we already Ref() the doc once
-    if (xml_obj->parent != NULL &&
-        xml_obj->parent->_private != NULL &&
-        (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        static_cast<XmlNode*>(xml_obj->parent->_private)->Ref();
-    }
+    // ref the nearest wrapped ancestor
+    this->ref_wrapped_ancestor();
 }
 
 XmlNode::~XmlNode() {
+    if (xml_obj == NULL) return;
 
-    // check if `xml_obj` has been freed so we don't access bad memory
-    if (this->freed)
-    {
-
-        // unref the doc using the doc reference we saved in the `flagNode` callback
-        if (this->doc)
-        {
-            XmlDocument* doc = static_cast<XmlDocument*>(this->doc->_private);
-            doc->unref();
-        }
-
-        // set doc to null for good measure?
-        // this->doc = NULL;
-
-        // return so we don't attempt to use `xml_obj`
-        return;
-    }
+    // Unref the doc
+    (static_cast<XmlDocument*>(xml_obj->doc->_private))->Unref();
 
     xml_obj->_private = NULL;
-    // release the hold and allow the document to be freed
-    XmlDocument* doc = static_cast<XmlDocument*>(xml_obj->doc->_private);
-    doc->unref();
 
-    // We do not free the xmlNode here if it is linked to a document
-    // It will be freed when the doc is freed
+    // Unref the nearest wrapped ancestor
+    this->unref_wrapped_ancestor();
+
+    // free node since we have no parent and we're unwrapped
     if (xml_obj->parent == NULL)
-      xmlFreeNode(xml_obj);
+        xmlFreeNode(xml_obj);
+}
 
-    // if there's a parent then Unref() it
-    else if (xml_obj->parent->_private != NULL &&
-            (void*)xml_obj->doc != (void*)xml_obj->parent)
-    {
-        XmlNode* parent = static_cast<XmlNode*>(xml_obj->parent->_private);
-
-        // make sure Unref() is necessary
-        if (parent->refs_ > 0)
-        {
-            parent->Unref();
-        }
+xmlNode* XmlNode::get_wrapped_ancestor() {
+    xmlNode* ancestor = xml_obj;
+    while ((ancestor = ancestor->parent)) {
+        if (ancestor->_private != NULL &&
+            ancestor->type != XML_DOCUMENT_NODE &&
+            ancestor->type != XML_HTML_DOCUMENT_NODE)
+            break;
     }
+    return ancestor;
+}
+
+// recursively ref each parent
+void XmlNode::ref_wrapped_ancestor(int unref) {
+    xmlNode* ancestor = get_wrapped_ancestor();
+
+    // if our closest wrapped ancestor has changed then we either
+    // got removed, added, or a closer ancestor was wrapped
+    if (ancestor != this->ancestor) {
+        // unref the old ancestor
+        if (this->ancestor != NULL) {
+            (static_cast<XmlNode*>(this->ancestor->_private))->Unref();
+
+            // return IF:
+            // 1. our ancestor has changed
+            // 2. our previous ancestor is not NULL
+            // 3. we're trying to unref the new ancestor
+            //    (which we haven't ref'ed yet)
+            if (unref)
+                return;
+        }
+        this->ancestor = ancestor;
+    }
+    // nothing to do if we don't have a wrapped ancestor
+    if (this->ancestor == NULL)
+        return;
+
+    XmlNode* node = static_cast<XmlNode*>(this->ancestor->_private);
+    if (unref) {
+        node->Unref();
+    }else{
+        node->Ref();
+    }
+}
+
+// recursively unref each parent
+void XmlNode::unref_wrapped_ancestor() {
+    this->ref_wrapped_ancestor(true);
 }
 
 v8::Local<v8::Value>
@@ -430,7 +443,48 @@ XmlNode::to_string(int options) {
 
 void
 XmlNode::remove() {
+  this->unref_wrapped_ancestor();
+  this->ancestor = NULL;
   xmlUnlinkNode(xml_obj);
+}
+
+void
+XmlNode::add_child(xmlNode* child) {
+  xmlAddChild(xml_obj, child);
+  // if the child is wrapped then we have to ref its parents
+  if (child->_private != NULL) {
+      XmlNode* node = static_cast<XmlNode*>(child->_private);
+      node->ref_wrapped_ancestor();
+  }
+}
+
+void
+XmlNode::add_prev_sibling(xmlNode* node) {
+  xmlAddPrevSibling(xml_obj, node);
+  if (node->_private != NULL)
+    this->ref_wrapped_ancestor();
+  // no need to call `ref_ancestors` directly on `node` since they have the same parent
+}
+
+void
+XmlNode::add_next_sibling(xmlNode* node) {
+  xmlAddNextSibling(xml_obj, node);
+  if (node->_private != NULL)
+    this->ref_wrapped_ancestor();
+  // no need to call `ref_ancestors` directly on `node` since they have the same parent
+}
+
+xmlNode*
+XmlNode::import_element(XmlNode *element) {
+  if (xml_obj->doc == element->xml_obj->doc) {
+      // remove the child from its parent
+      // (alternatively, we could clone and keep the original in place)
+      if (element->xml_obj->parent != NULL)
+        element->remove();
+      return element->xml_obj;
+  }else{
+      return xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
+  }
 }
 
 v8::Local<v8::Value>
