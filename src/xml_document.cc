@@ -88,6 +88,7 @@ NAN_METHOD(XmlDocument::Root)
     XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
     assert(element);
     xmlDocSetRootElement(document->xml_obj, element->xml_obj);
+    element->ref_wrapped_ancestor();
     return info.GetReturnValue().Set(info[0]);
 }
 

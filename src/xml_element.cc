@@ -334,11 +334,6 @@ XmlElement::get_attrs() {
 }
 
 void
-XmlElement::add_child(xmlNode* child) {
-  xmlAddChild(xml_obj, child);
-}
-
-void
 XmlElement::add_cdata(xmlNode* cdata) {
   xmlAddChild(xml_obj, cdata);
 }
@@ -474,30 +469,18 @@ XmlElement::XmlElement(xmlNode* node)
 }
 
 void
-XmlElement::add_prev_sibling(xmlNode* element) {
-  xmlAddPrevSibling(xml_obj, element);
-}
-
-void
-XmlElement::add_next_sibling(xmlNode* element) {
-  xmlAddNextSibling(xml_obj, element);
-}
-
-void
 XmlElement::replace_element(xmlNode* element) {
   xmlReplaceNode(xml_obj, element);
+  if (element->_private != NULL) {
+      XmlNode* node = static_cast<XmlNode*>(element->_private);
+      node->ref_wrapped_ancestor();
+  }
 }
 
 void
 XmlElement::replace_text(const char* content) {
   xmlNodePtr txt = xmlNewDocText(xml_obj->doc, (const xmlChar*)content);
   xmlReplaceNode(xml_obj, txt);
-}
-
-xmlNode*
-XmlElement::import_element(XmlElement *element) {
-  return (xml_obj->doc == element->xml_obj->doc) ?
-        element->xml_obj : xmlDocCopyNode(element->xml_obj, xml_obj->doc, 1);
 }
 
 void
