@@ -233,76 +233,257 @@ XmlNode::XmlNode(xmlNode* node) : xml_obj(node) {
     xml_obj->_private = this;
     this->ancestor = NULL;
 
-    // Ref the doc
-    (static_cast<XmlDocument*>(xml_obj->doc->_private))->Ref();
+    if ((xml_obj->doc != NULL) && (xml_obj->doc->_private != NULL)) {
+        this->doc = xml_obj->doc;
+        static_cast<XmlDocument*>(this->doc->_private)->Ref();
+    }
 
-    // ref the nearest wrapped ancestor
     this->ref_wrapped_ancestor();
 }
 
+/*
+ * Return the (non-document) root, or a wrapped ancestor: whichever is closest
+ */
+xmlNode*
+get_wrapped_ancestor_or_root(xmlNode *xml_obj) {
+    while ((xml_obj->parent != NULL) &&
+           (static_cast<void*>(xml_obj->doc) != static_cast<void*>(xml_obj->parent))  &&
+           (xml_obj->parent->_private == NULL)) {
+        xml_obj = xml_obj->parent;
+    }
+    return ((xml_obj->parent != NULL) &&
+            (static_cast<void*>(xml_obj->doc) != static_cast<void*>(xml_obj->parent))) ?
+        xml_obj->parent : xml_obj;
+}
+
+
+/*
+ * Search linked list for javascript wrapper, ignoring given node.
+ */
+xmlAttr*
+get_wrapped_attr_in_list(xmlAttr *xml_obj, void *skip_xml_obj) {
+    xmlAttr *wrapped_attr = NULL;
+    while (xml_obj != NULL) {
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            wrapped_attr = xml_obj;
+            xml_obj = NULL;
+        }
+        else {
+            xml_obj = xml_obj->next;
+        }
+    }
+    return wrapped_attr;
+}
+
+xmlNs*
+get_wrapped_ns_in_list(xmlNs *xml_obj, void *skip_xml_obj) {
+    xmlNs *wrapped_ns = NULL;
+    while (xml_obj != NULL) {
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            wrapped_ns = xml_obj;
+            xml_obj = NULL;
+        }
+        else {
+            xml_obj = xml_obj->next;
+        }
+    }
+    return wrapped_ns;
+}
+
+xmlNode* get_wrapped_node_in_children(xmlNode *xml_obj, void *skip_xml_obj);
+
+/*
+ * Search document for javascript wrapper, ignoring given node.
+ * Based on xmlFreeDoc.
+ */
+xmlNode*
+get_wrapped_node_in_document(xmlDoc *xml_obj, void *skip_xml_obj) {
+    xmlNode *wrapped_node = NULL;
+    if ((xml_obj->extSubset != NULL) &&
+        (xml_obj->extSubset->_private != NULL) &&
+        (static_cast<void*>(xml_obj->extSubset) != skip_xml_obj)) {
+        wrapped_node = reinterpret_cast<xmlNode*>(xml_obj->extSubset);
+    }
+    if ((wrapped_node == NULL) &&
+        (xml_obj->intSubset != NULL) &&
+        (xml_obj->intSubset->_private != NULL) &&
+        (static_cast<void*>(xml_obj->intSubset) != skip_xml_obj)) {
+        wrapped_node = reinterpret_cast<xmlNode*>(xml_obj->intSubset);
+    }
+    if ((wrapped_node == NULL) && (xml_obj->children != NULL)) {
+        wrapped_node =
+            get_wrapped_node_in_children(xml_obj->children, skip_xml_obj);
+    }
+    if ((wrapped_node == NULL) && (xml_obj->oldNs != NULL)) {
+        wrapped_node =
+            reinterpret_cast<xmlNode*>(get_wrapped_ns_in_list(xml_obj->oldNs, skip_xml_obj));
+
+    }
+    return wrapped_node;
+}
+
+/*
+ * Search children of node for javascript wrapper, ignoring given node.
+ * Based on xmlFreeNodeList.
+ */
+xmlNode*
+get_wrapped_node_in_children(xmlNode *xml_obj, xmlNode *skip_xml_obj) {
+
+    xmlNode* wrapped_node = NULL;
+
+    if (xml_obj->type == XML_NAMESPACE_DECL) {
+        return reinterpret_cast<xmlNode*>(
+            get_wrapped_ns_in_list(reinterpret_cast<xmlNs*>(xml_obj), skip_xml_obj)
+        );
+    }
+
+    if ((xml_obj->type == XML_DOCUMENT_NODE) ||
+#ifdef LIBXML_DOCB_ENABLED
+        (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
+#endif
+        (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
+        return get_wrapped_node_in_document(reinterpret_cast<xmlDoc*>(xml_obj), skip_xml_obj);
+    }
+
+    xmlNode *next;
+    while (xml_obj != NULL) {
+        next = xml_obj->next;
+
+        if ((xml_obj != skip_xml_obj) && (xml_obj->_private != NULL)) {
+            wrapped_node = xml_obj;
+        }
+        else {
+
+            if ((xml_obj->children != NULL) && (xml_obj->type != XML_ENTITY_REF_NODE)) {
+                wrapped_node = get_wrapped_node_in_children(xml_obj->children, skip_xml_obj);
+            }
+
+            if ((wrapped_node == NULL) &&
+                ((xml_obj->type == XML_ELEMENT_NODE) ||
+                 (xml_obj->type == XML_XINCLUDE_START) ||
+                 (xml_obj->type == XML_XINCLUDE_END))) {
+
+                if ((wrapped_node == NULL) && (xml_obj->properties != NULL)) {
+                    wrapped_node =
+                        reinterpret_cast<xmlNode*>(get_wrapped_attr_in_list(xml_obj->properties, skip_xml_obj));
+                }
+
+                if ((wrapped_node == NULL) && (xml_obj->nsDef != NULL)) {
+                    wrapped_node =
+                        reinterpret_cast<xmlNode*>(get_wrapped_ns_in_list(xml_obj->nsDef, skip_xml_obj));
+                }
+            }
+
+        }
+
+        if (wrapped_node != NULL) {
+            break;
+        }
+
+        xml_obj = next;
+    }
+
+    return wrapped_node;
+}
+
+/*
+ * Search descendants of node to find javascript wrapper,
+ * optionally ignoring given node. Based on xmlFreeNode.
+ */
+xmlNode*
+get_wrapped_descendant(xmlNode *xml_obj, xmlNode *skip_xml_obj=NULL) {
+
+    xmlNode* wrapped_descendant = NULL;
+
+    if (xml_obj->type == XML_DTD_NODE) {
+        return (xml_obj->children == NULL) ?
+            NULL : get_wrapped_node_in_children(xml_obj->children, skip_xml_obj);
+    }
+
+    if (xml_obj->type == XML_NAMESPACE_DECL) {
+        return NULL;
+    }
+
+    if (xml_obj->type == XML_ATTRIBUTE_NODE) {
+        return (xml_obj->children == NULL) ?
+            NULL : get_wrapped_node_in_children(xml_obj->children, skip_xml_obj);
+    }
+
+    if ((xml_obj->children != NULL) && (xml_obj->type != XML_ENTITY_REF_NODE)) {
+        wrapped_descendant =
+            get_wrapped_node_in_children(xml_obj->children, skip_xml_obj);
+    }
+
+    if ((xml_obj->type == XML_ELEMENT_NODE) ||
+        (xml_obj->type == XML_XINCLUDE_START) ||
+        (xml_obj->type == XML_XINCLUDE_END)) {
+
+        if ((wrapped_descendant == NULL) && (xml_obj->properties != NULL)) {
+            wrapped_descendant =
+                reinterpret_cast<xmlNode*>(get_wrapped_attr_in_list(xml_obj->properties, skip_xml_obj));
+        }
+
+        if ((wrapped_descendant == NULL) && (xml_obj->nsDef != NULL)) {
+            wrapped_descendant =
+                reinterpret_cast<xmlNode*>(get_wrapped_ns_in_list(xml_obj->nsDef, skip_xml_obj));
+        }
+    }
+
+    return wrapped_descendant;
+}
+
 XmlNode::~XmlNode() {
+    if ((this->doc != NULL) && (this->doc->_private != NULL)) {
+      static_cast<XmlDocument*>(this->doc->_private)->Unref();
+    }
+    this->unref_wrapped_ancestor();
     if (xml_obj == NULL) return;
 
-    // Unref the doc
-    (static_cast<XmlDocument*>(xml_obj->doc->_private))->Unref();
-
     xml_obj->_private = NULL;
-
-    // Unref the nearest wrapped ancestor
-    this->unref_wrapped_ancestor();
-
-    // free node since we have no parent and we're unwrapped
-    if (xml_obj->parent == NULL)
-        xmlFreeNode(xml_obj);
-}
-
-xmlNode* XmlNode::get_wrapped_ancestor() {
-    xmlNode* ancestor = xml_obj;
-    while ((ancestor = ancestor->parent)) {
-        if (ancestor->_private != NULL &&
-            ancestor->type != XML_DOCUMENT_NODE &&
-            ancestor->type != XML_HTML_DOCUMENT_NODE)
-            break;
+    if (xml_obj->parent == NULL) {
+        if (get_wrapped_descendant(xml_obj) == NULL) {
+            xmlFreeNode(xml_obj);
+        }
     }
-    return ancestor;
+    else {
+        xmlNode *ancestor = get_wrapped_ancestor_or_root(xml_obj);
+        if ((ancestor->_private == NULL) &&
+            (ancestor->parent == NULL) &&
+            (get_wrapped_descendant(ancestor, xml_obj) == NULL)) {
+            xmlFreeNode(ancestor);
+        }
+    }
 }
 
-// recursively ref each parent
-void XmlNode::ref_wrapped_ancestor(int unref) {
+xmlNode*
+XmlNode::get_wrapped_ancestor() {
+    xmlNode* ancestor = get_wrapped_ancestor_or_root(xml_obj);
+    return ((xml_obj == ancestor) || (ancestor->_private == NULL)) ? NULL : ancestor;
+}
+
+void
+XmlNode::ref_wrapped_ancestor() {
     xmlNode* ancestor = get_wrapped_ancestor();
 
     // if our closest wrapped ancestor has changed then we either
     // got removed, added, or a closer ancestor was wrapped
     if (ancestor != this->ancestor) {
-        // unref the old ancestor
-        if (this->ancestor != NULL) {
-            (static_cast<XmlNode*>(this->ancestor->_private))->Unref();
-
-            // return IF:
-            // 1. our ancestor has changed
-            // 2. our previous ancestor is not NULL
-            // 3. we're trying to unref the new ancestor
-            //    (which we haven't ref'ed yet)
-            if (unref)
-                return;
-        }
+        this->unref_wrapped_ancestor();
         this->ancestor = ancestor;
     }
-    // nothing to do if we don't have a wrapped ancestor
-    if (this->ancestor == NULL)
-        return;
 
-    XmlNode* node = static_cast<XmlNode*>(this->ancestor->_private);
-    if (unref) {
-        node->Unref();
-    }else{
+    if (this->ancestor != NULL) {
+        XmlNode* node = static_cast<XmlNode*>(this->ancestor->_private);
         node->Ref();
     }
 }
 
-// recursively unref each parent
-void XmlNode::unref_wrapped_ancestor() {
-    this->ref_wrapped_ancestor(true);
+void
+XmlNode::unref_wrapped_ancestor() {
+    if ((this->ancestor != NULL) && (this->ancestor->_private != NULL)) {
+        (static_cast<XmlNode*>(this->ancestor->_private))->Unref();
+    }
+    this->ancestor = NULL;
 }
 
 v8::Local<v8::Value>
@@ -444,7 +625,6 @@ XmlNode::to_string(int options) {
 void
 XmlNode::remove() {
   this->unref_wrapped_ancestor();
-  this->ancestor = NULL;
   xmlUnlinkNode(xml_obj);
 }
 
@@ -462,16 +642,14 @@ void
 XmlNode::add_prev_sibling(xmlNode* node) {
   xmlAddPrevSibling(xml_obj, node);
   if (node->_private != NULL)
-    this->ref_wrapped_ancestor();
-  // no need to call `ref_ancestors` directly on `node` since they have the same parent
+    static_cast<XmlNode*>(node->_private)->ref_wrapped_ancestor();
 }
 
 void
 XmlNode::add_next_sibling(xmlNode* node) {
   xmlAddNextSibling(xml_obj, node);
   if (node->_private != NULL)
-    this->ref_wrapped_ancestor();
-  // no need to call `ref_ancestors` directly on `node` since they have the same parent
+    static_cast<XmlNode*>(node->_private)->ref_wrapped_ancestor();
 }
 
 xmlNode*

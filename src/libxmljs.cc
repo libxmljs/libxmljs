@@ -149,6 +149,11 @@ void xmlDeregisterNodeCallback(xmlNode* xml_obj)
 {
     nodeCount--;
     deregisterNodeNamespaces(xml_obj);
+    if (xml_obj->_private != NULL)
+    {
+        static_cast<XmlNode*>(xml_obj->_private)->xml_obj = NULL;
+        xml_obj->_private = NULL;
+    }
     return;
 }
 

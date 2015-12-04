@@ -17,7 +17,7 @@ module.exports.gc = function(assert) {
 };
 
 module.exports.references = function(assert) {
-    var nodes = libxml.parseXml('<root> <child> <grandchildren/> </child> <child2/></root>').childNodes();
+    var nodes = libxml.parseXml('<root> <child> <grandchildren/> </child> <child2/> </root>').childNodes();
 
     gc();
 
@@ -60,4 +60,110 @@ module.exports.freed_namespace_unwrappable = function(assert) {
     assert.done();
 };
 
+module.exports.unlinked_tree_persistence_parent_proxied_first = function(assert) {
+  var doc = makeDocument();
+  var parent_node = doc.get('//middle');
+  var child_node = doc.get('//inner');
+
+  parent_node.remove();
+  parent_node = null;
+  collectGarbage();
+
+  assert.equal("inner", child_node.name()); // works with >= v0.14.3
+  assert.done();
+};
+
+module.exports.unlinked_tree_proxied_leaf_persistent_ancestor_first = function(assert) {
+  var doc = makeDocument();
+  var ancestor = doc.get('//middle');
+  var leaf = doc.get('//center');
+
+  ancestor.remove();
+  ancestor = null;
+  collectGarbage();
+
+  assert.equal("center", leaf.name()); // fails with v0.14.3, v0.15
+  assert.done();
+};
+
+module.exports.unlinked_tree_proxied_leaf_persistent_descendant_first = function(assert) {
+  var doc = makeDocument();
+  var leaf = doc.get('//center');
+  var ancestor = doc.get('//middle');
+
+  ancestor.remove(); // make check here?
+  ancestor = null;
+  collectGarbage();
+
+  assert.equal("center", leaf.name());
+  assert.done();
+};
+
+module.exports.unlinked_tree_persistence_child_proxied_first = function(assert) {
+  var doc = makeDocument();
+  var child_node = doc.get('//inner');
+  var parent_node = doc.get('//middle');
+
+  parent_node.remove();
+  parent_node = null;
+  collectGarbage();
+
+  assert.equal("inner", child_node.name()); // fails with v0.14.3, v0.15
+  assert.done();
+};
+
+module.exports.unlinked_tree_leaf_persistence_with_proxied_ancestor = function(assert) {
+  var doc = makeDocument();
+  var proxied_ancestor = doc.get('//inner');
+  var leaf = doc.get('//center');
+
+  doc.get('//middle').remove();
+  leaf = null;
+  collectGarbage();
+
+  leaf = proxied_ancestor.get('.//center');
+  assert.equal("center", leaf.name());
+  assert.done();
+};
+
+module.exports.unlinked_tree_leaf_persistence_with_peer_proxy = function(assert) {
+  var doc = makeDocument();
+  var leaf = doc.get('//left');
+  var peer = doc.get('//right');
+
+  doc.get('//middle').remove();
+  leaf = null;
+  collectGarbage();
+
+  leaf = peer.parent().get('./left');
+  assert.equal("left", leaf.name());
+  assert.done();
+};
+
+function makeDocument() {
+    var body = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<root><outer><middle><inner><left/><center/><right/></inner></middle></outer></root>";
+    return libxml.parseXml(body);
+}
+
+function collectGarbage(minCycles, maxCycles) {
+    minCycles = minCycles || 3;
+    maxCycles = maxCycles || 10;
+
+    var cycles = 0;
+    var freedRss = 0;
+    var usage = process.memoryUsage();
+    do {
+        global.gc();
+
+        var usageAfterGc = process.memoryUsage();
+        freedRss = usage.rss - usageAfterGc.rss;
+        usage = usageAfterGc;
+
+        cycles++;
+    }
+    while ((cycles < minCycles) || ((freedRss !== 0) && (cycles < maxCycles)));
+
+    return usage;
+}
 

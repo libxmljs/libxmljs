@@ -16,12 +16,15 @@ public:
     xmlNode* ancestor;
 
     // referencing functions
-    void ref_wrapped_ancestor(int unref = 0);
+    void ref_wrapped_ancestor();
     void unref_wrapped_ancestor();
     xmlNode* get_wrapped_ancestor();
     int refs() {
         return refs_;
     };
+
+    // the doc ref'd by this proxy
+    xmlDoc* doc;
 
     explicit XmlNode(xmlNode* node);
     virtual ~XmlNode();
