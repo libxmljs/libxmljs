@@ -47,17 +47,13 @@ protected:
     v8::Local<v8::Value> get_attr(const char* name);
     v8::Local<v8::Value> get_attrs();
     void set_attr(const char* name, const char* value);
-    void add_child(xmlNode* child);
     void add_cdata(xmlNode* cdata);
     void set_content(const char* content);
     v8::Local<v8::Value> get_content();
     v8::Local<v8::Value> get_next_element();
     v8::Local<v8::Value> get_prev_element();
-    void add_prev_sibling(xmlNode* element);
-    void add_next_sibling(xmlNode* element);
     void replace_element(xmlNode* element);
     void replace_text(const char* content);
-    xmlNode *import_element(XmlElement* element);
 };
 
 }  // namespace libxmljs

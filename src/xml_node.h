@@ -12,10 +12,18 @@ public:
 
     xmlNode* xml_obj;
 
-    // boolean value to check if `xml_obj` was already freed
-    bool freed;
+    // reference to a parent XmlNode or XmlElement
+    xmlNode* ancestor;
 
-    // backup reference to the doc in case `xml_obj` was already freed
+    // referencing functions
+    void ref_wrapped_ancestor();
+    void unref_wrapped_ancestor();
+    xmlNode* get_wrapped_ancestor();
+    int refs() {
+        return refs_;
+    };
+
+    // the doc ref'd by this proxy
     xmlDoc* doc;
 
     explicit XmlNode(xmlNode* node);
@@ -55,6 +63,12 @@ protected:
     v8::Local<v8::Value> get_type();
     v8::Local<v8::Value> to_string(int options = 0);
     void remove();
+    void add_child(xmlNode* child);
+    void add_prev_sibling(xmlNode* element);
+    void add_next_sibling(xmlNode* element);
+    void replace_element(xmlNode* element);
+    void replace_text(const char* content);
+    xmlNode *import_element(XmlNode* element);
 };
 
 }  // namespace libxmljs

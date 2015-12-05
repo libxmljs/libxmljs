@@ -38,3 +38,4 @@ module.exports.SaxPushParser = sax_parser.SaxPushParser;
 
 module.exports.memoryUsage = bindings.xmlMemUsed;
 
+module.exports.nodeCount = bindings.xmlNodeCount;

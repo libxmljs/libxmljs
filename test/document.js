@@ -331,16 +331,11 @@ module.exports.validate_memory_usage = function(assert) {
     var xsdDoc = libxml.parseXml(xsd);
     var xmlDoc = libxml.parseXml(xml);
 
-    var initialMemory = process.memoryUsage();
-
+    var rssBefore = rssAfterGarbageCollection();
     for (var i = 0; i < 10000; ++i) {
         xmlDoc.validate(xsdDoc);
     }
-
-    global.gc();
-
-    var maxRssDelta = /^v0\.8/.test(process.version) ? (initialMemory.rss / 2) : 2000000;
-    assert.ok(process.memoryUsage().rss - initialMemory.rss < maxRssDelta);
+    assert.ok((rssAfterGarbageCollection() - rssBefore) < VALIDATE_RSS_TOLERANCE);
     assert.done();
 };
 
@@ -392,16 +387,32 @@ module.exports.validate_rng_memory_usage = function(assert) {
     var rngDoc = libxml.parseXml(rng);
     var xmlDoc = libxml.parseXml(xml_valid);
 
-    var initialMemory = process.memoryUsage();
-
+    var rssBefore = rssAfterGarbageCollection();
     for (var i = 0; i < 10000; ++i) {
         xmlDoc.rngValidate(rngDoc);
     }
-
-    global.gc();
-
-    var maxRssDelta = /^v0\.8/.test(process.version) ? (initialMemory.rss / 2) : 2000000;
-    assert.ok(process.memoryUsage().rss - initialMemory.rss < maxRssDelta);
+    assert.ok((rssAfterGarbageCollection() - rssBefore) < VALIDATE_RSS_TOLERANCE);
     assert.done();
 };
+
+var VALIDATE_RSS_TOLERANCE = 100000;
+
+function rssAfterGarbageCollection(maxCycles) {
+    maxCycles || (maxCycles = 10);
+
+    var rss = process.memoryUsage().rss;
+    var freedMemory = 0;
+    do {
+        global.gc();
+
+        var rssAfterGc = process.memoryUsage().rss;
+        freedMemory = rss - rssAfterGc;
+        rss = rssAfterGc;
+
+        maxCycles--;
+    }
+    while ((freedMemory !== 0) && (maxCycles > 0));
+
+    return rss;
+}
 
