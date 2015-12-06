@@ -68,7 +68,7 @@ protected:
     void add_next_sibling(xmlNode* element);
     void replace_element(xmlNode* element);
     void replace_text(const char* content);
-    xmlNode *import_element(XmlNode* element);
+    xmlNode *import_node(xmlNode* node);
 };
 
 }  // namespace libxmljs
