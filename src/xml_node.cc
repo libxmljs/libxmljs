@@ -89,7 +89,12 @@ NAN_METHOD(XmlNode::Namespaces) {
   XmlNode* node = Nan::ObjectWrap::Unwrap<XmlNode>(info.Holder());
   assert(node);
 
-  return info.GetReturnValue().Set(node->get_all_namespaces());
+  // ignore everything but a literal true; different from IsFalse
+  if ((info.Length() == 0) || !info[0]->IsTrue()) {
+      return info.GetReturnValue().Set(node->get_all_namespaces());
+  }
+
+  return info.GetReturnValue().Set(node->get_local_namespaces());
 }
 
 NAN_METHOD(XmlNode::Parent) {
@@ -543,6 +548,22 @@ XmlNode::get_all_namespaces() {
       Nan::Set(namespaces, index, ns);
     }
     xmlFree(nsList);
+  }
+
+  return scope.Escape(namespaces);
+}
+
+v8::Local<v8::Value>
+XmlNode::get_local_namespaces() {
+  Nan::EscapableHandleScope scope;
+
+  // Iterate through local namespaces
+  v8::Local<v8::Array> namespaces = Nan::New<v8::Array>();
+  xmlNs* nsDef = xml_obj->nsDef;
+  for(int i=0; nsDef; i++, nsDef = nsDef->next) {
+      v8::Local<v8::Number> index = Nan::New<v8::Number>(i);
+      v8::Local<v8::Object> ns = XmlNamespace::New(nsDef);
+      Nan::Set(namespaces, index, ns);
   }
 
   return scope.Escape(namespaces);

@@ -168,3 +168,43 @@ module.exports.custom_ns = function(assert) {
   assert.equal(div.toString(), exp.toString());
   assert.done();
 }
+
+module.exports.local_namespaces = function(assert) {
+  var str = '<html xmlns="urn:example" xmlns:ex1="urn:example:1"><body xmlns:ex2="urn:example:2"/></html>';
+  var doc = libxml.parseXmlString(str);
+  assert.ok(doc);
+  var root = doc.root();
+  assert.ok(root);
+  var decls = root.namespaces(true)
+  assert.ok(decls);
+  assert.equal(2, decls.length);
+  decls.forEach(function(n) {
+    if (n.prefix()==null) {
+      assert.equal("urn:example", n.href());
+    }
+    else if (n.prefix() == "ex1") {
+      assert.equal("urn:example:1", n.href());
+    }
+    else {
+      assert.ok(false);
+    }
+  });
+  // body has a namespace, from the default declaration on html.
+  var body = root.get('ex:body', {ex: 'urn:example'});
+  assert.ok(body);
+  decls = body.namespaces(true);
+  assert.equal(1, decls.length);
+  assert.equal("urn:example:2", decls[0].href())
+
+  // Make sure default behavior still works,
+  // and doesn't get turned on by mistake
+  decls = body.namespaces();
+  assert.equal(3, decls.length);
+  decls = body.namespaces(false);
+  assert.equal(3, decls.length);
+  decls = body.namespaces(0);
+  assert.equal(3, decls.length);
+  decls = body.namespaces(1);
+  assert.equal(3, decls.length);
+  assert.done();
+};
