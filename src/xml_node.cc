@@ -295,14 +295,14 @@ get_wrapped_ns_in_list(xmlNs *xml_obj, void *skip_xml_obj) {
     return wrapped_ns;
 }
 
-xmlNode* get_wrapped_node_in_children(xmlNode *xml_obj, void *skip_xml_obj);
+xmlNode* get_wrapped_node_in_children(xmlNode *xml_obj, xmlNode *skip_xml_obj);
 
 /*
  * Search document for javascript wrapper, ignoring given node.
  * Based on xmlFreeDoc.
  */
 xmlNode*
-get_wrapped_node_in_document(xmlDoc *xml_obj, void *skip_xml_obj) {
+get_wrapped_node_in_document(xmlDoc *xml_obj, xmlNode *skip_xml_obj) {
     xmlNode *wrapped_node = NULL;
     if ((xml_obj->extSubset != NULL) &&
         (xml_obj->extSubset->_private != NULL) &&
