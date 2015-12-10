@@ -59,7 +59,9 @@ int vfprintf(FILE *, const char *, va_list);
 #endif
 
 #ifdef WIN32
+#if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf _snprintf
+#endif
 #undef HAVE_UNISTD_H
 #undef HAVE_RAND_R
 #undef HAVE_ZLIB_H
