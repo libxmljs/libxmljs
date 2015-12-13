@@ -140,6 +140,18 @@ module.exports.unlinked_tree_leaf_persistence_with_peer_proxy = function(assert)
   assert.done();
 };
 
+module.exports.set_text_clobbering_children = function(assert) {
+  var doc = libxml.parseHtml('<root><child><inner>old</inner></child></root>')
+  var child = doc.get('//child');
+  var inner = doc.get('//inner');
+  child.text('new');
+
+  assert.equal(doc, inner.parent());
+  assert.equal('old', inner.text());
+
+  assert.done();
+}
+
 function makeDocument() {
     var body = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<root><outer><middle><inner><left/><center/><right/></inner></middle></outer></root>";

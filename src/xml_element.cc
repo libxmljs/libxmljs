@@ -420,8 +420,22 @@ XmlElement::get_path() {
 }
 
 void
+XmlElement::unlink_children() {
+  xmlNode *cur = xml_obj->children;
+  while (cur != NULL) {
+    xmlNode *next = cur->next;
+    if (cur->_private != NULL) {
+      static_cast<XmlNode*>(cur->_private)->unref_wrapped_ancestor();
+    }
+    xmlUnlinkNode(cur);
+    cur = next;
+  }
+}
+
+void
 XmlElement::set_content(const char* content) {
   xmlChar *encoded = xmlEncodeSpecialChars(xml_obj->doc, (const xmlChar*)content);
+  this->unlink_children();
   xmlNodeSetContent(xml_obj, encoded);
   xmlFree(encoded);
 }
