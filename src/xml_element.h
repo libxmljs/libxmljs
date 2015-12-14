@@ -48,6 +48,7 @@ protected:
     v8::Local<v8::Value> get_attrs();
     void set_attr(const char* name, const char* value);
     void add_cdata(xmlNode* cdata);
+    void unlink_children();
     void set_content(const char* content);
     v8::Local<v8::Value> get_content();
     v8::Local<v8::Value> get_next_element();
