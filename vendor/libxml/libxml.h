@@ -58,13 +58,6 @@ int vfprintf(FILE *, const char *, va_list);
 #include "trio.h"
 #endif
 
-#ifdef WIN32
-#define snprintf _snprintf
-#undef HAVE_UNISTD_H
-#undef HAVE_RAND_R
-#undef HAVE_ZLIB_H
-#endif
-
 /*
  * Internal variable indicating if a callback has been registered for
  * node creation/destruction. It avoids spending a lot of time in locking
@@ -91,12 +84,16 @@ void __xmlGlobalInitMutexLock(void);
 void __xmlGlobalInitMutexUnlock(void);
 void __xmlGlobalInitMutexDestroy(void);
 
+int __xmlInitializeDict(void);
+
 #if defined(HAVE_RAND) && defined(HAVE_SRAND) && defined(HAVE_TIME)
 /*
  * internal thread safe random function
  */
 int __xmlRandom(void);
 #endif
+
+int xmlNop(void);
 
 #ifdef IN_LIBXML
 #ifdef __GNUC__
