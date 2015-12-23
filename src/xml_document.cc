@@ -10,6 +10,7 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/relaxng.h>
+#include <libxml/xmlsave.h>
 
 #include "xml_document.h"
 #include "xml_element.h"
@@ -17,10 +18,6 @@
 #include "xml_syntax_error.h"
 
 namespace libxmljs {
-
-// Static member initialization
-const int XmlDocument::DEFAULT_PARSING_OPTS = 0;
-const int XmlDocument::EXCLUDE_IMPLIED_ELEMENTS = HTML_PARSE_NOIMPLIED | HTML_PARSE_NODEFDTD;
 
 Nan::Persistent<v8::FunctionTemplate> XmlDocument::constructor_template;
 
@@ -179,17 +176,67 @@ NAN_METHOD(XmlDocument::ToString)
     XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info.Holder());
     assert(document);
 
-    xmlChar* buffer = NULL;
-    int len = 0;
-    if (document->xml_obj->type == XML_HTML_DOCUMENT_NODE) {
-        htmlDocDumpMemoryFormat(document->xml_obj, &buffer, &len, info[0]->BooleanValue() ? 1 : 0);
-    } else {
-        xmlDocDumpFormatMemoryEnc(document->xml_obj, &buffer, &len, "UTF-8", info[0]->BooleanValue() ? 1 : 0);
-    }
-    v8::Local<v8::String> str = Nan::New<v8::String>((const char*)buffer, len).ToLocalChecked();
-    xmlFree(buffer);
+    int options = 0;
 
-    return info.GetReturnValue().Set(str);
+    if (info.Length() > 0) {
+    if (info[0]->IsBoolean()) {
+        if (info[0]->ToBoolean()->BooleanValue() == true) {
+            options |= XML_SAVE_FORMAT;
+        }
+    } else if (info[0]->IsObject()) {
+        v8::Local<v8::Object> obj = info[0]->ToObject();
+
+        // drop the xml declaration
+        if (obj->Get(Nan::New<v8::String>("declaration").ToLocalChecked())->IsFalse()) {
+            options |= XML_SAVE_NO_DECL;
+        }
+
+        // format save output
+        if (obj->Get(Nan::New<v8::String>("format").ToLocalChecked())->IsTrue()) {
+            options |= XML_SAVE_FORMAT;
+        }
+
+        // no empty tags (only works with XML) ex: <title></title> becomes <title/>
+        if (obj->Get(Nan::New<v8::String>("selfCloseEmpty").ToLocalChecked())->IsFalse()) {
+            options |= XML_SAVE_NO_EMPTY;
+        }
+
+        // format with non-significant whitespace
+        if (obj->Get(Nan::New<v8::String>("whitespace").ToLocalChecked())->IsTrue()) {
+            options |= XML_SAVE_WSNONSIG;
+        }
+
+        v8::Local<v8::Value> type = obj->Get(Nan::New<v8::String>("type").ToLocalChecked());
+        if (type->Equals(Nan::New<v8::String>("XML").ToLocalChecked()) ||
+            type->Equals(Nan::New<v8::String>("xml").ToLocalChecked())) {
+            options |= XML_SAVE_AS_XML;    // force XML serialization on HTML doc
+        } else if (type->Equals(Nan::New<v8::String>("HTML").ToLocalChecked()) ||
+                 type->Equals(Nan::New<v8::String>("html").ToLocalChecked())) {
+            options |= XML_SAVE_AS_HTML;   // force HTML serialization on XML doc
+            // if the document is XML and we want formatted HTML output
+            // we must use the XHTML serializer because the default HTML
+            // serializer only formats node->type = HTML_NODE and not XML_NODEs
+            if ((options & XML_SAVE_FORMAT) && (options & XML_SAVE_XHTML) == false) {
+              options |= XML_SAVE_XHTML;
+            }
+        } else if (type->Equals(Nan::New<v8::String>("XHTML").ToLocalChecked()) ||
+                 type->Equals(Nan::New<v8::String>("xhtml").ToLocalChecked())) {
+                options |= XML_SAVE_XHTML;    // force XHTML serialization
+            }
+        }
+    }
+
+    xmlBuffer* buf = xmlBufferCreate();
+    xmlSaveCtxt* savectx = xmlSaveToBuffer(buf, "UTF-8", options);
+    xmlSaveTree(savectx, (xmlNode*)document->xml_obj);
+    xmlSaveFlush(savectx);
+    xmlSaveClose(savectx);
+    v8::Local<v8::Value> ret = Nan::Null();
+    if (xmlBufferLength(buf) > 0)
+        ret = Nan::New<v8::String>((char*)xmlBufferContent(buf), xmlBufferLength(buf)).ToLocalChecked();
+    xmlBufferFree(buf);
+    
+    return info.GetReturnValue().Set(ret);
 }
 
 // not called from node
@@ -217,6 +264,78 @@ XmlDocument::New(xmlDoc* doc)
     doc->_private = document;
 
     return scope.Escape(obj);
+}
+
+int getParserOption(v8::Local<v8::Object> props, const char *key, int value, bool defaultValue = true) {
+    Nan::HandleScope scope;
+    v8::Local<v8::Value> prop = props->Get(Nan::New<v8::String>(key).ToLocalChecked());
+    return !prop->IsUndefined() && prop->ToBoolean()->BooleanValue() == defaultValue ? value : 0;
+}
+
+xmlParserOption getParserOptions(v8::Local<v8::Object> props) {
+    int ret = 0;
+
+    // http://xmlsoft.org/html/libxml-parser.html#xmlParserOption
+    // http://www.xmlsoft.org/html/libxml-HTMLparser.html#htmlParserOption
+
+    ret |= getParserOption(props, "recover", XML_PARSE_RECOVER);            // 1: recover on errors
+    /*ret |= getParserOption(props, "recover", HTML_PARSE_RECOVER);           // 1: Relaxed parsing*/
+
+    ret |= getParserOption(props, "noent", XML_PARSE_NOENT);                // 2: substitute entities
+
+    ret |= getParserOption(props, "dtdload", XML_PARSE_DTDLOAD);            // 4: load the external subset
+    ret |= getParserOption(props, "doctype", HTML_PARSE_NODEFDTD, false);   // 4: do not default a doctype if not found
+
+    ret |= getParserOption(props, "dtdattr", XML_PARSE_DTDATTR);            // 8: default DTD attributes
+    ret |= getParserOption(props, "dtdvalid", XML_PARSE_DTDVALID);          // 16: validate with the DTD
+
+    ret |= getParserOption(props, "noerror", XML_PARSE_NOERROR);            // 32: suppress error reports
+    ret |= getParserOption(props, "errors",  HTML_PARSE_NOERROR, false);    // 32: suppress error reports
+
+    ret |= getParserOption(props, "nowarning", XML_PARSE_NOWARNING);        // 64: suppress warning reports
+    ret |= getParserOption(props, "warnings", HTML_PARSE_NOWARNING, false); // 64: suppress warning reports
+
+    ret |= getParserOption(props, "pedantic", XML_PARSE_PEDANTIC);          // 128: pedantic error reporting
+    /*ret |= getParserOption(props, "pedantic", HTML_PARSE_PEDANTIC);         // 128: pedantic error reporting*/
+
+    ret |= getParserOption(props, "noblanks", XML_PARSE_NOBLANKS);          // 256: remove blank nodes
+    ret |= getParserOption(props, "blanks", HTML_PARSE_NOBLANKS, false);    // 256: remove blank nodes
+
+    ret |= getParserOption(props, "sax1", XML_PARSE_SAX1);                  // 512: use the SAX1 interface internally
+    ret |= getParserOption(props, "xinclude", XML_PARSE_XINCLUDE);          // 1024: Implement XInclude substitition
+
+    ret |= getParserOption(props, "nonet", XML_PARSE_NONET);                // 2048: Forbid network access
+    ret |= getParserOption(props, "net", HTML_PARSE_NONET, false);          // 2048: Forbid network access
+
+    ret |= getParserOption(props, "nodict", XML_PARSE_NODICT);              // 4096: Do not reuse the context dictionnary
+    ret |= getParserOption(props, "dict", XML_PARSE_NODICT, false);         // 4096: Do not reuse the context dictionnary
+
+    ret |= getParserOption(props, "nsclean", XML_PARSE_NSCLEAN);            // 8192: remove redundant namespaces declarations
+    ret |= getParserOption(props, "implied", HTML_PARSE_NOIMPLIED, false);  // 8192: Do not add implied html/body elements
+
+    ret |= getParserOption(props, "nocdata", XML_PARSE_NOCDATA);            // 16384: merge CDATA as text nodes
+    ret |= getParserOption(props, "cdata", XML_PARSE_NOCDATA, false);       // 16384: merge CDATA as text nodes
+
+    ret |= getParserOption(props, "noxincnode", XML_PARSE_NOXINCNODE);      // 32768: do not generate XINCLUDE START/END nodes
+    ret |= getParserOption(props, "xinclude", XML_PARSE_NOXINCNODE, false); // 32768: do not generate XINCLUDE START/END nodes
+
+    ret |= getParserOption(props, "compact", XML_PARSE_COMPACT);            // 65536: compact small text nodes; no modification of the tree allowed afterwards (will possibly crash if you try to modify the tree)
+    /*ret |= getParserOption(props, "compact", HTML_PARSE_COMPACT , false);   // 65536: compact small text nodes*/
+
+    ret |= getParserOption(props, "old10", XML_PARSE_OLD10);                // 131072: parse using XML-1.0 before update 5
+
+    ret |= getParserOption(props, "nobasefix", XML_PARSE_NOBASEFIX);        // 262144: do not fixup XINCLUDE xml:base uris
+    ret |= getParserOption(props, "basefix", XML_PARSE_NOBASEFIX, false);   // 262144: do not fixup XINCLUDE xml:base uris
+
+    ret |= getParserOption(props, "huge", XML_PARSE_HUGE);                  // 524288: relax any hardcoded limit from the parser
+    ret |= getParserOption(props, "oldsax", XML_PARSE_OLDSAX);              // 1048576: parse using SAX2 interface before 2.7.0
+
+    ret |= getParserOption(props, "ignore_enc", XML_PARSE_IGNORE_ENC);      // 2097152: ignore internal document encoding hint
+    /*ret |= getParserOption(props, "ignore_enc", HTML_PARSE_IGNORE_ENC);      // 2097152: ignore internal document encoding hint*/
+
+    ret |= getParserOption(props, "big_lines", XML_PARSE_BIG_LINES);        // 4194304: Store big lines numbers in text PSVI field
+
+    return (xmlParserOption)ret;
 }
 
 NAN_METHOD(XmlDocument::FromHtml)
@@ -251,21 +370,21 @@ NAN_METHOD(XmlDocument::FromHtml)
     xmlResetLastError();
     xmlSetStructuredErrorFunc(reinterpret_cast<void*>(&errors), XmlSyntaxError::PushToArray);
 
-    const int parsingOptions = excludeImpliedElementsOpt->ToBoolean()->Value()
-        ? EXCLUDE_IMPLIED_ELEMENTS
-        : DEFAULT_PARSING_OPTS;
+    int opts = (int)getParserOptions(options);
+    if (excludeImpliedElementsOpt->ToBoolean()->Value())
+        opts |= HTML_PARSE_NOIMPLIED | HTML_PARSE_NODEFDTD;
 
     htmlDocPtr doc;
     if (!node::Buffer::HasInstance(info[0])) {
         // Parse a string
         v8::String::Utf8Value str(info[0]->ToString());
-        doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, parsingOptions);
+        doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, opts);
     }
     else {
         // Parse a buffer
         v8::Local<v8::Object> buf = info[0]->ToObject();
         doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
-                            baseUrl, encoding, parsingOptions);
+                            baseUrl, encoding, opts);
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);
@@ -285,44 +404,6 @@ NAN_METHOD(XmlDocument::FromHtml)
     return info.GetReturnValue().Set(doc_handle);
 }
 
-int getXmlParserOption2(v8::Local<v8::Object> props, const char *key, int value) {
-    Nan::HandleScope scope;
-    v8::Local<v8::String> key2 = Nan::New<v8::String>(key).ToLocalChecked();
-    v8::Local<v8::Boolean> val = props->Get(key2)->ToBoolean();
-    return val->BooleanValue() ? value : 0;
-}
-
-xmlParserOption getXmlParserOption(v8::Local<v8::Object> props) {
-    int ret = 0;
-
-    // http://xmlsoft.org/html/libxml-parser.html#xmlParserOption
-    ret |= getXmlParserOption2(props, "recover", XML_PARSE_RECOVER); // recover on errors
-    ret |= getXmlParserOption2(props, "noent", XML_PARSE_NOENT); // substitute entities
-    ret |= getXmlParserOption2(props, "dtdload", XML_PARSE_DTDLOAD); // load the external subset
-    ret |= getXmlParserOption2(props, "dtdattr", XML_PARSE_DTDATTR); // default DTD attributes
-    ret |= getXmlParserOption2(props, "dtdvalid", XML_PARSE_DTDVALID); // validate with the DTD
-    ret |= getXmlParserOption2(props, "noerror", XML_PARSE_NOERROR); // suppress error reports
-    ret |= getXmlParserOption2(props, "nowarning", XML_PARSE_NOWARNING); // suppress warning reports
-    ret |= getXmlParserOption2(props, "pedantic", XML_PARSE_PEDANTIC); // pedantic error reporting
-    ret |= getXmlParserOption2(props, "noblanks", XML_PARSE_NOBLANKS); // remove blank nodes
-    ret |= getXmlParserOption2(props, "sax1", XML_PARSE_SAX1); // use the SAX1 interface internally
-    ret |= getXmlParserOption2(props, "xinclude", XML_PARSE_XINCLUDE); // Implement XInclude substitition
-    ret |= getXmlParserOption2(props, "nonet", XML_PARSE_NONET); // Forbid network access
-    ret |= getXmlParserOption2(props, "nodict", XML_PARSE_NODICT); // Do not reuse the context dictionnary
-    ret |= getXmlParserOption2(props, "nsclean", XML_PARSE_NSCLEAN); // remove redundant namespaces declarations
-    ret |= getXmlParserOption2(props, "nocdata", XML_PARSE_NOCDATA); // merge CDATA as text nodes
-    ret |= getXmlParserOption2(props, "noxincnode", XML_PARSE_NOXINCNODE); // do not generate XINCLUDE START/END nodes
-    ret |= getXmlParserOption2(props, "compact", XML_PARSE_COMPACT); // compact small text nodes; no modification of the tree allowed afterwards (will possibly crash if you try to modify the tree)
-    ret |= getXmlParserOption2(props, "old10", XML_PARSE_OLD10); // parse using XML-1.0 before update 5
-    ret |= getXmlParserOption2(props, "nobasefix", XML_PARSE_NOBASEFIX); // do not fixup XINCLUDE xml:base uris
-    ret |= getXmlParserOption2(props, "huge", XML_PARSE_HUGE); // relax any hardcoded limit from the parser
-    ret |= getXmlParserOption2(props, "oldsax", XML_PARSE_OLDSAX); // parse using SAX2 interface before 2.7.0
-    ret |= getXmlParserOption2(props, "ignore_enc", XML_PARSE_IGNORE_ENC); // ignore internal document encoding hint
-    ret |= getXmlParserOption2(props, "big_lines", XML_PARSE_BIG_LINES); // Store big lines numbers in text PSVI field
-
-    return (xmlParserOption)ret;
-}
-
 NAN_METHOD(XmlDocument::FromXml)
 {
     Nan::HandleScope scope;
@@ -332,7 +413,7 @@ NAN_METHOD(XmlDocument::FromXml)
     xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
             XmlSyntaxError::PushToArray);
 
-    xmlParserOption opts = getXmlParserOption(info[1]->ToObject());
+    xmlParserOption opts = getParserOptions(info[1]->ToObject());
 
     xmlDocPtr doc;
     if (!node::Buffer::HasInstance(info[0])) {
