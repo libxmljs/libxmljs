@@ -112,3 +112,33 @@ module.exports.recoverable_parse = function(assert) {
     assert.done();
 };
 
+module.exports.parseOptions = function(assert) {
+    var doc = libxml.parseHtml("<a/>", { doctype: false, implied: false }).toString();
+    assert.ok(doc.indexOf('DOCTYPE') === -1);
+    assert.ok(doc.indexOf('body') === -1);
+    assert.ok(doc.indexOf('<html>') === -1);
+
+    doc = libxml.parseHtml("<a/>", { doctype: false, implied: true }).toString();
+    assert.ok(doc.indexOf('DOCTYPE') === -1);
+    assert.ok(doc.indexOf('body') > -1);
+    assert.ok(doc.indexOf('<html>') > -1);
+
+    doc = libxml.parseHtml("<a/>", { implied: false }).toString();
+    assert.ok(doc.indexOf('DOCTYPE') > -1);
+    assert.ok(doc.indexOf('body') === -1);
+    assert.ok(doc.indexOf('<html>') === -1);
+    assert.done();
+}
+
+module.exports.toString = function(assert) {
+    var doc = new libxml.Document();
+    assert.ok(doc.toString({declaration: false}) === null);
+    assert.ok(doc.toString({declaration: false, type:'html'}).length === 1);
+
+    doc = libxml.parseHtml("<a></a>");
+    assert.ok(doc.toString().indexOf('<?xml') === -1);
+    assert.ok(doc.toString({ type: 'xml' }).indexOf('<?xml') > -1);
+    assert.ok(doc.toString({ type: 'xhtml' }).indexOf('<?xml') > -1);
+    assert.ok(doc.toString({ type: 'xml', selfCloseEmpty:true }).indexOf('<a/>') > -1);
+    assert.done();
+}
