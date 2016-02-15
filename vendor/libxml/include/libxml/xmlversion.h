@@ -156,7 +156,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the xmlWriter saving interface is configured in
  */
-#if 0
+#if 1
 #define LIBXML_WRITER_ENABLED
 #endif
 
