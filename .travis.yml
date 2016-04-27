@@ -11,6 +11,7 @@ node_js:
     - iojs-2
     - iojs-3
     - 4
+    - 6
 
 addons:
     apt:
