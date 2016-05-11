@@ -1,6 +1,8 @@
 # Libxmljs
 [![Build Status](https://secure.travis-ci.org/polotek/libxmljs.svg?branch=master)](http://travis-ci.org/polotek/libxmljs)
 
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs)
+
 LibXML bindings for [node.js](http://nodejs.org/)
 
 ```javascript
@@ -50,4 +52,3 @@ Start by checking out the [open issues](https://github.com/polotek/libxmljs/issu
 ### Requirements
 
 Make sure you have met the requirements for [node-gyp](https://github.com/TooTallNate/node-gyp#installation). You DO NOT need to manually install node-gyp; it comes bundled with node.
-

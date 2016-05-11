@@ -235,7 +235,7 @@ NAN_METHOD(XmlDocument::ToString)
     if (xmlBufferLength(buf) > 0)
         ret = Nan::New<v8::String>((char*)xmlBufferContent(buf), xmlBufferLength(buf)).ToLocalChecked();
     xmlBufferFree(buf);
-    
+
     return info.GetReturnValue().Set(ret);
 }
 
@@ -317,7 +317,7 @@ xmlParserOption getParserOptions(v8::Local<v8::Object> props) {
     ret |= getParserOption(props, "cdata", XML_PARSE_NOCDATA, false);       // 16384: merge CDATA as text nodes
 
     ret |= getParserOption(props, "noxincnode", XML_PARSE_NOXINCNODE);      // 32768: do not generate XINCLUDE START/END nodes
-    ret |= getParserOption(props, "xinclude", XML_PARSE_NOXINCNODE, false); // 32768: do not generate XINCLUDE START/END nodes
+    ret |= getParserOption(props, "xincnode", XML_PARSE_NOXINCNODE, false); // 32768: do not generate XINCLUDE START/END nodes
 
     ret |= getParserOption(props, "compact", XML_PARSE_COMPACT);            // 65536: compact small text nodes; no modification of the tree allowed afterwards (will possibly crash if you try to modify the tree)
     /*ret |= getParserOption(props, "compact", HTML_PARSE_COMPACT , false);   // 65536: compact small text nodes*/
@@ -404,6 +404,9 @@ NAN_METHOD(XmlDocument::FromHtml)
     return info.GetReturnValue().Set(doc_handle);
 }
 
+// FIXME: this method is almost identical to FromHtml above.
+// The two should be refactored to use a common function for most
+// of the work
 NAN_METHOD(XmlDocument::FromXml)
 {
     Nan::HandleScope scope;
@@ -413,19 +416,41 @@ NAN_METHOD(XmlDocument::FromXml)
     xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
             XmlSyntaxError::PushToArray);
 
-    xmlParserOption opts = getParserOptions(info[1]->ToObject());
+    v8::Local<v8::Object> options = info[1]->ToObject();
+    v8::Local<v8::Value>  baseUrlOpt  = options->Get(
+        Nan::New<v8::String>("baseUrl").ToLocalChecked());
+    v8::Local<v8::Value>  encodingOpt = options->Get(
+        Nan::New<v8::String>("encoding").ToLocalChecked());
+    v8::Local<v8::Value> excludeImpliedElementsOpt = options->Get(
+        Nan::New<v8::String>("excludeImpliedElements").ToLocalChecked());
 
+    // the base URL that will be used for this document
+    v8::String::Utf8Value baseUrl_(baseUrlOpt->ToString());
+    const char * baseUrl = *baseUrl_;
+    if (!baseUrlOpt->IsString()) {
+        baseUrl = NULL;
+    }
+
+    // the encoding to be used for this document
+    // (leave NULL for libxml to autodetect)
+    v8::String::Utf8Value encoding_(encodingOpt->ToString());
+    const char * encoding = *encoding_;
+    if (!encodingOpt->IsString()) {
+        encoding = NULL;
+    }
+
+    int opts = (int) getParserOptions(options);
     xmlDocPtr doc;
     if (!node::Buffer::HasInstance(info[0])) {
       // Parse a string
       v8::String::Utf8Value str(info[0]->ToString());
-      doc = xmlReadMemory(*str, str.length(), NULL, "UTF-8", opts);
+      doc = xmlReadMemory(*str, str.length(), baseUrl, "UTF-8", opts);
     }
     else {
       // Parse a buffer
       v8::Local<v8::Object> buf = info[0]->ToObject();
       doc = xmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
-                          NULL, NULL, opts);
+                          baseUrl, encoding, opts);
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);

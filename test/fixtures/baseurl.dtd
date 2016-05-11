@@ -1,0 +1,3 @@
+<!ELEMENT example EMPTY>
+<!ATTLIST example msg CDATA "IMPLIED">
+<!ENTITY happy "Happy gardens forever!">

@@ -1,0 +1,65 @@
+environment:
+  github_release_token:
+    secure: en/UnoFHA3RsSAHM5c6zb3RAMa4V01lC3pYG1YrHSeOPFu78SUA/0lOjNe3pp8RG
+  matrix:
+    - nodejs_version: 0.10.40
+      nodejs_abi: 11
+      platform: x86
+      arch: ia32
+    - nodejs_version: 0.10.40
+      nodejs_abi: 11
+      platform: x64
+      arch: x64
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x86
+      arch: ia32
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x64
+      arch: x64
+    - nodejs_version: 4.0.0
+      nodejs_abi: 46
+      platform: x86
+      arch: ia32
+    - nodejs_version: 4.0.0
+      nodejs_abi: 46
+      platform: x64
+      arch: x64
+    - nodejs_version: 5.0.0
+      nodejs_abi: 47
+      platform: x86
+      arch: ia32
+    - nodejs_version: 5.0.0
+      nodejs_abi: 47
+      platform: x64
+      arch: x64
+
+image: Visual Studio 2015
+
+artifacts:
+  - path: node-v$(nodejs_abi)-win32-$(ARCH).node
+    name: libxml_binary
+
+deploy:
+  - provider: GitHub
+    release: $(APPVEYOR_REPO_TAG_NAME)
+    artifact: libxml_binary
+    auth_token: $(github_release_token)
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+
+install:
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm install -g npm
+
+build_script:
+  - npm install --msvs_version=2013
+
+after_build:
+  - ps: Copy-Item build/Release/xmljs.node ($env:nodejs_abi + "-win32-" + $env:platform + ".node")
+
+test_script:
+- cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test

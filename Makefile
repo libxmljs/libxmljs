@@ -1,5 +1,5 @@
 
-target=./build/Release/libxmljs.node
+target=./build/Release/xmljs.node
 
 all: $(target)
 

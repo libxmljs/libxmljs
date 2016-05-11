@@ -4,9 +4,17 @@
   "contributors": [
     "Jeff Smick"
   ],
+  "binary": {
+        "module_name" : "xmljs",
+        "module_path" : "./build/Release/",
+        "host"        : "https://github.com",
+        "remote_path" : "./polotek/libxmljs/releases/download/v{version}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+  },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.16.1",
+  "version": "0.17.1",
   "scripts": {
+    "install": "node-pre-gyp install --fallback-to-build",
     "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
   },
   "repository": {
@@ -22,8 +30,9 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
+    "node-pre-gyp": "0.6.28",
     "bindings": "1.2.1",
-    "nan": "2.0.7"
+    "nan": "2.3.2"
   },
   "devDependencies": {
     "nodeunit": "0.9.0"
