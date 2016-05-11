@@ -1,0 +1,87 @@
+environment:
+  github_release_token:
+    secure: en/UnoFHA3RsSAHM5c6zb3RAMa4V01lC3pYG1YrHSeOPFu78SUA/0lOjNe3pp8RG
+  matrix:
+
+      # Node v0.10, MSVS 2013
+    - nodejs_version: 0.10.40
+      nodejs_abi: 11
+      platform: x86
+      target_arch: ia32
+      msvs_version: 2013
+
+    - nodejs_version: 0.10.40
+      nodejs_abi: 11
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
+      # Node v0.12, MSVS 2015
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x86
+      target_arch: ia32
+      msvs_version: 2015
+
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x64
+      target_arch: x64
+      msvs_version: 2015
+
+      # Node v0.12, MSVS 2013
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x86
+      target_arch: ia32
+      msvs_version: 2013
+
+    - nodejs_version: 0.12.7
+      nodejs_abi: 14
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
+    - nodejs_version: 4.0.0
+      nodejs_abi: 46
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
+    - nodejs_version: 5.0.0
+      nodejs_abi: 47
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
+image: Visual Studio 2015
+
+artifacts:
+  - path: node-v$(nodejs_abi)-win32-$(target_arch).node
+    name: libxml_binary
+
+deploy:
+  - provider: GitHub
+    release: $(APPVEYOR_REPO_TAG_NAME)
+    artifact: libxml_binary
+    auth_token: $(github_release_token)
+    draft: false
+    prerelease: false
+    on:
+      msvs_version: 2013
+      appveyor_repo_tag: true
+
+install:
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm config set msvs_version %msvs_version%
+  - npm config set python C:\Python27\python.exe
+  - npm install -g npm
+
+build_script:
+  - npm install --msvs_version=%msvs_version%
+
+test_script:
+- cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
+
+after_test:
+  - ps: Copy-Item build/Release/xmljs.node ($env:nodejs_abi + "-win32-" + $env:platform + ".node")

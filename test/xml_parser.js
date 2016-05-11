@@ -56,6 +56,12 @@ module.exports.recoverable_parse = function(assert) {
 };
 
 module.exports.baseurl_xml = function(assert) {
+    if (/^win/.test(process.platform)) {
+        // libxml won't resolve the path on Windows
+        assert.done();
+        return;
+    }
+
     var str = '<!DOCTYPE example SYSTEM "baseurl.dtd">\n' +
       '<example msg="&happy;"/>\n';
 
