@@ -2853,10 +2853,13 @@ int
 xmlCharEncCloseFunc(xmlCharEncodingHandler *handler) {
     int ret = 0;
     int tofree = 0;
+#if defined(LIBXML_ICONV_ENABLED) || defined(LIBXML_ICU_ENABLED)
     int i, handler_in_list = 0;
+#endif
 
     if (handler == NULL) return(-1);
     if (handler->name == NULL) return(-1);
+#if defined(LIBXML_ICONV_ENABLED) || defined(LIBXML_ICU_ENABLED)
     if (handlers != NULL) {
         for (i = 0;i < nbCharEncodingHandler; i++) {
             if (handler == handlers[i]) {
@@ -2865,6 +2868,7 @@ xmlCharEncCloseFunc(xmlCharEncodingHandler *handler) {
 	    }
 	}
     }
+#endif
 #ifdef LIBXML_ICONV_ENABLED
     /*
      * Iconv handlers can be used only once, free the whole block.
