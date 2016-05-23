@@ -3,6 +3,10 @@
     {
       'target_name': 'libxml',
       'type': 'static_library',
+      'cflags': [ '-Wall', '-Werror' ],
+      "xcode_settings": {
+        "OTHER_CFLAGS": [ "-Wall", "-Werror" ]
+      },
       'sources': [
         'buf.c',
         'catalog.c',

@@ -421,8 +421,6 @@ NAN_METHOD(XmlDocument::FromXml)
         Nan::New<v8::String>("baseUrl").ToLocalChecked());
     v8::Local<v8::Value>  encodingOpt = options->Get(
         Nan::New<v8::String>("encoding").ToLocalChecked());
-    v8::Local<v8::Value> excludeImpliedElementsOpt = options->Get(
-        Nan::New<v8::String>("excludeImpliedElements").ToLocalChecked());
 
     // the base URL that will be used for this document
     v8::String::Utf8Value baseUrl_(baseUrlOpt->ToString());

@@ -4400,7 +4400,7 @@ static void
 htmlParseElementInternal(htmlParserCtxtPtr ctxt) {
     const xmlChar *name;
     const htmlElemDesc * info;
-    htmlParserNodeInfo node_info = { 0, };
+    htmlParserNodeInfo node_info = { 0, 0, 0, 0, 0};
     int failed;
 
     if ((ctxt == NULL) || (ctxt->input == NULL)) {

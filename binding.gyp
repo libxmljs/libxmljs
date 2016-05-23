@@ -5,6 +5,10 @@
       'product_extension': 'node',
       'type': 'shared_library',
       'include_dirs': ["<!(node -e \"require('nan')\")"],
+      'cflags': [ '-Wall', '-Werror' ],
+      "xcode_settings": {
+        "OTHER_CFLAGS": [ "-Wall", "-Werror" ]
+      },
       'sources': [
         'src/libxmljs.cc',
         'src/xml_attribute.cc',

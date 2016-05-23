@@ -187,6 +187,7 @@ TRIO_ARGS1((values),
   return result;
 }
 
+#if 0 // unused
 /*
  * trio_is_special_quantity
  */
@@ -228,6 +229,7 @@ TRIO_ARGS1((number),
   }
   return is_negative;
 }
+#endif
 
 #endif /* USE_IEEE_754 */
 
