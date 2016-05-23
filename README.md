@@ -1,5 +1,5 @@
 # Libxmljs
-[![Build Status](https://secure.travis-ci.org/polotek/libxmljs.svg?branch=master)](http://travis-ci.org/polotek/libxmljs)
+[![Build Status](https://secure.travis-ci.org/libxmljs/libxmljs.svg?branch=master)](http://travis-ci.org/libxmljs/libxmljs)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
@@ -28,14 +28,14 @@ console.log(child.attr('foo').value()); // prints "bar"
 
 ## Support
 
-* Docs - [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki)
+* Docs - [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki)
 * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
 
 ## API and Examples
 
-Check out the wiki [http://github.com/polotek/libxmljs/wiki](http://github.com/polotek/libxmljs/wiki).
+Check out the wiki [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki).
 
-See the [examples](https://github.com/polotek/libxmljs/tree/master/examples) folder.
+See the [examples](https://github.com/libxmljs/libxmljs/tree/master/examples) folder.
 
 ## Installation via [npm](https://npmjs.org)
 
@@ -45,7 +45,7 @@ npm install libxmljs
 
 ## Contribute
 
-Start by checking out the [open issues](https://github.com/polotek/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/polotek/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
+Start by checking out the [open issues](https://github.com/libxmljs/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/libxmljs/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
 
 ### Requirements
 

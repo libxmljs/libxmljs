@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/polotek/libxmljs.git"
+    "url": "http://github.com/libxmljs/libxmljs.git"
   },
   "bugs": {
-    "url": "http://github.com/polotek/libxmljs/issues"
+    "url": "http://github.com/libxmljs/libxmljs/issues"
   },
   "main": "./index",
   "license": "MIT",
