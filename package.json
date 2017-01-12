@@ -12,7 +12,7 @@
         "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
