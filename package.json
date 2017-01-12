@@ -9,10 +9,10 @@
         "module_path" : "./build/Release/",
         "host"        : "https://github.com",
         "remote_path" : "./libxmljs/libxmljs/releases/download/v{version}/",
-        "package_name": "node-v{node_abi}-{platform}-{arch}.node"
+        "package_name": "{node_abi}-{platform}-{arch}.node"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
