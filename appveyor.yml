@@ -54,10 +54,22 @@ environment:
       target_arch: x64
       msvs_version: 2013
 
+    - nodejs_version: 6.0.0
+      nodejs_abi: 48
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
+    - nodejs_version: 7.0.0
+      nodejs_abi: 51
+      platform: x64
+      target_arch: x64
+      msvs_version: 2013
+
 image: Visual Studio 2015
 
 artifacts:
-  - path: node-v$(nodejs_abi)-win32-$(target_arch).node
+  - path: $(artifact_path)
     name: libxml_binary
 
 deploy:
@@ -84,4 +96,6 @@ test_script:
 - cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
 
 after_test:
-  - ps: Copy-Item build/Release/xmljs.node ($env:nodejs_abi + "-win32-" + $env:platform + ".node")
+  - ps: $env:artifact_path = "node-v" + $env:nodejs_abi + "-win32-" + $env:target_arch + ".node"
+  - ps: Copy-Item build/Release/xmljs.node ($env:artifact_path)
+  - ps: echo ("Created artifact " + $env:artifact_path)
