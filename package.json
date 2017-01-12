@@ -9,7 +9,7 @@
         "module_path" : "./build/Release/",
         "host"        : "https://github.com",
         "remote_path" : "./libxmljs/libxmljs/releases/download/v{version}/",
-        "package_name": "{node_abi}-{platform}-{arch}.node"
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
   "version": "0.18.1",
