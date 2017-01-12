@@ -253,7 +253,7 @@ module.exports.rngValidate = function(assert) {
 			'</zeroOrMore>'+
 		'</element>';
 
-	var xml_valid = 
+	var xml_valid =
 		'<addressBook>'+
 			'<card>'+
 				'<name>John Smith</name>'+
@@ -265,7 +265,7 @@ module.exports.rngValidate = function(assert) {
 			'</card>'+
 		'</addressBook>';
 
-	var xml_invalid = 
+	var xml_invalid =
 		'<addressBook>'+
 			'<card>'+
 				'<Name>John Smith</Name>'+
@@ -280,7 +280,7 @@ module.exports.rngValidate = function(assert) {
     var rngDoc = libxml.parseXml(rng);
     var xmlDocValid = libxml.parseXml(xml_valid);
     var xmlDocInvalid = libxml.parseXml(xml_invalid);
-	
+
     assert.equal(xmlDocValid.rngValidate(rngDoc), true);
     assert.equal(xmlDocValid.validationErrors.length, 0);
 
@@ -395,17 +395,17 @@ module.exports.validate_rng_memory_usage = function(assert) {
     assert.done();
 };
 
-var VALIDATE_RSS_TOLERANCE = 100000;
+var VALIDATE_RSS_TOLERANCE = 1;
 
 function rssAfterGarbageCollection(maxCycles) {
     maxCycles || (maxCycles = 10);
 
-    var rss = process.memoryUsage().rss;
+    var rss = libxml.memoryUsage();
     var freedMemory = 0;
     do {
         global.gc();
 
-        var rssAfterGc = process.memoryUsage().rss;
+        var rssAfterGc = libxml.memoryUsage();
         freedMemory = rss - rssAfterGc;
         rss = rssAfterGc;
 
@@ -415,4 +415,3 @@ function rssAfterGarbageCollection(maxCycles) {
 
     return rss;
 }
-
