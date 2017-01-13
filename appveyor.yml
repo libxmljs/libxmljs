@@ -24,13 +24,20 @@ install:
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
   - npm install -g npm
+  - npm install -g node-gyp
   - npm install -g node-pre-gyp
+
+  # work around an issue with node-gyp v3.3.1 and node 4x
+  # https://github.com/nodejs/node-gyp/issues/921
+  - npm config set -g cafile=package.json
+  - npm config set -g strict-ssl=false
+  - npm config set registry http://registry.npmjs.org/
 
 build_script:
   - npm install --msvs_version=2015
 
 test_script:
-- cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
+  - cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
 
 after_test:
   - cmd: node-pre-gyp package 2>&1
