@@ -173,12 +173,13 @@
 /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
 
-/* Define to 1 if you have the `snprintf' function. */
-#if defined(_WIN32) && _MSC_VER >= 1900
-#define HAVE_SNPRINTF 1
-#else
+/* snprintf macro for older MSVS versions */
+#if defined(_WIN32) && _MSC_VER < 1900
 #define snprintf _snprintf
 #endif
+
+/* Define to 1 if you have the `snprintf' function. */
+#define HAVE_SNPRINTF 1
 
 /* Define to 1 if you have the `sprintf' function. */
 #define HAVE_SPRINTF 1

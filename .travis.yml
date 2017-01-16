@@ -21,3 +21,4 @@ sudo: false
 before_install:
     - $CXX --version
     - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm install -g npm@2 ;; esac
+    - npm install node-gyp -g

@@ -23,7 +23,7 @@ XmlAttribute::New(xmlNode* xml_obj, const xmlChar* name, const xmlChar* value)
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
-    v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
     attribute->Wrap(obj);
     return scope.Escape(obj);
 }
@@ -39,7 +39,7 @@ XmlAttribute::New(xmlAttr* attr)
     }
 
     XmlAttribute* attribute = new XmlAttribute(attr);
-    v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
     attribute->Wrap(obj);
     return scope.Escape(obj);
 }

@@ -87,7 +87,7 @@ XmlComment::New(xmlNode* node)
     }
 
     XmlComment* comment = new XmlComment(node);
-    v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
     comment->Wrap(obj);
     return scope.Escape(obj);
 }

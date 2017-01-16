@@ -207,7 +207,7 @@ XmlText::New(xmlNode* node)
     }
 
     XmlText* element = new XmlText(node);
-    v8::Local<v8::Object> obj = Nan::New(constructor_template)->GetFunction()->NewInstance();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
     element->Wrap(obj);
     return scope.Escape(obj);
 }
