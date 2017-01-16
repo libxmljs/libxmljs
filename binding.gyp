@@ -22,7 +22,7 @@
         'src/xml_text.cc',
         'src/xml_xpath_context.cc',
       ],
-      'dependencies': [
+      'dependencies':  [
         './vendor/libxml/libxml.gyp:libxml'
       ],
       'conditions': [
