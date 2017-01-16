@@ -37,10 +37,10 @@ build_script:
   - npm install --msvs_version=2015
 
 test_script:
-  - cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
+  - node --expose-gc node_modules/nodeunit/bin/nodeunit test
 
 after_test:
-  - cmd: node-pre-gyp package 2>&1
+  - node-pre-gyp package 2>&1
 
 deploy:
   - provider: GitHub
@@ -53,6 +53,9 @@ deploy:
       appveyor_repo_tag: true
 
 after_deploy:
+  - npm config delete -g cafile
+  - npm config delete -g strict-ssl
+  - npm config delete registry
   - node-pre-gyp clean
   - npm install --fallback-to-build=false
-  - cmd: node --expose-gc node_modules/nodeunit/bin/nodeunit test
+  - node --expose-gc node_modules/nodeunit/bin/nodeunit test
