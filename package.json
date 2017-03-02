@@ -6,13 +6,13 @@
   ],
   "binary": {
         "module_name" : "xmljs",
-        "module_path" : "./build/Release/",
+        "module_path" : "./lib/binding/{node_abi}-{platform}-{arch}",
         "host"        : "https://github.com",
         "remote_path" : "./libxmljs/libxmljs/releases/download/v{version}/",
         "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.18.4",
+  "version": "0.18.5",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "node-pre-gyp": "~0.6.32",
-    "bindings": "1.2.1",
     "nan": "~2.5.0"
   },
   "devDependencies": {
