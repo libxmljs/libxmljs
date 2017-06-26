@@ -24,7 +24,7 @@ before_install:
 - npm install -g node-pre-gyp
 install:
 - npm install --build-from-source
-after_success:
+before_deploy:
 - node-pre-gyp package 2>&1
 deploy:
   provider: releases
