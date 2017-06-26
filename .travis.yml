@@ -1,24 +1,37 @@
 language: node_js
-
+os:
+- linux
+- osx
 env:
-    - CXX=g++-4.8
-
+- CXX=g++-4.8
 node_js:
-    - "0.10"
-    - "0.12"
-    - 4
-    - 6
-
+- '0.10'
+- '0.12'
+- 4
+- 6
 addons:
-    apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - g++-4.8
-
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
 sudo: false
-
 before_install:
-    - $CXX --version
-    - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm install -g npm@2 ;; esac
-    - npm install node-gyp -g
+- $CXX --version
+- case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm install -g npm@2 ;; esac
+- npm install node-gyp -g
+- npm install -g node-gyp
+- npm install -g node-pre-gyp
+install:
+- npm install --build-from-source
+before_deploy:
+- node-pre-gyp package 2>&1
+deploy:
+  provider: releases
+  api_key:
+    secure: TVbS63BPfzMu5MlVgusGAe3tUEogStb8M2m/E+XzTF1NsSVqwClL/DJSI1Gvhqbnex7sllsbyV+WzRuU5n3o/bRlQWRqBRKOnTACWcVGbXSelTczIvqEIjc5IJA/EQJHUIL9TnDwqN2NyoIqdOrPeNh5apKzDzwFqvvqXGfBbAM=
+  file: build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz
+  file_glob: true
+  skip_cleanup: true
+  on:
+    tags: true
