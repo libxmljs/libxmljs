@@ -2,6 +2,11 @@ language: node_js
 os:
 - linux
 - osx
+env:
+- CXX=g++-4.8
+compiler:
+- gcc
+- clang
 node_js:
 - '0.10'
 - '0.12'
@@ -19,6 +24,7 @@ addons:
 sudo: false
 before_install:
 - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
+- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install gcc48; fi
 - $CXX --version
 
 - PUBLISH_BINARY=false
