@@ -51,7 +51,7 @@ build_script:
 test_script:
   - node --expose-gc node_modules/nodeunit/bin/nodeunit test
 
-before_deploy:
+after_test:
   - node-pre-gyp package 2>&1
 
 deploy:
