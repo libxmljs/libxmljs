@@ -30,6 +30,7 @@ artifacts:
     name: libxml_binary
 
 install:
+  - ps: Install-Product node $env:nodejs_version $env:platform
   - npm --version
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
@@ -44,15 +45,13 @@ install:
   - npm config set -g strict-ssl=false
   - npm config set registry http://registry.npmjs.org/
 
-  - ps: Install-Product node $env:nodejs_version $env:platform
-
 build_script:
   - npm install --msvs_version=2015
 
 test_script:
   - node --expose-gc node_modules/nodeunit/bin/nodeunit test
 
-after_test:
+before_deploy:
   - node-pre-gyp package 2>&1
 
 deploy:
