@@ -1,9 +1,15 @@
 environment:
+  npm_version: latest
+  gyp_version: latest
   github_release_token:
     secure: en/UnoFHA3RsSAHM5c6zb3RAMa4V01lC3pYG1YrHSeOPFu78SUA/0lOjNe3pp8RG
   matrix:
     - nodejs_version: 0.10
+      npm_version: 4.6.1
+      gyp_version: 3.5.0
     - nodejs_version: 0.12
+      npm_version: 4.6.1
+      gyp_version: 3.5.0
     - nodejs_version: 4
     - nodejs_version: 5
     - nodejs_version: 6
@@ -24,8 +30,8 @@ install:
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
-  - npm install -g npm
-  - npm install -g node-gyp
+  - npm install -g npm@%npm_version%
+  - npm install -g node-gyp@%gyp_version%
   - npm install -g node-pre-gyp
 
   # work around an issue with node-gyp v3.3.1 and node 4x
