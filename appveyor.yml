@@ -30,9 +30,11 @@ artifacts:
     name: libxml_binary
 
 install:
+  - npm --version
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
   - npm install -g npm@%npm_version%
+  - npm --version
   - npm install -g node-gyp@%gyp_version%
   - npm install -g node-pre-gyp@%pre_gyp_version%
 
