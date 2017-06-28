@@ -4,7 +4,7 @@ os:
 - osx
 env:
 - CXX=g++-4.8
-compiler:		
+compiler:
 - gcc
 - clang
 node_js:
