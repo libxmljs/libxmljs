@@ -6,11 +6,11 @@ environment:
     secure: en/UnoFHA3RsSAHM5c6zb3RAMa4V01lC3pYG1YrHSeOPFu78SUA/0lOjNe3pp8RG
   matrix:
     - nodejs_version: 0.10
-      npm_version: 4.6.1
+      npm_version: 4.0.3
       gyp_version: 3.5.0
       pre_gyp_version: 0.6.36
     - nodejs_version: 0.12
-      npm_version: 4.6.1
+      npm_version: 4.0.3
       gyp_version: 3.5.0
       pre_gyp_version: 0.6.36
     - nodejs_version: 4
