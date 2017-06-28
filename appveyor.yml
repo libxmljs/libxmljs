@@ -31,7 +31,6 @@ install:
   - npm config set python C:\Python27\python.exe
   - npm install -g npm@%npm_version%
   - npm install -g node-gyp@%gyp_version%
-  - ps: Install-Product node $env:nodejs_version $env:platform
   - npm install -g node-pre-gyp
 
   # work around an issue with node-gyp v3.3.1 and node 4x
@@ -39,6 +38,8 @@ install:
   - npm config set -g cafile=package.json
   - npm config set -g strict-ssl=false
   - npm config set registry http://registry.npmjs.org/
+
+  - ps: Install-Product node $env:nodejs_version $env:platform
 
 build_script:
   - npm install --msvs_version=2015
