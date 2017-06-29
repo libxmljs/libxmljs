@@ -1,4 +1,6 @@
 language: node_js
+env:
+- CXX=g++-4.8
 os:
 - linux
 - osx
@@ -17,7 +19,6 @@ addons:
     - g++-4.8
 sudo: false
 before_install:
-- if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
 - if [[ $TRAVIS_OS_NAME == "osx" ]]; then export CXX=clang; fi
 - $CXX --version
 
