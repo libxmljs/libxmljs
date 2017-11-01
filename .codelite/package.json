@@ -1,0 +1,7 @@
+{
+ "name": "libxmljs",
+ "version": "0.18.7",
+ "description": "libxml bindings for v8 javascript engine",
+ "main": "/home/woolear/nodejs/libxmljs/index",
+ "args": []
+}

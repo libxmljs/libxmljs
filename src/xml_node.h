@@ -6,6 +6,16 @@
 #include "nan.h"
 
 namespace libxmljs {
+#define _isElement(c_node) \
+        (((c_node)->type == XML_ELEMENT_NODE) || \
+         ((c_node)->type == XML_COMMENT_NODE) || \
+         ((c_node)->type == XML_ENTITY_REF_NODE) || \
+         ((c_node)->type == XML_PI_NODE))
+
+#define _isElementOrXInclude(c_node) \
+        (_isElement(c_node)                     || \
+         ((c_node)->type == XML_XINCLUDE_START) || \
+         ((c_node)->type == XML_XINCLUDE_END))
 
 class XmlNode : public Nan::ObjectWrap {
 public:
@@ -36,7 +46,9 @@ public:
     static v8::Local<v8::Value> New(xmlNode* node);
 
 protected:
-
+    void destroyFakeDoc(xmlDoc *c_doc);
+    xmlDoc *createFakeDoc();
+    void copyParentNamespaces(xmlNode *c_from_node, xmlNode *c_to_node);
     static NAN_METHOD(Doc);
     static NAN_METHOD(Namespace);
     static NAN_METHOD(Namespaces);
@@ -63,6 +75,7 @@ protected:
     v8::Local<v8::Value> clone(bool recurse);
     v8::Local<v8::Value> get_type();
     v8::Local<v8::Value> to_string(int options = 0);
+    v8::Local<v8::Value> to_c14n_string(int exclusive=0);
     void remove();
     void add_child(xmlNode* child);
     void add_prev_sibling(xmlNode* element);
