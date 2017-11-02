@@ -678,7 +678,7 @@ namespace libxmljs {
         c_new_root->next = c_new_root->prev = NULL;
 
 //store original node
-        c_doc->_private = c_node;
+        //c_doc->_private = c_node;
 
 //divert parent pointers of children
         c_child = c_new_root->children;
@@ -702,7 +702,7 @@ namespace libxmljs {
         c_root = xmlDocGetRootElement(c_doc);
 
 //restore parent pointers of children
-        c_parent = (xmlNode *) c_doc->_private;
+        c_parent = xml_obj;//(xmlNode *) c_doc->_private;
         c_child = c_root->children;
         while (c_child != NULL) {
             c_child->parent = c_parent;
