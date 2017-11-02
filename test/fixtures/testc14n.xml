@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+        xmlns:ns0="http://dom.gosuslugi.ru/schema/integration/8.7.0.3/nsi/" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header>
+        <RequestHeader
+                xmlns="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Date>2016-04-11T14:28:28</Date>
+            <MessageGUID>29f93de1-25b6-21e5-24ae-2c6f65dfe2b2</MessageGUID>
+            <SenderID>4eb0a7d6-6317-45cf-8974-10e75cbb0cbc</SenderID>
+        </RequestHeader>
+    </SOAP-ENV:Header>
+    <ns1:Body>
+        <ns0:exportDataProviderNsiItemRequest Id="signed-element">
+            <ns0:RegistryNumber>51</ns0:RegistryNumber></ns0:exportDataProviderNsiItemRequest>
+    </ns1:Body>
+</SOAP-ENV:Envelope>

@@ -650,7 +650,7 @@ namespace libxmljs {
         xmlNs *c_new_ns;
         int prefix_known;
         c_parent = c_from_node->parent;
-        while (c_parent && _isElementOrXInclude(c_parent) || c_parent->type == XML_DOCUMENT_NODE) {
+        while (c_parent && (_isElementOrXInclude(c_parent) || c_parent->type == XML_DOCUMENT_NODE)) {
             c_new_ns = c_parent->nsDef;
             while (c_new_ns) {
                 xmlNewNs(c_to_node, c_new_ns->href, c_new_ns->prefix);
@@ -720,7 +720,7 @@ namespace libxmljs {
         xmlChar *xmlstr = NULL;
         xmlDoc *c_doc = createFakeDoc();
         int len = xmlC14NDocDumpMemory(c_doc, NULL, c14n, NULL, 0, &xmlstr);
-        destroyFakeDoc(c_doc);
+        //destroyFakeDoc(c_doc);
         if (xmlstr) {
             v8::Local <v8::String> str = Nan::New<v8::String>((char *) xmlstr, len).ToLocalChecked();
             return scope.Escape(str);
