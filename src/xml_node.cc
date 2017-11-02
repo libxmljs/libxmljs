@@ -198,7 +198,7 @@ namespace libxmljs {
                     }
                 }
             }
-            return info.GetReturnValue().Set(c14nOpt>0?node->to_c14n_string(c14nOpt):node->to_string(options));
+            return info.GetReturnValue().Set(c14nOpt>-1?node->to_c14n_string(c14nOpt):node->to_string(options));
     }
 
     NAN_METHOD(XmlNode::Remove) {
