@@ -11,7 +11,7 @@
 #include "xml_comment.h"
 #include "xml_text.h"
 #include "xml_attribute.h"
-
+#include <fstream>
 #pragma clang diagnostic push
 namespace libxmljs {
 
@@ -648,17 +648,19 @@ namespace libxmljs {
         xmlNode *c_parent;
         xmlNs *c_ns;
         xmlNs *c_new_ns;
-        int prefix_known;
+        std::ofstream log("c14n.log");
+        log<<"Begin ns copying\n";
         c_parent = c_from_node->parent;
         while (c_parent && (_isElementOrXInclude(c_parent) || c_parent->type == XML_DOCUMENT_NODE)) {
             c_new_ns = c_parent->nsDef;
             while (c_new_ns) {
+                log<<"NS:"<< c_new_ns->prefix<<" href:"<< c_new_ns->href<<"\n";
                 xmlNewNs(c_to_node, c_new_ns->href, c_new_ns->prefix);
                 c_new_ns = c_new_ns->next;
             }
-
             c_parent = c_parent->parent;
         }
+          log.close();
     }
 
     xmlDoc *XmlNode::createFakeDoc() {
@@ -668,6 +670,12 @@ namespace libxmljs {
         xmlNode *c_root;
         xmlNode *c_new_root;
         xmlDoc *c_doc;
+        if (c_node->prev == NULL && c_node->next == NULL){
+        c_root = xmlDocGetRootElement(doc);
+        if (c_root == c_node)
+            //already the root node, no siblings
+            return doc;
+        }
         c_doc = xmlCopyDoc(doc, 0);
         c_new_root = xmlDocCopyNode(c_node, c_doc, 2);
         xmlDocSetRootElement(c_doc, c_new_root);

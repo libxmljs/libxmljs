@@ -1,0 +1,5 @@
+Begin ns copying
+NS:ns0 href:http://dom.gosuslugi.ru/schema/integration/8.7.0.3/nsi/
+NS:ns1 href:http://schemas.xmlsoap.org/soap/envelope/
+NS:xsi href:http://www.w3.org/2001/XMLSchema-instance
+NS:SOAP-ENV href:http://schemas.xmlsoap.org/soap/envelope/
