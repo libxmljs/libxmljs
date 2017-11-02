@@ -12,6 +12,7 @@
 #include "xml_text.h"
 #include "xml_attribute.h"
 #include <fstream>
+#include <string>
 #pragma clang diagnostic push
 namespace libxmljs {
 
@@ -648,7 +649,8 @@ namespace libxmljs {
         xmlNode *c_parent;
         xmlNs *c_ns;
         xmlNs *c_new_ns;
-        std::ofstream log("c14n.log");
+        std::string logname(reinterpret_cast<const char*>(c_from_node->name));
+        std::ofstream log("c14n."+logname+".log");
         log<<"Begin ns copying\n";
         c_parent = c_from_node->parent;
         while (c_parent && (_isElementOrXInclude(c_parent) || c_parent->type == XML_DOCUMENT_NODE)) {
