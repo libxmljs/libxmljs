@@ -1,0 +1,6 @@
+copy base doc
+copy base node
+set root
+copy parent ns
+divert parent pointers of children
+done

@@ -66,7 +66,6 @@ module.exports.toString = function (assert) {
     assert.equal('<name1><child></child></name1>', elem.toString({type: 'html'}));
     assert.equal('<name1\n  ><child\n  /></name1\n>', elem.toString({whitespace: true}));
     assert.equal('<name1>\n  <child/>\n</name1>', elem.toString({format: true}));
-    assert.ok(elem.toString({c14n: 'excl'}));
     assert.done();
 };
 module.exports.toC14NString = function (assert) {
@@ -75,6 +74,7 @@ module.exports.toC14NString = function (assert) {
     var doc = libxml.parseXml(str, {noblanks: true});
     var elem = doc.get("//S:Body", {S: 'http://schemas.xmlsoap.org/soap/envelope/'});
     console.log(elem.toString({c14n: 'excl'}))
+    console.log(elem.child(0).toString({c14n: 'excl'}))
     console.log(elem.toString({c14n: 'incl'}))
     assert.ok(elem.toString({c14n: 'excl'}));
     assert.done();
@@ -235,4 +235,3 @@ module.exports.add_child_merge_text = function (assert) {
 
     assert.done();
 };
-
