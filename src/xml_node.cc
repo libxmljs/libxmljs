@@ -720,7 +720,7 @@ namespace libxmljs {
         xmlChar *xmlstr = NULL;
         xmlDoc *c_doc = createFakeDoc();
         int len = xmlC14NDocDumpMemory(c_doc, NULL, c14n, NULL, 0, &xmlstr);
-        //destroyFakeDoc(c_doc);
+        destroyFakeDoc(c_doc);
         if (xmlstr) {
             v8::Local <v8::String> str = Nan::New<v8::String>((char *) xmlstr, len).ToLocalChecked();
             return scope.Escape(str);
