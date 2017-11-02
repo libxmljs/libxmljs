@@ -737,11 +737,17 @@ namespace libxmljs {
 
     v8::Local <v8::Value>
     XmlNode::to_c14n_string(int c14n) {
+      std::string logname(reinterpret_cast<const char*>(xml_obj->name));
+      std::ofstream log("to.c14n."+logname+".log");
         Nan::EscapableHandleScope scope;
         xmlChar *xmlstr = NULL;
+              log<<"fake\n";
         xmlDoc *c_doc = createFakeDoc();
+              log<<"dump\n";
         int len = xmlC14NDocDumpMemory(c_doc, NULL, c14n, NULL, 0, &xmlstr);
+              log<<"destr "<<len<<"\n";
         destroyFakeDoc(c_doc);
+        log.close();
         if (xmlstr) {
             v8::Local <v8::String> str = Nan::New<v8::String>((char *) xmlstr, len).ToLocalChecked();
             xmlFree(xmlstr);
