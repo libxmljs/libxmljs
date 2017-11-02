@@ -662,7 +662,7 @@ namespace libxmljs {
     }
 
     xmlDoc *XmlNode::createFakeDoc() {
-        if (xml_obj == xmlDocGetRootElement(doc)) return doc;
+        //if (xml_obj == xmlDocGetRootElement(doc)) return doc;
         xmlNode *c_node = xml_obj;
         xmlNode *c_child;
         xmlNode *c_root;
@@ -723,9 +723,9 @@ namespace libxmljs {
         destroyFakeDoc(c_doc);
         if (xmlstr) {
             v8::Local <v8::String> str = Nan::New<v8::String>((char *) xmlstr, len).ToLocalChecked();
+            xmlFree(xmlstr);
             return scope.Escape(str);
         } else {
-
             return scope.Escape(Nan::Null());
         }
     }
