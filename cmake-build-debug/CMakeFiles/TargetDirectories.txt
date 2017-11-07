@@ -1,3 +1,0 @@
-/home/woolear/nodejs/libxmljs/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/woolear/nodejs/libxmljs/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/woolear/nodejs/libxmljs/cmake-build-debug/CMakeFiles/libxmljs.dir

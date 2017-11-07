@@ -73,10 +73,8 @@ module.exports.toC14NString = function (assert) {
     var str = fs.readFileSync(filename, 'utf8');
     var doc = libxml.parseXml(str, {noblanks: true});
     var elem = doc.get("//S:Body", {S: 'http://schemas.xmlsoap.org/soap/envelope/'});
-    console.log(elem.toString({c14n: 'excl'}))
-    console.log(elem.child(0).toString({c14n: 'excl'}))
-    console.log(elem.toString({c14n: 'incl'}))
     assert.ok(elem.toString({c14n: 'excl'}));
+	assert.ok(elem.toString({c14n: 'incl'}));
     assert.done();
 };
 module.exports.path = function (assert) {

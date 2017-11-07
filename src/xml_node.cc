@@ -11,8 +11,6 @@
 #include "xml_comment.h"
 #include "xml_text.h"
 #include "xml_attribute.h"
-#include <fstream>
-#include <string>
 #pragma clang diagnostic push
 namespace libxmljs {
 
@@ -649,20 +647,15 @@ namespace libxmljs {
         xmlNode *c_parent;
         xmlNs *c_ns;
         xmlNs *c_new_ns;
-        std::string logname(reinterpret_cast<const char*>(c_from_node->name));
-        std::ofstream log("c14n."+logname+".log");
-        log<<"Begin ns copying\n";
         c_parent = c_from_node->parent;
         while (c_parent && (_isElementOrXInclude(c_parent) || c_parent->type == XML_DOCUMENT_NODE)) {
             c_new_ns = c_parent->nsDef;
             while (c_new_ns) {
-                log<<"NS:"<< c_new_ns->prefix<<" href:"<< c_new_ns->href<<"\n";
                 xmlNewNs(c_to_node, c_new_ns->href, c_new_ns->prefix);
                 c_new_ns = c_new_ns->next;
             }
             c_parent = c_parent->parent;
         }
-          log.close();
     }
 
     xmlDoc *XmlNode::createFakeDoc() {
@@ -672,82 +665,52 @@ namespace libxmljs {
         xmlNode *c_root;
         xmlNode *c_new_root;
         xmlDoc *c_doc;
-        std::string logname(reinterpret_cast<const char*>(c_node->name));
-        std::ofstream log("fake."+logname+".log");
         if (c_node->prev == NULL && c_node->next == NULL){
           c_root = xmlDocGetRootElement(doc);
           if (c_root == c_node){
-            //already the root node, no siblings
-            log<<"returning base doc\n";
-            log.close();
             return doc;
           }
         }
-        log<<"copy base doc\n";
         c_doc = xmlCopyDoc(doc, 0);
-                log<<"copy base node\n";
         c_new_root = xmlDocCopyNode(c_node, c_doc, 2);
-                        log<<"set root\n";
         xmlDocSetRootElement(c_doc, c_new_root);
-                        log<<"copy parent ns\n";
         copyParentNamespaces(c_node, c_new_root);
-
         c_new_root->children = c_node->children;
         c_new_root->last = c_node->last;
         c_new_root->next = c_new_root->prev = NULL;
-
-//store original node
-        //c_doc->_private = c_node;
-      log<<"divert parent pointers of children\n";
-//divert parent pointers of children
         c_child = c_new_root->children;
         while (c_child != NULL) {
             c_child->parent = c_new_root;
             c_child = c_child->next;
         }
-
         c_doc->children = c_new_root;
-            log<<"done\n";
-            log.close();
         return c_doc;
     }
 
     void XmlNode::destroyFakeDoc(xmlDoc *c_doc) {
         xmlDoc *c_base_doc = doc;
-//delete a temporary document
         if (c_doc == c_base_doc) return;
-
         xmlNode *c_child;
         xmlNode *c_parent;
         xmlNode *c_root;
         c_root = xmlDocGetRootElement(c_doc);
-
-//restore parent pointers of children
-        c_parent = xml_obj;//(xmlNode *) c_doc->_private;
+        c_parent = xml_obj;
         c_child = c_root->children;
         while (c_child != NULL) {
             c_child->parent = c_parent;
             c_child = c_child->next;
         }
-
-//prevent recursive removal of children
         c_root->children = c_root->last  = c_root->next = NULL;
         xmlFreeDoc(c_doc);
     }
 
     v8::Local <v8::Value>
     XmlNode::to_c14n_string(int c14n) {
-      std::string logname(reinterpret_cast<const char*>(xml_obj->name));
-      std::ofstream log("to.c14n."+logname+".log");
         Nan::EscapableHandleScope scope;
         xmlChar *xmlstr = NULL;
-              log<<"fake\n";
         xmlDoc *c_doc = createFakeDoc();
-              log<<"dump\n";
         int len = xmlC14NDocDumpMemory(c_doc, NULL, c14n, NULL, 0, &xmlstr);
-              log<<"destr "<<len<<"\n";
         destroyFakeDoc(c_doc);
-        log.close();
         if (xmlstr) {
             v8::Local <v8::String> str = Nan::New<v8::String>((char *) xmlstr, len).ToLocalChecked();
             xmlFree(xmlstr);
