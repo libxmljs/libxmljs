@@ -1,6 +1,5 @@
+var semver = require('semver');
 var libxml = require('../index');
-var versionsToSkip = [8, 9, 10];
-var currentNodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
 
 if (!global.gc) {
     throw new Error('must run with --expose_gc for memory management tests');
@@ -26,8 +25,8 @@ module.exports.inaccessible_document_freed = function(assert) {
  * I've tried to fix that by playing around with collect garbage values but not successes here..
  */
 module.exports.inaccessible_document_freed_when_node_freed = function(assert) {
-    if (versionsToSkip.indexOf(currentNodeVersion) > -1) {
-      console.warn('Watch out! Below test is skipped due tue node version you are currently running on.');
+    if (semver.gte(process.version, '8.3.0')) {
+      console.warn('\nWatch out! Below test is skipped due tue node version you are currently running on.\n');
       return assert.done();
     }
 
