@@ -1,4 +1,6 @@
 var libxml = require('../index');
+var versionsToSkip = [8, 9, 10];
+var currentNodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
 
 if (!global.gc) {
     throw new Error('must run with --expose_gc for memory management tests');
@@ -22,7 +24,13 @@ module.exports.inaccessible_document_freed = function(assert) {
 /**
  * FIXME: this test fails, probably because of some differences in GC behaviour between node versions
  * I've tried to fix that by playing around with collect garbage values but not successes here..
+ */
 module.exports.inaccessible_document_freed_when_node_freed = function(assert) {
+    if (versionsToSkip.indexOf(currentNodeVersion) > -1) {
+      console.warn('Watch out! Below test is skipped due tue node version you are currently running on.');
+      return assert.done();
+    }
+
     var xml_memory_before_document = libxml.memoryUsage();
     var nodes = [];
     for (var i=0; i<10; i++) {
@@ -33,7 +41,6 @@ module.exports.inaccessible_document_freed_when_node_freed = function(assert) {
     assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
     assert.done();
 };
-*/
 
 module.exports.inaccessible_document_freed_after_middle_nodes_proxied = function(assert) {
     var xml_memory_before_document = libxml.memoryUsage();
