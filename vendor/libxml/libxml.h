@@ -60,6 +60,18 @@ int vfprintf(FILE *, const char *, va_list);
 #include "trio.h"
 #endif
 
+#if defined(__clang__) || \
+    (defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406))
+#define XML_IGNORE_PEDANTIC_WARNINGS \
+    _Pragma("GCC diagnostic push") \
+    _Pragma("GCC diagnostic ignored \"-Wpedantic\"")
+#define XML_POP_WARNINGS \
+    _Pragma("GCC diagnostic pop")
+#else
+#define XML_IGNORE_PEDANTIC_WARNINGS
+#define XML_POP_WARNINGS
+#endif
+
 /*
  * Internal variable indicating if a callback has been registered for
  * node creation/destruction. It avoids spending a lot of time in locking
@@ -96,12 +108,12 @@ int __xmlRandom(void);
 #endif
 
 XMLPUBFUN xmlChar * XMLCALL xmlEscapeFormatString(xmlChar **msg);
-int xmlNop(void);
+int xmlInputReadCallbackNop(void *context, char *buffer, int len);
 
 #ifdef IN_LIBXML
 #ifdef __GNUC__
 #ifdef PIC
-#ifdef linux
+#ifdef __linux__
 #if (__GNUC__ == 3 && __GNUC_MINOR__ >= 3) || (__GNUC__ > 3)
 #include "elfgcchack.h"
 #endif
@@ -109,7 +121,7 @@ int xmlNop(void);
 #endif
 #endif
 #endif
-#if !defined(PIC) && !defined(NOLIBTOOL)
+#if !defined(PIC) && !defined(NOLIBTOOL) && !defined(LIBXML_STATIC)
 #  define LIBXML_STATIC
 #endif
 #endif /* ! __XML_LIBXML_H__ */

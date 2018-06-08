@@ -491,6 +491,11 @@ xmlTextReaderFreeNode(xmlTextReaderPtr reader, xmlNodePtr cur) {
     }
 }
 
+static void
+xmlTextReaderFreeIDTableEntry(void *id, const xmlChar *name ATTRIBUTE_UNUSED) {
+    xmlFreeID((xmlIDPtr) id);
+}
+
 /**
  * xmlTextReaderFreeIDTable:
  * @table:  An id table
@@ -499,7 +504,7 @@ xmlTextReaderFreeNode(xmlTextReaderPtr reader, xmlNodePtr cur) {
  */
 static void
 xmlTextReaderFreeIDTable(xmlIDTablePtr table) {
-    xmlHashFree(table, (xmlHashDeallocator) xmlFreeID);
+    xmlHashFree(table, xmlTextReaderFreeIDTableEntry);
 }
 
 /**
@@ -3982,7 +3987,7 @@ xmlTextReaderPreserve(xmlTextReaderPtr reader) {
  * pattern. The caller must also use xmlTextReaderCurrentDoc() to
  * keep an handle on the resulting document once parsing has finished
  *
- * Returns a positive number in case of success and -1 in case of error
+ * Returns a non-negative number in case of success and -1 in case of error
  */
 int
 xmlTextReaderPreservePattern(xmlTextReaderPtr reader, const xmlChar *pattern,
