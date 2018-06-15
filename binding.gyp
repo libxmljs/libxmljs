@@ -52,6 +52,7 @@
         'vendor/libxml/xmlIO.c',
         'vendor/libxml/xmlmemory.c',
         'vendor/libxml/xmlmodule.c',
+        'vendor/libxml/c14n.c',
         'vendor/libxml/xmlreader.c',
         'vendor/libxml/xmlregexp.c',
         'vendor/libxml/xmlsave.c',
