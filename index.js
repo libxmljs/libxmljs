@@ -24,6 +24,7 @@ module.exports.features = bindings.features;
 module.exports.Comment = require('./lib/comment');
 module.exports.Document = Document;
 module.exports.Element = require('./lib/element');
+module.exports.ProcessingInstruction = require('./lib/pi');
 module.exports.Text = require('./lib/text');
 
 // Compatibility synonyms
