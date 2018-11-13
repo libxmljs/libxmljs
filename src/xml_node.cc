@@ -11,6 +11,7 @@
 #include "xml_comment.h"
 #include "xml_text.h"
 #include "xml_attribute.h"
+#include "xml_pi.h"
 
 namespace libxmljs {
 
@@ -781,6 +782,7 @@ XmlNode::Initialize(v8::Handle<v8::Object> target) {
   XmlElement::Initialize(target);
   XmlText::Initialize(target);
   XmlComment::Initialize(target);
+  XmlProcessingInstruction::Initialize(target);
   XmlAttribute::Initialize(target);
 }
 }  // namespace libxmljs

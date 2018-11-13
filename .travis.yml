@@ -5,12 +5,16 @@ os:
 - linux
 - osx
 node_js:
-- '0.10'
-- '0.12'
+#- '0.10'
+#- '0.12'
 - 4
+- 5
 - 6
 - 7
 - 8
+- 9
+- 10
+
 addons:
   apt:
     sources:
@@ -20,6 +24,8 @@ addons:
 sudo: false
 before_install:
 - if [[ $TRAVIS_OS_NAME == "osx" ]]; then export CXX=clang; fi
+# related: https://github.com/travis-ci/travis-ci/issues/6307#issuecomment-350725425
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; command curl -sSL https://rvm.io/mpapis.asc | gpg --import -; then rvm get stable; fi
 - $CXX --version
 
 - PUBLISH_BINARY=false
