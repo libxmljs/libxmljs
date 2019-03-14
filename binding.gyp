@@ -12,6 +12,7 @@
       'xcode_settings': {
         'OTHER_CFLAGS': [ '-Wall' ]
       },
+      'defines': ['LIBXML_XINCLUDE_ENABLED'],
       'sources': [
         'src/libxmljs.cc',
         'src/xml_attribute.cc',
