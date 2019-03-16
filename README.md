@@ -1,7 +1,7 @@
 # Libxmljs
-[![Build Status](https://secure.travis-ci.org/libxmljs/libxmljs.svg?branch=master)](http://travis-ci.org/libxmljs/libxmljs)
+[![Build Status](https://secure.travis-ci.org/marudor/libxmljs.svg?branch=master)](http://travis-ci.org/marudor/libxmljs)
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl/branch/master?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs/branch/master)
+<!-- [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl/branch/master?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs/branch/master) -->
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
@@ -30,24 +30,24 @@ console.log(child.attr('foo').value()); // prints "bar"
 
 ## Support
 
-* Docs - [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki)
-* Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
+* Docs - [http://github.com/marudor/libxmljs/wiki](http://github.com/marudor/libxmljs/wiki)
+<!-- * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs) -->
 
 ## API and Examples
 
-Check out the wiki [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki).
+Check out the wiki [http://github.com/marudor/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki).
 
-See the [examples](https://github.com/libxmljs/libxmljs/tree/master/examples) folder.
+See the [examples](https://github.com/marudor/libxmljs/tree/master/examples) folder.
 
 ## Installation via [npm](https://npmjs.org)
 
 ```shell
-npm install libxmljs
+npm install libxmljs2
 ```
 
 ## Contribute
 
-Start by checking out the [open issues](https://github.com/libxmljs/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/libxmljs/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
+Start by checking out the [open issues](https://github.com/marudor/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/marudor/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
 
 ### Requirements
 

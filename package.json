@@ -20,10 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/libxmljs/libxmljs.git"
+    "url": "http://github.com/marudor/libxmljs.git"
   },
   "bugs": {
-    "url": "http://github.com/libxmljs/libxmljs/issues"
+    "url": "http://github.com/marudor/libxmljs/issues"
   },
   "main": "./index",
   "license": "MIT",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "bindings": "~1.3.0",
-    "nan": "~2.10.0",
-    "node-pre-gyp": "~0.11.0"
+    "nan": "~2.13.1",
+    "node-pre-gyp": "~0.12.0"
   },
   "devDependencies": {
     "nodeunit": "~0.11.2",
