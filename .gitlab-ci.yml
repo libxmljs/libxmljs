@@ -1,0 +1,73 @@
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - build
+  - deploy
+
+.baseBuild: &baseBuild
+  stage: build
+  artifacts:
+    paths:
+      - build/stage/marudor/libxmljs/releases/download
+  only: [tags]
+
+.glibc: &glibc
+  <<: *baseBuild
+  script:
+    - npm install -g node-gyp node-pre-gyp
+    - npm install --unsafe-perm --build-from-source
+    - node-pre-gyp package 2>&1
+
+.muslc: &muslc
+  <<: *baseBuild
+  script:
+    - apk update
+    - apk add python g++ make git
+    - npm install --unsafe-perm -g node-gyp node-pre-gyp
+    - npm install --unsafe-perm --build-from-source
+    - node-pre-gyp package 2>&1
+
+node-11:
+  <<: *glibc
+  image: node:11
+
+node-10:
+  <<: *glibc
+  image: node:10
+
+node-9:
+  <<: *glibc
+  image: node:9
+
+node-8:
+  <<: *glibc
+  image: node:8
+
+node-11-alpine:
+  <<: *muslc
+  image: node:11-alpine
+
+node-10-alpine:
+  <<: *muslc
+  image: node:10-alpine
+
+node-9-alpine:
+  <<: *muslc
+  image: node:9-alpine
+
+node-8-alpine:
+  <<: *muslc
+  image: node:8-alpine
+
+deploy:
+  image: node:10-alpine
+  stage: deploy
+  script:
+    - npm install --unsafe-perm -g github-release-cli
+    - github-release upload -T "$RELEASE_TOKEN" -o "marudor" -r "libxmljs" -t "$CI_COMMIT_TAG" -n "$CI_COMMIT_TAG" -b "$CI_COMMIT_MESSAGE" build/stage/marudor/libxmljs/releases/download/**/*.tar.gz
+  artifacts:
+    paths:
+      - build/stage/marudor/libxmljs/releases/download
+  only: [tags]
