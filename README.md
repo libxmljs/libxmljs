@@ -9,7 +9,7 @@
 LibXML bindings for [node.js](http://nodejs.org/)
 
 ```javascript
-var libxmljs = require('libxmljs');
+var libxmljs = require('libxmljs2');
 var xml =
   '<?xml version="1.0" encoding="UTF-8"?>' +
   '<root>' +
