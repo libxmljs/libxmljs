@@ -38,6 +38,7 @@
   "devDependencies": {
     "github-release-cli": "^1.0.1",
     "nodeunit": "~0.11.2",
+    "prettier": "^1.16.4",
     "semver": "~5.5.0"
   }
 }

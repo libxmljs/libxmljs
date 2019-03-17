@@ -1,4 +1,3 @@
-
 variables:
   DOCKER_DRIVER: overlay2
 
@@ -11,13 +10,13 @@ stages:
   artifacts:
     paths:
       - build/stage/marudor/libxmljs/releases/download
-  only: [tags]
 
 .glibc: &glibc
   <<: *baseBuild
   script:
     - npm install -g node-gyp node-pre-gyp
     - npm install --unsafe-perm --build-from-source
+    - npm run test
     - node-pre-gyp package 2>&1
 
 .muslc: &muslc
@@ -27,6 +26,7 @@ stages:
     - apk add python g++ make git
     - npm install --unsafe-perm -g node-gyp node-pre-gyp
     - npm install --unsafe-perm --build-from-source
+    - npm run test
     - node-pre-gyp package 2>&1
 
 node-11:
