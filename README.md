@@ -1,26 +1,30 @@
-# Libxmljs
-[![Build Status](https://secure.travis-ci.org/marudor/libxmljs.svg?branch=master)](http://travis-ci.org/marudor/libxmljs)
+# Libxmljs2
 
-<!-- [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl/branch/master?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs/branch/master) -->
+[![Build Status](https://secure.travis-ci.org/marudor/libxmljs2.svg?branch=master)](http://travis-ci.org/marudor/libxmljs2)
+
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/ji1580agkhxm165t/branch/master?svg=true)](https://ci.appveyor.com/project/marudor/libxmljs2/branch/master)
+
+![Gitlab build Status](https://gitlab.com/marudor/libxmljs2/badges/master/pipeline.svg)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
 ```javascript
-var libxmljs = require("libxmljs");
-var xml =  '<?xml version="1.0" encoding="UTF-8"?>' +
-           '<root>' +
-               '<child foo="bar">' +
-                   '<grandchild baz="fizbuzz">grandchild content</grandchild>' +
-               '</child>' +
-               '<sibling>with content!</sibling>' +
-           '</root>';
+var libxmljs = require('libxmljs');
+var xml =
+  '<?xml version="1.0" encoding="UTF-8"?>' +
+  '<root>' +
+  '<child foo="bar">' +
+  '<grandchild baz="fizbuzz">grandchild content</grandchild>' +
+  '</child>' +
+  '<sibling>with content!</sibling>' +
+  '</root>';
 
 var xmlDoc = libxmljs.parseXml(xml);
 
 // xpath queries
 var gchild = xmlDoc.get('//grandchild');
 
-console.log(gchild.text());  // prints "grandchild content"
+console.log(gchild.text()); // prints "grandchild content"
 
 var children = xmlDoc.root().childNodes();
 var child = children[0];
@@ -30,14 +34,14 @@ console.log(child.attr('foo').value()); // prints "bar"
 
 ## Support
 
-* Docs - [http://github.com/marudor/libxmljs/wiki](http://github.com/marudor/libxmljs/wiki)
-<!-- * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs) -->
+- Docs - [http://github.com/marudor/libxmljs2/wiki](http://github.com/marudor/libxmljs2/wiki)
+  <!-- * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs) -->
 
 ## API and Examples
 
-Check out the wiki [http://github.com/marudor/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki).
+Check out the wiki [http://github.com/marudor/libxmljs2/wiki](http://github.com/libxmljs/libxmljs2/wiki).
 
-See the [examples](https://github.com/marudor/libxmljs/tree/master/examples) folder.
+See the [examples](https://github.com/marudor/libxmljs2/tree/master/examples) folder.
 
 ## Installation via [npm](https://npmjs.org)
 
@@ -47,7 +51,7 @@ npm install libxmljs2
 
 ## Contribute
 
-Start by checking out the [open issues](https://github.com/marudor/libxmljs/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/marudor/libxmljs/issues?labels=desired+feature&page=1&state=open) ones.
+Start by checking out the [open issues](https://github.com/marudor/libxmljs2/issues?labels=&page=1&state=open). Specifically the [desired feature](https://github.com/marudor/libxmljs2/issues?labels=desired+feature&page=1&state=open) ones.
 
 ### Requirements
 

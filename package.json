@@ -9,7 +9,7 @@
     "module_name": "xmljs",
     "module_path": "./build/Release/",
     "host": "https://github.com",
-    "remote_path": "./marudor/libxmljs/releases/download/v{version}/",
+    "remote_path": "./marudor/libxmljs2/releases/download/v{version}/",
     "package_name": "{node_abi}-{platform}-{arch}-{libc}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
@@ -20,10 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/marudor/libxmljs.git"
+    "url": "http://github.com/marudor/libxmljs2.git"
   },
   "bugs": {
-    "url": "http://github.com/marudor/libxmljs/issues"
+    "url": "http://github.com/marudor/libxmljs2/issues"
   },
   "main": "./index",
   "license": "MIT",
