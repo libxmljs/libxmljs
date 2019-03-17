@@ -1,12 +1,8 @@
 var libxml = require('../index');
-var semver = require('semver');
 
 if (!global.gc) {
   throw new Error('must run with --expose_gc for memory management tests');
 }
-
-var nodeVersion = process.versions.node;
-var shouldSkip = semver.satisfies(nodeVersion, '8.x || 9.x || 10.x');
 
 module.exports.setUp = function(done) {
   collectGarbage();
@@ -26,12 +22,6 @@ module.exports.inaccessible_document_freed = function(assert) {
 };
 
 module.exports.inaccessible_document_freed_when_node_freed = function(assert) {
-  if (shouldSkip) {
-    assert.done();
-    console.warn('skipping inaccessible_document_freed_when_node_freed');
-    return;
-  }
-
   var xml_memory_before_document = libxml.memoryUsage();
   var nodes = [];
   for (var i = 0; i < 10; i++) {
@@ -60,12 +50,6 @@ module.exports.inaccessible_document_freed_after_middle_nodes_proxied = function
 };
 
 module.exports.inaccessible_tree_freed = function(assert) {
-  if (shouldSkip) {
-    assert.done();
-    console.warn('skipping inaccessible_tree_freed');
-    return;
-  }
-
   var doc = makeDocument();
   var xml_memory_after_document = libxml.memoryUsage();
   doc.get('//middle').remove();
