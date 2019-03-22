@@ -15,7 +15,9 @@
   "version": "0.19.5",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
-    "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
+    "test": "node --expose_gc ./node_modules/.bin/nodeunit test",
+    "coverage": "node node_modules/.bin/istanbul cover _mocha -- -R spec",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
@@ -35,6 +37,9 @@
     "node-pre-gyp": "~0.11.0"
   },
   "devDependencies": {
+    "coveralls": "3.0.3",
+    "istanbul": "0.4.5",
+    "mocha": "6.0.2",
     "nodeunit": "~0.11.2",
     "semver": "~5.5.0"
   }
