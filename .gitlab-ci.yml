@@ -14,7 +14,7 @@ stages:
 .glibc: &glibc
   <<: *baseBuild
   script:
-    - npm install -g node-gyp node-pre-gyp
+    - source $NVM_DIR/nvm.sh
     - npm install --unsafe-perm --build-from-source
     - npm run test
     - node-pre-gyp package 2>&1
@@ -31,19 +31,19 @@ stages:
 
 node-11:
   <<: *glibc
-  image: node:11-stretch
+  image: registry.gitlab.com/marudor/deploy-helper/native-node:11
 
 node-10:
   <<: *glibc
-  image: node:10-stretch
+  image: registry.gitlab.com/marudor/deploy-helper/native-node:10
 
 node-9:
   <<: *glibc
-  image: node:9-stretch
+  image: registry.gitlab.com/marudor/deploy-helper/native-node:9
 
 node-8:
   <<: *glibc
-  image: node:8-stretch
+  image: registry.gitlab.com/marudor/deploy-helper/native-node:8
 
 node-11-alpine:
   <<: *muslc
