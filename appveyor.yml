@@ -3,10 +3,11 @@ environment:
   github_release_token:
     secure: hxsvJ4kPWab0alyx7GyJLh7aWeqlXhON9GmvZFh5ywyGS1WO8lFqNn8bx8HmlG3H
   matrix:
-    - nodejs_version: 8
-    - nodejs_version: 9
-    - nodejs_version: 10
+    # - nodejs_version: 12
     - nodejs_version: 11
+    - nodejs_version: 10
+    - nodejs_version: 9
+    - nodejs_version: 8
 
 platform:
   - x86

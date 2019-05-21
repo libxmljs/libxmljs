@@ -4,10 +4,11 @@ env:
 os:
   - osx
 node_js:
-  - 8
-  - 9
-  - 10
+  - 12.2
   - 11
+  - 10
+  - 9
+  - 8
 addons:
   apt:
     sources:

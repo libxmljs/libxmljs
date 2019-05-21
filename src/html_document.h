@@ -5,15 +5,16 @@
 #include "libxmljs.h"
 #include "xml_document.h"
 
-namespace libxmljs {
+namespace libxmljs
+{
 
-class HtmlDocument : public XmlDocument {
-  public:
-
-  explicit HtmlDocument(xmlDoc* doc) : XmlDocument(doc) {}
-  static void Initialize(v8::Handle<v8::Object> target);
+class HtmlDocument : public XmlDocument
+{
+public:
+  explicit HtmlDocument(xmlDoc *doc) : XmlDocument(doc) {}
+  static void Initialize(v8::Local<v8::Object> target);
 };
 
-}  // namespace libxmljs
+} // namespace libxmljs
 
-#endif  // SRC_HTML_DOCUMENT_H_
+#endif // SRC_HTML_DOCUMENT_H_

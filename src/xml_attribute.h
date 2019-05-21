@@ -6,24 +6,23 @@
 #include "xml_element.h"
 #include "xml_namespace.h"
 
-namespace libxmljs {
+namespace libxmljs
+{
 
-class XmlAttribute : public XmlNode {
+class XmlAttribute : public XmlNode
+{
 public:
+    explicit XmlAttribute(xmlAttr *node) : XmlNode(reinterpret_cast<xmlNode *>(node)) {}
 
-    explicit XmlAttribute(xmlAttr* node) :
-        XmlNode(reinterpret_cast<xmlNode*>(node)) {}
-
-    static void Initialize(v8::Handle<v8::Object> target);
+    static void Initialize(v8::Local<v8::Object> target);
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
-    static v8::Local<v8::Object> New(xmlNode* xml_obj,
-            const xmlChar* name, const xmlChar* value);
+    static v8::Local<v8::Object> New(xmlNode *xml_obj,
+                                     const xmlChar *name, const xmlChar *value);
 
-    static v8::Local<v8::Object> New(xmlAttr* attr);
+    static v8::Local<v8::Object> New(xmlAttr *attr);
 
 protected:
-
     static NAN_METHOD(New);
     static NAN_METHOD(Name);
     static NAN_METHOD(Value);
@@ -32,11 +31,11 @@ protected:
 
     v8::Local<v8::Value> get_name();
     v8::Local<v8::Value> get_value();
-    void set_value(const char* value);
+    void set_value(const char *value);
     v8::Local<v8::Value> get_element();
     v8::Local<v8::Value> get_namespace();
 };
 
-}  // namespace libxmljs
+} // namespace libxmljs
 
-#endif  // SRC_XML_ATTRIBUTE_H_
+#endif // SRC_XML_ATTRIBUTE_H_
