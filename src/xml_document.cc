@@ -11,6 +11,7 @@
 #include <libxml/xmlschemas.h>
 #include <libxml/relaxng.h>
 #include <libxml/xmlsave.h>
+#include <libxml/xinclude.h>
 
 #include "xml_document.h"
 #include "xml_element.h"
@@ -501,6 +502,24 @@ NAN_METHOD(XmlDocument::FromXml)
       return Nan::ThrowError(XmlSyntaxError::BuildSyntaxError(error));
     }
     return Nan::ThrowError("Could not parse XML string");
+  }
+
+  if (opts & XML_PARSE_XINCLUDE)
+  {
+    xmlSetStructuredErrorFunc(reinterpret_cast<void *>(&errors),
+                              XmlSyntaxError::PushToArray);
+    int ret = xmlXIncludeProcessFlags(doc, opts);
+    xmlSetStructuredErrorFunc(NULL, NULL);
+
+    if (ret < 0)
+    {
+      xmlError *error = xmlGetLastError();
+      if (error)
+      {
+        return Nan::ThrowError(XmlSyntaxError::BuildSyntaxError(error));
+      }
+      return Nan::ThrowError("Could not perform XInclude substitution");
+    }
   }
 
   v8::Local<v8::Object> doc_handle = XmlDocument::New(doc);

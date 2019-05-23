@@ -13,6 +13,7 @@
         'OTHER_CFLAGS': [ '-Wall' ]
       },
       'win_delay_load_hook': 'false',
+      'defines': ['LIBXML_XINCLUDE_ENABLED'],
       'sources': [
         'src/libxmljs.cc',
         'src/xml_attribute.cc',
