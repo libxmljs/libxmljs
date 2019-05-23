@@ -3,7 +3,7 @@ environment:
   github_release_token:
     secure: hxsvJ4kPWab0alyx7GyJLh7aWeqlXhON9GmvZFh5ywyGS1WO8lFqNn8bx8HmlG3H
   matrix:
-    # - nodejs_version: 12
+    - nodejs_version: 12
     - nodejs_version: 11
     - nodejs_version: 10
     - nodejs_version: 9
@@ -13,14 +13,14 @@ platform:
   - x86
   - x64
 
-image: Visual Studio 2015
+os: Visual Studio 2015
 
 artifacts:
   - path: build\**\*.tar.gz
     name: libxml_binary
 
 install:
-  - ps: Install-Product node $env:nodejs_version $env:platform
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:PLATFORM
   - npm --version
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
