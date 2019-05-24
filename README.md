@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/marudor/libxmljs2.svg?branch=master)](http://travis-ci.org/marudor/libxmljs2)
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/ji1580agkhxm165t/branch/master?svg=true)](https://ci.appveyor.com/project/marudor/libxmljs2/branch/master)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/vlefa3ucskt8avb8?svg=true)](https://ci.appveyor.com/project/marudor/libxmljs2/branch/master)
 
 ![Gitlab build Status](https://gitlab.com/marudor/libxmljs2/badges/master/pipeline.svg)
 
