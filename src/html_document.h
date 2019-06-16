@@ -11,7 +11,7 @@ class HtmlDocument : public XmlDocument {
   public:
 
   explicit HtmlDocument(xmlDoc* doc) : XmlDocument(doc) {}
-  static void Initialize(v8::Handle<v8::Object> target);
+  static void Initialize(v8::Local<v8::Object> target);
 };
 
 }  // namespace libxmljs

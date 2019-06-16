@@ -4,6 +4,6 @@
 namespace libxmljs {
 
 void
-HtmlDocument::Initialize(v8::Handle<v8::Object> target) {
+HtmlDocument::Initialize(v8::Local<v8::Object> target) {
 }
 }  // namespcae libxmljs

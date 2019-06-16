@@ -26,16 +26,16 @@ NAN_METHOD(XmlElement::New) {
       return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
+  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(document);
 
-  v8::String::Utf8Value name(info[1]);
+  Nan::Utf8String name(info[1]);
 
   v8::Local<v8::Value> contentOpt;
   if(info[2]->IsString()) {
       contentOpt = info[2];
   }
-  v8::String::Utf8Value contentRaw(contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlChar* encodedContent = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*)content) : NULL;
@@ -51,7 +51,7 @@ NAN_METHOD(XmlElement::New) {
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -64,7 +64,7 @@ NAN_METHOD(XmlElement::Name) {
   if (info.Length() == 0)
       return info.GetReturnValue().Set(element->get_name());
 
-  v8::String::Utf8Value name(info[0]->ToString());
+  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
   element->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -77,13 +77,13 @@ NAN_METHOD(XmlElement::Attr) {
   // getter
   if (info.Length() == 1)
   {
-      v8::String::Utf8Value name(info[0]);
+      Nan::Utf8String name(info[0]);
       return info.GetReturnValue().Set(element->get_attr(*name));
   }
 
   // setter
-  v8::String::Utf8Value name(info[0]->ToString());
-  v8::String::Utf8Value value(info[1]->ToString());
+  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String value(Nan::To<v8::String>(info[1]).ToLocalChecked());
   element->set_attr(*name, *value);
 
   return info.GetReturnValue().Set(info.Holder());
@@ -101,7 +101,7 @@ NAN_METHOD(XmlElement::AddChild) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode* child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  XmlNode* child = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(child);
 
   xmlNode *imported_child = element->import_node(child->xml_obj);
@@ -133,7 +133,7 @@ NAN_METHOD(XmlElement::AddCData) {
   if(info[0]->IsString()) {
       contentOpt = info[0];
   }
-  v8::String::Utf8Value contentRaw(contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode* elem = xmlNewCDataBlock(element->xml_obj->doc,
@@ -149,23 +149,23 @@ NAN_METHOD(XmlElement::Find) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  v8::String::Utf8Value xpath(info[0]);
+  Nan::Utf8String xpath(info[0]);
 
   XmlXpathContext ctxt(element->xml_obj);
 
   if (info.Length() == 2) {
     if (info[1]->IsString()) {
-      v8::String::Utf8Value uri(info[1]);
+      Nan::Utf8String uri(info[1]);
       ctxt.register_ns((const xmlChar*)"xmlns", (const xmlChar*)*uri);
 
     } else if (info[1]->IsObject()) {
-      v8::Local<v8::Object> namespaces = info[1]->ToObject();
-      v8::Local<v8::Array> properties = namespaces->GetPropertyNames();
+      v8::Local<v8::Object> namespaces = Nan::To<v8::Object>(info[1]).ToLocalChecked();
+      v8::Local<v8::Array> properties = Nan::GetPropertyNames(namespaces).ToLocalChecked();
       for (unsigned int i = 0; i < properties->Length(); i++) {
-        v8::Local<v8::String> prop_name = properties->Get(
-          Nan::New<v8::Number>(i))->ToString();
-        v8::String::Utf8Value prefix(prop_name);
-        v8::String::Utf8Value uri(namespaces->Get(prop_name));
+          v8::Local<v8::String> prop_name = Nan::To<v8::String>(Nan::Get(properties,
+          Nan::New<v8::Number>(i)).ToLocalChecked()).ToLocalChecked();
+        Nan::Utf8String prefix(prop_name);
+        Nan::Utf8String uri(Nan::Get(namespaces, prop_name).ToLocalChecked());
         ctxt.register_ns((const xmlChar*)*prefix, (const xmlChar*)*uri);
       }
     }
@@ -198,7 +198,7 @@ NAN_METHOD(XmlElement::Text) {
   if (info.Length() == 0) {
     return info.GetReturnValue().Set(element->get_content());
   } else {
-    element->set_content(*v8::String::Utf8Value(info[0]));
+    element->set_content(*Nan::Utf8String(info[0]));
   }
 
   return info.GetReturnValue().Set(info.Holder());
@@ -214,7 +214,7 @@ NAN_METHOD(XmlElement::Child) {
       return Nan::ThrowError("Bad argument: must provide #child() with a number");
   }
 
-  const int32_t idx = info[0]->Int32Value();
+  const int32_t idx = Nan::To<v8::Int32>(info[0]).ToLocalChecked()->Value();
   return info.GetReturnValue().Set(element->get_child(idx));
 }
 
@@ -224,7 +224,7 @@ NAN_METHOD(XmlElement::ChildNodes) {
   assert(element);
 
   if (info[0]->IsInt32())
-      return info.GetReturnValue().Set(element->get_child(info[0]->Int32Value()));
+      return info.GetReturnValue().Set(element->get_child(Nan::To<v8::Int32>(info[0]).ToLocalChecked()->Value()));
 
   return info.GetReturnValue().Set(element->get_child_nodes());
 }
@@ -241,7 +241,7 @@ NAN_METHOD(XmlElement::AddPrevSibling) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -266,7 +266,7 @@ NAN_METHOD(XmlElement::AddNextSibling) {
   XmlElement* element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -292,9 +292,9 @@ NAN_METHOD(XmlElement::Replace) {
   assert(element);
 
   if (info[0]->IsString()) {
-    element->replace_text(*v8::String::Utf8Value(info[0]));
+    element->replace_text(*Nan::Utf8String(info[0]));
   } else {
-    XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject());
+    XmlElement* new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -352,11 +352,11 @@ XmlElement::get_attrs() {
 
   v8::Local<v8::Array> attributes = Nan::New<v8::Array>();
   v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(
-    attributes->Get(Nan::New<v8::String>("push").ToLocalChecked()));
+    Nan::Get(attributes, Nan::New<v8::String>("push").ToLocalChecked()).ToLocalChecked());
   v8::Local<v8::Value> argv[1];
   do {
       argv[0] = XmlAttribute::New(attr);
-      push->Call(attributes, 1, argv);
+      Nan::Call(push, attributes, 1, argv);
   } while ((attr = attr->next));
 
   return scope.Escape(attributes);
@@ -500,7 +500,7 @@ XmlElement::New(xmlNode* node)
     }
 
     XmlElement* element = new XmlElement(node);
-    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
     element->Wrap(obj);
     return scope.Escape(obj);
 }
@@ -553,7 +553,7 @@ XmlElement::prev_sibling_will_merge(xmlNode *child) {
 }
 
 void
-XmlElement::Initialize(v8::Handle<v8::Object> target)
+XmlElement::Initialize(v8::Local<v8::Object> target)
 {
     Nan::HandleScope scope;
     v8::Local<v8::FunctionTemplate> tmpl =
@@ -623,7 +623,7 @@ XmlElement::Initialize(v8::Handle<v8::Object> target)
             XmlElement::Replace);
 
     Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
-            tmpl->GetFunction());
+            Nan::GetFunction(tmpl).ToLocalChecked());
 
 }
 

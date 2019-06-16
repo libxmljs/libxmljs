@@ -43,12 +43,12 @@ NAN_METHOD(XmlNode::Namespace) {
   // #namespace(ns) libxml.Namespace object was provided
   // TODO(sprsquish): check that it was actually given a namespace obj
   if (info[0]->IsObject())
-    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(info[0]->ToObject());
+    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
   if (info[0]->IsString()) {
-    v8::String::Utf8Value ns_to_find(info[0]->ToString());
+    Nan::Utf8String ns_to_find(Nan::To<v8::String>(info[0]).ToLocalChecked());
     xmlNs* found_ns = node->find_namespace(*ns_to_find);
     if (found_ns) {
         // maybe build
@@ -72,13 +72,13 @@ NAN_METHOD(XmlNode::Namespace) {
       }
 
       v8::Local<v8::Function> define_namespace =
-          Nan::New(XmlNamespace::constructor_template)->GetFunction();
+          Nan::GetFunction(Nan::New(XmlNamespace::constructor_template)).ToLocalChecked();
 
       // will create a new namespace attached to this node
       // since we keep the document around, the namespace, like the node, won't be
       // garbage collected
       v8::Local<v8::Value> new_ns = Nan::NewInstance(define_namespace, argc, argv).ToLocalChecked();
-      ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(new_ns->ToObject());
+      ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<v8::Object>(new_ns).ToLocalChecked());
   }
 
   node->set_namespace(ns->xml_obj);
@@ -147,38 +147,38 @@ NAN_METHOD(XmlNode::ToString) {
 
   if (info.Length() > 0) {
       if (info[0]->IsBoolean()) {
-          if (info[0]->ToBoolean()->BooleanValue() == true) {
+          if (Nan::To<v8::Boolean>(info[0]).ToLocalChecked()->Value() == true) {
               options |= XML_SAVE_FORMAT;
           }
       } else if (info[0]->IsObject()) {
-          v8::Local<v8::Object> obj = info[0]->ToObject();
+          v8::Local<v8::Object> obj = Nan::To<v8::Object>(info[0]).ToLocalChecked();
 
           // drop the xml declaration
-          if (obj->Get(Nan::New<v8::String>("declaration").ToLocalChecked())->IsFalse()) {
+          if (Nan::Get(obj, Nan::New<v8::String>("declaration").ToLocalChecked()).ToLocalChecked()->IsFalse()) {
               options |= XML_SAVE_NO_DECL;
           }
 
           // format save output
-          if (obj->Get(Nan::New<v8::String>("format").ToLocalChecked())->IsTrue()) {
+          if (Nan::Get(obj, Nan::New<v8::String>("format").ToLocalChecked()).ToLocalChecked()->IsTrue()) {
               options |= XML_SAVE_FORMAT;
           }
 
           // no empty tags (only works with XML) ex: <title></title> becomes <title/>
-          if (obj->Get(Nan::New<v8::String>("selfCloseEmpty").ToLocalChecked())->IsFalse()) {
+          if (Nan::Get(obj, Nan::New<v8::String>("selfCloseEmpty").ToLocalChecked()).ToLocalChecked()->IsFalse()) {
               options |= XML_SAVE_NO_EMPTY;
           }
 
           // format with non-significant whitespace
-          if (obj->Get(Nan::New<v8::String>("whitespace").ToLocalChecked())->IsTrue()) {
+          if (Nan::Get(obj, Nan::New<v8::String>("whitespace").ToLocalChecked()).ToLocalChecked()->IsTrue()) {
               options |= XML_SAVE_WSNONSIG;
           }
 
-          v8::Local<v8::Value> type = obj->Get(Nan::New<v8::String>("type").ToLocalChecked());
-          if (type->Equals(Nan::New<v8::String>("XML").ToLocalChecked()) ||
-              type->Equals(Nan::New<v8::String>("xml").ToLocalChecked())) {
+          v8::Local<v8::Value> type = Nan::Get(obj, Nan::New<v8::String>("type").ToLocalChecked()).ToLocalChecked();
+          if (Nan::Equals(type, Nan::New<v8::String>("XML").ToLocalChecked()).ToChecked() ||
+              Nan::Equals(type, Nan::New<v8::String>("xml").ToLocalChecked()).ToChecked()) {
               options |= XML_SAVE_AS_XML;    // force XML serialization on HTML doc
-          } else if (type->Equals(Nan::New<v8::String>("HTML").ToLocalChecked()) ||
-                     type->Equals(Nan::New<v8::String>("html").ToLocalChecked())) {
+          } else if (Nan::Equals(type, Nan::New<v8::String>("HTML").ToLocalChecked()).ToChecked() ||
+                     Nan::Equals(type, Nan::New<v8::String>("html").ToLocalChecked()).ToChecked()) {
               options |= XML_SAVE_AS_HTML;   // force HTML serialization on XML doc
               // if the document is XML and we want formatted HTML output
               // we must use the XHTML serializer because the default HTML
@@ -186,8 +186,8 @@ NAN_METHOD(XmlNode::ToString) {
               if ((options & XML_SAVE_FORMAT) && (options & XML_SAVE_XHTML) == false) {
                   options |= XML_SAVE_XHTML;
               }
-          } else if (type->Equals(Nan::New<v8::String>("XHTML").ToLocalChecked()) ||
-                     type->Equals(Nan::New<v8::String>("xhtml").ToLocalChecked())) {
+          } else if (Nan::Equals(type, Nan::New<v8::String>("XHTML").ToLocalChecked()).ToChecked() ||
+                     Nan::Equals(type, Nan::New<v8::String>("xhtml").ToLocalChecked()).ToChecked()) {
               options |= XML_SAVE_XHTML;    // force XHTML serialization
           }
       }
@@ -213,7 +213,7 @@ NAN_METHOD(XmlNode::Clone) {
   bool recurse = true;
 
   if (info.Length() == 1 && info[0]->IsBoolean())
-      recurse = info[0]->ToBoolean()->BooleanValue();
+      recurse = Nan::To<v8::Boolean>(info[0]).ToLocalChecked()->Value();
 
   return info.GetReturnValue().Set(node->clone(recurse));
 }
@@ -729,7 +729,7 @@ XmlNode::get_type() {
 }
 
 void
-XmlNode::Initialize(v8::Handle<v8::Object> target) {
+XmlNode::Initialize(v8::Local<v8::Object> target) {
   Nan::HandleScope scope;
   v8::Local<v8::FunctionTemplate> tmpl = Nan::New<v8::FunctionTemplate>();
   constructor_template.Reset( tmpl);

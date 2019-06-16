@@ -274,6 +274,6 @@ NAN_MODULE_INIT(init)
       Nan::SetMethod(target, "xmlNodeCount", XmlNodeCount);
 }
 
-NODE_MODULE(xmljs, init)
+NAN_MODULE_WORKER_ENABLED(xmljs, init)
 
 }  // namespace libxmljs

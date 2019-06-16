@@ -23,14 +23,14 @@ NAN_METHOD(XmlComment::New) {
       return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
+  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(document);
 
   v8::Local<v8::Value> contentOpt;
   if (info[1]->IsString()) {
       contentOpt = info[1];
   }
-  v8::String::Utf8Value contentRaw(contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode* comm = xmlNewDocComment(document->xml_obj, (xmlChar *) content);
@@ -40,7 +40,7 @@ NAN_METHOD(XmlComment::New) {
   comment->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -53,7 +53,7 @@ NAN_METHOD(XmlComment::Text) {
   if (info.Length() == 0) {
     return info.GetReturnValue().Set(comment->get_content());
   } else {
-    comment->set_content(*v8::String::Utf8Value(info[0]));
+    comment->set_content(*Nan::Utf8String(info[0]));
   }
 
   return info.GetReturnValue().Set(info.Holder());
@@ -87,7 +87,7 @@ XmlComment::New(xmlNode* node)
     }
 
     XmlComment* comment = new XmlComment(node);
-    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
     comment->Wrap(obj);
     return scope.Escape(obj);
 }
@@ -98,7 +98,7 @@ XmlComment::XmlComment(xmlNode* node)
 }
 
 void
-XmlComment::Initialize(v8::Handle<v8::Object> target)
+XmlComment::Initialize(v8::Local<v8::Object> target)
 {
     Nan::HandleScope scope;
     v8::Local<v8::FunctionTemplate> t = Nan::New<v8::FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
@@ -111,7 +111,7 @@ XmlComment::Initialize(v8::Handle<v8::Object> target)
             XmlComment::Text);
 
     Nan::Set(target, Nan::New<v8::String>("Comment").ToLocalChecked(),
-            t->GetFunction());
+            Nan::GetFunction(t).ToLocalChecked());
 }
 
 }  // namespace libxmljs

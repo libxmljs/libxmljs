@@ -25,14 +25,14 @@ NAN_METHOD(XmlText::New) {
       return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject());
+  XmlDocument* document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(document);
 
   v8::Local<v8::Value> contentOpt;
   if (info[1]->IsString()) {
       contentOpt = info[1];
   }
-  v8::String::Utf8Value contentRaw(contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char* content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlChar* encodedContent = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar*) content) : NULL;
@@ -47,7 +47,7 @@ NAN_METHOD(XmlText::New) {
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -76,7 +76,7 @@ NAN_METHOD(XmlText::Text) {
   if (info.Length() == 0) {
     return info.GetReturnValue().Set(element->get_content());
   } else {
-    element->set_content(*v8::String::Utf8Value(info[0]));
+    element->set_content(*Nan::Utf8String(info[0]));
   }
 
   return info.GetReturnValue().Set(info.Holder());
@@ -86,7 +86,7 @@ NAN_METHOD(XmlText::AddPrevSibling) {
   XmlText* text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -105,7 +105,7 @@ NAN_METHOD(XmlText::AddNextSibling) {
   XmlText* text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject());
+  XmlNode* new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -125,9 +125,9 @@ NAN_METHOD(XmlText::Replace) {
   assert(element);
 
   if (info[0]->IsString()) {
-    element->replace_text(*v8::String::Utf8Value(info[0]));
+    element->replace_text(*Nan::Utf8String(info[0]));
   } else {
-    XmlText* new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(info[0]->ToObject());
+    XmlText* new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -207,7 +207,7 @@ XmlText::New(xmlNode* node)
     }
 
     XmlText* element = new XmlText(node);
-    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction()).ToLocalChecked();
+    v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
     element->Wrap(obj);
     return scope.Escape(obj);
 }
@@ -249,7 +249,7 @@ XmlText::prev_sibling_will_merge(xmlNode *child) {
 }
 
 void
-XmlText::Initialize(v8::Handle<v8::Object> target)
+XmlText::Initialize(v8::Local<v8::Object> target)
 {
     Nan::HandleScope scope;
     v8::Local<v8::FunctionTemplate> tmpl =
@@ -277,7 +277,7 @@ XmlText::Initialize(v8::Handle<v8::Object> target)
             XmlText::Replace);
 
     Nan::Set(target, Nan::New<v8::String>("Text").ToLocalChecked(),
-            tmpl->GetFunction());
+            Nan::GetFunction(tmpl).ToLocalChecked());
 
 }
 
