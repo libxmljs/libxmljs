@@ -11,7 +11,7 @@ public:
 
     explicit XmlComment(xmlNode* node);
 
-    static void Initialize(v8::Handle<v8::Object> target);
+    static void Initialize(v8::Local<v8::Object> target);
 
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 

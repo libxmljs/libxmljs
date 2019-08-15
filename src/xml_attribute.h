@@ -14,7 +14,7 @@ public:
     explicit XmlAttribute(xmlAttr* node) :
         XmlNode(reinterpret_cast<xmlNode*>(node)) {}
 
-    static void Initialize(v8::Handle<v8::Object> target);
+    static void Initialize(v8::Local<v8::Object> target);
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
     static v8::Local<v8::Object> New(xmlNode* xml_obj,

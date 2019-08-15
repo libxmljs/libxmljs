@@ -6,7 +6,7 @@ if (!global.gc) {
 }
 
 var nodeVersion = process.versions.node
-var shouldSkip = semver.satisfies(nodeVersion, '8.x || 9.x || 10.x')
+var shouldSkip = semver.satisfies(nodeVersion, '8.x || 9.x || 10.x || 11.x || 12.x')
 
 module.exports.setUp = function(done) {
     collectGarbage();

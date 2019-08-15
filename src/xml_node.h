@@ -29,7 +29,7 @@ public:
     explicit XmlNode(xmlNode* node);
     virtual ~XmlNode();
 
-    static void Initialize(v8::Handle<v8::Object> target);
+    static void Initialize(v8::Local<v8::Object> target);
     static Nan::Persistent<v8::FunctionTemplate> constructor_template;
 
     // create new XmlElement, XmlAttribute, etc. to wrap a libxml xmlNode
