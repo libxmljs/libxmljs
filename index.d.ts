@@ -126,8 +126,9 @@ export class Element extends Node {
     name(newName: string): this;
     text(): string;
     text(newText: string): this;
-    attr(name: string): Attribute|null;
-    attr(attrObject: StringMap): this;
+    attr(name: string): Attribute|null; //getter
+    attr(name: string, value: string): this; //setter
+    attr(attrObject: StringMap): this; //setter using stringMap
     attrs(): Attribute[];
 
     doc(): Document;
