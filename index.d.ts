@@ -148,6 +148,7 @@ export class Element extends Node {
     find(xpath: string, ns_uri?: string): Node[];
     find(xpath: string, namespaces: StringMap): Node[];
     get(xpath: string, ns_uri?: string): Element|null;
+    get(xpath: string, namespaces: StringMap): Element|null;
 
     defineNamespace(prefixOrHref: string, hrefInCaseOfPrefix?: string): Namespace;
 
