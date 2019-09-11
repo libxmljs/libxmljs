@@ -14,7 +14,7 @@ class XmlTextWriter : public Nan::ObjectWrap {
   virtual ~XmlTextWriter();
 
   static void
-  Initialize(v8::Handle<v8::Object> target);
+  Initialize(v8::Local<v8::Object> target);
 
   static NAN_METHOD(NewTextWriter);
 

@@ -82,9 +82,9 @@ NAN_METHOD(XmlTextWriter::StartDocument) {
 
   XmlTextWriter *writer = Nan::ObjectWrap::Unwrap<XmlTextWriter>(info.Holder());
 
-  v8::String::Utf8Value version(info[0]->ToString());
-  v8::String::Utf8Value encoding(info[1]->ToString());
-  v8::String::Utf8Value standalone(info[2]->ToString());
+  Nan::Utf8String version(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String encoding(Nan::To<v8::String>(info[1]).ToLocalChecked());
+  Nan::Utf8String standalone(Nan::To<v8::String>(info[2]).ToLocalChecked());
 
   int result = xmlTextWriterStartDocument(
           writer->textWriter,
@@ -110,9 +110,9 @@ NAN_METHOD(XmlTextWriter::StartElementNS) {
 
   XmlTextWriter *writer = Nan::ObjectWrap::Unwrap<XmlTextWriter>(info.Holder());
 
-  v8::String::Utf8Value prefix(info[0]->ToString());
-  v8::String::Utf8Value name(info[1]->ToString());
-  v8::String::Utf8Value namespaceURI(info[2]->ToString());
+  Nan::Utf8String prefix(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<v8::String>(info[1]).ToLocalChecked());
+  Nan::Utf8String namespaceURI(Nan::To<v8::String>(info[2]).ToLocalChecked());
 
   int result = xmlTextWriterStartElementNS(
           writer->textWriter,
@@ -138,9 +138,9 @@ NAN_METHOD(XmlTextWriter::StartAttributeNS) {
 
   XmlTextWriter *writer = Nan::ObjectWrap::Unwrap<XmlTextWriter>(info.Holder());
 
-  v8::String::Utf8Value prefix(info[0]->ToString());
-  v8::String::Utf8Value name(info[1]->ToString());
-  v8::String::Utf8Value namespaceURI(info[2]->ToString());
+  Nan::Utf8String prefix(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<v8::String>(info[1]).ToLocalChecked());
+  Nan::Utf8String namespaceURI(Nan::To<v8::String>(info[2]).ToLocalChecked());
 
   int result = xmlTextWriterStartAttributeNS(
           writer->textWriter,
@@ -206,7 +206,7 @@ NAN_METHOD(XmlTextWriter::WriteString) {
 
   XmlTextWriter *writer = Nan::ObjectWrap::Unwrap<XmlTextWriter>(info.Holder());
 
-  v8::String::Utf8Value string(info[0]->ToString());
+  Nan::Utf8String string(Nan::To<v8::String>(info[0]).ToLocalChecked());
 
   int result = xmlTextWriterWriteString(writer->textWriter,
       (const xmlChar*)*string);
@@ -215,7 +215,7 @@ NAN_METHOD(XmlTextWriter::WriteString) {
 }
 
 void
-XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
+XmlTextWriter::Initialize(v8::Local<v8::Object> target) {
   Nan::HandleScope scope;
 
   v8::Local<v8::FunctionTemplate> writer_t =
@@ -284,6 +284,6 @@ XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
           XmlTextWriter::WriteString);
 
   Nan::Set(target, Nan::New<v8::String>("TextWriter").ToLocalChecked(),
-              writer_t->GetFunction());
+              Nan::GetFunction(writer_t).ToLocalChecked());
 }
 }  // namespace libxmljs
