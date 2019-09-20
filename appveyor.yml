@@ -1,7 +1,7 @@
 environment:
   npm_version: latest
   github_release_token:
-    secure: en/UnoFHA3RsSAHM5c6zb3RAMa4V01lC3pYG1YrHSeOPFu78SUA/0lOjNe3pp8RG
+    secure: fNm9+m4cngLwXcaUAk0vTM7Dp3pwjzU0H6tTb9YA+6Yh5Xng4fpSHIl257+H8mHB
   matrix:
     - nodejs_version: 4
       npm_version: 4.0.3
