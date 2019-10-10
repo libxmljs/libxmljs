@@ -3,6 +3,8 @@
 
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl/branch/master?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs/branch/master)
 
+[![Coverage Status](https://coveralls.io/repos/hjadoui/libxmljs/badge.svg?branch=master)](https://coveralls.io/r/hjadoui/libxmljs?branch=master)
+
 LibXML bindings for [node.js](http://nodejs.org/)
 
 ```javascript
