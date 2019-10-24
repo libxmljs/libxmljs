@@ -25,7 +25,7 @@ NAN_METHOD(XmlNamespace::New)
   if (!info[0]->IsObject())
     return Nan::ThrowError("You must provide a node to attach this namespace to");
 
-  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *node = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
 
   v8::String::Utf8Value *prefix = 0;
   v8::String::Utf8Value *href = 0;
@@ -60,7 +60,7 @@ XmlNamespace::New(xmlNs *node)
   }
 
   XmlNamespace *ns = new XmlNamespace(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   ns->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -174,6 +174,6 @@ void XmlNamespace::Initialize(v8::Local<v8::Object> target)
                           XmlNamespace::Prefix);
 
   Nan::Set(target, Nan::New<v8::String>("Namespace").ToLocalChecked(),
-           tmpl->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 } // namespace libxmljs

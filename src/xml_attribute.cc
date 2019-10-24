@@ -26,7 +26,7 @@ XmlAttribute::New(xmlNode *xml_obj, const xmlChar *name, const xmlChar *value)
   }
 
   XmlAttribute *attribute = new XmlAttribute(attr);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   attribute->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -43,7 +43,7 @@ XmlAttribute::New(xmlAttr *attr)
   }
 
   XmlAttribute *attribute = new XmlAttribute(attr);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   attribute->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -187,7 +187,7 @@ void XmlAttribute::Initialize(v8::Local<v8::Object> target)
   Nan::SetPrototypeMethod(tmpl, "namespace", XmlAttribute::Namespace);
 
   Nan::Set(target, Nan::New<v8::String>("Attribute").ToLocalChecked(),
-           tmpl->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 
 } // namespace libxmljs

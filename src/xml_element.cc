@@ -28,7 +28,7 @@ NAN_METHOD(XmlElement::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(document);
 
   v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[1]);
@@ -54,7 +54,7 @@ NAN_METHOD(XmlElement::New)
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -68,7 +68,7 @@ NAN_METHOD(XmlElement::Name)
   if (info.Length() == 0)
     return info.GetReturnValue().Set(element->get_name());
 
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
   element->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -87,8 +87,8 @@ NAN_METHOD(XmlElement::Attr)
   }
 
   // setter
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
-  v8::String::Utf8Value value(v8::Isolate::GetCurrent(), info[1]->ToString(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  v8::String::Utf8Value value(v8::Isolate::GetCurrent(), info[1]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
   element->set_attr(*name, *value);
 
   return info.GetReturnValue().Set(info.Holder());
@@ -108,7 +108,7 @@ NAN_METHOD(XmlElement::AddChild)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(child);
 
   xmlNode *imported_child = element->import_node(child->xml_obj);
@@ -158,6 +158,7 @@ NAN_METHOD(XmlElement::AddCData)
 
 NAN_METHOD(XmlElement::Find)
 {
+  v8::Local<v8::Context> current_context = Nan::GetCurrentContext();
   Nan::HandleScope scope;
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
@@ -175,16 +176,16 @@ NAN_METHOD(XmlElement::Find)
     }
     else if (info[1]->IsObject())
     {
-      v8::Local<v8::Object> namespaces = info[1]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked();
-      v8::Local<v8::Array> properties = namespaces->GetPropertyNames(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked();
+      v8::Local<v8::Object> namespaces = info[1]->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
+      v8::Local<v8::Array> properties = namespaces->GetPropertyNames(Nan::GetCurrentContext()).ToLocalChecked();
       for (unsigned int i = 0; i < properties->Length(); i++)
       {
-        v8::Local<v8::String> prop_name = properties->Get(
-                                                        Nan::New<v8::Number>(i))
-                                              ->ToString(v8::Isolate::GetCurrent()->GetCurrentContext())
+        v8::Local<v8::String> prop_name = Nan::Get(properties,
+                                                        Nan::New<v8::Number>(i)).ToLocalChecked()
+                                              ->ToString(current_context)
                                               .ToLocalChecked();
         v8::String::Utf8Value prefix(v8::Isolate::GetCurrent(), prop_name);
-        v8::String::Utf8Value uri(v8::Isolate::GetCurrent(), namespaces->Get(prop_name));
+        v8::String::Utf8Value uri(v8::Isolate::GetCurrent(), Nan::Get(namespaces, prop_name).ToLocalChecked());
         ctxt.register_ns((const xmlChar *)*prefix, (const xmlChar *)*uri);
       }
     }
@@ -240,7 +241,7 @@ NAN_METHOD(XmlElement::Child)
     return Nan::ThrowError("Bad argument: must provide #child() with a number");
   }
 
-  const int32_t idx = info[0]->Int32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
+  const int32_t idx = info[0]->Int32Value(Nan::GetCurrentContext()).ToChecked();
   return info.GetReturnValue().Set(element->get_child(idx));
 }
 
@@ -251,7 +252,7 @@ NAN_METHOD(XmlElement::ChildNodes)
   assert(element);
 
   if (info[0]->IsInt32())
-    return info.GetReturnValue().Set(element->get_child(info[0]->Int32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked()));
+    return info.GetReturnValue().Set(element->get_child(info[0]->Int32Value(Nan::GetCurrentContext()).ToChecked()));
 
   return info.GetReturnValue().Set(element->get_child_nodes());
 }
@@ -270,7 +271,7 @@ NAN_METHOD(XmlElement::AddPrevSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -299,7 +300,7 @@ NAN_METHOD(XmlElement::AddNextSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -334,7 +335,7 @@ NAN_METHOD(XmlElement::Replace)
   }
   else
   {
-    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -398,12 +399,12 @@ XmlElement::get_attrs()
 
   v8::Local<v8::Array> attributes = Nan::New<v8::Array>();
   v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(
-      attributes->Get(Nan::New<v8::String>("push").ToLocalChecked()));
+      Nan::Get(attributes, Nan::New<v8::String>("push").ToLocalChecked()).ToLocalChecked());
   v8::Local<v8::Value> argv[1];
   do
   {
     argv[0] = XmlAttribute::New(attr);
-    push->Call(v8::Isolate::GetCurrent()->GetCurrentContext(), attributes, 1, argv);
+    push->Call(Nan::GetCurrentContext(), attributes, 1, argv);
   } while ((attr = attr->next));
 
   return scope.Escape(attributes);
@@ -563,7 +564,7 @@ XmlElement::New(xmlNode *node)
   }
 
   XmlElement *element = new XmlElement(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   element->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -686,7 +687,7 @@ void XmlElement::Initialize(v8::Local<v8::Object> target)
                           XmlElement::Replace);
 
   Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
-           tmpl->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 
 } // namespace libxmljs

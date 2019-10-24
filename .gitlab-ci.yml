@@ -29,6 +29,10 @@ stages:
     - npm run test
     - node-pre-gyp package 2>&1
 
+node-13:
+  <<: *glibc
+  image: registry.gitlab.com/marudor/deploy-helper/native-node:13
+
 node-12:
   <<: *glibc
   image: registry.gitlab.com/marudor/deploy-helper/native-node:12
@@ -48,6 +52,10 @@ node-9:
 node-8:
   <<: *glibc
   image: registry.gitlab.com/marudor/deploy-helper/native-node:8
+
+node-13-alpine:
+  <<: *muslc
+  image: node:13-alpine
 
 node-12-alpine:
   <<: *muslc

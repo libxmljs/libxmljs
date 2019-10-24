@@ -26,7 +26,7 @@ NAN_METHOD(XmlComment::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(document);
 
   v8::Local<v8::Value> contentOpt;
@@ -44,7 +44,7 @@ NAN_METHOD(XmlComment::New)
   comment->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -98,7 +98,7 @@ XmlComment::New(xmlNode *node)
   }
 
   XmlComment *comment = new XmlComment(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   comment->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -121,7 +121,7 @@ void XmlComment::Initialize(v8::Local<v8::Object> target)
                           XmlComment::Text);
 
   Nan::Set(target, Nan::New<v8::String>("Comment").ToLocalChecked(),
-           t->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 
 } // namespace libxmljs

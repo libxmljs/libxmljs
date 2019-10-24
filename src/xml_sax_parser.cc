@@ -128,7 +128,7 @@ void XmlSaxParser::Callback(const char *what,
   }
 
   // get the 'emit' function from ourselves
-  v8::Local<v8::Value> emit_v = this->handle()->Get(Nan::New(emit_symbol));
+  v8::Local<v8::Value> emit_v = Nan::Get(this->handle(), Nan::New(emit_symbol)).ToLocalChecked();
   assert(emit_v->IsFunction());
 
   // trigger the event
@@ -147,9 +147,9 @@ NAN_METHOD(XmlSaxParser::Push)
 
   XmlSaxParser *parser = Nan::ObjectWrap::Unwrap<XmlSaxParser>(info.Holder());
 
-  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
 
-  bool terminate = info.Length() > 1 ? info[1]->ToBoolean(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()->Value() : false;
+  bool terminate = info.Length() > 1 ? info[1]->ToBoolean(v8::Isolate::GetCurrent())->Value() : false;
 
   parser->push(*parsable, parsable.length(), terminate);
 
@@ -179,7 +179,7 @@ NAN_METHOD(XmlSaxParser::ParseString)
 
   XmlSaxParser *parser = Nan::ObjectWrap::Unwrap<XmlSaxParser>(info.Holder());
 
-  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
   parser->parse_string(*parsable, parsable.length());
 
   // TODO(sprsquish): return based on the parser
@@ -467,7 +467,7 @@ void XmlSaxParser::Initialize(v8::Local<v8::Object> target)
                           XmlSaxParser::ParseString);
 
   Nan::Set(target, Nan::New<v8::String>("SaxParser").ToLocalChecked(),
-           parser_t->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           parser_t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 
   v8::Local<v8::FunctionTemplate> push_parser_t =
       Nan::New<v8::FunctionTemplate>(NewPushParser);
@@ -483,6 +483,6 @@ void XmlSaxParser::Initialize(v8::Local<v8::Object> target)
                           XmlSaxParser::Push);
 
   Nan::Set(target, Nan::New<v8::String>("SaxPushParser").ToLocalChecked(),
-           push_parser_t->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           push_parser_t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 } // namespace libxmljs

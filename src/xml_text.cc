@@ -28,7 +28,7 @@ NAN_METHOD(XmlText::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(document);
 
   v8::Local<v8::Value> contentOpt;
@@ -52,7 +52,7 @@ NAN_METHOD(XmlText::New)
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  info.Holder()->Set(Nan::New<v8::String>("document").ToLocalChecked(), info[0]);
+  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -98,7 +98,7 @@ NAN_METHOD(XmlText::AddPrevSibling)
   XmlText *text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -120,7 +120,7 @@ NAN_METHOD(XmlText::AddNextSibling)
   XmlText *text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -148,7 +148,7 @@ NAN_METHOD(XmlText::Replace)
   }
   else
   {
-    XmlText *new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+    XmlText *new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -237,7 +237,7 @@ XmlText::New(xmlNode *node)
   }
 
   XmlText *element = new XmlText(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
   element->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -306,7 +306,7 @@ void XmlText::Initialize(v8::Local<v8::Object> target)
                           XmlText::Replace);
 
   Nan::Set(target, Nan::New<v8::String>("Text").ToLocalChecked(),
-           tmpl->GetFunction(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
+           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
 }
 
 } // namespace libxmljs

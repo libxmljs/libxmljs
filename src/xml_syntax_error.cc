@@ -63,7 +63,8 @@ void XmlSyntaxError::PushToArray(void *errs, xmlError *error)
   Nan::HandleScope scope;
   v8::Local<v8::Array> errors = *reinterpret_cast<v8::Local<v8::Array> *>(errs);
   // push method for array
-  v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(Nan::New<v8::String>("push").ToLocalChecked()));
+  v8::Local<v8::Context> current_context = v8::Isolate::GetCurrent()->GetCurrentContext();
+  v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(errors->Get(current_context, Nan::New<v8::String>("push").ToLocalChecked()).ToLocalChecked());
 
   v8::Local<v8::Value> argv[1] = {XmlSyntaxError::BuildSyntaxError(error)};
   push->Call(v8::Isolate::GetCurrent()->GetCurrentContext(), errors, 1, argv);
