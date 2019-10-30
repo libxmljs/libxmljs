@@ -39,13 +39,7 @@ NAN_METHOD(XmlText::New)
   Nan::Utf8String contentRaw(contentOpt);
   const char *content = (contentRaw.length()) ? *contentRaw : NULL;
 
-  xmlChar *encodedContent = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar *)content) : NULL;
-
-  xmlNode *textNode = xmlNewDocText(document->xml_obj, encodedContent);
-  if (encodedContent)
-  {
-    xmlFree(encodedContent);
-  }
+  xmlNode *textNode = xmlNewDocText(document->xml_obj, (const xmlChar *)content);
 
   XmlText *element = new XmlText(textNode);
   textNode->_private = element;

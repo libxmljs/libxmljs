@@ -77,6 +77,16 @@ module.exports.addChild = function(assert) {
     assert.done();
 };
 
+module.exports.addChildEscaping = function(assert) {
+    var doc = libxml.parseXmlString("<p></p>");
+
+    doc.root().addChild(libxml.Text(doc, "x&x"));
+
+    assert.equal('<p>x&amp;x</p>', doc.root().toString());
+
+    assert.done();
+}
+
 module.exports.addSiblings = function(assert) {
     var doc = libxml.Document();
 
@@ -132,4 +142,3 @@ module.exports.add_next_sibling_merge_text = function(assert) {
 
   assert.done();
 };
-
