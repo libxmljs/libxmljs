@@ -5,10 +5,10 @@
     "Jeff Smick"
   ],
   "binary": {
-    "module_name": "xmljs",
-    "module_path": "./build/Release/",
-    "host": "https://github.com",
-    "remote_path": "./libxmljs/libxmljs/releases/download/v{version}/",
+    "module_name" : "xmljs",
+    "module_path" : "./lib/binding/{node_abi}-{platform}-{arch}",
+    "host"        : "https://github.com",
+    "remote_path" : "./libxmljs/libxmljs/releases/download/v{version}/",
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
