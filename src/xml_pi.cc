@@ -26,17 +26,17 @@ NAN_METHOD(XmlProcessingInstruction::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(document);
 
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[1]);
+  Nan::Utf8String name(info[1]);
 
   v8::Local<v8::Value> contentOpt;
   if (info[2]->IsString())
   {
     contentOpt = info[2];
   }
-  v8::String::Utf8Value contentRaw(v8::Isolate::GetCurrent(), contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char *content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode *pi = xmlNewDocPI(document->xml_obj, (const xmlChar *)*name, (xmlChar *)content);
@@ -60,7 +60,7 @@ NAN_METHOD(XmlProcessingInstruction::Name)
   if (info.Length() == 0)
     return info.GetReturnValue().Set(processing_instruction->get_name());
 
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
   processing_instruction->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -77,7 +77,7 @@ NAN_METHOD(XmlProcessingInstruction::Text)
   }
   else
   {
-    processing_instruction->set_content(*v8::String::Utf8Value(v8::Isolate::GetCurrent(), info[0]));
+    processing_instruction->set_content(*Nan::Utf8String(info[0]));
   }
 
   return info.GetReturnValue().Set(info.Holder());
@@ -129,7 +129,7 @@ XmlProcessingInstruction::New(xmlNode *node)
   }
 
   XmlProcessingInstruction *processing_instruction = new XmlProcessingInstruction(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   processing_instruction->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -156,7 +156,7 @@ void XmlProcessingInstruction::Initialize(v8::Local<v8::Object> target)
                           XmlProcessingInstruction::Text);
 
   Nan::Set(target, Nan::New<v8::String>("ProcessingInstruction").ToLocalChecked(),
-           t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
+           Nan::GetFunction(t).ToLocalChecked());
 }
 
 } // namespace libxmljs

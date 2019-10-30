@@ -147,9 +147,9 @@ NAN_METHOD(XmlSaxParser::Push)
 
   XmlSaxParser *parser = Nan::ObjectWrap::Unwrap<XmlSaxParser>(info.Holder());
 
-  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::Utf8String parsable(Nan::To<v8::String>(info[0]).ToLocalChecked());
 
-  bool terminate = info.Length() > 1 ? info[1]->ToBoolean(v8::Isolate::GetCurrent())->Value() : false;
+  bool terminate = info.Length() > 1 ? Nan::To<v8::Boolean>(info[1]).ToLocalChecked()->Value() : false;
 
   parser->push(*parsable, parsable.length(), terminate);
 
@@ -179,7 +179,7 @@ NAN_METHOD(XmlSaxParser::ParseString)
 
   XmlSaxParser *parser = Nan::ObjectWrap::Unwrap<XmlSaxParser>(info.Holder());
 
-  v8::String::Utf8Value parsable(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::Utf8String parsable(info[0]);
   parser->parse_string(*parsable, parsable.length());
 
   // TODO(sprsquish): return based on the parser
@@ -467,7 +467,7 @@ void XmlSaxParser::Initialize(v8::Local<v8::Object> target)
                           XmlSaxParser::ParseString);
 
   Nan::Set(target, Nan::New<v8::String>("SaxParser").ToLocalChecked(),
-           parser_t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
+           Nan::GetFunction(parser_t).ToLocalChecked());
 
   v8::Local<v8::FunctionTemplate> push_parser_t =
       Nan::New<v8::FunctionTemplate>(NewPushParser);
@@ -483,6 +483,6 @@ void XmlSaxParser::Initialize(v8::Local<v8::Object> target)
                           XmlSaxParser::Push);
 
   Nan::Set(target, Nan::New<v8::String>("SaxPushParser").ToLocalChecked(),
-           push_parser_t->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
+           Nan::GetFunction(push_parser_t).ToLocalChecked());
 }
 } // namespace libxmljs

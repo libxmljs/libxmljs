@@ -26,7 +26,7 @@ XmlAttribute::New(xmlNode *xml_obj, const xmlChar *name, const xmlChar *value)
   }
 
   XmlAttribute *attribute = new XmlAttribute(attr);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   attribute->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -43,7 +43,7 @@ XmlAttribute::New(xmlAttr *attr)
   }
 
   XmlAttribute *attribute = new XmlAttribute(attr);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   attribute->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -66,7 +66,7 @@ NAN_METHOD(XmlAttribute::Value)
   // attr.value('new value');
   if (info.Length() > 0)
   {
-    attr->set_value(*v8::String::Utf8Value(v8::Isolate::GetCurrent(), info[0]));
+    attr->set_value(*Nan::Utf8String(info[0]));
     return info.GetReturnValue().Set(info.Holder());
   }
 
@@ -187,7 +187,7 @@ void XmlAttribute::Initialize(v8::Local<v8::Object> target)
   Nan::SetPrototypeMethod(tmpl, "namespace", XmlAttribute::Namespace);
 
   Nan::Set(target, Nan::New<v8::String>("Attribute").ToLocalChecked(),
-           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::GetFunction(tmpl).ToLocalChecked());
 }
 
 } // namespace libxmljs

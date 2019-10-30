@@ -28,17 +28,17 @@ NAN_METHOD(XmlElement::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(document);
 
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[1]);
+  Nan::Utf8String name(info[1]);
 
   v8::Local<v8::Value> contentOpt;
   if (info[2]->IsString())
   {
     contentOpt = info[2];
   }
-  v8::String::Utf8Value contentRaw(v8::Isolate::GetCurrent(), contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char *content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlChar *encodedContent = content ? xmlEncodeSpecialChars(document->xml_obj, (const xmlChar *)content) : NULL;
@@ -68,7 +68,7 @@ NAN_METHOD(XmlElement::Name)
   if (info.Length() == 0)
     return info.GetReturnValue().Set(element->get_name());
 
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
   element->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -82,13 +82,13 @@ NAN_METHOD(XmlElement::Attr)
   // getter
   if (info.Length() == 1)
   {
-    v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]);
+    Nan::Utf8String name(info[0]);
     return info.GetReturnValue().Set(element->get_attr(*name));
   }
 
   // setter
-  v8::String::Utf8Value name(v8::Isolate::GetCurrent(), info[0]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
-  v8::String::Utf8Value value(v8::Isolate::GetCurrent(), info[1]->ToString(Nan::GetCurrentContext()).ToLocalChecked());
+  Nan::Utf8String name(info[0]);
+  Nan::Utf8String value(info[1]);
   element->set_attr(*name, *value);
 
   return info.GetReturnValue().Set(info.Holder());
@@ -108,7 +108,7 @@ NAN_METHOD(XmlElement::AddChild)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(child);
 
   xmlNode *imported_child = element->import_node(child->xml_obj);
@@ -145,7 +145,7 @@ NAN_METHOD(XmlElement::AddCData)
   {
     contentOpt = info[0];
   }
-  v8::String::Utf8Value contentRaw(v8::Isolate::GetCurrent(), contentOpt);
+  Nan::Utf8String contentRaw(contentOpt);
   const char *content = (contentRaw.length()) ? *contentRaw : NULL;
 
   xmlNode *elem = xmlNewCDataBlock(element->xml_obj->doc,
@@ -158,12 +158,11 @@ NAN_METHOD(XmlElement::AddCData)
 
 NAN_METHOD(XmlElement::Find)
 {
-  v8::Local<v8::Context> current_context = Nan::GetCurrentContext();
   Nan::HandleScope scope;
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  v8::String::Utf8Value xpath(v8::Isolate::GetCurrent(), info[0]);
+  Nan::Utf8String xpath(info[0]);
 
   XmlXpathContext ctxt(element->xml_obj);
 
@@ -171,21 +170,20 @@ NAN_METHOD(XmlElement::Find)
   {
     if (info[1]->IsString())
     {
-      v8::String::Utf8Value uri(v8::Isolate::GetCurrent(), info[1]);
+      Nan::Utf8String uri(info[1]);
       ctxt.register_ns((const xmlChar *)"xmlns", (const xmlChar *)*uri);
     }
     else if (info[1]->IsObject())
     {
-      v8::Local<v8::Object> namespaces = info[1]->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
-      v8::Local<v8::Array> properties = namespaces->GetPropertyNames(Nan::GetCurrentContext()).ToLocalChecked();
+      v8::Local<v8::Object> namespaces = Nan::To<v8::Object>(info[1]).ToLocalChecked();
+      v8::Local<v8::Array> properties = Nan::GetPropertyNames(namespaces).ToLocalChecked();
       for (unsigned int i = 0; i < properties->Length(); i++)
       {
-        v8::Local<v8::String> prop_name = Nan::Get(properties,
-                                                        Nan::New<v8::Number>(i)).ToLocalChecked()
-                                              ->ToString(current_context)
+        v8::Local<v8::String> prop_name = Nan::To<v8::String>(Nan::Get(properties,
+                                                        Nan::New<v8::Number>(i)).ToLocalChecked())
                                               .ToLocalChecked();
-        v8::String::Utf8Value prefix(v8::Isolate::GetCurrent(), prop_name);
-        v8::String::Utf8Value uri(v8::Isolate::GetCurrent(), Nan::Get(namespaces, prop_name).ToLocalChecked());
+        Nan::Utf8String prefix(prop_name);
+        Nan::Utf8String uri(Nan::Get(namespaces, prop_name).ToLocalChecked());
         ctxt.register_ns((const xmlChar *)*prefix, (const xmlChar *)*uri);
       }
     }
@@ -224,7 +222,7 @@ NAN_METHOD(XmlElement::Text)
   }
   else
   {
-    element->set_content(*v8::String::Utf8Value(v8::Isolate::GetCurrent(), info[0]));
+    element->set_content(*Nan::Utf8String(info[0]));
   }
 
   return info.GetReturnValue().Set(info.Holder());
@@ -241,7 +239,7 @@ NAN_METHOD(XmlElement::Child)
     return Nan::ThrowError("Bad argument: must provide #child() with a number");
   }
 
-  const int32_t idx = info[0]->Int32Value(Nan::GetCurrentContext()).ToChecked();
+  const int32_t idx = Nan::To<int32_t>(info[0]).ToChecked();
   return info.GetReturnValue().Set(element->get_child(idx));
 }
 
@@ -252,7 +250,7 @@ NAN_METHOD(XmlElement::ChildNodes)
   assert(element);
 
   if (info[0]->IsInt32())
-    return info.GetReturnValue().Set(element->get_child(info[0]->Int32Value(Nan::GetCurrentContext()).ToChecked()));
+    return info.GetReturnValue().Set(element->get_child(Nan::To<int32_t>(info[0]).ToChecked()));
 
   return info.GetReturnValue().Set(element->get_child_nodes());
 }
@@ -271,7 +269,7 @@ NAN_METHOD(XmlElement::AddPrevSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -300,7 +298,7 @@ NAN_METHOD(XmlElement::AddNextSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -331,11 +329,11 @@ NAN_METHOD(XmlElement::Replace)
 
   if (info[0]->IsString())
   {
-    element->replace_text(*v8::String::Utf8Value(v8::Isolate::GetCurrent(), info[0]));
+    element->replace_text(*Nan::Utf8String(info[0]));
   }
   else
   {
-    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -404,7 +402,7 @@ XmlElement::get_attrs()
   do
   {
     argv[0] = XmlAttribute::New(attr);
-    push->Call(Nan::GetCurrentContext(), attributes, 1, argv);
+    Nan::Call(push, attributes, 1, argv);
   } while ((attr = attr->next));
 
   return scope.Escape(attributes);
@@ -564,7 +562,7 @@ XmlElement::New(xmlNode *node)
   }
 
   XmlElement *element = new XmlElement(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::New(constructor_template)->GetFunction(Nan::GetCurrentContext()).ToLocalChecked()).ToLocalChecked();
+  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   element->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -687,7 +685,7 @@ void XmlElement::Initialize(v8::Local<v8::Object> target)
                           XmlElement::Replace);
 
   Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
-           tmpl->GetFunction(Nan::GetCurrentContext()).ToLocalChecked());
+           Nan::GetFunction(tmpl).ToLocalChecked());
 }
 
 } // namespace libxmljs
