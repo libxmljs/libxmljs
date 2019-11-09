@@ -23,17 +23,10 @@ install:
   - npm --version
   - npm config set msvs_version 2015
   - npm config set python C:\Python27\python.exe
-  - npm --version
-  - npm install -g node-pre-gyp --production
-
-  # work around an issue with node-gyp v3.3.1 and node 4x
-  # https://github.com/nodejs/node-gyp/issues/921
-  - npm config set -g cafile=package.json
-  - npm config set -g strict-ssl=false
-  - npm config set registry http://registry.npmjs.org/
+  - yarn global add node-pre-gyp
 
 build_script:
-  - npm install --msvs_version=2015
+  - npm_config_msvs_version=2015 yarn --frozen-lockfile
 
 test_script:
   - node --expose-gc node_modules/nodeunit/bin/nodeunit test
@@ -52,9 +45,6 @@ deploy:
       appveyor_repo_tag: true
 
 after_deploy:
-  - npm config delete -g cafile
-  - npm config delete -g strict-ssl
-  - npm config delete registry
   - node-pre-gyp clean
-  - npm install --fallback-to-build=false
+  - npm_config_fallback_to_build=false yarn --frozen-lockfile
   - node --expose-gc node_modules/nodeunit/bin/nodeunit test

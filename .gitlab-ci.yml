@@ -15,8 +15,8 @@ stages:
   <<: *baseBuild
   script:
     - source $NVM_DIR/nvm.sh
-    - npm install --unsafe-perm --build-from-source
-    - npm run test
+    - npm_config_build_from_source=true yarn --frozen-lockfile
+    - yarn test
     - node-pre-gyp package 2>&1
 
 .muslc: &muslc
@@ -24,9 +24,9 @@ stages:
   script:
     - apk update
     - apk add python g++ make git
-    - npm install --unsafe-perm -g node-gyp node-pre-gyp
-    - npm install --unsafe-perm --build-from-source
-    - npm run test
+    - yarn global add node-gyp node-pre-gyp
+    - npm_config_build_from_source=true yarn --frozen-lockfile
+    - yarn test
     - node-pre-gyp package 2>&1
 
 node-13:
@@ -78,10 +78,10 @@ node-8-alpine:
   image: node:8-alpine
 
 deploy:
-  image: node:10-alpine
+  image: node:12-alpine
   stage: deploy
   script:
-    - npm install --unsafe-perm -g github-release-cli
+    - yarn global add github-release-cli
     - github-release upload -T "$RELEASE_TOKEN" -o "marudor" -r "libxmljs2" -t "$CI_COMMIT_TAG" -n "$CI_COMMIT_TAG" build/stage/marudor/libxmljs2/releases/download/**/*.tar.gz
   artifacts:
     paths:

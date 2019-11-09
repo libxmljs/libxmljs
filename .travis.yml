@@ -23,9 +23,9 @@ before_install:
 - echo `git describe --tags --always HEAD`
 - npm config set progress false
 - npm config set spin false
-- npm install -g node-gyp node-pre-gyp
+- yarn global add node-gyp node-pre-gyp
 install:
-- npm install --build-from-source
+- npm_config_build_from_source=true yarn --frozen-lockfile
 before_deploy:
 - node-pre-gyp package 2>&1
 deploy:
