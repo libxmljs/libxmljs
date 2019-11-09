@@ -9,10 +9,12 @@
 #include "xml_attribute.h"
 #include "xml_xpath_context.h"
 
+using namespace v8;
+
 namespace libxmljs
 {
 
-Nan::Persistent<v8::FunctionTemplate> XmlComment::constructor_template;
+Nan::Persistent<FunctionTemplate> XmlComment::constructor_template;
 
 // doc, content
 NAN_METHOD(XmlComment::New)
@@ -26,10 +28,10 @@ NAN_METHOD(XmlComment::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(document);
 
-  v8::Local<v8::Value> contentOpt;
+  Local<Value> contentOpt;
   if (info[1]->IsString())
   {
     contentOpt = info[1];
@@ -44,7 +46,7 @@ NAN_METHOD(XmlComment::New)
   comment->Wrap(info.Holder());
 
   // this prevents the document from going away
-  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
+  Nan::Set(info.Holder(), Nan::New<String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -72,23 +74,23 @@ void XmlComment::set_content(const char *content)
   xmlNodeSetContent(xml_obj, (xmlChar *)content);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlComment::get_content()
 {
   Nan::EscapableHandleScope scope;
   xmlChar *content = xmlNodeGetContent(xml_obj);
   if (content)
   {
-    v8::Local<v8::String> ret_content =
-        Nan::New<v8::String>((const char *)content).ToLocalChecked();
+    Local<String> ret_content =
+        Nan::New<String>((const char *)content).ToLocalChecked();
     xmlFree(content);
     return scope.Escape(ret_content);
   }
 
-  return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
+  return scope.Escape(Nan::New<String>("").ToLocalChecked());
 }
 
-v8::Local<v8::Object>
+Local<Object>
 XmlComment::New(xmlNode *node)
 {
   Nan::EscapableHandleScope scope;
@@ -98,7 +100,7 @@ XmlComment::New(xmlNode *node)
   }
 
   XmlComment *comment = new XmlComment(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
+  Local<Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   comment->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -108,10 +110,10 @@ XmlComment::XmlComment(xmlNode *node)
 {
 }
 
-void XmlComment::Initialize(v8::Local<v8::Object> target)
+void XmlComment::Initialize(Local<Object> target)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t = Nan::New<v8::FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
+  Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
   t->Inherit(Nan::New(XmlNode::constructor_template));
   t->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template.Reset(t);
@@ -120,7 +122,7 @@ void XmlComment::Initialize(v8::Local<v8::Object> target)
                           "text",
                           XmlComment::Text);
 
-  Nan::Set(target, Nan::New<v8::String>("Comment").ToLocalChecked(),
+  Nan::Set(target, Nan::New<String>("Comment").ToLocalChecked(),
            Nan::GetFunction(t).ToLocalChecked());
 }
 

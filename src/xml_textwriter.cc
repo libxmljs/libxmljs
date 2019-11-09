@@ -3,6 +3,7 @@
 #include "libxmljs.h"
 #include "xml_textwriter.h"
 
+using namespace v8;
 namespace libxmljs {
 
 XmlTextWriter::XmlTextWriter() {
@@ -58,7 +59,7 @@ NAN_METHOD(XmlTextWriter::BufferContent) {
   // Receive bytes from the writerBuffer
   const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
 
-  return info.GetReturnValue().Set(Nan::New<v8::String>((const char*)buf,
+  return info.GetReturnValue().Set(Nan::New<String>((const char*)buf,
               xmlBufferLength(writer->writerBuffer)).ToLocalChecked());
 }
 
@@ -92,7 +93,7 @@ NAN_METHOD(XmlTextWriter::StartDocument) {
           info[1]->IsUndefined() ? NULL : *encoding,
           info[2]->IsUndefined() ? NULL : *standalone);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::EndDocument) {
@@ -102,7 +103,7 @@ NAN_METHOD(XmlTextWriter::EndDocument) {
 
   int result = xmlTextWriterEndDocument(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::StartElementNS) {
@@ -120,7 +121,7 @@ NAN_METHOD(XmlTextWriter::StartElementNS) {
           info[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           info[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::EndElement) {
@@ -130,7 +131,7 @@ NAN_METHOD(XmlTextWriter::EndElement) {
 
   int result = xmlTextWriterEndElement(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::StartAttributeNS) {
@@ -148,7 +149,7 @@ NAN_METHOD(XmlTextWriter::StartAttributeNS) {
           info[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           info[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::EndAttribute) {
@@ -158,7 +159,7 @@ NAN_METHOD(XmlTextWriter::EndAttribute) {
 
   int result = xmlTextWriterEndAttribute(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::StartCdata) {
@@ -168,7 +169,7 @@ NAN_METHOD(XmlTextWriter::StartCdata) {
 
   int result = xmlTextWriterStartCDATA(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::EndCdata) {
@@ -178,7 +179,7 @@ NAN_METHOD(XmlTextWriter::EndCdata) {
 
   int result = xmlTextWriterEndCDATA(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::StartComment) {
@@ -188,7 +189,7 @@ NAN_METHOD(XmlTextWriter::StartComment) {
 
   int result = xmlTextWriterStartComment(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::EndComment) {
@@ -198,7 +199,7 @@ NAN_METHOD(XmlTextWriter::EndComment) {
 
   int result = xmlTextWriterEndComment(writer->textWriter);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 NAN_METHOD(XmlTextWriter::WriteString) {
@@ -211,17 +212,17 @@ NAN_METHOD(XmlTextWriter::WriteString) {
   int result = xmlTextWriterWriteString(writer->textWriter,
       (const xmlChar*)*string);
 
-  return info.GetReturnValue().Set(Nan::New<v8::Number>((double)result));
+  return info.GetReturnValue().Set(Nan::New<Number>((double)result));
 }
 
 void
-XmlTextWriter::Initialize(v8::Local<v8::Object> target) {
+XmlTextWriter::Initialize(Local<Object> target) {
   Nan::HandleScope scope;
 
-  v8::Local<v8::FunctionTemplate> writer_t =
-    Nan::New<v8::FunctionTemplate>(NewTextWriter);
+  Local<FunctionTemplate> writer_t =
+    Nan::New<FunctionTemplate>(NewTextWriter);
 
-  Nan::Persistent<v8::FunctionTemplate> xml_writer_template;
+  Nan::Persistent<FunctionTemplate> xml_writer_template;
   xml_writer_template.Reset(writer_t);
 
 
@@ -283,7 +284,7 @@ XmlTextWriter::Initialize(v8::Local<v8::Object> target) {
           "_writeString",
           XmlTextWriter::WriteString);
 
-  Nan::Set(target, Nan::New<v8::String>("TextWriter").ToLocalChecked(),
+  Nan::Set(target, Nan::New<String>("TextWriter").ToLocalChecked(),
               Nan::GetFunction(writer_t).ToLocalChecked());
 }
 }  // namespace libxmljs

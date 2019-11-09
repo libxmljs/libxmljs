@@ -4,9 +4,9 @@
 
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/vlefa3ucskt8avb8?svg=true)](https://ci.appveyor.com/project/marudor/libxmljs2/branch/master)
 
-![Gitlab build Status](https://gitlab.com/marudor/libxmljs2/badges/master/pipeline.svg)
 
 LibXML bindings for [node.js](http://nodejs.org/)
+This package was forked as the original one is fairly unmaintained.
 
 ```javascript
 var libxmljs = require('libxmljs2');
@@ -35,7 +35,6 @@ console.log(child.attr('foo').value()); // prints "bar"
 ## Support
 
 - Docs - [http://github.com/marudor/libxmljs2/wiki](http://github.com/marudor/libxmljs2/wiki)
-  <!-- * Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs) -->
 
 ## API and Examples
 

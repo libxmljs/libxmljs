@@ -11,10 +11,12 @@
 #include "xml_attribute.h"
 #include "xml_xpath_context.h"
 
+using namespace v8;
+
 namespace libxmljs
 {
 
-Nan::Persistent<v8::FunctionTemplate> XmlElement::constructor_template;
+Nan::Persistent<FunctionTemplate> XmlElement::constructor_template;
 
 // doc, name, content
 NAN_METHOD(XmlElement::New)
@@ -28,12 +30,12 @@ NAN_METHOD(XmlElement::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(document);
 
   Nan::Utf8String name(info[1]);
 
-  v8::Local<v8::Value> contentOpt;
+  Local<Value> contentOpt;
   if (info[2]->IsString())
   {
     contentOpt = info[2];
@@ -54,7 +56,7 @@ NAN_METHOD(XmlElement::New)
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
+  Nan::Set(info.Holder(), Nan::New<String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -68,7 +70,7 @@ NAN_METHOD(XmlElement::Name)
   if (info.Length() == 0)
     return info.GetReturnValue().Set(element->get_name());
 
-  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<String>(info[0]).ToLocalChecked());
   element->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -108,7 +110,7 @@ NAN_METHOD(XmlElement::AddChild)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlNode *child = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(child);
 
   xmlNode *imported_child = element->import_node(child->xml_obj);
@@ -140,7 +142,7 @@ NAN_METHOD(XmlElement::AddCData)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  v8::Local<v8::Value> contentOpt;
+  Local<Value> contentOpt;
   if (info[0]->IsString())
   {
     contentOpt = info[0];
@@ -175,12 +177,12 @@ NAN_METHOD(XmlElement::Find)
     }
     else if (info[1]->IsObject())
     {
-      v8::Local<v8::Object> namespaces = Nan::To<v8::Object>(info[1]).ToLocalChecked();
-      v8::Local<v8::Array> properties = Nan::GetPropertyNames(namespaces).ToLocalChecked();
+      Local<Object> namespaces = Nan::To<Object>(info[1]).ToLocalChecked();
+      Local<Array> properties = Nan::GetPropertyNames(namespaces).ToLocalChecked();
       for (unsigned int i = 0; i < properties->Length(); i++)
       {
-        v8::Local<v8::String> prop_name = Nan::To<v8::String>(Nan::Get(properties,
-                                                        Nan::New<v8::Number>(i)).ToLocalChecked())
+        Local<String> prop_name = Nan::To<String>(Nan::Get(properties,
+                                                        Nan::New<Number>(i)).ToLocalChecked())
                                               .ToLocalChecked();
         Nan::Utf8String prefix(prop_name);
         Nan::Utf8String uri(Nan::Get(namespaces, prop_name).ToLocalChecked());
@@ -269,7 +271,7 @@ NAN_METHOD(XmlElement::AddPrevSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -298,7 +300,7 @@ NAN_METHOD(XmlElement::AddNextSibling)
   XmlElement *element = Nan::ObjectWrap::Unwrap<XmlElement>(info.Holder());
   assert(element);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -333,7 +335,7 @@ NAN_METHOD(XmlElement::Replace)
   }
   else
   {
-    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+    XmlElement *new_sibling = Nan::ObjectWrap::Unwrap<XmlElement>(Nan::To<Object>(info[0]).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -352,18 +354,18 @@ void XmlElement::set_name(const char *name)
   xmlNodeSetName(xml_obj, (const xmlChar *)name);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_name()
 {
   Nan::EscapableHandleScope scope;
   if (xml_obj->name)
-    return scope.Escape(Nan::New<v8::String>((const char *)xml_obj->name).ToLocalChecked());
+    return scope.Escape(Nan::New<String>((const char *)xml_obj->name).ToLocalChecked());
   else
     return scope.Escape(Nan::Undefined());
 }
 
 // TODO(sprsquish) make these work with namespaces
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_attr(const char *name)
 {
   Nan::EscapableHandleScope scope;
@@ -386,19 +388,19 @@ void XmlElement::set_attr(const char *name,
   XmlAttribute::New(xml_obj, (const xmlChar *)name, (const xmlChar *)value);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_attrs()
 {
   Nan::EscapableHandleScope scope;
   xmlAttr *attr = xml_obj->properties;
 
   if (!attr)
-    return scope.Escape(Nan::New<v8::Array>(0));
+    return scope.Escape(Nan::New<Array>(0));
 
-  v8::Local<v8::Array> attributes = Nan::New<v8::Array>();
-  v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(
-      Nan::Get(attributes, Nan::New<v8::String>("push").ToLocalChecked()).ToLocalChecked());
-  v8::Local<v8::Value> argv[1];
+  Local<Array> attributes = Nan::New<Array>();
+  Local<Function> push = Local<Function>::Cast(
+      Nan::Get(attributes, Nan::New<String>("push").ToLocalChecked()).ToLocalChecked());
+  Local<Value> argv[1];
   do
   {
     argv[0] = XmlAttribute::New(attr);
@@ -413,7 +415,7 @@ void XmlElement::add_cdata(xmlNode *cdata)
   xmlAddChild(xml_obj, cdata);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_child(int32_t idx)
 {
   Nan::EscapableHandleScope scope;
@@ -432,14 +434,14 @@ XmlElement::get_child(int32_t idx)
   return scope.Escape(XmlElement::New(child));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_child_nodes()
 {
   Nan::EscapableHandleScope scope;
 
   xmlNode *child = xml_obj->children;
   if (!child)
-    return scope.Escape(Nan::New<v8::Array>(0));
+    return scope.Escape(Nan::New<Array>(0));
 
   uint32_t len = 0;
   do
@@ -447,7 +449,7 @@ XmlElement::get_child_nodes()
     ++len;
   } while ((child = child->next));
 
-  v8::Local<v8::Array> children = Nan::New<v8::Array>(len);
+  Local<Array> children = Nan::New<Array>(len);
   child = xml_obj->children;
 
   uint32_t i = 0;
@@ -459,14 +461,14 @@ XmlElement::get_child_nodes()
   return scope.Escape(children);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_path()
 {
   Nan::EscapableHandleScope scope;
   xmlChar *path = xmlGetNodePath(xml_obj);
   const char *return_path = path ? reinterpret_cast<char *>(path) : "";
   int str_len = xmlStrlen((const xmlChar *)return_path);
-  v8::Local<v8::String> js_obj = Nan::New<v8::String>(return_path, str_len).ToLocalChecked();
+  Local<String> js_obj = Nan::New<String>(return_path, str_len).ToLocalChecked();
   xmlFree(path);
   return scope.Escape(js_obj);
 }
@@ -494,23 +496,23 @@ void XmlElement::set_content(const char *content)
   xmlFree(encoded);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_content()
 {
   Nan::EscapableHandleScope scope;
   xmlChar *content = xmlNodeGetContent(xml_obj);
   if (content)
   {
-    v8::Local<v8::String> ret_content =
-        Nan::New<v8::String>((const char *)content).ToLocalChecked();
+    Local<String> ret_content =
+        Nan::New<String>((const char *)content).ToLocalChecked();
     xmlFree(content);
     return scope.Escape(ret_content);
   }
 
-  return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
+  return scope.Escape(Nan::New<String>("").ToLocalChecked());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_next_element()
 {
   Nan::EscapableHandleScope scope;
@@ -530,7 +532,7 @@ XmlElement::get_next_element()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlElement::get_prev_element()
 {
   Nan::EscapableHandleScope scope;
@@ -552,7 +554,7 @@ XmlElement::get_prev_element()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Object>
+Local<Object>
 XmlElement::New(xmlNode *node)
 {
   Nan::EscapableHandleScope scope;
@@ -562,7 +564,7 @@ XmlElement::New(xmlNode *node)
   }
 
   XmlElement *element = new XmlElement(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
+  Local<Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   element->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -615,11 +617,11 @@ bool XmlElement::prev_sibling_will_merge(xmlNode *child)
             (xml_obj->name == xml_obj->prev->name))));
 }
 
-void XmlElement::Initialize(v8::Local<v8::Object> target)
+void XmlElement::Initialize(Local<Object> target)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> tmpl =
-      Nan::New<v8::FunctionTemplate>(New);
+  Local<FunctionTemplate> tmpl =
+      Nan::New<FunctionTemplate>(New);
   constructor_template.Reset(tmpl);
   tmpl->Inherit(Nan::New(XmlNode::constructor_template));
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -684,7 +686,7 @@ void XmlElement::Initialize(v8::Local<v8::Object> target)
                           "replace",
                           XmlElement::Replace);
 
-  Nan::Set(target, Nan::New<v8::String>("Element").ToLocalChecked(),
+  Nan::Set(target, Nan::New<String>("Element").ToLocalChecked(),
            Nan::GetFunction(tmpl).ToLocalChecked());
 }
 

@@ -11,10 +11,12 @@
 #include "xml_attribute.h"
 #include "xml_xpath_context.h"
 
+using namespace v8;
+
 namespace libxmljs
 {
 
-Nan::Persistent<v8::FunctionTemplate> XmlText::constructor_template;
+Nan::Persistent<FunctionTemplate> XmlText::constructor_template;
 
 // doc, name, content
 NAN_METHOD(XmlText::New)
@@ -28,10 +30,10 @@ NAN_METHOD(XmlText::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(document);
 
-  v8::Local<v8::Value> contentOpt;
+  Local<Value> contentOpt;
   if (info[1]->IsString())
   {
     contentOpt = info[1];
@@ -46,7 +48,7 @@ NAN_METHOD(XmlText::New)
   element->Wrap(info.Holder());
 
   // this prevents the document from going away
-  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
+  Nan::Set(info.Holder(), Nan::New<String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -92,7 +94,7 @@ NAN_METHOD(XmlText::AddPrevSibling)
   XmlText *text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -114,7 +116,7 @@ NAN_METHOD(XmlText::AddNextSibling)
   XmlText *text = Nan::ObjectWrap::Unwrap<XmlText>(info.Holder());
   assert(text);
 
-  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlNode *new_sibling = Nan::ObjectWrap::Unwrap<XmlNode>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(new_sibling);
 
   xmlNode *imported_sibling = text->import_node(new_sibling->xml_obj);
@@ -142,7 +144,7 @@ NAN_METHOD(XmlText::Replace)
   }
   else
   {
-    XmlText *new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+    XmlText *new_sibling = Nan::ObjectWrap::Unwrap<XmlText>(Nan::To<Object>(info[0]).ToLocalChecked());
     assert(new_sibling);
 
     xmlNode *imported_sibling = element->import_node(new_sibling->xml_obj);
@@ -163,23 +165,23 @@ void XmlText::set_content(const char *content)
   xmlFree(encoded);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlText::get_content()
 {
   Nan::EscapableHandleScope scope;
   xmlChar *content = xmlNodeGetContent(xml_obj);
   if (content)
   {
-    v8::Local<v8::String> ret_content =
-        Nan::New<v8::String>((const char *)content).ToLocalChecked();
+    Local<String> ret_content =
+        Nan::New<String>((const char *)content).ToLocalChecked();
     xmlFree(content);
     return scope.Escape(ret_content);
   }
 
-  return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
+  return scope.Escape(Nan::New<String>("").ToLocalChecked());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlText::get_next_element()
 {
   Nan::EscapableHandleScope scope;
@@ -199,7 +201,7 @@ XmlText::get_next_element()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlText::get_prev_element()
 {
   Nan::EscapableHandleScope scope;
@@ -221,7 +223,7 @@ XmlText::get_prev_element()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Object>
+Local<Object>
 XmlText::New(xmlNode *node)
 {
   Nan::EscapableHandleScope scope;
@@ -231,7 +233,7 @@ XmlText::New(xmlNode *node)
   }
 
   XmlText *element = new XmlText(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
+  Local<Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   element->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -272,11 +274,11 @@ bool XmlText::prev_sibling_will_merge(xmlNode *child)
   return (child->type == XML_TEXT_NODE);
 }
 
-void XmlText::Initialize(v8::Local<v8::Object> target)
+void XmlText::Initialize(Local<Object> target)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> tmpl =
-      Nan::New<v8::FunctionTemplate>(New);
+  Local<FunctionTemplate> tmpl =
+      Nan::New<FunctionTemplate>(New);
 
   constructor_template.Reset(tmpl);
 
@@ -299,7 +301,7 @@ void XmlText::Initialize(v8::Local<v8::Object> target)
                           "replace",
                           XmlText::Replace);
 
-  Nan::Set(target, Nan::New<v8::String>("Text").ToLocalChecked(),
+  Nan::Set(target, Nan::New<String>("Text").ToLocalChecked(),
            Nan::GetFunction(tmpl).ToLocalChecked());
 }
 

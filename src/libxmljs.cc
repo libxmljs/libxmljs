@@ -11,6 +11,7 @@
 #include "xml_namespace.h"
 #include "xml_textwriter.h"
 
+using namespace v8;
 namespace libxmljs {
 
 // ensure destruction at exit time
@@ -52,23 +53,11 @@ void xmlMemFreeWrap(void* p)
     // our cleanup routines for libxml will be called (freeing memory)
     // but v8 is already offline and does not need to be informed
     // trying to adjust after shutdown will result in a fatal error
-#if (NODE_MODULE_VERSION > 14)
-    if (v8::Isolate::GetCurrent() == 0 ||
-        v8::Isolate::GetCurrent()->IsDead())
+    if (Isolate::GetCurrent() == 0 ||
+        Isolate::GetCurrent()->IsDead())
     {
         return;
     }
-#elif (NODE_MODULE_VERSION > 0x000B)
-    if (v8::Isolate::GetCurrent() == 0)
-    {
-        return;
-    }
-#else
-    if (v8::V8::IsDead())
-    {
-        return;
-    }
-#endif
 
     const int diff = xmlMemUsed() - xml_memory_used;
     xml_memory_used += diff;
@@ -196,11 +185,11 @@ LibXMLJS::~LibXMLJS()
     xmlCleanupParser();
 }
 
-v8::Local<v8::Object> listFeatures() {
+Local<Object> listFeatures() {
     Nan::EscapableHandleScope scope;
-    v8::Local<v8::Object> target = Nan::New<v8::Object>();
-#define FEAT(x) Nan::Set(target, Nan::New<v8::String>(# x).ToLocalChecked(), \
-                    Nan::New<v8::Boolean>(xmlHasFeature(XML_WITH_ ## x)))
+    Local<Object> target = Nan::New<Object>();
+#define FEAT(x) Nan::Set(target, Nan::New<String>(# x).ToLocalChecked(), \
+                    Nan::New<Boolean>(xmlHasFeature(XML_WITH_ ## x)))
     // See enum xmlFeature in parser.h
     FEAT(THREAD);
     FEAT(TREE);
@@ -241,13 +230,13 @@ v8::Local<v8::Object> listFeatures() {
 NAN_METHOD(XmlMemUsed)
 {
   Nan::HandleScope scope;
-  return info.GetReturnValue().Set(Nan::New<v8::Int32>(xmlMemUsed()));
+  return info.GetReturnValue().Set(Nan::New<Int32>(xmlMemUsed()));
 }
 
 NAN_METHOD(XmlNodeCount)
 {
   Nan::HandleScope scope;
-  return info.GetReturnValue().Set(Nan::New<v8::Int32>(nodeCount));
+  return info.GetReturnValue().Set(Nan::New<Int32>(nodeCount));
 }
 
 NAN_MODULE_INIT(init)
@@ -258,18 +247,18 @@ NAN_MODULE_INIT(init)
       XmlSaxParser::Initialize(target);
       XmlTextWriter::Initialize(target);
 
-      Nan::Set(target, Nan::New<v8::String>("libxml_version").ToLocalChecked(),
-                  Nan::New<v8::String>(LIBXML_DOTTED_VERSION).ToLocalChecked());
+      Nan::Set(target, Nan::New<String>("libxml_version").ToLocalChecked(),
+                  Nan::New<String>(LIBXML_DOTTED_VERSION).ToLocalChecked());
 
-      Nan::Set(target, Nan::New<v8::String>("libxml_parser_version").ToLocalChecked(),
-                  Nan::New<v8::String>(xmlParserVersion).ToLocalChecked());
+      Nan::Set(target, Nan::New<String>("libxml_parser_version").ToLocalChecked(),
+                  Nan::New<String>(xmlParserVersion).ToLocalChecked());
 
-      Nan::Set(target, Nan::New<v8::String>("libxml_debug_enabled").ToLocalChecked(),
-                  Nan::New<v8::Boolean>(debugging));
+      Nan::Set(target, Nan::New<String>("libxml_debug_enabled").ToLocalChecked(),
+                  Nan::New<Boolean>(debugging));
 
-      Nan::Set(target, Nan::New<v8::String>("features").ToLocalChecked(), listFeatures());
+      Nan::Set(target, Nan::New<String>("features").ToLocalChecked(), listFeatures());
 
-      Nan::Set(target, Nan::New<v8::String>("libxml").ToLocalChecked(), target);
+      Nan::Set(target, Nan::New<String>("libxml").ToLocalChecked(), target);
 
       Nan::SetMethod(target, "xmlMemUsed", XmlMemUsed);
 

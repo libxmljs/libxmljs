@@ -6,6 +6,8 @@
 #include "xml_xpath_context.h"
 #include "xml_element.h"
 
+using namespace v8;
+
 namespace libxmljs {
 
 XmlXpathContext::XmlXpathContext(xmlNode* node) {
@@ -23,21 +25,21 @@ XmlXpathContext::register_ns(const xmlChar* prefix,
   xmlXPathRegisterNs(ctxt, prefix, uri);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlXpathContext::evaluate(const xmlChar* xpath) {
   Nan::EscapableHandleScope scope;
   xmlXPathObject* xpathobj = xmlXPathEval(xpath, ctxt);
-  v8::Local<v8::Value> res;
+  Local<Value> res;
 
   if (xpathobj) {
     switch (xpathobj->type) {
     case XPATH_NODESET: {
       if (xmlXPathNodeSetIsEmpty(xpathobj->nodesetval)) {
-        res = Nan::New<v8::Array>(0);
+        res = Nan::New<Array>(0);
         break;
       }
 
-      v8::Local<v8::Array> nodes = Nan::New<v8::Array>(xpathobj->nodesetval->nodeNr);
+      Local<Array> nodes = Nan::New<Array>(xpathobj->nodesetval->nodeNr);
       for (int i = 0; i != xpathobj->nodesetval->nodeNr; ++i) {
         Nan::Set(nodes, i, XmlNode::New(xpathobj->nodesetval->nodeTab[i]));
       }
@@ -47,15 +49,15 @@ XmlXpathContext::evaluate(const xmlChar* xpath) {
     }
 
     case XPATH_BOOLEAN:
-      res = Nan::New<v8::Boolean>(xpathobj->boolval);
+      res = Nan::New<Boolean>(xpathobj->boolval);
       break;
 
     case XPATH_NUMBER:
-      res = Nan::New<v8::Number>(xpathobj->floatval);
+      res = Nan::New<Number>(xpathobj->floatval);
       break;
 
     case XPATH_STRING:
-      res = Nan::New<v8::String>((const char *)xpathobj->stringval,
+      res = Nan::New<String>((const char *)xpathobj->stringval,
                             xmlStrlen(xpathobj->stringval)).ToLocalChecked();
       break;
 

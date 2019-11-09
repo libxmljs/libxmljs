@@ -13,10 +13,12 @@
 #include "xml_attribute.h"
 #include "xml_pi.h"
 
+using namespace v8;
+
 namespace libxmljs
 {
 
-Nan::Persistent<v8::FunctionTemplate> XmlNode::constructor_template;
+Nan::Persistent<FunctionTemplate> XmlNode::constructor_template;
 
 NAN_METHOD(XmlNode::Doc)
 {
@@ -47,18 +49,18 @@ NAN_METHOD(XmlNode::Namespace)
   // #namespace(ns) libxml.Namespace object was provided
   // TODO(sprsquish): check that it was actually given a namespace obj
   if (info[0]->IsObject())
-    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<Object>(info[0]).ToLocalChecked());
 
   // #namespace(href) or #namespace(prefix, href)
   // if the namespace has already been defined on the node, just set it
   if (info[0]->IsString())
   {
-    Nan::Utf8String ns_to_find(Nan::To<v8::String>(info[0]).ToLocalChecked());
+    Nan::Utf8String ns_to_find(Nan::To<String>(info[0]).ToLocalChecked());
     xmlNs *found_ns = node->find_namespace(*ns_to_find);
     if (found_ns)
     {
       // maybe build
-      v8::Local<v8::Object> existing = XmlNamespace::New(found_ns);
+      Local<Object> existing = XmlNamespace::New(found_ns);
       ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(existing);
     }
   }
@@ -67,7 +69,7 @@ NAN_METHOD(XmlNode::Namespace)
   if (!ns)
   {
     const unsigned int argc = 3;
-    v8::Local<v8::Value> argv[argc];
+    Local<Value> argv[argc];
     argv[0] = info.Holder();
 
     if (info.Length() == 1)
@@ -81,14 +83,14 @@ NAN_METHOD(XmlNode::Namespace)
       argv[2] = info[1];
     }
 
-    v8::Local<v8::Function> define_namespace =
+    Local<Function> define_namespace =
         Nan::GetFunction(Nan::New(XmlNamespace::constructor_template)).ToLocalChecked();
 
     // will create a new namespace attached to this node
     // since we keep the document around, the namespace, like the node, won't be
     // garbage collected
-    v8::Local<v8::Value> new_ns = Nan::NewInstance(define_namespace, argc, argv).ToLocalChecked();
-    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<v8::Object>(new_ns).ToLocalChecked());
+    Local<Value> new_ns = Nan::NewInstance(define_namespace, argc, argv).ToLocalChecked();
+    ns = Nan::ObjectWrap::Unwrap<XmlNamespace>(Nan::To<Object>(new_ns).ToLocalChecked());
   }
 
   node->set_namespace(ns->xml_obj);
@@ -174,40 +176,40 @@ NAN_METHOD(XmlNode::ToString)
     }
     else if (info[0]->IsObject())
     {
-      v8::Local<v8::Object> obj = Nan::To<v8::Object>(info[0]).ToLocalChecked();
+      Local<Object> obj = Nan::To<Object>(info[0]).ToLocalChecked();
 
       // drop the xml declaration
-      if (Nan::Get(obj, Nan::New<v8::String>("declaration").ToLocalChecked()).ToLocalChecked()->IsFalse())
+      if (Nan::Get(obj, Nan::New<String>("declaration").ToLocalChecked()).ToLocalChecked()->IsFalse())
       {
         options |= XML_SAVE_NO_DECL;
       }
 
       // format save output
-      if (Nan::Get(obj, Nan::New<v8::String>("format").ToLocalChecked()).ToLocalChecked()->IsTrue())
+      if (Nan::Get(obj, Nan::New<String>("format").ToLocalChecked()).ToLocalChecked()->IsTrue())
       {
         options |= XML_SAVE_FORMAT;
       }
 
       // no empty tags (only works with XML) ex: <title></title> becomes <title/>
-      if (Nan::Get(obj, Nan::New<v8::String>("selfCloseEmpty").ToLocalChecked()).ToLocalChecked()->IsFalse())
+      if (Nan::Get(obj, Nan::New<String>("selfCloseEmpty").ToLocalChecked()).ToLocalChecked()->IsFalse())
       {
         options |= XML_SAVE_NO_EMPTY;
       }
 
       // format with non-significant whitespace
-      if (Nan::Get(obj, Nan::New<v8::String>("whitespace").ToLocalChecked()).ToLocalChecked()->IsTrue())
+      if (Nan::Get(obj, Nan::New<String>("whitespace").ToLocalChecked()).ToLocalChecked()->IsTrue())
       {
         options |= XML_SAVE_WSNONSIG;
       }
 
-      v8::Local<v8::Value> type = Nan::Get(obj, Nan::New<v8::String>("type").ToLocalChecked()).ToLocalChecked();
-      if (Nan::Equals(type, Nan::New<v8::String>("XML").ToLocalChecked()).ToChecked() ||
-          Nan::Equals(type, Nan::New<v8::String>("xml").ToLocalChecked()).ToChecked())
+      Local<Value> type = Nan::Get(obj, Nan::New<String>("type").ToLocalChecked()).ToLocalChecked();
+      if (Nan::Equals(type, Nan::New<String>("XML").ToLocalChecked()).ToChecked() ||
+          Nan::Equals(type, Nan::New<String>("xml").ToLocalChecked()).ToChecked())
       {
         options |= XML_SAVE_AS_XML; // force XML serialization on HTML doc
       }
-      else if (Nan::Equals(type, Nan::New<v8::String>("HTML").ToLocalChecked()).ToChecked() ||
-               Nan::Equals(type, Nan::New<v8::String>("html").ToLocalChecked()).ToChecked())
+      else if (Nan::Equals(type, Nan::New<String>("HTML").ToLocalChecked()).ToChecked() ||
+               Nan::Equals(type, Nan::New<String>("html").ToLocalChecked()).ToChecked())
       {
         options |= XML_SAVE_AS_HTML; // force HTML serialization on XML doc
         // if the document is XML and we want formatted HTML output
@@ -218,8 +220,8 @@ NAN_METHOD(XmlNode::ToString)
           options |= XML_SAVE_XHTML;
         }
       }
-      else if (Nan::Equals(type, Nan::New<v8::String>("XHTML").ToLocalChecked()).ToChecked() ||
-      Nan::Equals(type, Nan::New<v8::String>("xhtml").ToLocalChecked()).ToChecked())
+      else if (Nan::Equals(type, Nan::New<String>("XHTML").ToLocalChecked()).ToChecked() ||
+      Nan::Equals(type, Nan::New<String>("xhtml").ToLocalChecked()).ToChecked())
       {
         options |= XML_SAVE_XHTML; // force XHTML serialization
       }
@@ -253,7 +255,7 @@ NAN_METHOD(XmlNode::Clone)
   return info.GetReturnValue().Set(node->clone(recurse));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::New(xmlNode *node)
 {
   Nan::EscapableHandleScope scope;
@@ -570,21 +572,21 @@ void XmlNode::unref_wrapped_ancestor()
   this->ancestor = NULL;
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_doc()
 {
   Nan::EscapableHandleScope scope;
   return scope.Escape(XmlDocument::New(xml_obj->doc));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::remove_namespace()
 {
   xml_obj->ns = NULL;
   return Nan::Null();
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_namespace()
 {
   Nan::EscapableHandleScope scope;
@@ -617,20 +619,20 @@ XmlNode::find_namespace(const char *search_str)
   return ns;
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_all_namespaces()
 {
   Nan::EscapableHandleScope scope;
 
   // Iterate through namespaces
-  v8::Local<v8::Array> namespaces = Nan::New<v8::Array>();
+  Local<Array> namespaces = Nan::New<Array>();
   xmlNs **nsList = xmlGetNsList(xml_obj->doc, xml_obj);
   if (nsList != NULL)
   {
     for (int i = 0; nsList[i] != NULL; i++)
     {
-      v8::Local<v8::Number> index = Nan::New<v8::Number>(i);
-      v8::Local<v8::Object> ns = XmlNamespace::New(nsList[i]);
+      Local<Number> index = Nan::New<Number>(i);
+      Local<Object> ns = XmlNamespace::New(nsList[i]);
       Nan::Set(namespaces, index, ns);
     }
     xmlFree(nsList);
@@ -639,25 +641,25 @@ XmlNode::get_all_namespaces()
   return scope.Escape(namespaces);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_local_namespaces()
 {
   Nan::EscapableHandleScope scope;
 
   // Iterate through local namespaces
-  v8::Local<v8::Array> namespaces = Nan::New<v8::Array>();
+  Local<Array> namespaces = Nan::New<Array>();
   xmlNs *nsDef = xml_obj->nsDef;
   for (int i = 0; nsDef; i++, nsDef = nsDef->next)
   {
-    v8::Local<v8::Number> index = Nan::New<v8::Number>(i);
-    v8::Local<v8::Object> ns = XmlNamespace::New(nsDef);
+    Local<Number> index = Nan::New<Number>(i);
+    Local<Object> ns = XmlNamespace::New(nsDef);
     Nan::Set(namespaces, index, ns);
   }
 
   return scope.Escape(namespaces);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_parent()
 {
   Nan::EscapableHandleScope scope;
@@ -670,7 +672,7 @@ XmlNode::get_parent()
   return scope.Escape(XmlDocument::New(xml_obj->doc));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_prev_sibling()
 {
   Nan::EscapableHandleScope scope;
@@ -682,7 +684,7 @@ XmlNode::get_prev_sibling()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_next_sibling()
 {
   Nan::EscapableHandleScope scope;
@@ -694,14 +696,14 @@ XmlNode::get_next_sibling()
   return scope.Escape(Nan::Null());
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_line_number()
 {
   Nan::EscapableHandleScope scope;
-  return scope.Escape(Nan::New<v8::Integer>(uint32_t(xmlGetLineNo(xml_obj))));
+  return scope.Escape(Nan::New<Integer>(uint32_t(xmlGetLineNo(xml_obj))));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::clone(bool recurse)
 {
   Nan::EscapableHandleScope scope;
@@ -710,7 +712,7 @@ XmlNode::clone(bool recurse)
   return scope.Escape(XmlNode::New(new_xml_obj));
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::to_string(int options)
 {
   Nan::EscapableHandleScope scope;
@@ -726,7 +728,7 @@ XmlNode::to_string(int options)
 
   if (xmlstr)
   {
-    v8::Local<v8::String> str = Nan::New<v8::String>((char *)xmlstr, xmlBufferLength(buf)).ToLocalChecked();
+    Local<String> str = Nan::New<String>((char *)xmlstr, xmlBufferLength(buf)).ToLocalChecked();
     xmlSaveClose(savectx);
 
     xmlBufferFree(buf);
@@ -781,63 +783,63 @@ XmlNode::import_node(xmlNode *node)
   }
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlNode::get_type()
 {
   Nan::EscapableHandleScope scope;
   switch (xml_obj->type)
   {
   case XML_ELEMENT_NODE:
-    return scope.Escape(Nan::New<v8::String>("element").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("element").ToLocalChecked());
   case XML_ATTRIBUTE_NODE:
-    return scope.Escape(Nan::New<v8::String>("attribute").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("attribute").ToLocalChecked());
   case XML_TEXT_NODE:
-    return scope.Escape(Nan::New<v8::String>("text").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("text").ToLocalChecked());
   case XML_CDATA_SECTION_NODE:
-    return scope.Escape(Nan::New<v8::String>("cdata").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("cdata").ToLocalChecked());
   case XML_ENTITY_REF_NODE:
-    return scope.Escape(Nan::New<v8::String>("entity_ref").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("entity_ref").ToLocalChecked());
   case XML_ENTITY_NODE:
-    return scope.Escape(Nan::New<v8::String>("entity").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("entity").ToLocalChecked());
   case XML_PI_NODE:
-    return scope.Escape(Nan::New<v8::String>("pi").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("pi").ToLocalChecked());
   case XML_COMMENT_NODE:
-    return scope.Escape(Nan::New<v8::String>("comment").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("comment").ToLocalChecked());
   case XML_DOCUMENT_NODE:
-    return scope.Escape(Nan::New<v8::String>("document").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("document").ToLocalChecked());
   case XML_DOCUMENT_TYPE_NODE:
-    return scope.Escape(Nan::New<v8::String>("document_type").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("document_type").ToLocalChecked());
   case XML_DOCUMENT_FRAG_NODE:
-    return scope.Escape(Nan::New<v8::String>("document_frag").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("document_frag").ToLocalChecked());
   case XML_NOTATION_NODE:
-    return scope.Escape(Nan::New<v8::String>("notation").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("notation").ToLocalChecked());
   case XML_HTML_DOCUMENT_NODE:
-    return scope.Escape(Nan::New<v8::String>("html_document").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("html_document").ToLocalChecked());
   case XML_DTD_NODE:
-    return scope.Escape(Nan::New<v8::String>("dtd").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("dtd").ToLocalChecked());
   case XML_ELEMENT_DECL:
-    return scope.Escape(Nan::New<v8::String>("element_decl").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("element_decl").ToLocalChecked());
   case XML_ATTRIBUTE_DECL:
-    return scope.Escape(Nan::New<v8::String>("attribute_decl").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("attribute_decl").ToLocalChecked());
   case XML_ENTITY_DECL:
-    return scope.Escape(Nan::New<v8::String>("entity_decl").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("entity_decl").ToLocalChecked());
   case XML_NAMESPACE_DECL:
-    return scope.Escape(Nan::New<v8::String>("namespace_decl").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("namespace_decl").ToLocalChecked());
   case XML_XINCLUDE_START:
-    return scope.Escape(Nan::New<v8::String>("xinclude_start").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("xinclude_start").ToLocalChecked());
   case XML_XINCLUDE_END:
-    return scope.Escape(Nan::New<v8::String>("xinclude_end").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("xinclude_end").ToLocalChecked());
   case XML_DOCB_DOCUMENT_NODE:
-    return scope.Escape(Nan::New<v8::String>("docb_document").ToLocalChecked());
+    return scope.Escape(Nan::New<String>("docb_document").ToLocalChecked());
   }
 
   return scope.Escape(Nan::Null());
 }
 
-void XmlNode::Initialize(v8::Local<v8::Object> target)
+void XmlNode::Initialize(Local<Object> target)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> tmpl = Nan::New<v8::FunctionTemplate>();
+  Local<FunctionTemplate> tmpl = Nan::New<FunctionTemplate>();
   constructor_template.Reset(tmpl);
   tmpl->InstanceTemplate()->SetInternalFieldCount(1);
 

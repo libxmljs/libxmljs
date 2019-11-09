@@ -4,10 +4,11 @@
 
 #include "xml_syntax_error.h"
 
+using namespace v8;
 namespace
 {
 
-void set_string_field(v8::Local<v8::Object> obj,
+void set_string_field(Local<Object> obj,
                       const char *name, const char *value)
 {
   Nan::HandleScope scope;
@@ -15,14 +16,14 @@ void set_string_field(v8::Local<v8::Object> obj,
   {
     return;
   }
-  Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::String>(value, strlen(value)).ToLocalChecked());
+  Nan::Set(obj, Nan::New<String>(name).ToLocalChecked(), Nan::New<String>(value, strlen(value)).ToLocalChecked());
 }
 
-void set_numeric_field(v8::Local<v8::Object> obj,
+void set_numeric_field(Local<Object> obj,
                        const char *name, const int value)
 {
   Nan::HandleScope scope;
-  Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::Int32>(value));
+  Nan::Set(obj, Nan::New<String>(name).ToLocalChecked(), Nan::New<Int32>(value));
 }
 
 } // anonymous namespace
@@ -30,14 +31,14 @@ void set_numeric_field(v8::Local<v8::Object> obj,
 namespace libxmljs
 {
 
-v8::Local<v8::Value>
+Local<Value>
 XmlSyntaxError::BuildSyntaxError(xmlError *error)
 {
   Nan::EscapableHandleScope scope;
 
-  v8::Local<v8::Value> err = v8::Exception::Error(
-      Nan::New<v8::String>(error->message).ToLocalChecked());
-  v8::Local<v8::Object> out = v8::Local<v8::Object>::Cast(err);
+  Local<Value> err = Exception::Error(
+      Nan::New<String>(error->message).ToLocalChecked());
+  Local<Object> out = Local<Object>::Cast(err);
 
   set_numeric_field(out, "domain", error->domain);
   set_numeric_field(out, "code", error->code);
@@ -61,11 +62,11 @@ XmlSyntaxError::BuildSyntaxError(xmlError *error)
 void XmlSyntaxError::PushToArray(void *errs, xmlError *error)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::Array> errors = *reinterpret_cast<v8::Local<v8::Array> *>(errs);
+  Local<Array> errors = *reinterpret_cast<Local<Array> *>(errs);
   // push method for array
-  v8::Local<v8::Function> push = v8::Local<v8::Function>::Cast(Nan::Get(errors, Nan::New<v8::String>("push").ToLocalChecked()).ToLocalChecked());
+  Local<Function> push = Local<Function>::Cast(Nan::Get(errors, Nan::New<String>("push").ToLocalChecked()).ToLocalChecked());
 
-  v8::Local<v8::Value> argv[1] = {XmlSyntaxError::BuildSyntaxError(error)};
+  Local<Value> argv[1] = {XmlSyntaxError::BuildSyntaxError(error)};
   Nan::Call(push, errors, 1, argv);
 }
 

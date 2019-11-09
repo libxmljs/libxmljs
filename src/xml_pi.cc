@@ -9,10 +9,12 @@
 #include "xml_attribute.h"
 #include "xml_xpath_context.h"
 
+using namespace v8;
+
 namespace libxmljs
 {
 
-Nan::Persistent<v8::FunctionTemplate> XmlProcessingInstruction::constructor_template;
+Nan::Persistent<FunctionTemplate> XmlProcessingInstruction::constructor_template;
 
 // doc, content
 NAN_METHOD(XmlProcessingInstruction::New)
@@ -26,12 +28,12 @@ NAN_METHOD(XmlProcessingInstruction::New)
     return info.GetReturnValue().Set(info.Holder());
   }
 
-  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
+  XmlDocument *document = Nan::ObjectWrap::Unwrap<XmlDocument>(Nan::To<Object>(info[0]).ToLocalChecked());
   assert(document);
 
   Nan::Utf8String name(info[1]);
 
-  v8::Local<v8::Value> contentOpt;
+  Local<Value> contentOpt;
   if (info[2]->IsString())
   {
     contentOpt = info[2];
@@ -46,7 +48,7 @@ NAN_METHOD(XmlProcessingInstruction::New)
   processing_instruction->Wrap(info.Holder());
 
   // this prevents the document from going away
-  Nan::Set(info.Holder(), Nan::New<v8::String>("document").ToLocalChecked(), info[0]).Check();
+  Nan::Set(info.Holder(), Nan::New<String>("document").ToLocalChecked(), info[0]).Check();
 
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -60,7 +62,7 @@ NAN_METHOD(XmlProcessingInstruction::Name)
   if (info.Length() == 0)
     return info.GetReturnValue().Set(processing_instruction->get_name());
 
-  Nan::Utf8String name(Nan::To<v8::String>(info[0]).ToLocalChecked());
+  Nan::Utf8String name(Nan::To<String>(info[0]).ToLocalChecked());
   processing_instruction->set_name(*name);
   return info.GetReturnValue().Set(info.Holder());
 }
@@ -88,12 +90,12 @@ void XmlProcessingInstruction::set_name(const char *name)
   xmlNodeSetName(xml_obj, (const xmlChar *)name);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlProcessingInstruction::get_name()
 {
   Nan::EscapableHandleScope scope;
   if (xml_obj->name)
-    return scope.Escape(Nan::New<v8::String>((const char *)xml_obj->name).ToLocalChecked());
+    return scope.Escape(Nan::New<String>((const char *)xml_obj->name).ToLocalChecked());
   else
     return scope.Escape(Nan::Undefined());
 }
@@ -103,23 +105,23 @@ void XmlProcessingInstruction::set_content(const char *content)
   xmlNodeSetContent(xml_obj, (xmlChar *)content);
 }
 
-v8::Local<v8::Value>
+Local<Value>
 XmlProcessingInstruction::get_content()
 {
   Nan::EscapableHandleScope scope;
   xmlChar *content = xmlNodeGetContent(xml_obj);
   if (content)
   {
-    v8::Local<v8::String> ret_content =
-        Nan::New<v8::String>((const char *)content).ToLocalChecked();
+    Local<String> ret_content =
+        Nan::New<String>((const char *)content).ToLocalChecked();
     xmlFree(content);
     return scope.Escape(ret_content);
   }
 
-  return scope.Escape(Nan::New<v8::String>("").ToLocalChecked());
+  return scope.Escape(Nan::New<String>("").ToLocalChecked());
 }
 
-v8::Local<v8::Object>
+Local<Object>
 XmlProcessingInstruction::New(xmlNode *node)
 {
   Nan::EscapableHandleScope scope;
@@ -129,7 +131,7 @@ XmlProcessingInstruction::New(xmlNode *node)
   }
 
   XmlProcessingInstruction *processing_instruction = new XmlProcessingInstruction(node);
-  v8::Local<v8::Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
+  Local<Object> obj = Nan::NewInstance(Nan::GetFunction(Nan::New(constructor_template)).ToLocalChecked()).ToLocalChecked();
   processing_instruction->Wrap(obj);
   return scope.Escape(obj);
 }
@@ -139,10 +141,10 @@ XmlProcessingInstruction::XmlProcessingInstruction(xmlNode *node)
 {
 }
 
-void XmlProcessingInstruction::Initialize(v8::Local<v8::Object> target)
+void XmlProcessingInstruction::Initialize(Local<Object> target)
 {
   Nan::HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t = Nan::New<v8::FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
+  Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(static_cast<NAN_METHOD((*))>(New));
   t->Inherit(Nan::New(XmlNode::constructor_template));
   t->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template.Reset(t);
@@ -155,7 +157,7 @@ void XmlProcessingInstruction::Initialize(v8::Local<v8::Object> target)
                           "text",
                           XmlProcessingInstruction::Text);
 
-  Nan::Set(target, Nan::New<v8::String>("ProcessingInstruction").ToLocalChecked(),
+  Nan::Set(target, Nan::New<String>("ProcessingInstruction").ToLocalChecked(),
            Nan::GetFunction(t).ToLocalChecked());
 }
 
