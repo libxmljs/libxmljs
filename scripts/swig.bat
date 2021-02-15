@@ -1,0 +1,1 @@
+C:\swig\swig.exe -I"./vendor/libxml2/" -I"./vendor/libxml2/include/" -I"./vendor/libxml2/include/libxml" -I"./vendor/libxml2.config/" -w-205,-503 -cpperraswarn -includeall -ignoremissing -javascript -node -module node_aal -c++ -v -o src/libxml2.cc src/libxml2.i

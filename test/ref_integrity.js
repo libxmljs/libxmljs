@@ -51,7 +51,7 @@ module.exports.double_free = function(assert) {
 
 module.exports.freed_namespace_unwrappable = function(assert) {
     var doc = libxml.parseXml("<?xml version='1.0' encoding='UTF-8'?><root></root>");
-    var el = new libxml.Element(doc, "foo");
+    var el = libxml.Element(doc, "foo");
     var ns = el.namespace("bar", null);
     el = null;
     global.gc();

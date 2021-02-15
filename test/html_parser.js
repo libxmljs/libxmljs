@@ -1,6 +1,8 @@
 var fs = require('fs');
 var libxml = require('../index');
 
+const TEST_DIR = __dirname + '/../../test';
+
 function make_error(object) {
     var err = new Error(object.message);
     err.domain = object.domain;
@@ -11,8 +13,8 @@ function make_error(object) {
     return err;
 }
 
-module.exports.parse = function(assert) {
-    var filename = __dirname + '/fixtures/parser.html';
+module.exports.parse = function(assert: any) {
+    var filename = TEST_DIR + '/fixtures/parser.html';
 
     function attempt_parse(encoding) {
         var str = fs.readFileSync(filename, encoding);
@@ -35,8 +37,8 @@ module.exports.parse = function(assert) {
 // Although libxml defaults to a utf-8 encoding, if not specifically specified
 // it will guess the encoding based on meta http-equiv tags available
 // This test shows that the "guessed" encoding can be overridden
-module.exports.parse_force_encoding = function(assert) {
-    var filename = __dirname + '/fixtures/parser.euc_jp.html';
+module.exports.parse_force_encoding = function(assert: any) {
+    var filename = TEST_DIR + '/fixtures/parser.euc_jp.html';
 
     function attempt_parse(encoding, opts) {
         var str = fs.readFileSync(filename, encoding);
@@ -65,13 +67,13 @@ module.exports.parse_force_encoding = function(assert) {
     assert.done();
 };
 
-module.exports.parse_synonym = function(assert) {
+module.exports.parse_synonym = function(assert: any) {
     assert.strictEqual(libxml.parseHtml, libxml.parseHtmlString);
     assert.done();
 }
 
-module.exports.recoverable_parse = function(assert) {
-    var recoverableFile = __dirname +'/fixtures/warnings/amp.html';
+module.exports.recoverable_parse = function(assert: any) {
+    var recoverableFile = TEST_DIR +'/fixtures/warnings/amp.html';
     var str = fs.readFileSync(recoverableFile, 'utf8');
     var recoverableErrors = [
       make_error({ domain: 5,
@@ -112,7 +114,7 @@ module.exports.recoverable_parse = function(assert) {
     assert.done();
 };
 
-module.exports.parseOptions = function(assert) {
+module.exports.parseOptions = function(assert: any) {
     var doc = libxml.parseHtml("<a/>", { doctype: false, implied: false }).toString();
     assert.ok(doc.indexOf('DOCTYPE') === -1);
     assert.ok(doc.indexOf('body') === -1);
@@ -130,8 +132,8 @@ module.exports.parseOptions = function(assert) {
     assert.done();
 }
 
-module.exports.toString = function(assert) {
-    var doc = new libxml.Document();
+module.exports.toString = function(assert: any) {
+    var doc = libxml.Document();
     assert.ok(doc.toString({declaration: false}) === null);
     assert.ok(doc.toString({declaration: false, type:'html'}).length === 1);
 

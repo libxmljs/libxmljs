@@ -12,11 +12,7 @@
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "0.19.7",
-  "scripts": {
-    "install": "node-pre-gyp install --fallback-to-build --loglevel http",
-    "test": "node --expose_gc ./node_modules/.bin/nodeunit test"
-  },
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "http://github.com/libxmljs/libxmljs.git"
@@ -24,18 +20,38 @@
   "bugs": {
     "url": "http://github.com/libxmljs/libxmljs/issues"
   },
-  "main": "./index",
   "license": "MIT",
   "engines": {
     "node": ">=0.8.0"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
+    "install": "node-pre-gyp install --fallback-to-build --loglevel http",
+    "build": "node-gyp rebuild",
+    "build-debug": "node-gyp rebuild --debug",
+    "swig": "bash scripts/swig.sh",
+    "tsgenerate": "node scripts/swig2ts.js",
+    "tsgenerate-debug": "lldb -- `which node` scripts/swig2ts.js",
+    "tscompile": "tsc",
+    "dev": "tsc -w",
+    "lint": "tslint -p tsconfig.json",
+    "test": "npm run tscompile && node --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "test-debug": "npm run tscompile && lldb -- `which node` --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "docs": "typedoc --mode modules --excludeNotExported --out docs index.ts lib/"
+  },
   "dependencies": {
-    "bindings": "~1.3.0",
-    "nan": "~2.14.0",
-    "node-pre-gyp": "~0.11.0"
+    "bindings": "^1.5.0",
+    "node-pre-gyp": "~0.11.0",
+    "segfault-handler": "^1.3.0"
   },
   "devDependencies": {
-    "nodeunit": "~0.11.2",
-    "semver": "~5.5.0"
+    "@types/bindings": "^1.5.0",
+    "nan": "^2.14.2",
+    "nodeunit": "^0.11.3",
+    "tslint": "^6.1.3",
+    "typedoc": "^0.19.2",
+    "typescript": "^4.1.3"
   }
 }

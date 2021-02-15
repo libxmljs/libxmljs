@@ -67,8 +67,8 @@ module.exports.toString = function(assert) {
 module.exports.addChild = function(assert) {
     var doc = libxml.Document();
 
-    var newTextNode = new libxml.Text(doc, "my text");
-    var newElement = new libxml.Element(doc, "div");
+    var newTextNode = libxml.Text(doc, "my text");
+    var newElement = libxml.Element(doc, "div");
 
     newElement.addChild(newTextNode);
     doc.root(newElement);
@@ -80,10 +80,10 @@ module.exports.addChild = function(assert) {
 module.exports.addSiblings = function(assert) {
     var doc = libxml.Document();
 
-    var parentNode = new libxml.Element(doc, "div");
+    var parentNode = libxml.Element(doc, "div");
     var child = parentNode.node("child", "i'm a child");
-    var prevTextNode = new libxml.Text(doc, "before text");
-    var nextTextNode = new libxml.Text(doc, "after text");
+    var prevTextNode = libxml.Text(doc, "before text");
+    var nextTextNode = libxml.Text(doc, "after text");
 
     child.addPrevSibling(prevTextNode);
     child.addNextSibling(nextTextNode);
@@ -98,7 +98,7 @@ module.exports.add_prev_sibling_merge_text = function(assert) {
   var doc = libxml.parseXml(str);
   var bar = doc.root().childNodes()[0];
 
-  var qux = new libxml.Text(doc, 'qux');
+  var qux = libxml.Text(doc, 'qux');
   bar.addPrevSibling(qux);
   // added text is merged into existing child node
 
@@ -119,7 +119,7 @@ module.exports.add_next_sibling_merge_text = function(assert) {
   var doc = libxml.parseXml(str);
   var bar = doc.root().childNodes()[0];
 
-  var qux = new libxml.Text(doc, 'qux');
+  var qux = libxml.Text(doc, 'qux');
   bar.addNextSibling(qux);
 
   var children = doc.root().childNodes();

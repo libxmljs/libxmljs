@@ -3,7 +3,7 @@ var libxml = require('../index');
 module.exports.new = function(assert) {
     var doc = libxml.Document();
     var pi = libxml.ProcessingInstruction(doc, 'mypi', 'mycontent');
-    doc.root(new libxml.Element(doc, 'myelem'));
+    doc.root(libxml.Element(doc, 'myelem'));
     doc.root().addPrevSibling(pi);
 
     assert.equal(doc.root().prevSibling(), pi);
