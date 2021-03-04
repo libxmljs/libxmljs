@@ -55,13 +55,16 @@ install:
   - npm config set -g cafile=package.json
   - npm config set -g strict-ssl=false
   - npm config set registry http://registry.npmjs.org/
+  
   - git submodule update --init --recursive
 
 build_script:
   - npm install --msvs_version=2015
 
 test_script:
-  - npm run test
+  # - npm run test
+  - node --stack-size=10000 -e "process.argv=['node','tsc','-w'];require('./node_modules/typescript/lib/tsc.js')"
+  - node --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test
 
 after_test:
   - node-pre-gyp package 2>&1
@@ -82,4 +85,5 @@ after_deploy:
   - npm config delete registry
   - node-pre-gyp clean
   - npm install --fallback-to-build=false
-  - node --expose-gc node_modules/nodeunit/bin/nodeunit test
+  # - npm run test
+  - node --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test

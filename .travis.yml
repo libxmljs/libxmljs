@@ -39,6 +39,8 @@ before_install:
 - npm install -g node-gyp node-pre-gyp
 install:
 - npm install --build-from-source
+- npm run tsc
+- npm run test
 before_deploy:
 - node-pre-gyp package 2>&1
 deploy:

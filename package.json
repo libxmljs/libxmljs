@@ -37,8 +37,8 @@
     "tsc": "node --stack-size=10000 -e \"require('./node_modules/typescript/lib/tsc.js')\"",
     "dev": "node --stack-size=10000 -e \"process.argv=['node','tsc','-w'];require('./node_modules/typescript/lib/tsc.js')\"",
     "lint": "tslint -p tsconfig.json",
-    "test": "npm run tsc && node --expose_gc ./node_modules/.bin/nodeunit dist/test",
-    "test-debug": "npm run tsc && lldb -- `which node` --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "test": "node --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "test-debug": "lldb -- `which node` --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test",
     "docs": "typedoc --mode modules --excludeNotExported --out docs index.ts lib/"
   },
   "dependencies": {
