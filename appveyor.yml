@@ -5,14 +5,14 @@ environment:
   github_release_token:
     secure: fNm9+m4cngLwXcaUAk0vTM7Dp3pwjzU0H6tTb9YA+6Yh5Xng4fpSHIl257+H8mHB
   matrix:
-    - nodejs_version: 0.10
-      npm_version: 4.0.3
-      gyp_version: 3.5.0
-      pre_gyp_version: 0.6.36
-    - nodejs_version: 0.12
-      npm_version: 4.0.3
-      gyp_version: 3.5.0
-      pre_gyp_version: 0.6.36
+    # - nodejs_version: 0.10
+    #   npm_version: 4.0.3
+    #   gyp_version: 3.5.0
+    #   pre_gyp_version: 0.6.36
+    # - nodejs_version: 0.12
+    #   npm_version: 4.0.3
+    #   gyp_version: 3.5.0
+    #   pre_gyp_version: 0.6.36
     - nodejs_version: 4
       npm_version: 4.0.3
     - nodejs_version: 5
