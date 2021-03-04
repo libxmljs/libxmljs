@@ -236,7 +236,7 @@ typedef struct xmljsRef {
         }
 
         if (node->type == XML_NAMESPACE_DECL) {
-            xmlNs* ns = (xmlNs*) node;
+            xmlNs* ns = reinterpret_cast<xmlNs*>(node);
 
             return (xmljsRef*) ns->_private;
         }
@@ -250,7 +250,7 @@ typedef struct xmljsRef {
         }
 
         if (node->type == XML_NAMESPACE_DECL) {
-            xmlNs* ns = (xmlNs*) node;
+            xmlNs* ns = reinterpret_cast<xmlNs*>(node);
 
             ns->_private = (void*) value;
         } else {
@@ -293,6 +293,8 @@ typedef struct xmljsRef {
                 (xml_obj->type == XML_XINCLUDE_START) ||
                 (xml_obj->type == XML_XINCLUDE_END)) {
             return xml_obj->nsDef;
+        } else {
+            return NULL;
         }
     }
     
@@ -328,9 +330,12 @@ typedef struct xmljsRef {
         }
 
         xmlNs* ns = getNodeNamespace(node);
+        xmlNs* origRefNs = ref->ns;
+
+        ref->ns = ns;
 
         while (ns != NULL) {
-            xmlNs* refNs = ref->ns;
+            xmlNs* refNs = origRefNs;
 
             while (refNs != NULL && refNs != ns) {
                 refNs = refNs->next;
@@ -339,7 +344,7 @@ typedef struct xmljsRef {
             bool addedNamespace = (refNs != ns);
 
             if (addedNamespace) {
-                printf("addedNamespace %p %p", ns, refNs);
+                // printf("addedNamespace %i - %p %p %p\n", getXmlNodeRefID(node), ns, ns->_private, refNs);
                 xmljsRef* nsRef = (xmljsRef*) ns->_private;
 
                 if (nsRef != NULL) {
@@ -349,8 +354,6 @@ typedef struct xmljsRef {
 
             ns = ns->next;
         }
-
-        ref->ns = ns;
     }
 
     void checkParentRef(xmlNode* node, xmlNode* parent, int increment = 0) {
@@ -359,13 +362,15 @@ typedef struct xmljsRef {
         xmljsRef* ref = getXmlNodePrivate(node);
 
         if (ref == NULL) {
-            if (node != NULL) {
+            if (node != NULL && node->type != XML_NAMESPACE_DECL) {
+                // xmlNs nodes can exist without having _private,
+                // since libxml2 doesn't initialize them with xmlRegisterNodeCallback
                 printf("node has no private %i\n", node->type);
             }
             return;
         }
 
-        // checkNamespaceRef(node, ref);
+        checkNamespaceRef(node, ref);
 
         const int totalCount = refGetTotalCount(ref);
         const int parentChanged = (ref->parent != parent);
@@ -452,8 +457,6 @@ typedef struct xmljsRef {
         xmlNs* ns = getNodeNamespace(xml_obj);
 
         while (ns != NULL) {
-            printf("deregister namespaces %s - %s\n", ns->prefix, ns->href);
-
             xmljsRef* nsRef = (xmljsRef*) ns->_private;
             
             if (nsRef == NULL) {
@@ -472,6 +475,12 @@ typedef struct xmljsRef {
     void xmlRegisterNodeCallback(xmlNode* xml_obj)  {
         xml_node_count++;
 
+        xmlNs* ns = getNodeNamespace(xml_obj);
+
+        if (ns != NULL) {
+            setXmlNodePrivate((xmlNode*) ns, NULL);
+        }
+
         xmljsRef* ref = (xmljsRef*) xmlMalloc(sizeof(xmljsRef));
 
         ref->id = xml_node_count;
@@ -489,7 +498,7 @@ typedef struct xmljsRef {
     void xmlDeregisterNodeCallback(xmlNode* xml_obj)  {
         xml_node_count--;
 
-        // deregisterNodeNamespaces(xml_obj);
+        deregisterNodeNamespaces(xml_obj);
 
         xmljsRef* ref = getXmlNodePrivate(xml_obj);
 

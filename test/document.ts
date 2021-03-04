@@ -360,8 +360,8 @@ module.exports.fromHtml = function(assert: any) {
     var header = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n<html><body>';
     var footer = "</body></html>\n";
 
-    // @ts-ignore
     var parsedHtml = libxml.Document.fromHtml(html);
+    
     assert.equal(header + html + footer, parsedHtml.toString());
     assert.done();
 };
@@ -369,7 +369,6 @@ module.exports.fromHtml = function(assert: any) {
 module.exports.fromHtmlFragment = function(assert: any) {
     var html = "<p>A paragraph with <span>inline tags</span></p>";
 
-    // @ts-ignore
     var parsedHtml = libxml.Document.fromHtmlFragment(html);
 
     assert.equal(html + "\n", parsedHtml.toString());
