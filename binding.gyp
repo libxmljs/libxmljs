@@ -6,11 +6,10 @@
       'type': 'shared_library',
       'include_dirs': [
         'vendor/libxml2',
-        'vendor/libxml2.config',
-        'vendor/libxml2.config/include',
         'vendor/libxml2/include',
         'vendor/libxml2/include/libxml',
-        'vendor/dynbuf/inc',
+        'vendor/libxml2.config',
+        'vendor/libxml2.config/include',
         "<!(node -e \"require('nan')\")"
       ],
       'cflags': [ '-Wall -Wno-unused-result' ],
