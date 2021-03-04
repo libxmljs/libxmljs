@@ -406,11 +406,9 @@ export class XMLElement extends XMLNode {
 
             return createXMLReference(XMLAttribute, xmlSetProp(_ref, key, value.toString())).getSelfOrNull();
         } else {
-            const entries = Object.entries(key);
-
-            for (let [k, v] of entries) {
-                this.attr(k, v);
-            }
+            Object.keys(key).forEach((k) => {
+                this.attr(k, key[k]);
+            });
         }
 
         // @ts-ignore
