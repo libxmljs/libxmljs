@@ -52,6 +52,6 @@
     "nodeunit": "^0.11.3",
     "tslint": "^6.1.3",
     "typedoc": "^0.19.2",
-    "typescript": "^4.0.5"
+    "typescript": "~4.0.5"
   }
 }
