@@ -34,17 +34,16 @@
     "swig": "bash scripts/swig.sh",
     "tsgenerate": "node scripts/swig2ts.js",
     "tsgenerate-debug": "lldb -- `which node` scripts/swig2ts.js",
-    "tscompile": "tsc",
-    "dev": "tsc -w",
+    "tsc": "node --stack-size=10000 -e \"require('./node_modules/typescript/lib/tsc.js')\"",
+    "dev": "node --stack-size=10000 -e \"process.argv=['node','tsc','-w'];require('./node_modules/typescript/lib/tsc.js')\"",
     "lint": "tslint -p tsconfig.json",
-    "test": "npm run tscompile && node --expose_gc ./node_modules/.bin/nodeunit dist/test",
-    "test-debug": "npm run tscompile && lldb -- `which node` --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "test": "npm run tsc && node --expose_gc ./node_modules/.bin/nodeunit dist/test",
+    "test-debug": "npm run tsc && lldb -- `which node` --expose_gc ./node_modules/.bin/nodeunit dist/test",
     "docs": "typedoc --mode modules --excludeNotExported --out docs index.ts lib/"
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-pre-gyp": "~0.11.0",
-    "segfault-handler": "^1.3.0"
+    "node-pre-gyp": "~0.11.0"
   },
   "devDependencies": {
     "@types/bindings": "^1.5.0",
@@ -52,6 +51,6 @@
     "nodeunit": "^0.11.3",
     "tslint": "^6.1.3",
     "typedoc": "^0.19.2",
-    "typescript": "~4.0.5"
+    "typescript": "~3.9.6"
   }
 }

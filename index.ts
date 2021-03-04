@@ -2,10 +2,6 @@
 
 const version = require('../package.json').version;
 
-var SegfaultHandler = require('segfault-handler');
-
-SegfaultHandler.registerHandler("crash.log");
-
 /**
  * packageDocumentation
  * @module libxmljs
