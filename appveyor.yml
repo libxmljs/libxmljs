@@ -64,7 +64,7 @@ build_script:
 test_script:
     # - npm run test
     - node --stack-size=100000 -e "process.argv=['node','tsc'];require('./node_modules/typescript/lib/tsc.js')"
-    - node --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test
+    - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
 
 after_test:
     - node-pre-gyp package 2>&1
@@ -86,4 +86,4 @@ after_deploy:
     - node-pre-gyp clean
     - npm install --fallback-to-build=false
     # - npm run test
-    - node --stack-size=10000 --expose_gc ./node_modules/.bin/nodeunit dist/test
+    - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
