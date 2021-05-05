@@ -1,4 +1,4 @@
-import bindings, { xmlFreeNode, xmlRelaxNGFree, xmlRelaxNGFreeParserCtxt, xmlRelaxNGFreeValidCtxt, xmlRelaxNGNewDocParserCtxt, xmlRelaxNGNewValidCtxt, xmlRelaxNGParse, xmlRelaxNGValidateDoc, xmlResetLastError } from "./bindings"
+import bindings from "./bindings";
 
 import { XMLElement, XMLDTD } from "./node";
 
@@ -11,10 +11,21 @@ import {
     DEFAULT_XML_PARSE_OPTIONS,
 } from "./parse";
 
+import { XMLReference, createXMLReference } from "./bindings";
+
+import { xmlDocPtr, XMLReferenceType } from "./bindings/types";
+
 import {
-    xmlDocPtr,
+    xmlFreeNode,
+    xmlRelaxNGFree,
+    xmlRelaxNGFreeParserCtxt,
+    xmlRelaxNGFreeValidCtxt,
+    xmlRelaxNGNewDocParserCtxt,
+    xmlRelaxNGNewValidCtxt,
+    xmlRelaxNGParse,
+    xmlRelaxNGValidateDoc,
+    xmlResetLastError,
     xmlDocGetRootElement,
-    XMLReference,
     xmlGetIntSubset,
     xmlNewDoc,
     xmlUnlinkNode,
@@ -30,8 +41,6 @@ import {
     xmlEncodeSpecialChars,
     xmlNewDocNode,
     xmlDocSetRootElement,
-    createXMLReference,
-    XMLReferenceType,
     xmlPtrToXmlDoc,
     xmlSchemaNewDocParserCtxt,
     xmlSchemaParse,
@@ -41,12 +50,12 @@ import {
     xmlSchemaFree,
     xmlSchemaFreeParserCtxt,
     xmlGetLastError,
-} from "./bindings";
+} from "./bindings/functions";
 
 export enum XMLDocumentError {
-    NO_REF = 'Document has no native reference',
-    NO_ROOT = 'Document has no root element',
-};
+    NO_REF = "Document has no native reference",
+    NO_ROOT = "Document has no root element",
+}
 
 export enum XMLSaveFlags {
     // XML_SAVE_FORMAT = 1 : format save output
@@ -72,30 +81,30 @@ export enum XMLSaveFlags {
 
     // XML_SAVE_WSNONSIG = 128 : format with non-significant whitespace
     XML_SAVE_WSNONSIG = bindings.XML_SAVE_WSNONSIG,
-};
+}
 
 export type XMLSaveOptions = {
     // drop the xml declaration
-    declaration?: boolean,
+    declaration?: boolean;
 
     // format save output
-    format?: boolean,
+    format?: boolean;
 
     // no empty tags (only works with XML) ex: <title></title> becomes <title/>
-    selfCloseEmpty?: boolean,
+    selfCloseEmpty?: boolean;
 
     // format with non-significant whitespace
-    whitespace?: boolean,
+    whitespace?: boolean;
 
     // "XML" or "HTML"
-    type?: string,
+    type?: string;
 
     // override flags
-    flags?: XMLSaveFlags[],
+    flags?: XMLSaveFlags[];
 };
 
 export const DEFAULT_XML_SAVE_OPTIONS: XMLSaveOptions = {
-    type: 'XML',
+    type: "XML",
     format: true,
 };
 
@@ -119,7 +128,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public root(node?: XMLElement): XMLElement | null {
-        return this.getNativeReferenceOrReturnNull(_docRef => {
+        return this.getNativeReferenceOrReturnNull((_docRef) => {
             if (node !== undefined) {
                 xmlDocSetRootElement(_docRef, node.getNativeReferenceOrThrow(XMLDocumentError.NO_ROOT));
             }
@@ -219,7 +228,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
 
     public rngValidate(schemaDoc: XMLDocument) {
         // this.validationErrors = [];
-        
+
         const parser_ctxt = xmlRelaxNGNewDocParserCtxt(schemaDoc.getNativeReferenceOrThrow(XMLDocumentError.NO_REF));
 
         if (parser_ctxt === null) {
@@ -256,35 +265,38 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public name(): string {
-        return 'document';
+        return "document";
     }
 
     public node(name: string, content?: string): XMLElement {
         const node = this.root(this.createElement(name, content));
 
         if (node === null) {
-            throw new Error('Couldn\'t create root node');
+            throw new Error("Couldn't create root node");
         }
 
         return node;
     }
 
     public encode(data: string): string {
-        const content = this.getNativeReferenceOrReturnNull(_ref => {
+        const content = this.getNativeReferenceOrReturnNull((_ref) => {
             return xmlEncodeSpecialChars(_ref, data);
         });
 
         if (content === null) {
-            throw new Error('Couldn\'t encode, document is NULL');
+            throw new Error("Couldn't encode, document is NULL");
         }
 
         return content;
     }
 
-    public createElement(name: string, content: string = ''): XMLElement {
+    public createElement(name: string, content: string = ""): XMLElement {
         const encodedContent = this.encode(content);
 
-        const node = createXMLReference(XMLElement, xmlNewDocNode(this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF), null, name, encodedContent));
+        const node = createXMLReference(
+            XMLElement,
+            xmlNewDocNode(this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF), null, name, encodedContent)
+        );
 
         // TODO: enable
         // xmlFree(encodedContent);
@@ -293,20 +305,20 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public getDtd(): XMLDTD | null {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            return (createXMLReference(XMLDTD, xmlGetIntSubset(_ref))).getSelfOrNull();
+        return this.getNativeReferenceOrReturnNull((_ref) => {
+            return createXMLReference(XMLDTD, xmlGetIntSubset(_ref)).getSelfOrNull();
         });
     }
 
     public setDtd(name: string, externalId: string | null = null, systemId: string | null = null): XMLDTD | null {
         const dtd = this.getDtd();
 
-        if (typeof name !== 'string') {
-            throw new Error('Invalid DTD name, must be a string');
+        if (typeof name !== "string") {
+            throw new Error("Invalid DTD name, must be a string");
         }
 
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            dtd?.getNativeReferenceOrReturnNull(_dtdRef => {
+        return this.getNativeReferenceOrReturnNull((_ref) => {
+            dtd?.getNativeReferenceOrReturnNull((_dtdRef) => {
                 xmlUnlinkNode(xmlPtrToXmlNode(_dtdRef));
                 // xmlFreeNode(xmlPtrToXmlNode(_dtdRef));
             });
@@ -318,7 +330,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public fromHtml(buffer: string, options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS): HTMLDocument {
-        parseHtml(buffer, options).getNativeReferenceOrReturnNull(_ref => {
+        parseHtml(buffer, options).getNativeReferenceOrReturnNull((_ref) => {
             this.setNativeReference(_ref);
         });
 
@@ -326,7 +338,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public fromXml(buffer: string, options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS): HTMLDocument {
-        parseXml(buffer, options).getNativeReferenceOrReturnNull(_ref => {
+        parseXml(buffer, options).getNativeReferenceOrReturnNull((_ref) => {
             this.setNativeReference(_ref);
         });
 
@@ -334,33 +346,37 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public version(): string | null {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            return _ref.version || '';
+        return this.getNativeReferenceOrReturnNull((_ref) => {
+            return _ref.version || "";
         });
     }
 
     public encoding(value?: string): string {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            if (value) {
-                _ref.encoding = value;
-            }
+        return (
+            this.getNativeReferenceOrReturnNull((_ref) => {
+                if (value) {
+                    _ref.encoding = value;
+                }
 
-            return _ref.encoding;
-        }) || '';
+                return _ref.encoding;
+            }) || ""
+        );
     }
 
     public type(): string {
-        return 'document';
+        return "document";
     }
 
     public toString(options: XMLSaveOptions | false = DEFAULT_XML_SAVE_OPTIONS): string {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            return XMLDocument.toString(_ref, options);
-        }) || '';
+        return (
+            this.getNativeReferenceOrReturnNull((_ref) => {
+                return XMLDocument.toString(_ref, options);
+            }) || ""
+        );
     }
 
     public static toString(node: XMLReferenceType, options: XMLSaveOptions | false = DEFAULT_XML_SAVE_OPTIONS): string {
-            if (typeof options === 'boolean') {
+        if (typeof options === "boolean") {
             return this.toString(node, {
                 format: options,
             });
@@ -368,7 +384,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
 
         const flags: XMLSaveFlags[] = options.flags || DEFAULT_XML_SAVE_OPTIONS.flags || [];
 
-        if ((options.type === 'html' || options.type === 'HTML') && flags.indexOf(XMLSaveFlags.XML_SAVE_AS_HTML) === -1) {
+        if (
+            (options.type === "html" || options.type === "HTML") &&
+            flags.indexOf(XMLSaveFlags.XML_SAVE_AS_HTML) === -1
+        ) {
             flags.push(XMLSaveFlags.XML_SAVE_AS_HTML);
         }
 
@@ -399,7 +418,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
 
         xmlBufferFree(buffer);
 
-        return content || '';
+        return content || "";
     }
 
     public static fromHtml(buffer: string, options?: HTMLParseOptions): XMLDocument {
@@ -416,14 +435,14 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
 
         return parseHtml(buffer, options);
     }
-};
+}
 
 export class HTMLDocument extends XMLDocument {
     public toString(options: XMLSaveOptions = {}): string {
         if (!options?.type) {
-            options.type = 'HTML';
+            options.type = "HTML";
         }
 
         return super.toString(options);
     }
-};
+}

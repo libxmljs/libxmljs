@@ -1,19 +1,12 @@
-'use strict';
+"use strict";
 
-import {
-    xmlReadMemory,
-    htmlReadMemory,
-    fromBufferAsync,
-    FROM_BUFFER_ASYNC_TYPE,
-    xmlNodePtr,
-    xmlDocPtr,
-    createXMLReference,
-    
-} from "./bindings"
+import { createXMLReference } from "./bindings";
+import { xmlDocPtr, FROM_BUFFER_ASYNC_TYPE } from "./bindings/types";
+import { xmlReadMemory, htmlReadMemory, fromBufferAsync } from "./bindings/functions";
 
-import bindings from "./bindings"
+import bindings from "./bindings";
 
-import {XMLDocument, HTMLDocument} from "./document"
+import { XMLDocument, HTMLDocument } from "./document";
 
 export enum HTMLParseFlags {
     HTML_PARSE_COMPACT = bindings.HTML_PARSE_COMPACT,
@@ -26,7 +19,7 @@ export enum HTMLParseFlags {
     HTML_PARSE_NOWARNING = bindings.HTML_PARSE_NOWARNING,
     HTML_PARSE_PEDANTIC = bindings.HTML_PARSE_PEDANTIC,
     HTML_PARSE_RECOVER = bindings.HTML_PARSE_RECOVER,
-};
+}
 
 export enum XMLParseFlags {
     // XML_PARSE_RECOVER = 1 : recover on errors
@@ -53,43 +46,39 @@ export enum XMLParseFlags {
     // XML_PARSE_OLDSAX = 1048576 : parse using SAX2 interface before 2.7.0
     // XML_PARSE_IGNORE_ENC = 2097152 : ignore internal document encoding hint
     // XML_PARSE_BIG_LINES = 4194304 : Store big lines numbers in text PSVI field
-};
+}
 
 export type XMLParseOptions = {
-    url?: string,
-    encoding?: string,
-    flags?: XMLParseFlags[],
+    url?: string;
+    encoding?: string;
+    flags?: XMLParseFlags[];
 };
 
 export const DEFAULT_XML_PARSE_OPTIONS: XMLParseOptions = {
-    url: '',
-    encoding: 'UTF-8',
-    flags: [
-        XMLParseFlags.XML_PARSE_RECOVER
-    ]
+    url: "",
+    encoding: "UTF-8",
+    flags: [XMLParseFlags.XML_PARSE_RECOVER],
 };
 
 export type HTMLParseOptions = {
-    url?: string,
-    encoding?: string,
-    doctype?: boolean,
-    implied?: boolean,
-    flags?: HTMLParseFlags[],
+    url?: string;
+    encoding?: string;
+    doctype?: boolean;
+    implied?: boolean;
+    flags?: HTMLParseFlags[];
 };
 
 export const DEFAULT_HTML_PARSE_OPTIONS: HTMLParseOptions = {
-    url: '',
-    encoding: 'UTF-8',
-    flags: [
-        HTMLParseFlags.HTML_PARSE_COMPACT
-    ]
+    url: "",
+    encoding: "UTF-8",
+    flags: [HTMLParseFlags.HTML_PARSE_COMPACT],
 };
 
 const htmlOptionsToFlags = (options: HTMLParseOptions) => {
     const flags: HTMLParseFlags[] = [];
 
     if (DEFAULT_HTML_PARSE_OPTIONS.flags) {
-        DEFAULT_HTML_PARSE_OPTIONS.flags.forEach(flag => {
+        DEFAULT_HTML_PARSE_OPTIONS.flags.forEach((flag) => {
             if (flags.indexOf(flag) === -1) {
                 flags.push(flag);
             }
@@ -129,44 +118,59 @@ export function parseXml(buffer: string, options: XMLParseOptions = DEFAULT_XML_
     const document = xmlReadMemory(
         buffer.toString(),
         buffer.length,
-        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || '',
-        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || '',
-        flagsToInt(options.flags || DEFAULT_HTML_PARSE_OPTIONS.flags || []));
+        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || "",
+        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || "",
+        flagsToInt(options.flags || DEFAULT_HTML_PARSE_OPTIONS.flags || [])
+    );
 
     return createXMLReference(XMLDocument, document);
 }
-
 
 export function parseHtml(buffer: string, options: HTMLParseOptions = {}): HTMLDocument {
     const document = htmlReadMemory(
         buffer.toString(),
         buffer.length,
-        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || '',
-        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || '',
-        htmlOptionsToFlags(options));
+        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || "",
+        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || "",
+        htmlOptionsToFlags(options)
+    );
 
     return createXMLReference(HTMLDocument, document);
 }
 
-export function parseBufferAsync(type: FROM_BUFFER_ASYNC_TYPE, buffer: string, options: HTMLParseOptions | XMLParseOptions, callback: Function = Function.prototype) {
+export function parseBufferAsync(
+    type: FROM_BUFFER_ASYNC_TYPE,
+    buffer: string,
+    options: HTMLParseOptions | XMLParseOptions,
+    callback: Function = Function.prototype
+) {
     fromBufferAsync(
         type,
         buffer.toString(),
         buffer.length,
-        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || '',
-        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || '',
+        options.url || DEFAULT_HTML_PARSE_OPTIONS.url || "",
+        options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || "",
         flagsToInt(options.flags || DEFAULT_HTML_PARSE_OPTIONS.flags || []),
         (err: any, document: xmlDocPtr) => {
             console.log(err, document);
 
             callback(err, createXMLReference(HTMLDocument, document));
-    });
+        }
+    );
 }
 
-export function parseHtmlAsync(buffer: string, options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS, callback: Function = Function.prototype) {
+export function parseHtmlAsync(
+    buffer: string,
+    options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS,
+    callback: Function = Function.prototype
+) {
     return parseBufferAsync(FROM_BUFFER_ASYNC_TYPE.HTML, buffer, options, callback);
 }
 
-export function parseXmlAsync(buffer: string, options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS, callback: Function = Function.prototype) {
+export function parseXmlAsync(
+    buffer: string,
+    options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS,
+    callback: Function = Function.prototype
+) {
     return parseBufferAsync(FROM_BUFFER_ASYNC_TYPE.XML, buffer, options, callback);
 }

@@ -1,38 +1,41 @@
-'use strict';
+"use strict";
 
-const version = require('../package.json').version;
+const version = require("../package.json").version;
 
 /**
  * packageDocumentation
  * @module libxmljs
  */
 
+import { parseHtml } from "./lib/parse";
+export { parseHtml } from "./lib/parse";
+export { parseHtml as parseHtmlString };
 
-import {parseHtml} from "./lib/parse";
-export {parseHtml} from "./lib/parse";
-export {parseHtml as parseHtmlString};
+import { parseXml } from "./lib/parse";
+export { parseXml } from "./lib/parse";
+export { parseXml as parseXmlString };
 
-import {parseXml} from "./lib/parse";
-export {parseXml} from "./lib/parse";
-export {parseXml as parseXmlString};
+import { HTMLParseOptions } from "./lib/parse";
+import { XMLDocument } from "./lib/document";
 
-import {HTMLParseOptions} from "./lib/parse";
-import {XMLDocument} from "./lib/document";
+import { createXMLReference } from "./lib/bindings";
+import { xmlDocPtr, XMLReferenceType } from "./lib/bindings/types";
+import { xmlNewDoc, xmlNewDocText, xmlNewNs, xmlPtrToXmlDoc } from "./lib/bindings/functions";
 
-import {createXMLReference, xmlNewDoc, xmlNewDocText, xmlNewNs, xmlPtrToXmlDoc} from "./lib/bindings";
+function Document(_ref: XMLReferenceType | null | string = null, encoding: string = "utf8"): XMLDocument {
+    let _docRef: xmlDocPtr;
 
-function Document(_ref: XMLReferenceType | null | string = null, encoding: string = 'utf8'): XMLDocument {  
-    if (_ref === null || typeof _ref === 'string') {
-        _ref = xmlNewDoc(_ref || '1.0');
+    if (_ref === null || typeof _ref === "string") {
+        _docRef = xmlNewDoc(_ref || "1.0");
     } else {
-        _ref = xmlPtrToXmlDoc(_ref);
+        _docRef = xmlPtrToXmlDoc(_ref);
     }
 
-    if (_ref && encoding) {
-        _ref.encoding = encoding;
+    if (_docRef && encoding) {
+        _docRef.encoding = encoding;
     }
-    
-    return createXMLReference(XMLDocument, _ref);
+
+    return createXMLReference(XMLDocument, _docRef);
 }
 
 Document.fromHtml = (buffer: string, options?: HTMLParseOptions): XMLDocument => {
@@ -43,45 +46,54 @@ Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions): XMLDoc
     return XMLDocument.fromHtmlFragment(buffer, options);
 };
 
-export {Document};
+export { Document };
 
-import {XMLElement, XMLText, XMLNamespace, XMLNodeError} from "./lib/node";
+import { XMLElement, XMLText, XMLNamespace, XMLNodeError } from "./lib/node";
 
-function Element(_ref: XMLReferenceType, name?: string, content: string = ''): XMLElement {
+function Element(_ref: XMLReferenceType, name?: string, content: string = ""): XMLElement {
     if (_ref instanceof XMLDocument) {
         if (!name) {
-            throw new Error('name argument required');
+            throw new Error("name argument required");
         }
 
-        return createXMLReference(XMLElement, _ref.createElement(name, content).getNativeReferenceOrThrow(XMLNodeError.NO_REF));
+        return createXMLReference(
+            XMLElement,
+            _ref.createElement(name, content).getNativeReferenceOrThrow(XMLNodeError.NO_REF)
+        );
     }
 
     return createXMLReference(XMLElement, _ref);
 }
 
-export {Element};
+export { Element };
 
 function Text(document: XMLDocument, content?: string): XMLText {
-    return createXMLReference(XMLText, xmlNewDocText(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encoding(content)));
+    return createXMLReference(
+        XMLText,
+        xmlNewDocText(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encoding(content))
+    );
 }
 
-export {Text};
+export { Text };
 
 function Namespace(node: XMLElement, prefix: string, href: string): XMLNamespace {
-    return createXMLReference(XMLNamespace, xmlNewNs(node.getNativeReferenceOrThrow(XMLNodeError.NO_REF), href, prefix));
+    return createXMLReference(
+        XMLNamespace,
+        xmlNewNs(node.getNativeReferenceOrThrow(XMLNodeError.NO_REF), href, prefix)
+    );
 }
 
-export {Namespace};
+export { Namespace };
 
-export {default as bindings} from "./lib/bindings"
+export { default as bindings } from "./lib/bindings";
 
-import {default as bindings, XMLReferenceType} from "./lib/bindings"
+import { default as bindings } from "./lib/bindings";
 
 /**
  * Get the current version of libxml.js
  * @type {string}
  */
-export {version};
+export { version };
 
 const libxml_version = bindings.VERSION;
 
@@ -89,7 +101,7 @@ const libxml_version = bindings.VERSION;
  * Get the compiled version of libxml
  * @type {string}
  */
-export {libxml_version};
+export { libxml_version };
 
 const libxml_parser_version = bindings.__xmlParserVersion();
 
@@ -97,15 +109,15 @@ const libxml_parser_version = bindings.__xmlParserVersion();
  * Get the loaded version of libxml
  * @type {string}
  */
-export {libxml_parser_version};
+export { libxml_parser_version };
 
-const libxml_debug_enabled = !!(bindings.libxmljs_debug);
+const libxml_debug_enabled = !!bindings.libxmljs_debug;
 
 /**
  * Is debugging inabled
  * @type {boolean}
  */
-export {libxml_debug_enabled};
+export { libxml_debug_enabled };
 
 const memoryUsage = bindings.getMemUsed;
 
@@ -113,7 +125,7 @@ const memoryUsage = bindings.getMemUsed;
  * Get the amount of memory allocated by libxml
  * @returns {number} - number of bytes
  */
-export {memoryUsage};
+export { memoryUsage };
 
 const nodeCount = bindings.getNodeCount;
 
@@ -122,7 +134,7 @@ const nodeCount = bindings.getNodeCount;
  * @returns {number} - number of nodes
  */
 
-export {nodeCount};
+export { nodeCount };
 
 export default {
     bindings,

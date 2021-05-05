@@ -14,7 +14,7 @@
       ],
       'cflags': [ '-Wall -Wno-unused-result' ],
       'xcode_settings': {
-        'OTHER_CFLAGS': [ '-Wall -Wno-unused-result -O0' ]
+        'OTHER_CFLAGS': [ '-Wall -Wno-unused-result -O3' ]
       },
       'defines': [
         'BUILDING_NODE_EXTENSION',

@@ -1,23 +1,27 @@
 import {
     xmlDocPtr,
     xmlNodePtr,
-    XMLReference,
+    xmlAttrPtr,
+    xmlDtdPtr,
+    xmlElementPtr,
+    xmlNsPtr,
+    XMLReferenceType,
+} from "./bindings/types";
+
+import { XMLReference, createXMLReference } from "./bindings";
+
+import {
     xmlXPathNewContext,
     xmlXPathNodeEval,
     xmlUnlinkNode,
     xmlHasProp,
     xmlGetProp,
-    xmlAttrPtr,
     xmlSetProp,
     xmlAddChild,
-    xmlDtdPtr,
-    xmlElementPtr,
     xmlPtrToXmlNode,
     xmlPtrToXmlDtd,
     xmlPtrToXmlDoc,
     xmlPtrToXmlNs,
-    createXMLReference,
-    XMLReferenceType,
     xmlDocCopyNode,
     xmlNewCDataBlock,
     xmlGetLastError,
@@ -29,7 +33,6 @@ import {
     xmlCopyNode,
     xmlAddNextSibling,
     xmlAddPrevSibling,
-    xmlNsPtr,
     xmlNewDocText,
     xmlReplaceNode,
     xmlNewNs,
@@ -37,13 +40,13 @@ import {
     xmlSearchNs,
     xmlEncodeEntitiesReentrant,
     xmlStringGetNodeList,
-} from "./bindings";
+} from "./bindings/functions";
 
-import bindings from "./bindings"
+import bindings from "./bindings";
 
 export enum XMLNodeError {
-    NO_REF = 'Node has no native reference',
-};
+    NO_REF = "Node has no native reference",
+}
 
 export enum XMLElementType {
     // XML_ELEMENT_NODE = 1
@@ -108,16 +111,16 @@ export enum XMLElementType {
 
     // XML_DOCB_DOCUMENT_NODE = 21
     XML_DOCB_DOCUMENT_NODE = bindings.XML_DOCB_DOCUMENT_NODE,
-};
+}
 
 export type XMLAttributeMap = {
-    [key: string]: string | number
+    [key: string]: string | number;
 };
 
 import { XMLDocument, XMLSaveOptions } from "./document";
 
 export const DEFAULT_XML_SAVE_OPTIONS: XMLSaveOptions = {
-    type: 'XML',
+    type: "XML",
     format: false,
 };
 
@@ -128,9 +131,11 @@ function refToNodeType(node: xmlNodePtr | xmlDocPtr | null): XMLNode | XMLAttrib
         return null;
     }
 
-    if (node.type === XMLElementType.XML_DOCUMENT_NODE ||
+    if (
+        node.type === XMLElementType.XML_DOCUMENT_NODE ||
         node.type === XMLElementType.XML_DOCB_DOCUMENT_NODE ||
-        node.type === XMLElementType.XML_HTML_DOCUMENT_NODE) {
+        node.type === XMLElementType.XML_HTML_DOCUMENT_NODE
+    ) {
         return createXMLReference(XMLDocument, xmlPtrToXmlDoc(node));
     }
 
@@ -151,7 +156,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
     }
 
     public parent() {
-        return this.getNativeReferenceOrReturnNull(_ref => {
+        return this.getNativeReferenceOrReturnNull((_ref) => {
             if (_ref.parent === null) {
                 return refToNodeType(_ref.doc);
             }
@@ -163,20 +168,22 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
     public name(): string {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        if (_ref.type === XMLElementType.XML_DOCUMENT_NODE ||
+        if (
+            _ref.type === XMLElementType.XML_DOCUMENT_NODE ||
             _ref.type === XMLElementType.XML_DOCB_DOCUMENT_NODE ||
-            _ref.type === XMLElementType.XML_HTML_DOCUMENT_NODE) {
+            _ref.type === XMLElementType.XML_HTML_DOCUMENT_NODE
+        ) {
             return xmlPtrToXmlDoc(_ref).URL;
         }
-    
+
         if (_ref.type === XMLElementType.XML_ATTRIBUTE_NODE) {
             return _ref.name;
         }
-    
+
         if (_ref.type === XMLElementType.XML_NAMESPACE_DECL) {
             return xmlPtrToXmlNs(_ref).prefix;
         }
-        
+
         return this.type();
     }
 
@@ -184,14 +191,14 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
         if (_ref.type === XMLElementType.XML_COMMENT_NODE) {
-            return 'comment';
+            return "comment";
         }
 
         if (_ref.type === XMLElementType.XML_ELEMENT_NODE) {
-            return 'element';
+            return "element";
         }
 
-        return 'node';
+        return "node";
     }
 
     public node(name: string, content?: string): XMLElement {
@@ -202,10 +209,13 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
         if (_ref.doc === null) {
-            throw new Error('No document for node');
+            throw new Error("No document for node");
         }
 
-        return (createXMLReference(XMLDocument, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).doc)).createElement(name, content);
+        return createXMLReference(XMLDocument, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).doc).createElement(
+            name,
+            content
+        );
     }
 
     private importNode(node: xmlNodePtr) {
@@ -218,18 +228,20 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
 
             return node;
         }
-        
+
         return xmlDocCopyNode(node, _ref.doc, 1);
     }
 
     private childWillMerge(_nodeRef: xmlNodePtr) {
         const _selfRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        return ((_nodeRef.type === XMLElementType.XML_TEXT_NODE) &&
-                (_selfRef.last !== null) &&
-                (_selfRef.last.type === XMLElementType.XML_TEXT_NODE) &&
-                (_selfRef.last.name === _nodeRef.name) &&
-                (_selfRef.last !== _nodeRef));
+        return (
+            _nodeRef.type === XMLElementType.XML_TEXT_NODE &&
+            _selfRef.last !== null &&
+            _selfRef.last.type === XMLElementType.XML_TEXT_NODE &&
+            _selfRef.last.name === _nodeRef.name &&
+            _selfRef.last !== _nodeRef
+        );
     }
 
     public addChild(node: XMLElement): XMLElement {
@@ -250,18 +262,20 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         const _selfRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _nodeRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        return ((_nodeRef.type === XMLElementType.XML_TEXT_NODE) &&
-            ((_selfRef.type === XMLElementType.XML_TEXT_NODE) ||
-            ((_selfRef.next !== null) &&
-            (_selfRef.next.type === XMLElementType.XML_TEXT_NODE) &&
-            (_selfRef.name === _selfRef.next.name)))); // libxml2 bug?
+        return (
+            _nodeRef.type === XMLElementType.XML_TEXT_NODE &&
+            (_selfRef.type === XMLElementType.XML_TEXT_NODE ||
+                (_selfRef.next !== null &&
+                    _selfRef.next.type === XMLElementType.XML_TEXT_NODE &&
+                    _selfRef.name === _selfRef.next.name))
+        ); // libxml2 bug?
     }
 
     public addNextSibling(node: XMLElement) {
         const _parentRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _childRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         let childNode = this.importNode(_childRef);
-        
+
         if (childNode === _childRef && this.nextSiblingWillMerge(node)) {
             childNode = xmlCopyNode(childNode, 0);
         }
@@ -273,18 +287,20 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         const _selfRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _nodeRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        return ((_nodeRef.type === XMLElementType.XML_TEXT_NODE) &&
-            ((_selfRef.type === XMLElementType.XML_TEXT_NODE) ||
-            ((_selfRef.prev !== null) &&
-            (_selfRef.prev.type === XMLElementType.XML_TEXT_NODE) &&
-            (_selfRef.name === _selfRef.prev.name))));
+        return (
+            _nodeRef.type === XMLElementType.XML_TEXT_NODE &&
+            (_selfRef.type === XMLElementType.XML_TEXT_NODE ||
+                (_selfRef.prev !== null &&
+                    _selfRef.prev.type === XMLElementType.XML_TEXT_NODE &&
+                    _selfRef.name === _selfRef.prev.name))
+        );
     }
 
     public addPrevSibling(node: XMLElement) {
         const _parentRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _childRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         let childNode = this.importNode(_childRef);
-        
+
         if (childNode === _childRef && this.prevSiblingWillMerge(node)) {
             childNode = xmlCopyNode(childNode, 0);
         }
@@ -293,18 +309,20 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
     }
 
     public childNodes() {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            const children = [];
+        return (
+            this.getNativeReferenceOrReturnNull((_ref) => {
+                const children = [];
 
-            let child = _ref.children;
+                let child = _ref.children;
 
-            while (child !== null) {
-                children.push(createXMLReference(XMLElement, child));
-                child = child.next;
-            }
+                while (child !== null) {
+                    children.push(createXMLReference(XMLElement, child));
+                    child = child.next;
+                }
 
-            return children;
-        }) || [];
+                return children;
+            }) || []
+        );
     }
 
     public prevSibling(): XMLNode {
@@ -321,11 +339,9 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         // console.log(_ref.doc);
         const xpathContext = xmlXPathNewContext(_ref.doc);
 
-        return xmlXPathNodeEval(_ref, xpath, xpathContext)
-                .nodesetval
-                .map(node => {
-                    return refToNodeType(node);
-                });
+        return xmlXPathNodeEval(_ref, xpath, xpathContext).nodesetval.map((node) => {
+            return refToNodeType(node);
+        });
     }
 
     public get(xpath: string): XMLXPathResult | null {
@@ -333,7 +349,10 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
     }
 
     public child(index: number) {
-        return createXMLReference(XMLElement, getChildAtIndex(this.getNativeReferenceOrThrow(XMLNodeError.NO_REF), index) || null);
+        return createXMLReference(
+            XMLElement,
+            getChildAtIndex(this.getNativeReferenceOrThrow(XMLNodeError.NO_REF), index) || null
+        );
     }
 
     public remove() {
@@ -342,48 +361,58 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
 
     public doc(): XMLDocument {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
-        
+
         return createXMLReference(XMLDocument, _ref.doc);
     }
 
     public toString(options: XMLSaveOptions | false = DEFAULT_XML_SAVE_OPTIONS): string {
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            return XMLDocument.toString(_ref, options);
-        }) || '';
+        return (
+            this.getNativeReferenceOrReturnNull((_ref) => {
+                return XMLDocument.toString(_ref, options);
+            }) || ""
+        );
     }
 
     // TODO(refactor): overloaded return value
     public namespace(prefix?: string | XMLNamespace, href?: string) {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        if (prefix instanceof XMLNamespace || typeof prefix === 'string') {
-            let namespace: xmlNsPtr | null = (prefix instanceof XMLNamespace) ? prefix.getNativeReferenceOrThrow(XMLNodeError.NO_REF) : this.doc().getNativeReferenceOrReturnNull(_docRef => {
-                const namespace = xmlSearchNs(_docRef, _ref, prefix);
+        if (prefix instanceof XMLNamespace || typeof prefix === "string") {
+            let namespace: xmlNsPtr | null =
+                prefix instanceof XMLNamespace
+                    ? prefix.getNativeReferenceOrThrow(XMLNodeError.NO_REF)
+                    : this.doc().getNativeReferenceOrReturnNull((_docRef) => {
+                          const namespace = xmlSearchNs(_docRef, _ref, prefix);
 
-                if (!namespace && typeof href === 'string') {
-                    return xmlSearchNs(_docRef, _ref, href);
-                }
+                          if (!namespace && typeof href === "string") {
+                              return xmlSearchNs(_docRef, _ref, href);
+                          }
 
-                return namespace;
-            });
+                          return namespace;
+                      });
 
-            return (createXMLReference(XMLNamespace,
-                (namespace === null && typeof href === 'string' && typeof prefix === 'string') ? xmlNewNs(_ref, prefix, href) : namespace)
-            ).getNativeReferenceOrReturnNull(_nsRef => {
-                xmlSetNs(_ref, _nsRef);
-                
-                return this;
-            }) || this;
+            return (
+                createXMLReference(
+                    XMLNamespace,
+                    namespace === null && typeof href === "string" && typeof prefix === "string"
+                        ? xmlNewNs(_ref, prefix, href)
+                        : namespace
+                ).getNativeReferenceOrReturnNull((_nsRef) => {
+                    xmlSetNs(_ref, _nsRef);
+
+                    return this;
+                }) || this
+            );
         }
 
-        return (createXMLReference(XMLNamespace, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).ns)).getSelfOrNull();
+        return createXMLReference(XMLNamespace, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).ns).getSelfOrNull();
     }
 
     public clone() {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         return refToNodeType(xmlDocCopyNode(_ref, _ref.doc, 1));
     }
-};
+}
 
 export class XMLElement extends XMLNode {
     public name(value?: string): string {
@@ -391,13 +420,15 @@ export class XMLElement extends XMLNode {
             xmlNodeSetName(this.getNativeReferenceOrThrow(XMLNodeError.NO_REF), value);
         }
 
-        return this.getNativeReferenceOrReturnNull(_ref => {
-            return _ref.name;
-        }) || '';
+        return (
+            this.getNativeReferenceOrReturnNull((_ref) => {
+                return _ref.name;
+            }) || ""
+        );
     }
 
     public attr(key: string | XMLAttributeMap, value?: string | number): XMLAttribute | null {
-        if (typeof key === 'string') {
+        if (typeof key === "string") {
             const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
             if (value === undefined) {
@@ -447,7 +478,7 @@ export class XMLElement extends XMLNode {
 
         while (attr !== null) {
             attrs.push(new XMLAttribute(attr));
-            
+
             attr = attr.next;
         }
 
@@ -459,7 +490,7 @@ export class XMLElement extends XMLNode {
 
         let _newRef;
 
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             _newRef = xmlNewDocText(this.doc().getNativeReferenceOrThrow(XMLNodeError.NO_REF), value);
         } else {
             _newRef = value.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
@@ -467,7 +498,7 @@ export class XMLElement extends XMLNode {
 
         this.setNativeReference(xmlReplaceNode(_ref, _newRef));
     }
-};
+}
 
 export class XMLNamespace extends XMLReference<xmlNsPtr> {
     constructor(_ref: XMLReferenceType) {
@@ -481,7 +512,7 @@ export class XMLNamespace extends XMLReference<xmlNsPtr> {
     public href(): string {
         return this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).href;
     }
-};
+}
 
 export class XMLAttribute extends XMLNode {
     public name(): string {
@@ -491,7 +522,7 @@ export class XMLAttribute extends XMLNode {
     public value(value?: string): string {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             const content = xmlEncodeEntitiesReentrant(_ref.doc, value);
 
             _ref.children = xmlStringGetNodeList(_ref.doc, content);
@@ -517,7 +548,7 @@ export class XMLAttribute extends XMLNode {
     public node(): XMLElement {
         return createXMLReference(XMLElement, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).parent);
     }
-};
+}
 
 export class XMLDTD extends XMLReference<xmlDtdPtr> {
     public name: string;
@@ -535,7 +566,7 @@ export class XMLDTD extends XMLReference<xmlDtdPtr> {
     }
 
     public getName(): string {
-        return xmlPtrToXmlDtd(this.getNativeReference())?.name || '';
+        return xmlPtrToXmlDtd(this.getNativeReference())?.name || "";
     }
 
     public getExternalID(): string | null {
@@ -545,7 +576,6 @@ export class XMLDTD extends XMLReference<xmlDtdPtr> {
     public getSystemID(): string | null {
         return xmlPtrToXmlDtd(this.getNativeReference())?.SystemID || null;
     }
-};
+}
 
-export class XMLText extends XMLElement {
-};
+export class XMLText extends XMLElement {}
