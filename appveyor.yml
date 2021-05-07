@@ -64,7 +64,7 @@ build_script:
 test_script:
     # - npm run test
     - node --stack_size=100000 --es_staging -e
-      "process.argv=['node','tsc'];require('./node_modules/typescript/lib/tsc.js')"
+      "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--sourceMap','false'];require('./node_modules/typescript/lib/tsc.js')"
     - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
 
 after_test:
