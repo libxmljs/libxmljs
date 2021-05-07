@@ -16,7 +16,6 @@ import { XMLReference, createXMLReference } from "./bindings";
 import { xmlDocPtr, XMLReferenceType } from "./bindings/types";
 
 import {
-    xmlFreeNode,
     xmlRelaxNGFree,
     xmlRelaxNGFreeParserCtxt,
     xmlRelaxNGFreeValidCtxt,
@@ -27,7 +26,6 @@ import {
     xmlResetLastError,
     xmlDocGetRootElement,
     xmlGetIntSubset,
-    xmlNewDoc,
     xmlUnlinkNode,
     xmlCreateIntSubset,
     xmlBufferCreate,

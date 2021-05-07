@@ -50,7 +50,7 @@ export { Document };
 
 import { XMLElement, XMLText, XMLNamespace, XMLNodeError } from "./lib/node";
 
-function Element(_ref: XMLReferenceType, name?: string, content: string = ""): XMLElement {
+function Element(_ref: XMLDocument, name?: string, content: string = ""): XMLElement {
     if (_ref instanceof XMLDocument) {
         if (!name) {
             throw new Error("name argument required");
@@ -70,7 +70,7 @@ export { Element };
 function Text(document: XMLDocument, content?: string): XMLText {
     return createXMLReference(
         XMLText,
-        xmlNewDocText(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encoding(content))
+        xmlNewDocText(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encode(content || ""))
     );
 }
 

@@ -1,12 +1,4 @@
-import {
-    xmlDocPtr,
-    xmlNodePtr,
-    xmlAttrPtr,
-    xmlDtdPtr,
-    xmlElementPtr,
-    xmlNsPtr,
-    XMLReferenceType,
-} from "./bindings/types";
+import { xmlDocPtr, xmlNodePtr, xmlDtdPtr, xmlNsPtr, XMLReferenceType } from "./bindings/types";
 
 import { XMLReference, createXMLReference } from "./bindings";
 

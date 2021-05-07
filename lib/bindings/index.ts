@@ -80,5 +80,5 @@
         }
     };
     
-    export default bindings;
+    export default bindings as NativeBindings;
     

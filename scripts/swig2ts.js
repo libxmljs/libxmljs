@@ -390,7 +390,7 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
         }
     };
     
-    export default bindings;
+    export default bindings as NativeBindings;
     `);
 
     fs.writeFileSync('lib/bindings/types.ts', `
