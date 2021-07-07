@@ -10,6 +10,8 @@
 %include "refcounting.i"
 %include "casting.i"
 %include "threads.i"
+%include "errors.i"
+%include "sax.i"
 
 // %exception {
 // 	try {
@@ -40,6 +42,27 @@
 //   $2 = static_cast<int>(length & std::numeric_limits<int>::max());
 // }
 
+%typemap(in, noblock=1) char* (int res, char *buf = 0, size_t size = 0, int alloc = 0), const char* (int res, char *buf = 0, size_t size = 0, int alloc = 0) {
+  if ($input->IsNull()) {
+    $1 = NULL;
+  } else if (node::Buffer::HasInstance($input)) {
+    $1 = node::Buffer::Data(Nan::To<v8::Object>($input).ToLocalChecked());
+    // printf("data: %s - %i\n", $1, strlen($1));
+  } else {
+    res = SWIG_AsCharPtrAndSize($input, &buf, &size, &alloc);
+
+    if (!SWIG_IsOK(res)) {
+      %argument_fail(res,"$type",$symname, $argnum);
+    }
+
+    $1 = %reinterpret_cast(buf, $1_ltype);
+  }
+}
+
+%typemap(freearg, noblock=1) char*, const char* {
+  // free($1);
+}
+
 %typemap(in, noblock=1) xmlChar* (int res, char *buf = 0, size_t size = 0, int alloc = 0) {
   if ($input->IsNull()) {
     $1 = NULL;
@@ -61,8 +84,18 @@
 %typemap(out) xmlNodeSet* {
   $result = SWIGV8_ARRAY_NEW();
 
-  for (int index = 0; index < $1->nodeNr; index++) {
-    SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1->nodeTab[index]), SWIGTYPE_p__xmlNode, 0 |  0 ));
+  for (int index = 0; $1 != NULL && index < $1->nodeNr; index++) {
+    // SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1->nodeTab[index]), SWIGTYPE_p__xmlNode, 0 |  0 ));
+    SWIGV8_AppendOutput($result, getXmlNodeWrap(reinterpret_cast<xmlNode*>($1->nodeTab[index])));
+  }
+}
+
+%typemap(out) xmlNsPtr* {
+  $result = SWIGV8_ARRAY_NEW();
+
+  for (int index = 0; $1 != NULL && $1[index] != NULL; index++) {
+    // SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1[index]), SWIGTYPE_p__xmlNs, 0 |  0 ));
+    SWIGV8_AppendOutput($result, getXmlNodeWrap(reinterpret_cast<xmlNode*>($1[index])));
   }
 }
 
@@ -97,6 +130,7 @@
 
 %include "tree.h"
 %include "xpath.h"
+%include "xpathInternals.h"
 
 // %include "buf.h"
 %include "catalog.h"
@@ -172,5 +206,12 @@
   #include "xmlunicode.h"
   #include "xmlwriter.h"
   #include "xpath.h"
+  #include "xpathInternals.h"
   #include "xpointer.h"
+  
+  #include "xml_sax_parser.h"
+%}
+
+%init %{
+  libxmljs::XmlSaxParser::Initialize(exports_obj);
 %}

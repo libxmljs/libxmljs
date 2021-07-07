@@ -5,6 +5,7 @@
       'product_extension': 'node',
       'type': 'shared_library',
       'include_dirs': [
+        'src/include',
         'vendor/libxml2',
         'vendor/libxml2/include',
         'vendor/libxml2/include/libxml',
@@ -22,6 +23,7 @@
         '_REENTRANT',
       ],
       'sources': [
+        'src/xml_sax_parser.cc',
         'src/libxml2.cc',
         'vendor/libxml2/buf.c',
         'vendor/libxml2/catalog.c',

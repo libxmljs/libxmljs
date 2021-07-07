@@ -16,17 +16,58 @@
     } \
 }
 
+
+#define GUARD_REFERENCE_PROPERTY_ACCESS_FUNC(CLASS_NAME, RET_TYPE, PROP_NAME, GET_FUNC, SET_FUNC) \
+%header %{ \
+    RET_TYPE CLASS_NAME##_##PROP_NAME##_get(CLASS_NAME* self) { \
+        if (self == NULL) { \
+            return (RET_TYPE) 0; \
+        } \
+        \
+        return GET_FUNC(self);\
+    } \
+%} \
+%extend struct CLASS_NAME { \
+    RET_TYPE PROP_NAME { \
+        if (self != NULL) { \
+            SET_FUNC(self, (RET_TYPE) PROP_NAME); \
+        } \
+    } \
+}
+
+#define GUARD_REFERENCE_PROPERTY_ACCESS_STRING(CLASS_NAME, RET_TYPE, PROP_NAME) \
+%header %{ \
+    RET_TYPE CLASS_NAME##_##PROP_NAME##_get(CLASS_NAME* self) { \
+        if (self == NULL) { \
+            return (RET_TYPE) 0; \
+        } \
+        \
+        return self->PROP_NAME;\
+    } \
+%} \
+%extend struct CLASS_NAME { \
+    RET_TYPE PROP_NAME { \
+        if (self != NULL) { \
+            if (self->PROP_NAME != NULL) { \
+                xmlFree((void*)self->PROP_NAME); \
+            } \
+            \
+            self->PROP_NAME = xmlStrdup((RET_TYPE) PROP_NAME); \
+        } \
+    } \
+}
+
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, xmlElementType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, const xmlChar *, name)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlNode, const xmlChar *, name)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlNode *, children)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlNode *, last)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlNode *, parent)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlNode *, next)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlNode *, prev)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlDoc *, doc)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, xmlNs *, ns)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, xmlChar *, content)
+GUARD_REFERENCE_PROPERTY_ACCESS_FUNC(_xmlNode, xmlNs *, ns, getNodeNamespace, xmlSetNs)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlNode, xmlChar *, content)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, _xmlAttr *, properties)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, xmlNs *, nsDef)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, void *, psvi)
@@ -35,7 +76,7 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNode, unsigned short, extra)
 
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, xmlElementType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, const xmlChar *, name)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlElement, const xmlChar *, name)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, _xmlNode *, children)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, _xmlNode *, last)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, _xmlDtd *, parent)
@@ -45,7 +86,7 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, _xmlDoc *, doc)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, xmlElementTypeVal, etype)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, xmlElementContentPtr, content)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, xmlAttributePtr, attributes)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, const xmlChar *, prefix)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlElement, const xmlChar *, prefix)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, xmlRegexpPtr, contModel)
 // GUARD_REFERENCE_PROPERTY_ACCESS(_xmlElement, void *, contModel)
 
@@ -63,11 +104,11 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, int, standalone)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, _xmlDtd *, intSubset)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, _xmlDtd *, extSubset)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, _xmlNs *, oldNs)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, const xmlChar *, version)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, const xmlChar *, encoding)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDoc, const xmlChar *, version)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDoc, const xmlChar *, encoding)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, void *, ids)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, void *, refs)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, const xmlChar *, URL)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDoc, const xmlChar *, URL)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, int, charset)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, _xmlDict *, dict)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, void *, psvi)
@@ -76,7 +117,7 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDoc, int, properties)
 
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, xmlElementType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, const xmlChar *, name)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlAttr, const xmlChar *, name)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, _xmlNode *, children)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, _xmlNode *, last)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, _xmlNode *, parent)
@@ -90,7 +131,7 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlAttr, void *, psvi)
 
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, xmlElementType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, const xmlChar *, name)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDtd, const xmlChar *, name)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, _xmlNode *, children)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, _xmlNode *, last)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, _xmlDoc *, parent)
@@ -101,84 +142,77 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, notations)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, elements)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, attributes)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, entities)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, const xmlChar *, ExternalID)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, const xmlChar *, SystemID)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDtd, const xmlChar *, ExternalID)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlDtd, const xmlChar *, SystemID)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlDtd, void *, pentities)
 
 
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, _xmlNs *, next)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, xmlNsType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, const xmlChar *, href)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, const xmlChar *, prefix)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlNs, const xmlChar *, href)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlNs, const xmlChar *, prefix)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlNs, _xmlDoc *, context)
 
 
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, void *, _private)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, xmlElementType, type)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, const xmlChar *, name)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, const xmlChar *, name)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlNode *, children)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlNode *, last)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlDtd *, parent)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlNode *, next)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlNode *, prev)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlDoc *, doc)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, xmlChar *, orig)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, xmlChar *, content)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, xmlChar *, orig)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, xmlChar *, content)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, int, length)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, xmlEntityType, etype)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, const xmlChar *, ExternalID)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, const xmlChar *, SystemID)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, const xmlChar *, ExternalID)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, const xmlChar *, SystemID)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, _xmlEntity *, nexte)
-GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, const xmlChar *, URI)
+GUARD_REFERENCE_PROPERTY_ACCESS_STRING(_xmlEntity, const xmlChar *, URI)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, int, owner)
 GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, int, checked)
 
 
 %extend struct _xmlNode {
-    // xmljsRef* _private;
     ~_xmlNode() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlElement {
-    // xmljsRef* _private;
     ~_xmlElement() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlDoc {
-    // xmljsRef* _private;
     ~_xmlDoc() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlAttr {
-    // xmljsRef* _private;
     ~_xmlAttr() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlDtd {
-    // xmljsRef* _private;
     ~_xmlDtd() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlEntity {
-    // xmljsRef* _private;
     ~_xmlEntity() {
         xmlNodeDtor((xmlNode*)self);
     }
 }
 
 %extend struct _xmlNs {
-    // xmljsRef* _private;
     ~_xmlNs() {
         xmlNodeDtor((xmlNode*)self);
     }
@@ -195,6 +229,11 @@ GUARD_REFERENCE_PROPERTY_ACCESS(_xmlEntity, int, checked)
 }
 
 %typemap(out, noblock=1) _xmlNode*, _xmlAttr*, _xmlDtd*, _xmlElement*, _xmlDoc* {
+    // libxml won't call xmlRegisterNodeCallback on XML_HTML_DOCUMENT_NODE
+    if ($1 != NULL && $1->type == XML_HTML_DOCUMENT_NODE && $1->_private == NULL) {
+        xmlRegisterNodeCallback(reinterpret_cast<xmlNode*>($1));
+    }
+
     $result = getXmlNodeWrap(reinterpret_cast<xmlNode*>($1));
 }
 
@@ -213,7 +252,7 @@ typedef struct xmljsRef {
     int id;
     int count;
     int children;
-    xmlNs* ns;
+    xmlNs** ns;
     xmlNode* parent;
     SWIGV8_Proxy* wrap;
 } xmljsRef;
@@ -221,11 +260,17 @@ typedef struct xmljsRef {
 %header %{
     #include "assert.h"
 
+    // some exposed libxml API functions (like xmlAddChild) will free the provided node,
+    // resulting in the proceeding checkParentRef() to process a freed node
+    // record the previously freed node so that we can avoid running checkParentRef()
+    // in those instances
+    xmlNode* lastFreedNode = NULL;
+
     typedef struct xmljsRef {
         int id;
         int count;
         int children;
-        xmlNs* ns;
+        xmlNs** ns;
         xmlNode* parent;
         SWIGV8_Proxy* wrap;
     } xmljsRef;
@@ -282,66 +327,56 @@ typedef struct xmljsRef {
         return ref->id;
     }
 
-    xmlNs* getNodeNamespace(xmlNode* xml_obj) {
-        if ((xml_obj->type == XML_DOCUMENT_NODE) ||
-    #ifdef LIBXML_DOCB_ENABLED
-            (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
-    #endif
-            (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
-            return reinterpret_cast<xmlDoc*>(xml_obj)->oldNs;
-        } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
-                (xml_obj->type == XML_XINCLUDE_START) ||
-                (xml_obj->type == XML_XINCLUDE_END)) {
-            return xml_obj->nsDef;
-        } else {
-            return NULL;
-        }
-    }
-    
-    void setNodeNamespace(xmlNode* xml_obj, xmlNs* ns) {
-        if (xml_obj == NULL) {
+    void checkNamespaceRef(xmlNode* node, xmljsRef* ref) {
+        if (node == NULL || node->type == XML_NAMESPACE_DECL) {
             return;
         }
 
-        if (xml_obj->type == XML_NAMESPACE_DECL) {
-            xmlNs* ns = (xmlNs*) xml_obj;
+        xmlNs* ns = getNodeNamespaceDef(node);
+        xmlNs** refNs = ref->ns;
+        xmlNs** newRefNs = NULL;
+        int nsCount = countNamespaces(ns);
+        
+        if (nsCount > 0) {
+            newRefNs = (xmlNs**) xmlMalloc(sizeof(xmlNs*) * (nsCount + 1));
 
-            while (ns->next != NULL) {
-                ns = ns->next;
+            for (int i = 0; i < (nsCount + 1); i++) {
+                newRefNs[i] = NULL;
+            }
+        }
+
+        for (int i = 0; refNs != NULL && refNs[i] != NULL; i++) {
+            bool removedNamespace = true;
+            xmlNs* tmpNs = ns;
+
+            while (tmpNs != NULL) {
+                if (tmpNs == refNs[i]) {
+                    removedNamespace = false;
+                    break;
+                }
+
+                tmpNs = tmpNs->next;
             }
 
-            ns->next = ns;
-        } else if ((xml_obj->type == XML_DOCUMENT_NODE) ||
-    #ifdef LIBXML_DOCB_ENABLED
-            (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
-    #endif
-            (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
-            reinterpret_cast<xmlDoc*>(xml_obj)->oldNs = ns;
-        } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
-                (xml_obj->type == XML_XINCLUDE_START) ||
-                (xml_obj->type == XML_XINCLUDE_END)) {
-            xml_obj->nsDef = ns;
+            if (removedNamespace) {
+                // printf("removedNamespace %i - %p %p %p\n", getXmlNodeRefID(node), ns, ns->_private, refNs);
+                xmljsRef* nsRef = (xmljsRef*) refNs[i]->_private;
+
+                if (nsRef != NULL) {
+                    nsRef->count--;
+                }
+            }
         }
-    }
-
-    void checkNamespaceRef(xmlNode* node, xmljsRef* ref) {
-        if (node == NULL) {
-            return;
-        }
-
-        xmlNs* ns = getNodeNamespace(node);
-        xmlNs* origRefNs = ref->ns;
-
-        ref->ns = ns;
 
         while (ns != NULL) {
-            xmlNs* refNs = origRefNs;
+            bool addedNamespace = true;
 
-            while (refNs != NULL && refNs != ns) {
-                refNs = refNs->next;
+            for (int i = 0; refNs != NULL && refNs[i] != NULL; i++) {
+                if (refNs[i] == ns) {
+                    addedNamespace = false;
+                    break;
+                }
             }
-
-            bool addedNamespace = (refNs != ns);
 
             if (addedNamespace) {
                 // printf("addedNamespace %i - %p %p %p\n", getXmlNodeRefID(node), ns, ns->_private, refNs);
@@ -354,10 +389,18 @@ typedef struct xmljsRef {
 
             ns = ns->next;
         }
+
+        xmlFree(ref->ns);
+
+        ref->ns = newRefNs;
     }
 
     void checkParentRef(xmlNode* node, xmlNode* parent, int increment = 0) {
         xmlNode* freeNode = node;
+
+        if (lastFreedNode == node) {
+            return;
+        }
 
         xmljsRef* ref = getXmlNodePrivate(node);
 
@@ -365,7 +408,7 @@ typedef struct xmljsRef {
             if (node != NULL && node->type != XML_NAMESPACE_DECL) {
                 // xmlNs nodes can exist without having _private,
                 // since libxml2 doesn't initialize them with xmlRegisterNodeCallback
-                printf("node has no private %i\n", node->type);
+                // printf("node has no private %i\n", node->type);
             }
             return;
         }
@@ -405,6 +448,12 @@ typedef struct xmljsRef {
 
                 assert(currentRef != NULL);
 
+                // if (currentRef == NULL)  {
+                //     printf("currentRef == NULL\n");
+                //     currentNode = xmlNodeGetParent(currentNode);
+                //     continue;
+                // }
+
                 currentRef->children -= parentDecrement;
                 // printf(" - checkParent(%2i - %04X): ref(%2i): %3i, children: %3i\n", currentNode->type, currentRef->id, parentDecrement * -1, currentRef->count, currentRef->children);
 
@@ -440,42 +489,24 @@ typedef struct xmljsRef {
             ref->wrap = NULL;
         }
 
-        if (freeNode != NULL && getXmlNodeRefCount(freeNode) < 1 && xmlNodeGetParent(freeNode) == NULL) {
+        if (freeNode != NULL && getXmlNodeRefCount(freeNode) < 1 && xmlNodeGetParent(freeNode) == NULL && freeNode->type != XML_NAMESPACE_DECL) {
             // printf("xmlFreeNode(%2i - %04X)\n", freeNode->type, getXmlNodeRefID(freeNode));
-            xmlFreeNode(freeNode);
-        }
-    }
-
-    void xmlDeregisterNodeCallback(xmlNode* xml_obj);
-
-    void deregisterNodeNamespaces(xmlNode* xml_obj) {
-        if (xml_obj == NULL) {
-            return;
-        }
-
-        xmlNode* prev = xml_obj;
-        xmlNs* ns = getNodeNamespace(xml_obj);
-
-        while (ns != NULL) {
-            xmljsRef* nsRef = (xmljsRef*) ns->_private;
-            
-            if (nsRef == NULL) {
-                setNodeNamespace(prev, ns);
-                prev = (xmlNode*) ns;
+            if ((freeNode->type == XML_DOCUMENT_NODE) ||
+        #ifdef LIBXML_DOCB_ENABLED
+            (freeNode->type == XML_DOCB_DOCUMENT_NODE) ||
+        #endif
+            (freeNode->type == XML_HTML_DOCUMENT_NODE)) {
+	            xmlFreeDoc((xmlDocPtr) freeNode);
             } else {
-                nsRef->count--;
-                ns->context = NULL;
-                setNodeNamespace(prev, ns->next);
+                xmlFreeNode(freeNode);
             }
-
-            ns = ns->next;
         }
     }
 
     void xmlRegisterNodeCallback(xmlNode* xml_obj)  {
         xml_node_count++;
 
-        xmlNs* ns = getNodeNamespace(xml_obj);
+        xmlNs* ns = getNodeNamespaceDef(xml_obj);
 
         if (ns != NULL) {
             setXmlNodePrivate((xmlNode*) ns, NULL);
@@ -495,6 +526,8 @@ typedef struct xmljsRef {
         setXmlNodePrivate(xml_obj, ref);
     }
     
+    void deregisterNodeNamespaces(xmlNode* xml_obj);
+
     void xmlDeregisterNodeCallback(xmlNode* xml_obj)  {
         xml_node_count--;
 
@@ -511,6 +544,7 @@ typedef struct xmljsRef {
 
             wrap->swigCObject = NULL;
             wrap->swigCMemOwn = false;
+            wrap->handle.Reset();
         }
 
         ref->ns = NULL;
@@ -519,20 +553,63 @@ typedef struct xmljsRef {
 
         setXmlNodePrivate(xml_obj, NULL);
 
+        lastFreedNode = xml_obj;
+
         xmlFree(ref);
+    }
+
+    void deregisterNodeNamespaces(xmlNode* xml_obj) {
+        if (xml_obj == NULL) {
+            return;
+        }
+
+        xmlNode* prev = xml_obj;
+        xmlNs* ns = getNodeNamespaceDef(xml_obj);
+
+        setNodeNamespaceDef(xml_obj, NULL);
+        // while (ns != NULL) {
+        //     // printf("deregister\n");
+        //     xmljsRef* nsRef = (xmljsRef*) ns->_private;
+            
+        //     if (nsRef == NULL) {
+        //         setNodeNamespaceDef(prev, ns);
+        //         prev = (xmlNode*) ns;
+        //         ns = ns->next;
+        //     } else {
+        //         nsRef->count--;
+
+        //         if ((xmlNode*)ns->context == xml_obj) {
+        //             ns->context = NULL;
+        //         }
+
+        //         xmlNs* nextNs = ns->next;
+        //         setNodeNamespaceDef(prev, nextNs);
+
+        //         if (nsRef->count < 1) {
+        //             // xmlDeregisterNodeCallback(reinterpret_cast<xmlNode*>(ns));
+        //         }
+
+        //         ns = nextNs;
+        //     }
+        // }
     }
 
     SWIGV8_VALUE getXmlNodeWrap(xmlNode* node) {
         Nan::EscapableHandleScope scope;
         xmljsRef* ref = getXmlNodePrivate(node);
 
+        swig_type_info* info = xmlNodeGetSwigPtrInfo(node);
+
         if (ref == NULL) {
             // return SWIGV8_NULL();
+            if (node != NULL) {
+                printf("NO REF FOR NODE %i\n", node->type);
+            }
+            
             return SWIG_NewPointerObj(SWIG_as_voidptr(node), SWIGTYPE_p__xmlNode, 0);
         }
 
         xmlNode* parent = xmlNodeGetParent(node);
-        swig_type_info* info = xmlNodeGetSwigPtrInfo(node);
 
         if (ref->wrap == NULL || ref->wrap->handle.IsEmpty()) {
             SWIGV8_VALUE value = SWIG_NewPointerObj(SWIG_as_voidptr(node), info, SWIG_POINTER_OWN);

@@ -7,7 +7,7 @@ const version = require("../package.json").version;
  * @module libxmljs
  */
 
-import { parseHtml } from "./lib/parse";
+import { parseHtml, XMLParseOptions } from "./lib/parse";
 export { parseHtml } from "./lib/parse";
 export { parseHtml as parseHtmlString };
 
@@ -20,7 +20,17 @@ import { XMLDocument } from "./lib/document";
 
 import { createXMLReference } from "./lib/bindings";
 import { xmlDocPtr, XMLReferenceType } from "./lib/bindings/types";
-import { xmlNewDoc, xmlNewDocText, xmlNewNs, xmlPtrToXmlDoc } from "./lib/bindings/functions";
+import {
+    xmlNewDoc,
+    xmlNewDocComment,
+    xmlNewDocPI,
+    xmlNewDocText,
+    xmlNewNs,
+    xmlPtrToXmlDoc,
+} from "./lib/bindings/functions";
+
+import { SaxParser, SaxPushParser } from "./lib/sax";
+export { SaxParser, SaxPushParser };
 
 function Document(_ref: XMLReferenceType | null | string = null, encoding: string = "utf8"): XMLDocument {
     let _docRef: xmlDocPtr;
@@ -38,11 +48,15 @@ function Document(_ref: XMLReferenceType | null | string = null, encoding: strin
     return createXMLReference(XMLDocument, _docRef);
 }
 
-Document.fromHtml = (buffer: string, options?: HTMLParseOptions): XMLDocument => {
+Document.fromXml = (buffer: string, options?: XMLParseOptions) => {
+    return XMLDocument.fromXml(buffer, options);
+};
+
+Document.fromHtml = (buffer: string, options?: HTMLParseOptions) => {
     return XMLDocument.fromHtml(buffer, options);
 };
 
-Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions): XMLDocument => {
+Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions) => {
     return XMLDocument.fromHtmlFragment(buffer, options);
 };
 
@@ -68,6 +82,18 @@ function Element(_ref: XMLDocument, name?: string, content: string = ""): XMLEle
 export { Element };
 
 function Text(document: XMLDocument, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    if (!content) {
+        throw new Error("content argument required");
+    }
+
     return createXMLReference(
         XMLText,
         xmlNewDocText(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encode(content || ""))
@@ -75,6 +101,44 @@ function Text(document: XMLDocument, content?: string): XMLText {
 }
 
 export { Text };
+
+function Comment(document: XMLDocument, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    return createXMLReference(
+        XMLText,
+        xmlNewDocComment(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), document.encode(content || ""))
+    );
+}
+
+export { Comment };
+
+function ProcessingInstruction(document: XMLDocument, name: string, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    if (!name) {
+        throw new Error("name argument required");
+    }
+
+    return createXMLReference(
+        XMLText,
+        xmlNewDocPI(document.getNativeReferenceOrThrow(XMLNodeError.NO_REF), name, document.encode(content || ""))
+    );
+}
+
+export { ProcessingInstruction };
 
 function Namespace(node: XMLElement, prefix: string, href: string): XMLNamespace {
     return createXMLReference(
@@ -148,4 +212,8 @@ export default {
     Document,
     Element,
     Namespace,
+    Text,
+    Comment,
+    SaxParser,
+    SaxPushParser,
 };

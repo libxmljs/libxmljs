@@ -1215,7 +1215,54 @@ getCPtr: {
                 (): number,
             }}
     type xmljsRef = {}
+
+    export type XMLStructuredErrorData = {
+        domain: number; // What part of the library raised this er
+        code: number; // The error code, e.g. an xmlParserError
+        message: string; // human-readable informative error messag
+        level: number; // how consequent is the error (xmlErrorLevel)
+        column: number; // error column # or 0 if N/A (previously int2)
+        file: string; // the filename
+        line: number; // the line number if available
+        str1: string; // extra string information
+        str2: string; // extra string information
+        str3: string; // extra string information
+        int1?: number; // extra number information
+    };
     
+    export class XMLStructuredError extends Error {
+        domain: number; // What part of the library raised this er
+        code: number; // The error code, e.g. an xmlParserError
+        message: string; // human-readable informative error messag
+        level: number; // how consequent is the error (xmlErrorLevel)
+        column: number; // error column # or 0 if N/A (previously int2)
+        file: string; // the filename
+        line: number; // the line number if available
+        str1: string; // extra string information
+        str2: string; // extra string information
+        str3: string; // extra string information
+        int1?: number; // extra number information
+
+        constructor(error: XMLStructuredErrorData) {
+            super();
+
+            this.domain = error.domain;
+            this.code = error.code;
+            this.message = error.message;
+            this.level = error.level;
+            this.column = error.column;
+            this.file = error.file;
+            this.line = error.line;
+            this.str1 = error.str1;
+            this.str2 = error.str2;
+            this.str3 = error.str3;
+            this.int1 = error.int1;
+        }
+    };
+    
+    export type StructuredErrorCallback = (errors: XMLStructuredError[]) => any;
+    export type GenericErrorCallback = (errors: string[]) => any;
+
     export enum FROM_BUFFER_ASYNC_TYPE {
         XML = 0,
         HTML = 1,
@@ -2660,11251 +2707,12260 @@ getCPtr: {
     
         /* Functions */
     
+        withStructuredErrors: {
+            <T>(callback: StructuredErrorCallback): T
+        }
+        
+        withGenericErrors: {
+            <T>(callback: GenericErrorCallback): T
+        }
+
         
                     UTF8ToHtml: {
                         /** 
-                        * @param out {string | null} - p.unsigned char
-                        * @param outlen {number} - p.int
-                        * @param in {string | null} - p.q(const).unsigned char
-                        * @param inlen {number} - p.int
-                        * @returns {number - int}
+                        * @param out {string | Buffer | null} p.unsigned char
+                        * @param outlen {number} p.int
+                        * @param in {string | Buffer | null} p.q(const).unsigned char
+                        * @param inlen {number} p.int
+                        * @returns {number} int
                         */
-                        (out: string | null, outlen: number, inArg: string | null, inlen: number): number
+                        (out: string | Buffer | null, outlen: number, inArg: string | Buffer | null, inlen: number): number
                     }
                 
                     UTF8Toisolat1: {
                         /** 
-                        * @param out {string | null} - p.unsigned char
-                        * @param outlen {number} - p.int
-                        * @param in {string | null} - p.q(const).unsigned char
-                        * @param inlen {number} - p.int
-                        * @returns {number - int}
+                        * @param out {string | Buffer | null} p.unsigned char
+                        * @param outlen {number} p.int
+                        * @param in {string | Buffer | null} p.q(const).unsigned char
+                        * @param inlen {number} p.int
+                        * @returns {number} int
                         */
-                        (out: string | null, outlen: number, inArg: string | null, inlen: number): number
+                        (out: string | Buffer | null, outlen: number, inArg: string | Buffer | null, inlen: number): number
                     }
                 
                     __docbDefaultSAXHandler: {
                         /** 
-                        * @returns {xmlSAXHandlerV1 - xmlSAXHandlerV1}
+                        * @returns {xmlSAXHandlerV1} xmlSAXHandlerV1
                         */
                         (): xmlSAXHandlerV1
                     }
                 
                     __htmlDefaultSAXHandler: {
                         /** 
-                        * @returns {xmlSAXHandlerV1 - xmlSAXHandlerV1}
+                        * @returns {xmlSAXHandlerV1} xmlSAXHandlerV1
                         */
                         (): xmlSAXHandlerV1
                     }
                 
                     __oldXMLWDcompatibility: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlBufferAllocScheme: {
                         /** 
-                        * @returns {xmlBufferAllocationScheme - xmlBufferAllocationScheme}
+                        * @returns {xmlBufferAllocationScheme} xmlBufferAllocationScheme
                         */
                         (): xmlBufferAllocationScheme
                     }
                 
                     __xmlDefaultBufferSize: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlDefaultSAXHandler: {
                         /** 
-                        * @returns {xmlSAXHandlerV1 - xmlSAXHandlerV1}
+                        * @returns {xmlSAXHandlerV1} xmlSAXHandlerV1
                         */
                         (): xmlSAXHandlerV1
                     }
                 
                     __xmlDefaultSAXLocator: {
                         /** 
-                        * @returns {xmlSAXLocator - xmlSAXLocator}
+                        * @returns {xmlSAXLocator} xmlSAXLocator
                         */
                         (): xmlSAXLocator
                     }
                 
                     __xmlDeregisterNodeDefaultValue: {
                         /** 
-                        * @returns {xmlDeregisterNodeFunc - xmlDeregisterNodeFunc}
+                        * @returns {xmlDeregisterNodeFunc} xmlDeregisterNodeFunc
                         */
                         (): xmlDeregisterNodeFunc
                     }
                 
                     __xmlDoValidityCheckingDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlGenericError: {
                         /** 
-                        * @returns {xmlGenericErrorFunc - xmlGenericErrorFunc}
+                        * @returns {xmlGenericErrorFunc} xmlGenericErrorFunc
                         */
                         (): xmlGenericErrorFunc
                     }
                 
                     __xmlGenericErrorContext: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     __xmlGetWarningsDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlIndentTreeOutput: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlKeepBlanksDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlLastError: {
                         /** 
-                        * @returns {xmlError - xmlError}
+                        * @returns {xmlError} xmlError
                         */
                         (): xmlError
                     }
                 
                     __xmlLineNumbersDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlLoadExtDtdDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlOutputBufferCreateFilename: {
                         /** 
-                        * @param URI {string | null} - p.q(const).char
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @param compression {number} - int
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param URI {string | Buffer | null} p.q(const).char
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @param compression {number} int
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
-                        (URI: string | null, encoder: xmlCharEncodingHandlerPtr | null, compression: number): xmlOutputBufferPtr
+                        (URI: string | Buffer | null, encoder: xmlCharEncodingHandlerPtr | null, compression: number): xmlOutputBufferPtr
                     }
                 
                     __xmlOutputBufferCreateFilenameValue: {
                         /** 
-                        * @returns {xmlOutputBufferCreateFilenameFunc - xmlOutputBufferCreateFilenameFunc}
+                        * @returns {xmlOutputBufferCreateFilenameFunc} xmlOutputBufferCreateFilenameFunc
                         */
                         (): xmlOutputBufferCreateFilenameFunc
                     }
                 
                     __xmlParserDebugEntities: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlParserInputBufferCreateFilename: {
                         /** 
-                        * @param URI {string | null} - p.q(const).char
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param URI {string | Buffer | null} p.q(const).char
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
-                        (URI: string | null, enc: xmlCharEncoding): xmlParserInputBufferPtr
+                        (URI: string | Buffer | null, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     __xmlParserInputBufferCreateFilenameValue: {
                         /** 
-                        * @returns {xmlParserInputBufferCreateFilenameFunc - xmlParserInputBufferCreateFilenameFunc}
+                        * @returns {xmlParserInputBufferCreateFilenameFunc} xmlParserInputBufferCreateFilenameFunc
                         */
                         (): xmlParserInputBufferCreateFilenameFunc
                     }
                 
                     __xmlParserVersion: {
                         /** 
-                        * @returns {string - q(const).char}
+                        * @returns {string} q(const).char
                         */
                         (): string
                     }
                 
                     __xmlPedanticParserDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlRegisterNodeDefaultValue: {
                         /** 
-                        * @returns {xmlRegisterNodeFunc - xmlRegisterNodeFunc}
+                        * @returns {xmlRegisterNodeFunc} xmlRegisterNodeFunc
                         */
                         (): xmlRegisterNodeFunc
                     }
                 
                     __xmlSaveNoEmptyTags: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlStructuredError: {
                         /** 
-                        * @returns {xmlStructuredErrorFunc - xmlStructuredErrorFunc}
+                        * @returns {xmlStructuredErrorFunc} xmlStructuredErrorFunc
                         */
                         (): xmlStructuredErrorFunc
                     }
                 
                     __xmlStructuredErrorContext: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     __xmlSubstituteEntitiesDefaultValue: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     __xmlTreeIndentString: {
                         /** 
-                        * @returns {string - q(const).char}
+                        * @returns {string} q(const).char
                         */
                         (): string
                     }
                 
                     attribute: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param fullname {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param fullname {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, fullname: string | null, value: string | null): any
+                        (ctx: any, fullname: string | Buffer | null, value: string | Buffer | null): any
                     }
                 
                     attributeDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param elem {string | null} - p.q(const).xmlChar
-                        * @param fullname {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param def {number} - int
-                        * @param defaultValue {string | null} - p.q(const).xmlChar
-                        * @param tree {xmlEnumerationPtr | null} - xmlEnumerationPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param elem {string | Buffer | null} p.q(const).xmlChar
+                        * @param fullname {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param def {number} int
+                        * @param defaultValue {string | Buffer | null} p.q(const).xmlChar
+                        * @param tree {xmlEnumerationPtr | null} xmlEnumerationPtr
+                        * @returns {any} void
                         */
-                        (ctx: any, elem: string | null, fullname: string | null, type: number, def: number, defaultValue: string | null, tree: xmlEnumerationPtr | null): any
+                        (ctx: any, elem: string | Buffer | null, fullname: string | Buffer | null, type: number, def: number, defaultValue: string | Buffer | null, tree: xmlEnumerationPtr | null): any
                     }
                 
                     cdataBlock: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, value: string | null, len: number): any
+                        (ctx: any, value: string | Buffer | null, len: number): any
                     }
                 
                     characters: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param ch {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param ch {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, ch: string | null, len: number): any
+                        (ctx: any, ch: string | Buffer | null, len: number): any
                     }
                 
                     checkNamespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param nameSpace {string | null} - p.xmlChar
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @param nameSpace {string | Buffer | null} p.xmlChar
+                        * @returns {number} int
                         */
-                        (ctx: any, nameSpace: string | null): number
+                        (ctx: any, nameSpace: string | Buffer | null): number
                     }
                 
                     comment: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, value: string | null): any
+                        (ctx: any, value: string | Buffer | null): any
                     }
                 
                     docbDefaultSAXHandlerInit: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     elementDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, type: number, content: xmlElementContentPtr | null): any
+                        (ctx: any, name: string | Buffer | null, type: number, content: xmlElementContentPtr | null): any
                     }
                 
                     endDocument: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctx: any): any
                     }
                 
                     endElement: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null): any
+                        (ctx: any, name: string | Buffer | null): any
                     }
                 
                     entityDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, type: number, publicId: string | null, systemId: string | null, content: string | null): any
+                        (ctx: any, name: string | Buffer | null, type: number, publicId: string | Buffer | null, systemId: string | Buffer | null, content: string | Buffer | null): any
                     }
                 
                     externalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, ExternalID: string | null, SystemID: string | null): any
-                    }
-                
-                    getChildAtIndex: {
-                        /** 
-                        * @param node {xmlNode} - p.xmlNode
-                        * @param index {number} - int
-                        * @returns {xmlNode - xmlNode}
-                        */
-                        (node: xmlNode, index: number): xmlNode
+                        (ctx: any, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): any
                     }
                 
                     getColumnNumber: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     getEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (ctx: any, name: string | null): xmlEntityPtr
+                        (ctx: any, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     getLineNumber: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     getMemUsed: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     getNamespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param ctx {any} p.void
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
                         (ctx: any): xmlNsPtr
                     }
                 
                     getNodeCount: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     getParameterEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (ctx: any, name: string | null): xmlEntityPtr
+                        (ctx: any, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     getPublicId: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctx {any} p.void
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctx: any): string
                     }
                 
                     getSystemId: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctx {any} p.void
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctx: any): string
                     }
                 
                     globalNamespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param href {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param href {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, href: string | null, prefix: string | null): any
+                        (ctx: any, href: string | Buffer | null, prefix: string | Buffer | null): any
                     }
                 
                     hasExternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     hasInternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     htmlAttrAllowed: {
                         /** 
-                        * @param arg0 {htmlElemDesc} - p.q(const).htmlElemDesc
-                        * @param arg1 {string | null} - p.q(const).xmlChar
-                        * @param arg2 {number} - int
-                        * @returns {htmlStatus - htmlStatus}
+                        * @param arg0 {htmlElemDescPtr | null} p.q(const).htmlElemDesc
+                        * @param arg1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param arg2 {number} int
+                        * @returns {htmlStatus} htmlStatus
                         */
-                        (arg0: htmlElemDesc, arg1: string | null, arg2: number): htmlStatus
+                        (arg0: htmlElemDescPtr | null, arg1: string | Buffer | null, arg2: number): htmlStatus
                     }
                 
                     htmlAutoCloseTag: {
                         /** 
-                        * @param doc {htmlDocPtr | null} - htmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param elem {htmlNodePtr | null} - htmlNodePtr
-                        * @returns {number - int}
+                        * @param doc {htmlDocPtr | null} htmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param elem {htmlNodePtr | null} htmlNodePtr
+                        * @returns {number} int
                         */
-                        (doc: htmlDocPtr | null, name: string | null, elem: htmlNodePtr | null): number
+                        (doc: htmlDocPtr | null, name: string | Buffer | null, elem: htmlNodePtr | null): number
                     }
                 
                     htmlCreateFileParserCtxt: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {htmlParserCtxtPtr - htmlParserCtxtPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {htmlParserCtxtPtr} htmlParserCtxtPtr
                         */
-                        (filename: string | null, encoding: string | null): htmlParserCtxtPtr
+                        (filename: string | Buffer | null, encoding: string | Buffer | null): htmlParserCtxtPtr
                     }
                 
                     htmlCreateMemoryParserCtxt: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {htmlParserCtxtPtr - htmlParserCtxtPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {htmlParserCtxtPtr} htmlParserCtxtPtr
                         */
-                        (buffer: string | null, size: number): htmlParserCtxtPtr
+                        (buffer: string | Buffer | null, size: number): htmlParserCtxtPtr
                     }
                 
                     htmlCreatePushParserCtxt: {
                         /** 
-                        * @param sax {htmlSAXHandlerPtr | null} - htmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param chunk {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param filename {string | null} - p.q(const).char
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {htmlParserCtxtPtr - htmlParserCtxtPtr}
+                        * @param sax {htmlSAXHandlerPtr | null} htmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param chunk {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {htmlParserCtxtPtr} htmlParserCtxtPtr
                         */
-                        (sax: htmlSAXHandlerPtr | null, user_data: any, chunk: string | null, size: number, filename: string | null, enc: xmlCharEncoding): htmlParserCtxtPtr
+                        (sax: htmlSAXHandlerPtr | null, user_data: any, chunk: string | Buffer | null, size: number, filename: string | Buffer | null, enc: xmlCharEncoding): htmlParserCtxtPtr
                     }
                 
                     htmlCtxtReadDoc: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, cur: string | null, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, cur: string | Buffer | null, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlCtxtReadFd: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param fd {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param fd {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, fd: number, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, fd: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlCtxtReadFile: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, filename: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, filename: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlCtxtReadIO: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlCtxtReadMemory: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, buffer: string | null, size: number, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, buffer: string | Buffer | null, size: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlCtxtReset: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: htmlParserCtxtPtr | null): any
                     }
                 
                     htmlCtxtUseOptions: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: htmlParserCtxtPtr | null, options: number): number
                     }
                 
                     htmlDefaultSAXHandlerInit: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     htmlDocContentDumpFormatOutput: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {any - void}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {any} void
                         */
-                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | null, format: number): any
+                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | Buffer | null, format: number): any
                     }
                 
                     htmlDocContentDumpOutput: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | null): any
+                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | Buffer | null): any
                     }
                 
                     htmlDocDump: {
                         /** 
-                        * @param f {undefined} - p.FILE
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param f {undefined} p.FILE
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (f: undefined, cur: xmlDocPtr | null): number
                     }
                 
                     htmlDocDumpMemory: {
                         /** 
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param mem {string | null} - p.p.xmlChar
-                        * @param size {number} - p.int
-                        * @returns {any - void}
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param mem {string | Buffer | null} p.p.xmlChar
+                        * @param size {number} p.int
+                        * @returns {any} void
                         */
-                        (cur: xmlDocPtr | null, mem: string | null, size: number): any
+                        (cur: xmlDocPtr | null, mem: string | Buffer | null, size: number): any
                     }
                 
                     htmlDocDumpMemoryFormat: {
                         /** 
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param mem {string | null} - p.p.xmlChar
-                        * @param size {number} - p.int
-                        * @param format {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param mem {string | Buffer | null} p.p.xmlChar
+                        * @param size {number} p.int
+                        * @param format {number} int
+                        * @returns {any} void
                         */
-                        (cur: xmlDocPtr | null, mem: string | null, size: number, format: number): any
+                        (cur: xmlDocPtr | null, mem: string | Buffer | null, size: number, format: number): any
                     }
                 
                     htmlElementAllowedHere: {
                         /** 
-                        * @param arg0 {htmlElemDesc} - p.q(const).htmlElemDesc
-                        * @param arg1 {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param arg0 {htmlElemDescPtr | null} p.q(const).htmlElemDesc
+                        * @param arg1 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (arg0: htmlElemDesc, arg1: string | null): number
+                        (arg0: htmlElemDescPtr | null, arg1: string | Buffer | null): number
                     }
                 
                     htmlElementStatusHere: {
                         /** 
-                        * @param arg0 {htmlElemDesc} - p.q(const).htmlElemDesc
-                        * @param arg1 {htmlElemDesc} - p.q(const).htmlElemDesc
-                        * @returns {htmlStatus - htmlStatus}
+                        * @param arg0 {htmlElemDescPtr | null} p.q(const).htmlElemDesc
+                        * @param arg1 {htmlElemDescPtr | null} p.q(const).htmlElemDesc
+                        * @returns {htmlStatus} htmlStatus
                         */
-                        (arg0: htmlElemDesc, arg1: htmlElemDesc): htmlStatus
+                        (arg0: htmlElemDescPtr | null, arg1: htmlElemDescPtr | null): htmlStatus
                     }
                 
                     htmlEncodeEntities: {
                         /** 
-                        * @param out {string | null} - p.unsigned char
-                        * @param outlen {number} - p.int
-                        * @param in {string | null} - p.q(const).unsigned char
-                        * @param inlen {number} - p.int
-                        * @param quoteChar {number} - int
-                        * @returns {number - int}
+                        * @param out {string | Buffer | null} p.unsigned char
+                        * @param outlen {number} p.int
+                        * @param in {string | Buffer | null} p.q(const).unsigned char
+                        * @param inlen {number} p.int
+                        * @param quoteChar {number} int
+                        * @returns {number} int
                         */
-                        (out: string | null, outlen: number, inArg: string | null, inlen: number, quoteChar: number): number
+                        (out: string | Buffer | null, outlen: number, inArg: string | Buffer | null, inlen: number, quoteChar: number): number
                     }
                 
                     htmlEntityLookup: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {htmlEntityDesc - q(const).htmlEntityDesc}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {htmlEntityDesc} q(const).htmlEntityDesc
                         */
-                        (name: string | null): htmlEntityDesc
+                        (name: string | Buffer | null): htmlEntityDesc
                     }
                 
                     htmlEntityValueLookup: {
                         /** 
-                        * @param value {number} - unsigned int
-                        * @returns {htmlEntityDesc - q(const).htmlEntityDesc}
+                        * @param value {number} unsigned int
+                        * @returns {htmlEntityDesc} q(const).htmlEntityDesc
                         */
                         (value: number): htmlEntityDesc
                     }
                 
                     htmlFreeParserCtxt: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: htmlParserCtxtPtr | null): any
                     }
                 
                     htmlGetMetaEncoding: {
                         /** 
-                        * @param doc {htmlDocPtr | null} - htmlDocPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param doc {htmlDocPtr | null} htmlDocPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (doc: htmlDocPtr | null): string
                     }
                 
                     htmlHandleOmittedElem: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param val {number} int
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     htmlInitAutoClose: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     htmlIsAutoClosed: {
                         /** 
-                        * @param doc {htmlDocPtr | null} - htmlDocPtr
-                        * @param elem {htmlNodePtr | null} - htmlNodePtr
-                        * @returns {number - int}
+                        * @param doc {htmlDocPtr | null} htmlDocPtr
+                        * @param elem {htmlNodePtr | null} htmlNodePtr
+                        * @returns {number} int
                         */
                         (doc: htmlDocPtr | null, elem: htmlNodePtr | null): number
                     }
                 
                     htmlIsBooleanAttr: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (name: string | null): number
+                        (name: string | Buffer | null): number
                     }
                 
                     htmlIsScriptAttribute: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (name: string | null): number
+                        (name: string | Buffer | null): number
                     }
                 
                     htmlNewDoc: {
                         /** 
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (URI: string | null, ExternalID: string | null): htmlDocPtr
+                        (URI: string | Buffer | null, ExternalID: string | Buffer | null): htmlDocPtr
                     }
                 
                     htmlNewDocNoDtD: {
                         /** 
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (URI: string | null, ExternalID: string | null): htmlDocPtr
+                        (URI: string | Buffer | null, ExternalID: string | Buffer | null): htmlDocPtr
                     }
                 
                     htmlNewParserCtxt: {
                         /** 
-                        * @returns {htmlParserCtxtPtr - htmlParserCtxtPtr}
+                        * @returns {htmlParserCtxtPtr} htmlParserCtxtPtr
                         */
                         (): htmlParserCtxtPtr
                     }
                 
                     htmlNodeDump: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (buf: xmlBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null): number
                     }
                 
                     htmlNodeDumpFile: {
                         /** 
-                        * @param out {undefined} - p.FILE
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {any - void}
+                        * @param out {undefined} p.FILE
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
                         */
                         (out: undefined, doc: xmlDocPtr | null, cur: xmlNodePtr | null): any
                     }
                 
                     htmlNodeDumpFileFormat: {
                         /** 
-                        * @param out {undefined} - p.FILE
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param out {undefined} p.FILE
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {number} int
                         */
-                        (out: undefined, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | null, format: number): number
+                        (out: undefined, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | Buffer | null, format: number): number
                     }
                 
                     htmlNodeDumpFormatOutput: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {any - void}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {any} void
                         */
-                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | null, format: number): any
+                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | Buffer | null, format: number): any
                     }
                 
                     htmlNodeDumpOutput: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | null): any
+                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, encoding: string | Buffer | null): any
                     }
                 
                     htmlNodeStatus: {
                         /** 
-                        * @param arg0 {htmlNodePtr | null} - q(const).htmlNodePtr
-                        * @param arg1 {number} - int
-                        * @returns {htmlStatus - htmlStatus}
+                        * @param arg0 {htmlNodePtr | null} q(const).htmlNodePtr
+                        * @param arg1 {number} int
+                        * @returns {htmlStatus} htmlStatus
                         */
                         (arg0: htmlNodePtr | null, arg1: number): htmlStatus
                     }
                 
                     htmlParseCharRef: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: htmlParserCtxtPtr | null): number
                     }
                 
                     htmlParseChunk: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @param chunk {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param terminate {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @param chunk {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param terminate {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: htmlParserCtxtPtr | null, chunk: string | null, size: number, terminate: number): number
+                        (ctxt: htmlParserCtxtPtr | null, chunk: string | Buffer | null, size: number, terminate: number): number
                     }
                 
                     htmlParseDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (cur: string | null, encoding: string | null): htmlDocPtr
+                        (cur: string | Buffer | null, encoding: string | Buffer | null): htmlDocPtr
                     }
                 
                     htmlParseDocument: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: htmlParserCtxtPtr | null): number
                     }
                 
                     htmlParseElement: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: htmlParserCtxtPtr | null): any
                     }
                 
                     htmlParseEntityRef: {
                         /** 
-                        * @param ctxt {htmlParserCtxtPtr | null} - htmlParserCtxtPtr
-                        * @param str {string | null} - p.p.q(const).xmlChar
-                        * @returns {htmlEntityDesc - q(const).htmlEntityDesc}
+                        * @param ctxt {htmlParserCtxtPtr | null} htmlParserCtxtPtr
+                        * @param str {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {htmlEntityDesc} q(const).htmlEntityDesc
                         */
-                        (ctxt: htmlParserCtxtPtr | null, str: string | null): htmlEntityDesc
+                        (ctxt: htmlParserCtxtPtr | null, str: string | Buffer | null): htmlEntityDesc
                     }
                 
                     htmlParseFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (filename: string | null, encoding: string | null): htmlDocPtr
+                        (filename: string | Buffer | null, encoding: string | Buffer | null): htmlDocPtr
                     }
                 
                     htmlReadDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (cur: string | null, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (cur: string | Buffer | null, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlReadFd: {
                         /** 
-                        * @param fd {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param fd {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (fd: number, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (fd: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlReadFile: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlReadIO: {
                         /** 
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlReadMemory: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (buffer: string | null, size: number, URL: string | null, encoding: string | null, options: number): htmlDocPtr
+                        (buffer: string | Buffer | null, size: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): htmlDocPtr
                     }
                 
                     htmlSAXParseDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param sax {htmlSAXHandlerPtr | null} - htmlSAXHandlerPtr
-                        * @param userData {any} - p.void
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param sax {htmlSAXHandlerPtr | null} htmlSAXHandlerPtr
+                        * @param userData {any} p.void
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (cur: string | null, encoding: string | null, sax: htmlSAXHandlerPtr | null, userData: any): htmlDocPtr
+                        (cur: string | Buffer | null, encoding: string | Buffer | null, sax: htmlSAXHandlerPtr | null, userData: any): htmlDocPtr
                     }
                 
                     htmlSAXParseFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param sax {htmlSAXHandlerPtr | null} - htmlSAXHandlerPtr
-                        * @param userData {any} - p.void
-                        * @returns {htmlDocPtr - htmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param sax {htmlSAXHandlerPtr | null} htmlSAXHandlerPtr
+                        * @param userData {any} p.void
+                        * @returns {htmlDocPtr} htmlDocPtr
                         */
-                        (filename: string | null, encoding: string | null, sax: htmlSAXHandlerPtr | null, userData: any): htmlDocPtr
+                        (filename: string | Buffer | null, encoding: string | Buffer | null, sax: htmlSAXHandlerPtr | null, userData: any): htmlDocPtr
                     }
                 
                     htmlSaveFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null): number
                     }
                 
                     htmlSaveFileEnc: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null, encoding: string | null): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null, encoding: string | Buffer | null): number
                     }
                 
                     htmlSaveFileFormat: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null, encoding: string | null, format: number): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null, encoding: string | Buffer | null, format: number): number
                     }
                 
                     htmlSetMetaEncoding: {
                         /** 
-                        * @param doc {htmlDocPtr | null} - htmlDocPtr
-                        * @param encoding {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param doc {htmlDocPtr | null} htmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (doc: htmlDocPtr | null, encoding: string | null): number
+                        (doc: htmlDocPtr | null, encoding: string | Buffer | null): number
                     }
                 
                     htmlTagLookup: {
                         /** 
-                        * @param tag {string | null} - p.q(const).xmlChar
-                        * @returns {htmlElemDesc - q(const).htmlElemDesc}
+                        * @param tag {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {htmlElemDesc} q(const).htmlElemDesc
                         */
-                        (tag: string | null): htmlElemDesc
+                        (tag: string | Buffer | null): htmlElemDesc
                     }
                 
                     ignorableWhitespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param ch {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param ch {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, ch: string | null, len: number): any
+                        (ctx: any, ch: string | Buffer | null, len: number): any
                     }
                 
                     initGenericErrorDefaultFunc: {
                         /** 
-                        * @param handler {xmlGenericErrorFunc} - p.xmlGenericErrorFunc
-                        * @returns {any - void}
+                        * @param handler {xmlGenericErrorFunc} p.xmlGenericErrorFunc
+                        * @returns {any} void
                         */
                         (handler: xmlGenericErrorFunc): any
                     }
                 
                     initdocbDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandlerV1} - p.xmlSAXHandlerV1
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandlerV1} p.xmlSAXHandlerV1
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandlerV1): any
                     }
                 
                     inithtmlDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandlerV1} - p.xmlSAXHandlerV1
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandlerV1} p.xmlSAXHandlerV1
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandlerV1): any
                     }
                 
                     initxmlDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandlerV1} - p.xmlSAXHandlerV1
-                        * @param warning {number} - int
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandlerV1} p.xmlSAXHandlerV1
+                        * @param warning {number} int
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandlerV1, warning: number): any
                     }
                 
                     inputPop: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
                     }
                 
                     inputPush: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param value {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param value {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, value: xmlParserInputPtr | null): number
                     }
                 
                     internalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, ExternalID: string | null, SystemID: string | null): any
+                        (ctx: any, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): any
                     }
                 
                     isStandalone: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     isolat1ToUTF8: {
                         /** 
-                        * @param out {string | null} - p.unsigned char
-                        * @param outlen {number} - p.int
-                        * @param in {string | null} - p.q(const).unsigned char
-                        * @param inlen {number} - p.int
-                        * @returns {number - int}
+                        * @param out {string | Buffer | null} p.unsigned char
+                        * @param outlen {number} p.int
+                        * @param in {string | Buffer | null} p.q(const).unsigned char
+                        * @param inlen {number} p.int
+                        * @returns {number} int
                         */
-                        (out: string | null, outlen: number, inArg: string | null, inlen: number): number
+                        (out: string | Buffer | null, outlen: number, inArg: string | Buffer | null, inlen: number): number
                     }
                 
                     namePop: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     namePush: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, value: string | null): number
+                        (ctxt: xmlParserCtxtPtr | null, value: string | Buffer | null): number
                     }
                 
                     namespaceDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param href {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param href {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, href: string | null, prefix: string | null): any
+                        (ctx: any, href: string | Buffer | null, prefix: string | Buffer | null): any
                     }
                 
                     nodePop: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlNodePtr
                     }
                 
                     nodePush: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param value {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param value {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, value: xmlNodePtr | null): number
                     }
                 
                     notationDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, publicId: string | null, systemId: string | null): any
+                        (ctx: any, name: string | Buffer | null, publicId: string | Buffer | null, systemId: string | Buffer | null): any
                     }
                 
                     processingInstruction: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param target {string | null} - p.q(const).xmlChar
-                        * @param data {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param target {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, target: string | null, data: string | null): any
+                        (ctx: any, target: string | Buffer | null, data: string | Buffer | null): any
                     }
                 
                     reference: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null): any
+                        (ctx: any, name: string | Buffer | null): any
                     }
                 
                     resolveEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctx {any} p.void
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (ctx: any, publicId: string | null, systemId: string | null): xmlParserInputPtr
+                        (ctx: any, publicId: string | Buffer | null, systemId: string | Buffer | null): xmlParserInputPtr
                     }
                 
                     setDebugDisable: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     setDebugEnable: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     setDocumentLocator: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param loc {xmlSAXLocatorPtr | null} - xmlSAXLocatorPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param loc {xmlSAXLocatorPtr | null} xmlSAXLocatorPtr
+                        * @returns {any} void
                         */
                         (ctx: any, loc: xmlSAXLocatorPtr | null): any
                     }
                 
                     setNamespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null): any
+                        (ctx: any, name: string | Buffer | null): any
                     }
                 
                     startDocument: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctx: any): any
                     }
                 
                     startElement: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param fullname {string | null} - p.q(const).xmlChar
-                        * @param atts {string | null} - p.p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param fullname {string | Buffer | null} p.q(const).xmlChar
+                        * @param atts {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, fullname: string | null, atts: string | null): any
+                        (ctx: any, fullname: string | Buffer | null, atts: string | Buffer | null): any
                     }
                 
                     unparsedEntityDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @param notationName {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @param notationName {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, publicId: string | null, systemId: string | null, notationName: string | null): any
+                        (ctx: any, name: string | Buffer | null, publicId: string | Buffer | null, systemId: string | Buffer | null, notationName: string | Buffer | null): any
+                    }
+                
+                    valuePop: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): xmlXPathObjectPtr
+                    }
+                
+                    valuePush: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param value {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, value: xmlXPathObjectPtr | null): number
                     }
                 
                     xlinkGetDefaultDetect: {
                         /** 
-                        * @returns {xlinkNodeDetectFunc - xlinkNodeDetectFunc}
+                        * @returns {xlinkNodeDetectFunc} xlinkNodeDetectFunc
                         */
                         (): xlinkNodeDetectFunc
                     }
                 
                     xlinkGetDefaultHandler: {
                         /** 
-                        * @returns {xlinkHandlerPtr - xlinkHandlerPtr}
+                        * @returns {xlinkHandlerPtr} xlinkHandlerPtr
                         */
                         (): xlinkHandlerPtr
                     }
                 
                     xlinkIsLink: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xlinkType - xlinkType}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xlinkType} xlinkType
                         */
                         (doc: xmlDocPtr | null, node: xmlNodePtr | null): xlinkType
                     }
                 
                     xlinkSetDefaultDetect: {
                         /** 
-                        * @param func {xlinkNodeDetectFunc} - xlinkNodeDetectFunc
-                        * @returns {any - void}
+                        * @param func {xlinkNodeDetectFunc} xlinkNodeDetectFunc
+                        * @returns {any} void
                         */
                         (func: xlinkNodeDetectFunc): any
                     }
                 
                     xlinkSetDefaultHandler: {
                         /** 
-                        * @param handler {xlinkHandlerPtr | null} - xlinkHandlerPtr
-                        * @returns {any - void}
+                        * @param handler {xlinkHandlerPtr | null} xlinkHandlerPtr
+                        * @returns {any} void
                         */
                         (handler: xlinkHandlerPtr | null): any
                     }
                 
                     xmlACatalogAdd: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param type {string | null} - p.q(const).xmlChar
-                        * @param orig {string | null} - p.q(const).xmlChar
-                        * @param replace {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param type {string | Buffer | null} p.q(const).xmlChar
+                        * @param orig {string | Buffer | null} p.q(const).xmlChar
+                        * @param replace {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (catal: xmlCatalogPtr | null, type: string | null, orig: string | null, replace: string | null): number
+                        (catal: xmlCatalogPtr | null, type: string | Buffer | null, orig: string | Buffer | null, replace: string | Buffer | null): number
                     }
                 
                     xmlACatalogDump: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param out {undefined} - p.FILE
-                        * @returns {any - void}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param out {undefined} p.FILE
+                        * @returns {any} void
                         */
                         (catal: xmlCatalogPtr | null, out: undefined): any
                     }
                 
                     xmlACatalogRemove: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (catal: xmlCatalogPtr | null, value: string | null): number
+                        (catal: xmlCatalogPtr | null, value: string | Buffer | null): number
                     }
                 
                     xmlACatalogResolve: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catal: xmlCatalogPtr | null, pubID: string | null, sysID: string | null): string
+                        (catal: xmlCatalogPtr | null, pubID: string | Buffer | null, sysID: string | Buffer | null): string
                     }
                 
                     xmlACatalogResolvePublic: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catal: xmlCatalogPtr | null, pubID: string | null): string
+                        (catal: xmlCatalogPtr | null, pubID: string | Buffer | null): string
                     }
                 
                     xmlACatalogResolveSystem: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catal: xmlCatalogPtr | null, sysID: string | null): string
+                        (catal: xmlCatalogPtr | null, sysID: string | Buffer | null): string
                     }
                 
                     xmlACatalogResolveURI: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catal: xmlCatalogPtr | null, URI: string | null): string
+                        (catal: xmlCatalogPtr | null, URI: string | Buffer | null): string
                     }
                 
                     xmlAddAttributeDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param elem {string | null} - p.q(const).xmlChar
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @param type {xmlAttributeType} - xmlAttributeType
-                        * @param def {xmlAttributeDefault} - xmlAttributeDefault
-                        * @param defaultValue {string | null} - p.q(const).xmlChar
-                        * @param tree {xmlEnumerationPtr | null} - xmlEnumerationPtr
-                        * @returns {xmlAttributePtr - xmlAttributePtr}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param elem {string | Buffer | null} p.q(const).xmlChar
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {xmlAttributeType} xmlAttributeType
+                        * @param def {xmlAttributeDefault} xmlAttributeDefault
+                        * @param defaultValue {string | Buffer | null} p.q(const).xmlChar
+                        * @param tree {xmlEnumerationPtr | null} xmlEnumerationPtr
+                        * @returns {xmlAttributePtr} xmlAttributePtr
                         */
-                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, elem: string | null, name: string | null, ns: string | null, type: xmlAttributeType, def: xmlAttributeDefault, defaultValue: string | null, tree: xmlEnumerationPtr | null): xmlAttributePtr
+                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, elem: string | Buffer | null, name: string | Buffer | null, ns: string | Buffer | null, type: xmlAttributeType, def: xmlAttributeDefault, defaultValue: string | Buffer | null, tree: xmlEnumerationPtr | null): xmlAttributePtr
                     }
                 
                     xmlAddChild: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (parent: xmlNodePtr | null, cur: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlAddChildList: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (parent: xmlNodePtr | null, cur: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlAddDocEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, type: number, ExternalID: string | null, SystemID: string | null, content: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, type: number, ExternalID: string | Buffer | null, SystemID: string | Buffer | null, content: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlAddDtdEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, type: number, ExternalID: string | null, SystemID: string | null, content: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, type: number, ExternalID: string | Buffer | null, SystemID: string | Buffer | null, content: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlAddElementDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {xmlElementTypeVal} - xmlElementTypeVal
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {xmlElementPtr - xmlElementPtr}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {xmlElementTypeVal} xmlElementTypeVal
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {xmlElementPtr} xmlElementPtr
                         */
-                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, name: string | null, type: xmlElementTypeVal, content: xmlElementContentPtr | null): xmlElementPtr
+                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, name: string | Buffer | null, type: xmlElementTypeVal, content: xmlElementContentPtr | null): xmlElementPtr
                     }
                 
                     xmlAddEncodingAlias: {
                         /** 
-                        * @param name {string | null} - p.q(const).char
-                        * @param alias {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @param alias {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (name: string | null, alias: string | null): number
+                        (name: string | Buffer | null, alias: string | Buffer | null): number
                     }
                 
                     xmlAddID: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {xmlIDPtr - xmlIDPtr}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {xmlIDPtr} xmlIDPtr
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, value: string | null, attr: xmlAttrPtr | null): xmlIDPtr
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, value: string | Buffer | null, attr: xmlAttrPtr | null): xmlIDPtr
                     }
                 
                     xmlAddNextSibling: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (cur: xmlNodePtr | null, elem: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlAddNotationDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param PublicID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNotationPtr - xmlNotationPtr}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param PublicID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNotationPtr} xmlNotationPtr
                         */
-                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, name: string | null, PublicID: string | null, SystemID: string | null): xmlNotationPtr
+                        (ctxt: xmlValidCtxtPtr | null, dtd: xmlDtdPtr | null, name: string | Buffer | null, PublicID: string | Buffer | null, SystemID: string | Buffer | null): xmlNotationPtr
                     }
                 
                     xmlAddPrevSibling: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (cur: xmlNodePtr | null, elem: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlAddRef: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {xmlRefPtr - xmlRefPtr}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {xmlRefPtr} xmlRefPtr
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, value: string | null, attr: xmlAttrPtr | null): xmlRefPtr
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, value: string | Buffer | null, attr: xmlAttrPtr | null): xmlRefPtr
                     }
                 
                     xmlAddSibling: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (cur: xmlNodePtr | null, elem: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlAllocOutputBuffer: {
                         /** 
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
                         (encoder: xmlCharEncodingHandlerPtr | null): xmlOutputBufferPtr
                     }
                 
                     xmlAllocParserInputBuffer: {
                         /** 
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
                         (enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlAttrSerializeTxtContent: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @param string {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @param string {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (buf: xmlBufferPtr | null, doc: xmlDocPtr | null, attr: xmlAttrPtr | null, string: string | null): any
+                        (buf: xmlBufferPtr | null, doc: xmlDocPtr | null, attr: xmlAttrPtr | null, string: string | Buffer | null): any
                     }
                 
                     xmlAutomataCompile: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @returns {xmlRegexpPtr - xmlRegexpPtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @returns {xmlRegexpPtr} xmlRegexpPtr
                         */
                         (am: xmlAutomataPtr | null): xmlRegexpPtr
                     }
                 
                     xmlAutomataGetInitState: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataIsDeterminist: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @returns {number - int}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @returns {number} int
                         */
                         (am: xmlAutomataPtr | null): number
                     }
                 
                     xmlAutomataNewAllTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param lax {number} - int
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param lax {number} int
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, lax: number): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewCountTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, min: number, max: number, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, min: number, max: number, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewCountTrans2: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param token2 {string | null} - p.q(const).xmlChar
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param token2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, token2: string | null, min: number, max: number, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, token2: string | Buffer | null, min: number, max: number, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewCountedTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param counter {number} - int
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param counter {number} int
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, counter: number): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewCounter: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @returns {number - int}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @returns {number} int
                         */
                         (am: xmlAutomataPtr | null, min: number, max: number): number
                     }
                 
                     xmlAutomataNewCounterTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param counter {number} - int
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param counter {number} int
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, counter: number): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewEpsilon: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewNegTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param token2 {string | null} - p.q(const).xmlChar
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param token2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, token2: string | null, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, token2: string | Buffer | null, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewOnceTrans: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, min: number, max: number, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, min: number, max: number, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewOnceTrans2: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param token2 {string | null} - p.q(const).xmlChar
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param token2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, token2: string | null, min: number, max: number, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, token2: string | Buffer | null, min: number, max: number, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewState: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
                         (am: xmlAutomataPtr | null): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewTransition: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataNewTransition2: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param from {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param to {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @param token {string | null} - p.q(const).xmlChar
-                        * @param token2 {string | null} - p.q(const).xmlChar
-                        * @param data {any} - p.void
-                        * @returns {xmlAutomataStatePtr - xmlAutomataStatePtr}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param from {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param to {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @param token {string | Buffer | null} p.q(const).xmlChar
+                        * @param token2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {any} p.void
+                        * @returns {xmlAutomataStatePtr} xmlAutomataStatePtr
                         */
-                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | null, token2: string | null, data: any): xmlAutomataStatePtr
+                        (am: xmlAutomataPtr | null, from: xmlAutomataStatePtr | null, to: xmlAutomataStatePtr | null, token: string | Buffer | null, token2: string | Buffer | null, data: any): xmlAutomataStatePtr
                     }
                 
                     xmlAutomataSetFinalState: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @param state {xmlAutomataStatePtr | null} - xmlAutomataStatePtr
-                        * @returns {number - int}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @param state {xmlAutomataStatePtr | null} xmlAutomataStatePtr
+                        * @returns {number} int
                         */
                         (am: xmlAutomataPtr | null, state: xmlAutomataStatePtr | null): number
                     }
                 
                     xmlBufContent: {
                         /** 
-                        * @param buf {xmlBuf} - p.q(const).xmlBuf
-                        * @returns {string - xmlChar}
+                        * @param buf {xmlBufPtr | null} p.q(const).xmlBuf
+                        * @returns {string} xmlChar
                         */
-                        (buf: xmlBuf): string
+                        (buf: xmlBufPtr | null): string
                     }
                 
                     xmlBufEnd: {
                         /** 
-                        * @param buf {xmlBufPtr | null} - xmlBufPtr
-                        * @returns {string - xmlChar}
+                        * @param buf {xmlBufPtr | null} xmlBufPtr
+                        * @returns {string} xmlChar
                         */
                         (buf: xmlBufPtr | null): string
                     }
                 
                     xmlBufGetNodeContent: {
                         /** 
-                        * @param buf {xmlBufPtr | null} - xmlBufPtr
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - int}
+                        * @param buf {xmlBufPtr | null} xmlBufPtr
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} int
                         */
-                        (buf: xmlBufPtr | null, cur: xmlNode): number
+                        (buf: xmlBufPtr | null, cur: xmlNodePtr | null): number
                     }
                 
                     xmlBufNodeDump: {
                         /** 
-                        * @param buf {xmlBufPtr | null} - xmlBufPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param level {number} - int
-                        * @param format {number} - int
-                        * @returns {number - size_t}
+                        * @param buf {xmlBufPtr | null} xmlBufPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param level {number} int
+                        * @param format {number} int
+                        * @returns {number} size_t
                         */
                         (buf: xmlBufPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, level: number, format: number): number
                     }
                 
                     xmlBufShrink: {
                         /** 
-                        * @param buf {xmlBufPtr | null} - xmlBufPtr
-                        * @param len {number} - size_t
-                        * @returns {number - size_t}
+                        * @param buf {xmlBufPtr | null} xmlBufPtr
+                        * @param len {number} size_t
+                        * @returns {number} size_t
                         */
                         (buf: xmlBufPtr | null, len: number): number
                     }
                 
                     xmlBufUse: {
                         /** 
-                        * @param buf {xmlBufPtr | null} - q(const).xmlBufPtr
-                        * @returns {number - size_t}
+                        * @param buf {xmlBufPtr | null} q(const).xmlBufPtr
+                        * @returns {number} size_t
                         */
                         (buf: xmlBufPtr | null): number
                     }
                 
                     xmlBufferAdd: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (buf: xmlBufferPtr | null, str: string | null, len: number): number
+                        (buf: xmlBufferPtr | null, str: string | Buffer | null, len: number): number
                     }
                 
                     xmlBufferAddHead: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (buf: xmlBufferPtr | null, str: string | null, len: number): number
+                        (buf: xmlBufferPtr | null, str: string | Buffer | null, len: number): number
                     }
                 
                     xmlBufferCCat: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param str {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (buf: xmlBufferPtr | null, str: string | null): number
+                        (buf: xmlBufferPtr | null, str: string | Buffer | null): number
                     }
                 
                     xmlBufferCat: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (buf: xmlBufferPtr | null, str: string | null): number
+                        (buf: xmlBufferPtr | null, str: string | Buffer | null): number
                     }
                 
                     xmlBufferContent: {
                         /** 
-                        * @param buf {xmlBuffer} - p.q(const).xmlBuffer
-                        * @returns {string - q(const).xmlChar}
+                        * @param buf {xmlBufferPtr | null} p.q(const).xmlBuffer
+                        * @returns {string} q(const).xmlChar
                         */
-                        (buf: xmlBuffer): string
+                        (buf: xmlBufferPtr | null): string
                     }
                 
                     xmlBufferCreate: {
                         /** 
-                        * @returns {xmlBufferPtr - xmlBufferPtr}
+                        * @returns {xmlBufferPtr} xmlBufferPtr
                         */
                         (): xmlBufferPtr
                     }
                 
                     xmlBufferCreateSize: {
                         /** 
-                        * @param size {number} - size_t
-                        * @returns {xmlBufferPtr - xmlBufferPtr}
+                        * @param size {number} size_t
+                        * @returns {xmlBufferPtr} xmlBufferPtr
                         */
                         (size: number): xmlBufferPtr
                     }
                 
                     xmlBufferCreateStatic: {
                         /** 
-                        * @param mem {any} - p.void
-                        * @param size {number} - size_t
-                        * @returns {xmlBufferPtr - xmlBufferPtr}
+                        * @param mem {any} p.void
+                        * @param size {number} size_t
+                        * @returns {xmlBufferPtr} xmlBufferPtr
                         */
                         (mem: any, size: number): xmlBufferPtr
                     }
                 
                     xmlBufferDetach: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {string - xmlChar}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {string} xmlChar
                         */
                         (buf: xmlBufferPtr | null): string
                     }
                 
                     xmlBufferDump: {
                         /** 
-                        * @param file {undefined} - p.FILE
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {number - int}
+                        * @param file {undefined} p.FILE
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {number} int
                         */
                         (file: undefined, buf: xmlBufferPtr | null): number
                     }
                 
                     xmlBufferEmpty: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null): any
                     }
                 
                     xmlBufferFree: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null): any
                     }
                 
                     xmlBufferGrow: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param len {number} - unsigned int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param len {number} unsigned int
+                        * @returns {number} int
                         */
                         (buf: xmlBufferPtr | null, len: number): number
                     }
                 
                     xmlBufferLength: {
                         /** 
-                        * @param buf {xmlBuffer} - p.q(const).xmlBuffer
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} p.q(const).xmlBuffer
+                        * @returns {number} int
                         */
-                        (buf: xmlBuffer): number
+                        (buf: xmlBufferPtr | null): number
                     }
                 
                     xmlBufferResize: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param size {number} - unsigned int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param size {number} unsigned int
+                        * @returns {number} int
                         */
                         (buf: xmlBufferPtr | null, size: number): number
                     }
                 
                     xmlBufferSetAllocationScheme: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param scheme {xmlBufferAllocationScheme} - xmlBufferAllocationScheme
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param scheme {xmlBufferAllocationScheme} xmlBufferAllocationScheme
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, scheme: xmlBufferAllocationScheme): any
                     }
                 
                     xmlBufferShrink: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param len {number} - unsigned int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param len {number} unsigned int
+                        * @returns {number} int
                         */
                         (buf: xmlBufferPtr | null, len: number): number
                     }
                 
                     xmlBufferWriteCHAR: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param string {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param string {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (buf: xmlBufferPtr | null, string: string | null): any
+                        (buf: xmlBufferPtr | null, string: string | Buffer | null): any
                     }
                 
                     xmlBufferWriteChar: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param string {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param string {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (buf: xmlBufferPtr | null, string: string | null): any
+                        (buf: xmlBufferPtr | null, string: string | Buffer | null): any
                     }
                 
                     xmlBufferWriteQuotedString: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param string {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param string {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (buf: xmlBufferPtr | null, string: string | null): any
+                        (buf: xmlBufferPtr | null, string: string | Buffer | null): any
                     }
                 
                     xmlBuildQName: {
                         /** 
-                        * @param ncname {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param memory {string | null} - p.xmlChar
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param ncname {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param memory {string | Buffer | null} p.xmlChar
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (ncname: string | null, prefix: string | null, memory: string | null, len: number): string
+                        (ncname: string | Buffer | null, prefix: string | Buffer | null, memory: string | Buffer | null, len: number): string
                     }
                 
                     xmlBuildRelativeURI: {
                         /** 
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @param base {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @param base {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (URI: string | null, base: string | null): string
+                        (URI: string | Buffer | null, base: string | Buffer | null): string
                     }
                 
                     xmlBuildURI: {
                         /** 
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @param base {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @param base {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (URI: string | null, base: string | null): string
+                        (URI: string | Buffer | null, base: string | Buffer | null): string
                     }
                 
                     xmlByteConsumed: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - long}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} long
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlCanonicPath: {
                         /** 
-                        * @param path {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param path {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (path: string | null): string
+                        (path: string | Buffer | null): string
                     }
                 
                     xmlCatalogAdd: {
                         /** 
-                        * @param type {string | null} - p.q(const).xmlChar
-                        * @param orig {string | null} - p.q(const).xmlChar
-                        * @param replace {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param type {string | Buffer | null} p.q(const).xmlChar
+                        * @param orig {string | Buffer | null} p.q(const).xmlChar
+                        * @param replace {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (type: string | null, orig: string | null, replace: string | null): number
+                        (type: string | Buffer | null, orig: string | Buffer | null, replace: string | Buffer | null): number
                     }
                 
                     xmlCatalogAddLocal: {
                         /** 
-                        * @param catalogs {any} - p.void
-                        * @param URL {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param catalogs {any} p.void
+                        * @param URL {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (catalogs: any, URL: string | null): any
+                        (catalogs: any, URL: string | Buffer | null): any
                     }
                 
                     xmlCatalogCleanup: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCatalogConvert: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlCatalogDump: {
                         /** 
-                        * @param out {undefined} - p.FILE
-                        * @returns {any - void}
+                        * @param out {undefined} p.FILE
+                        * @returns {any} void
                         */
                         (out: undefined): any
                     }
                 
                     xmlCatalogFreeLocal: {
                         /** 
-                        * @param catalogs {any} - p.void
-                        * @returns {any - void}
+                        * @param catalogs {any} p.void
+                        * @returns {any} void
                         */
                         (catalogs: any): any
                     }
                 
                     xmlCatalogGetDefaults: {
                         /** 
-                        * @returns {xmlCatalogAllow - xmlCatalogAllow}
+                        * @returns {xmlCatalogAllow} xmlCatalogAllow
                         */
                         (): xmlCatalogAllow
                     }
                 
                     xmlCatalogGetPublic: {
                         /** 
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (pubID: string | null): string
+                        (pubID: string | Buffer | null): string
                     }
                 
                     xmlCatalogGetSystem: {
                         /** 
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (sysID: string | null): string
+                        (sysID: string | Buffer | null): string
                     }
                 
                     xmlCatalogIsEmpty: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @returns {number - int}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @returns {number} int
                         */
                         (catal: xmlCatalogPtr | null): number
                     }
                 
                     xmlCatalogLocalResolve: {
                         /** 
-                        * @param catalogs {any} - p.void
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catalogs {any} p.void
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catalogs: any, pubID: string | null, sysID: string | null): string
+                        (catalogs: any, pubID: string | Buffer | null, sysID: string | Buffer | null): string
                     }
                 
                     xmlCatalogLocalResolveURI: {
                         /** 
-                        * @param catalogs {any} - p.void
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param catalogs {any} p.void
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (catalogs: any, URI: string | null): string
+                        (catalogs: any, URI: string | Buffer | null): string
                     }
                 
                     xmlCatalogRemove: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (value: string | null): number
+                        (value: string | Buffer | null): number
                     }
                 
                     xmlCatalogResolve: {
                         /** 
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (pubID: string | null, sysID: string | null): string
+                        (pubID: string | Buffer | null, sysID: string | Buffer | null): string
                     }
                 
                     xmlCatalogResolvePublic: {
                         /** 
-                        * @param pubID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param pubID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (pubID: string | null): string
+                        (pubID: string | Buffer | null): string
                     }
                 
                     xmlCatalogResolveSystem: {
                         /** 
-                        * @param sysID {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param sysID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (sysID: string | null): string
+                        (sysID: string | Buffer | null): string
                     }
                 
                     xmlCatalogResolveURI: {
                         /** 
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (URI: string | null): string
+                        (URI: string | Buffer | null): string
                     }
                 
                     xmlCatalogSetDebug: {
                         /** 
-                        * @param level {number} - int
-                        * @returns {number - int}
+                        * @param level {number} int
+                        * @returns {number} int
                         */
                         (level: number): number
                     }
                 
                     xmlCatalogSetDefaultPrefer: {
                         /** 
-                        * @param prefer {xmlCatalogPrefer} - xmlCatalogPrefer
-                        * @returns {xmlCatalogPrefer - xmlCatalogPrefer}
+                        * @param prefer {xmlCatalogPrefer} xmlCatalogPrefer
+                        * @returns {xmlCatalogPrefer} xmlCatalogPrefer
                         */
                         (prefer: xmlCatalogPrefer): xmlCatalogPrefer
                     }
                 
                     xmlCatalogSetDefaults: {
                         /** 
-                        * @param allow {xmlCatalogAllow} - xmlCatalogAllow
-                        * @returns {any - void}
+                        * @param allow {xmlCatalogAllow} xmlCatalogAllow
+                        * @returns {any} void
                         */
                         (allow: xmlCatalogAllow): any
                     }
                 
                     xmlCharEncCloseFunc: {
                         /** 
-                        * @param handler {xmlCharEncodingHandler} - p.xmlCharEncodingHandler
-                        * @returns {number - int}
+                        * @param handler {xmlCharEncodingHandler} p.xmlCharEncodingHandler
+                        * @returns {number} int
                         */
                         (handler: xmlCharEncodingHandler): number
                     }
                 
                     xmlCharEncFirstLine: {
                         /** 
-                        * @param handler {xmlCharEncodingHandler} - p.xmlCharEncodingHandler
-                        * @param out {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param in {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {number - int}
+                        * @param handler {xmlCharEncodingHandler} p.xmlCharEncodingHandler
+                        * @param out {xmlBufferPtr | null} xmlBufferPtr
+                        * @param in {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {number} int
                         */
                         (handler: xmlCharEncodingHandler, out: xmlBufferPtr | null, inArg: xmlBufferPtr | null): number
                     }
                 
                     xmlCharEncInFunc: {
                         /** 
-                        * @param handler {xmlCharEncodingHandler} - p.xmlCharEncodingHandler
-                        * @param out {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param in {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {number - int}
+                        * @param handler {xmlCharEncodingHandler} p.xmlCharEncodingHandler
+                        * @param out {xmlBufferPtr | null} xmlBufferPtr
+                        * @param in {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {number} int
                         */
                         (handler: xmlCharEncodingHandler, out: xmlBufferPtr | null, inArg: xmlBufferPtr | null): number
                     }
                 
                     xmlCharEncOutFunc: {
                         /** 
-                        * @param handler {xmlCharEncodingHandler} - p.xmlCharEncodingHandler
-                        * @param out {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param in {xmlBufferPtr | null} - xmlBufferPtr
-                        * @returns {number - int}
+                        * @param handler {xmlCharEncodingHandler} p.xmlCharEncodingHandler
+                        * @param out {xmlBufferPtr | null} xmlBufferPtr
+                        * @param in {xmlBufferPtr | null} xmlBufferPtr
+                        * @returns {number} int
                         */
                         (handler: xmlCharEncodingHandler, out: xmlBufferPtr | null, inArg: xmlBufferPtr | null): number
                     }
                 
                     xmlCharInRange: {
                         /** 
-                        * @param val {number} - unsigned int
-                        * @param group {xmlChRangeGroup} - p.q(const).xmlChRangeGroup
-                        * @returns {number - int}
+                        * @param val {number} unsigned int
+                        * @param group {xmlChRangeGroupPtr | null} p.q(const).xmlChRangeGroup
+                        * @returns {number} int
                         */
-                        (val: number, group: xmlChRangeGroup): number
+                        (val: number, group: xmlChRangeGroupPtr | null): number
                     }
                 
                     xmlCharStrdup: {
                         /** 
-                        * @param cur {string | null} - p.q(const).char
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.q(const).char
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null): string
+                        (cur: string | Buffer | null): string
                     }
                 
                     xmlCharStrndup: {
                         /** 
-                        * @param cur {string | null} - p.q(const).char
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.q(const).char
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null, len: number): string
+                        (cur: string | Buffer | null, len: number): string
                     }
                 
                     xmlCheckFilename: {
                         /** 
-                        * @param path {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param path {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (path: string | null): number
+                        (path: string | Buffer | null): number
                     }
                 
                     xmlCheckHTTPInput: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param ret {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param ret {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null, ret: xmlParserInputPtr | null): xmlParserInputPtr
                     }
                 
                     xmlCheckLanguageID: {
                         /** 
-                        * @param lang {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param lang {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (lang: string | null): number
+                        (lang: string | Buffer | null): number
                     }
                 
                     xmlCheckUTF8: {
                         /** 
-                        * @param utf {string | null} - p.q(const).unsigned char
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).unsigned char
+                        * @returns {number} int
                         */
-                        (utf: string | null): number
+                        (utf: string | Buffer | null): number
                     }
                 
                     xmlCheckVersion: {
                         /** 
-                        * @param version {number} - int
-                        * @returns {any - void}
+                        * @param version {number} int
+                        * @returns {any} void
                         */
                         (version: number): any
                     }
                 
                     xmlChildElementCount: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - unsigned long}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} unsigned long
                         */
                         (parent: xmlNodePtr | null): number
                     }
                 
                     xmlCleanupCharEncodingHandlers: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupEncodingAliases: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupGlobals: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupInputCallbacks: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupMemory: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupOutputCallbacks: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupParser: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupPredefinedEntities: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlCleanupThreads: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlClearNodeInfoSeq: {
                         /** 
-                        * @param seq {xmlParserNodeInfoSeqPtr | null} - xmlParserNodeInfoSeqPtr
-                        * @returns {any - void}
+                        * @param seq {xmlParserNodeInfoSeqPtr | null} xmlParserNodeInfoSeqPtr
+                        * @returns {any} void
                         */
                         (seq: xmlParserNodeInfoSeqPtr | null): any
                     }
                 
                     xmlClearParserCtxt: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlConvertSGMLCatalog: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @returns {number - int}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @returns {number} int
                         */
                         (catal: xmlCatalogPtr | null): number
                     }
                 
                     xmlCopyAttributeTable: {
                         /** 
-                        * @param table {xmlAttributeTablePtr | null} - xmlAttributeTablePtr
-                        * @returns {xmlAttributeTablePtr - xmlAttributeTablePtr}
+                        * @param table {xmlAttributeTablePtr | null} xmlAttributeTablePtr
+                        * @returns {xmlAttributeTablePtr} xmlAttributeTablePtr
                         */
                         (table: xmlAttributeTablePtr | null): xmlAttributeTablePtr
                     }
                 
                     xmlCopyChar: {
                         /** 
-                        * @param len {number} - int
-                        * @param out {string | null} - p.xmlChar
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param len {number} int
+                        * @param out {string | Buffer | null} p.xmlChar
+                        * @param val {number} int
+                        * @returns {number} int
                         */
-                        (len: number, out: string | null, val: number): number
+                        (len: number, out: string | Buffer | null, val: number): number
                     }
                 
                     xmlCopyCharMultiByte: {
                         /** 
-                        * @param out {string | null} - p.xmlChar
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param out {string | Buffer | null} p.xmlChar
+                        * @param val {number} int
+                        * @returns {number} int
                         */
-                        (out: string | null, val: number): number
+                        (out: string | Buffer | null, val: number): number
                     }
                 
                     xmlCopyDoc: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param recursive {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param recursive {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
                         (doc: xmlDocPtr | null, recursive: number): xmlDocPtr
                     }
                 
                     xmlCopyDocElementContent: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
                         (doc: xmlDocPtr | null, content: xmlElementContentPtr | null): xmlElementContentPtr
                     }
                 
                     xmlCopyDtd: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
                         (dtd: xmlDtdPtr | null): xmlDtdPtr
                     }
                 
                     xmlCopyElementContent: {
                         /** 
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
                         (content: xmlElementContentPtr | null): xmlElementContentPtr
                     }
                 
                     xmlCopyElementTable: {
                         /** 
-                        * @param table {xmlElementTablePtr | null} - xmlElementTablePtr
-                        * @returns {xmlElementTablePtr - xmlElementTablePtr}
+                        * @param table {xmlElementTablePtr | null} xmlElementTablePtr
+                        * @returns {xmlElementTablePtr} xmlElementTablePtr
                         */
                         (table: xmlElementTablePtr | null): xmlElementTablePtr
                     }
                 
                     xmlCopyEntitiesTable: {
                         /** 
-                        * @param table {xmlEntitiesTablePtr | null} - xmlEntitiesTablePtr
-                        * @returns {xmlEntitiesTablePtr - xmlEntitiesTablePtr}
+                        * @param table {xmlEntitiesTablePtr | null} xmlEntitiesTablePtr
+                        * @returns {xmlEntitiesTablePtr} xmlEntitiesTablePtr
                         */
                         (table: xmlEntitiesTablePtr | null): xmlEntitiesTablePtr
                     }
                 
                     xmlCopyEnumeration: {
                         /** 
-                        * @param cur {xmlEnumerationPtr | null} - xmlEnumerationPtr
-                        * @returns {xmlEnumerationPtr - xmlEnumerationPtr}
+                        * @param cur {xmlEnumerationPtr | null} xmlEnumerationPtr
+                        * @returns {xmlEnumerationPtr} xmlEnumerationPtr
                         */
                         (cur: xmlEnumerationPtr | null): xmlEnumerationPtr
                     }
                 
                     xmlCopyError: {
                         /** 
-                        * @param from {xmlErrorPtr | null} - xmlErrorPtr
-                        * @param to {xmlErrorPtr | null} - xmlErrorPtr
-                        * @returns {number - int}
+                        * @param from {xmlErrorPtr | null} xmlErrorPtr
+                        * @param to {xmlErrorPtr | null} xmlErrorPtr
+                        * @returns {number} int
                         */
                         (from: xmlErrorPtr | null, to: xmlErrorPtr | null): number
                     }
                 
                     xmlCopyNamespace: {
                         /** 
-                        * @param cur {xmlNsPtr | null} - xmlNsPtr
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param cur {xmlNsPtr | null} xmlNsPtr
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
                         (cur: xmlNsPtr | null): xmlNsPtr
                     }
                 
                     xmlCopyNamespaceList: {
                         /** 
-                        * @param cur {xmlNsPtr | null} - xmlNsPtr
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param cur {xmlNsPtr | null} xmlNsPtr
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
                         (cur: xmlNsPtr | null): xmlNsPtr
                     }
                 
                     xmlCopyNode: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param recursive {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param recursive {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (node: xmlNodePtr | null, recursive: number): xmlNodePtr
                     }
                 
                     xmlCopyNodeList: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (node: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlCopyNotationTable: {
                         /** 
-                        * @param table {xmlNotationTablePtr | null} - xmlNotationTablePtr
-                        * @returns {xmlNotationTablePtr - xmlNotationTablePtr}
+                        * @param table {xmlNotationTablePtr | null} xmlNotationTablePtr
+                        * @returns {xmlNotationTablePtr} xmlNotationTablePtr
                         */
                         (table: xmlNotationTablePtr | null): xmlNotationTablePtr
                     }
                 
                     xmlCopyProp: {
                         /** 
-                        * @param target {xmlNodePtr | null} - xmlNodePtr
-                        * @param cur {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param target {xmlNodePtr | null} xmlNodePtr
+                        * @param cur {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
                         (target: xmlNodePtr | null, cur: xmlAttrPtr | null): xmlAttrPtr
                     }
                 
                     xmlCopyPropList: {
                         /** 
-                        * @param target {xmlNodePtr | null} - xmlNodePtr
-                        * @param cur {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param target {xmlNodePtr | null} xmlNodePtr
+                        * @param cur {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
                         (target: xmlNodePtr | null, cur: xmlAttrPtr | null): xmlAttrPtr
                     }
                 
                     xmlCreateDocParserCtxt: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (cur: string | null): xmlParserCtxtPtr
+                        (cur: string | Buffer | null): xmlParserCtxtPtr
                     }
                 
                     xmlCreateEntitiesTable: {
                         /** 
-                        * @returns {xmlEntitiesTablePtr - xmlEntitiesTablePtr}
+                        * @returns {xmlEntitiesTablePtr} xmlEntitiesTablePtr
                         */
                         (): xmlEntitiesTablePtr
                     }
                 
                     xmlCreateEntityParserCtxt: {
                         /** 
-                        * @param URL {string | null} - p.q(const).xmlChar
-                        * @param ID {string | null} - p.q(const).xmlChar
-                        * @param base {string | null} - p.q(const).xmlChar
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param URL {string | Buffer | null} p.q(const).xmlChar
+                        * @param ID {string | Buffer | null} p.q(const).xmlChar
+                        * @param base {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (URL: string | null, ID: string | null, base: string | null): xmlParserCtxtPtr
+                        (URL: string | Buffer | null, ID: string | Buffer | null, base: string | Buffer | null): xmlParserCtxtPtr
                     }
                 
                     xmlCreateEnumeration: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEnumerationPtr - xmlEnumerationPtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEnumerationPtr} xmlEnumerationPtr
                         */
-                        (name: string | null): xmlEnumerationPtr
+                        (name: string | Buffer | null): xmlEnumerationPtr
                     }
                 
                     xmlCreateFileParserCtxt: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (filename: string | null): xmlParserCtxtPtr
+                        (filename: string | Buffer | null): xmlParserCtxtPtr
                     }
                 
                     xmlCreateIOParserCtxt: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
                         (sax: xmlSAXHandlerPtr | null, user_data: any, ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, enc: xmlCharEncoding): xmlParserCtxtPtr
                     }
                 
                     xmlCreateIntSubset: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, ExternalID: string | null, SystemID: string | null): xmlDtdPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): xmlDtdPtr
                     }
                 
                     xmlCreateMemoryParserCtxt: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (buffer: string | null, size: number): xmlParserCtxtPtr
+                        (buffer: string | Buffer | null, size: number): xmlParserCtxtPtr
                     }
                 
                     xmlCreatePushParserCtxt: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param chunk {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param chunk {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, user_data: any, chunk: string | null, size: number, filename: string | null): xmlParserCtxtPtr
+                        (sax: xmlSAXHandlerPtr | null, user_data: any, chunk: string | Buffer | null, size: number, filename: string | Buffer | null): xmlParserCtxtPtr
                     }
                 
                     xmlCreateURI: {
                         /** 
-                        * @returns {xmlURIPtr - xmlURIPtr}
+                        * @returns {xmlURIPtr} xmlURIPtr
                         */
                         (): xmlURIPtr
                     }
                 
                     xmlCreateURLParserCtxt: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
-                        (filename: string | null, options: number): xmlParserCtxtPtr
+                        (filename: string | Buffer | null, options: number): xmlParserCtxtPtr
                     }
                 
                     xmlCtxtGetLastError: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {xmlErrorPtr - xmlErrorPtr}
+                        * @param ctx {any} p.void
+                        * @returns {xmlErrorPtr} xmlErrorPtr
                         */
                         (ctx: any): xmlErrorPtr
                     }
                 
                     xmlCtxtReadDoc: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, cur: string | null, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, cur: string | Buffer | null, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlCtxtReadFd: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param fd {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param fd {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, fd: number, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, fd: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlCtxtReadFile: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, filename: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, filename: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlCtxtReadIO: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlCtxtReadMemory: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, buffer: string | null, size: number, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ctxt: xmlParserCtxtPtr | null, buffer: string | Buffer | null, size: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlCtxtReset: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlCtxtResetLastError: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctx: any): any
                     }
                 
                     xmlCtxtResetPush: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param chunk {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param chunk {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, chunk: string | null, size: number, filename: string | null, encoding: string | null): number
+                        (ctxt: xmlParserCtxtPtr | null, chunk: string | Buffer | null, size: number, filename: string | Buffer | null, encoding: string | Buffer | null): number
                     }
                 
                     xmlCtxtUseOptions: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, options: number): number
                     }
                 
                     xmlCurrentChar: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param len {number} - p.int
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param len {number} p.int
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, len: number): number
                     }
                 
                     xmlDOMWrapAdoptNode: {
                         /** 
-                        * @param ctxt {xmlDOMWrapCtxtPtr | null} - xmlDOMWrapCtxtPtr
-                        * @param sourceDoc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param destDoc {xmlDocPtr | null} - xmlDocPtr
-                        * @param destParent {xmlNodePtr | null} - xmlNodePtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlDOMWrapCtxtPtr | null} xmlDOMWrapCtxtPtr
+                        * @param sourceDoc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param destDoc {xmlDocPtr | null} xmlDocPtr
+                        * @param destParent {xmlNodePtr | null} xmlNodePtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlDOMWrapCtxtPtr | null, sourceDoc: xmlDocPtr | null, node: xmlNodePtr | null, destDoc: xmlDocPtr | null, destParent: xmlNodePtr | null, options: number): number
                     }
                 
                     xmlDOMWrapCloneNode: {
                         /** 
-                        * @param ctxt {xmlDOMWrapCtxtPtr | null} - xmlDOMWrapCtxtPtr
-                        * @param sourceDoc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param clonedNode {xmlNodePtr | null} - p.xmlNodePtr
-                        * @param destDoc {xmlDocPtr | null} - xmlDocPtr
-                        * @param destParent {xmlNodePtr | null} - xmlNodePtr
-                        * @param deep {number} - int
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlDOMWrapCtxtPtr | null} xmlDOMWrapCtxtPtr
+                        * @param sourceDoc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param clonedNode {xmlNodePtr | null} p.xmlNodePtr
+                        * @param destDoc {xmlDocPtr | null} xmlDocPtr
+                        * @param destParent {xmlNodePtr | null} xmlNodePtr
+                        * @param deep {number} int
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlDOMWrapCtxtPtr | null, sourceDoc: xmlDocPtr | null, node: xmlNodePtr | null, clonedNode: xmlNodePtr | null, destDoc: xmlDocPtr | null, destParent: xmlNodePtr | null, deep: number, options: number): number
                     }
                 
                     xmlDOMWrapFreeCtxt: {
                         /** 
-                        * @param ctxt {xmlDOMWrapCtxtPtr | null} - xmlDOMWrapCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlDOMWrapCtxtPtr | null} xmlDOMWrapCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlDOMWrapCtxtPtr | null): any
                     }
                 
                     xmlDOMWrapNewCtxt: {
                         /** 
-                        * @returns {xmlDOMWrapCtxtPtr - xmlDOMWrapCtxtPtr}
+                        * @returns {xmlDOMWrapCtxtPtr} xmlDOMWrapCtxtPtr
                         */
                         (): xmlDOMWrapCtxtPtr
                     }
                 
                     xmlDOMWrapReconcileNamespaces: {
                         /** 
-                        * @param ctxt {xmlDOMWrapCtxtPtr | null} - xmlDOMWrapCtxtPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlDOMWrapCtxtPtr | null} xmlDOMWrapCtxtPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlDOMWrapCtxtPtr | null, elem: xmlNodePtr | null, options: number): number
                     }
                 
                     xmlDOMWrapRemoveNode: {
                         /** 
-                        * @param ctxt {xmlDOMWrapCtxtPtr | null} - xmlDOMWrapCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlDOMWrapCtxtPtr | null} xmlDOMWrapCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlDOMWrapCtxtPtr | null, doc: xmlDocPtr | null, node: xmlNodePtr | null, options: number): number
                     }
                 
                     xmlDecodeEntities: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param len {number} - int
-                        * @param what {number} - int
-                        * @param end {string | null} - xmlChar
-                        * @param end2 {string | null} - xmlChar
-                        * @param end3 {string | null} - xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param len {number} int
+                        * @param what {number} int
+                        * @param end {string | Buffer | null} xmlChar
+                        * @param end2 {string | Buffer | null} xmlChar
+                        * @param end3 {string | Buffer | null} xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, len: number, what: number, end: string | null, end2: string | null, end3: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, len: number, what: number, end: string | Buffer | null, end2: string | Buffer | null, end3: string | Buffer | null): string
                     }
                 
                     xmlDefaultSAXHandlerInit: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlDelEncodingAlias: {
                         /** 
-                        * @param alias {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param alias {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (alias: string | null): number
+                        (alias: string | Buffer | null): number
                     }
                 
                     xmlDeregisterNodeDefault: {
                         /** 
-                        * @param func {xmlDeregisterNodeFunc} - xmlDeregisterNodeFunc
-                        * @returns {xmlDeregisterNodeFunc - xmlDeregisterNodeFunc}
+                        * @param func {xmlDeregisterNodeFunc} xmlDeregisterNodeFunc
+                        * @returns {xmlDeregisterNodeFunc} xmlDeregisterNodeFunc
                         */
                         (func: xmlDeregisterNodeFunc): xmlDeregisterNodeFunc
                     }
                 
                     xmlDetectCharEncoding: {
                         /** 
-                        * @param in {string | null} - p.q(const).unsigned char
-                        * @param len {number} - int
-                        * @returns {xmlCharEncoding - xmlCharEncoding}
+                        * @param in {string | Buffer | null} p.q(const).unsigned char
+                        * @param len {number} int
+                        * @returns {xmlCharEncoding} xmlCharEncoding
                         */
-                        (inArg: string | null, len: number): xmlCharEncoding
+                        (inArg: string | Buffer | null, len: number): xmlCharEncoding
                     }
                 
                     xmlDictCleanup: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlDictCreate: {
                         /** 
-                        * @returns {xmlDictPtr - xmlDictPtr}
+                        * @returns {xmlDictPtr} xmlDictPtr
                         */
                         (): xmlDictPtr
                     }
                 
                     xmlDictCreateSub: {
                         /** 
-                        * @param sub {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {xmlDictPtr - xmlDictPtr}
+                        * @param sub {xmlDictPtr | null} xmlDictPtr
+                        * @returns {xmlDictPtr} xmlDictPtr
                         */
                         (sub: xmlDictPtr | null): xmlDictPtr
                     }
                 
                     xmlDictExists: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - q(const).xmlChar}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} q(const).xmlChar
                         */
-                        (dict: xmlDictPtr | null, name: string | null, len: number): string
+                        (dict: xmlDictPtr | null, name: string | Buffer | null, len: number): string
                     }
                 
                     xmlDictFree: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {any - void}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {any} void
                         */
                         (dict: xmlDictPtr | null): any
                     }
                 
                     xmlDictGetUsage: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {number - size_t}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {number} size_t
                         */
                         (dict: xmlDictPtr | null): number
                     }
                 
                     xmlDictLookup: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - q(const).xmlChar}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} q(const).xmlChar
                         */
-                        (dict: xmlDictPtr | null, name: string | null, len: number): string
+                        (dict: xmlDictPtr | null, name: string | Buffer | null, len: number): string
                     }
                 
                     xmlDictOwns: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (dict: xmlDictPtr | null, str: string | null): number
+                        (dict: xmlDictPtr | null, str: string | Buffer | null): number
                     }
                 
                     xmlDictQLookup: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (dict: xmlDictPtr | null, prefix: string | null, name: string | null): string
+                        (dict: xmlDictPtr | null, prefix: string | Buffer | null, name: string | Buffer | null): string
                     }
                 
                     xmlDictReference: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {number - int}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {number} int
                         */
                         (dict: xmlDictPtr | null): number
                     }
                 
                     xmlDictSetLimit: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @param limit {number} - size_t
-                        * @returns {number - size_t}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @param limit {number} size_t
+                        * @returns {number} size_t
                         */
                         (dict: xmlDictPtr | null, limit: number): number
                     }
                 
                     xmlDictSize: {
                         /** 
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {number - int}
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {number} int
                         */
                         (dict: xmlDictPtr | null): number
                     }
                 
                     xmlDocCopyNode: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param recursive {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param recursive {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (node: xmlNodePtr | null, doc: xmlDocPtr | null, recursive: number): xmlNodePtr
                     }
                 
                     xmlDocCopyNodeList: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (doc: xmlDocPtr | null, node: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlDocDump: {
                         /** 
-                        * @param f {undefined} - p.FILE
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param f {undefined} p.FILE
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (f: undefined, cur: xmlDocPtr | null): number
                     }
                 
                     xmlDocDumpFormatMemory: {
                         /** 
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param mem {string | null} - p.p.xmlChar
-                        * @param size {number} - p.int
-                        * @param format {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param mem {string | Buffer | null} p.p.xmlChar
+                        * @param size {number} p.int
+                        * @param format {number} int
+                        * @returns {any} void
                         */
-                        (cur: xmlDocPtr | null, mem: string | null, size: number, format: number): any
+                        (cur: xmlDocPtr | null, mem: string | Buffer | null, size: number, format: number): any
                     }
                 
                     xmlDocDumpFormatMemoryEnc: {
                         /** 
-                        * @param out_doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param doc_txt_ptr {string | null} - p.p.xmlChar
-                        * @param doc_txt_len {number} - p.int
-                        * @param txt_encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {any - void}
+                        * @param out_doc {xmlDocPtr | null} xmlDocPtr
+                        * @param doc_txt_ptr {string | Buffer | null} p.p.xmlChar
+                        * @param doc_txt_len {number} p.int
+                        * @param txt_encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {any} void
                         */
-                        (out_doc: xmlDocPtr | null, doc_txt_ptr: string | null, doc_txt_len: number, txt_encoding: string | null, format: number): any
+                        (out_doc: xmlDocPtr | null, doc_txt_ptr: string | Buffer | null, doc_txt_len: number, txt_encoding: string | Buffer | null, format: number): any
                     }
                 
                     xmlDocDumpMemory: {
                         /** 
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param mem {string | null} - p.p.xmlChar
-                        * @param size {number} - p.int
-                        * @returns {any - void}
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param mem {string | Buffer | null} p.p.xmlChar
+                        * @param size {number} p.int
+                        * @returns {any} void
                         */
-                        (cur: xmlDocPtr | null, mem: string | null, size: number): any
+                        (cur: xmlDocPtr | null, mem: string | Buffer | null, size: number): any
                     }
                 
                     xmlDocDumpMemoryEnc: {
                         /** 
-                        * @param out_doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param doc_txt_ptr {string | null} - p.p.xmlChar
-                        * @param doc_txt_len {number} - p.int
-                        * @param txt_encoding {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param out_doc {xmlDocPtr | null} xmlDocPtr
+                        * @param doc_txt_ptr {string | Buffer | null} p.p.xmlChar
+                        * @param doc_txt_len {number} p.int
+                        * @param txt_encoding {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (out_doc: xmlDocPtr | null, doc_txt_ptr: string | null, doc_txt_len: number, txt_encoding: string | null): any
+                        (out_doc: xmlDocPtr | null, doc_txt_ptr: string | Buffer | null, doc_txt_len: number, txt_encoding: string | Buffer | null): any
                     }
                 
                     xmlDocFormatDump: {
                         /** 
-                        * @param f {undefined} - p.FILE
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param f {undefined} p.FILE
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param format {number} int
+                        * @returns {number} int
                         */
                         (f: undefined, cur: xmlDocPtr | null, format: number): number
                     }
                 
                     xmlDocGetRootElement: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDoc): xmlNodePtr
+                        (doc: xmlDocPtr | null): xmlNodePtr
                     }
                 
                     xmlDocSetRootElement: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param root {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param root {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (doc: xmlDocPtr | null, root: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlDumpAttributeDecl: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param attr {xmlAttributePtr | null} - xmlAttributePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param attr {xmlAttributePtr | null} xmlAttributePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, attr: xmlAttributePtr | null): any
                     }
                 
                     xmlDumpAttributeTable: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param table {xmlAttributeTablePtr | null} - xmlAttributeTablePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param table {xmlAttributeTablePtr | null} xmlAttributeTablePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, table: xmlAttributeTablePtr | null): any
                     }
                 
                     xmlDumpElementDecl: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param elem {xmlElementPtr | null} - xmlElementPtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param elem {xmlElementPtr | null} xmlElementPtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, elem: xmlElementPtr | null): any
                     }
                 
                     xmlDumpElementTable: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param table {xmlElementTablePtr | null} - xmlElementTablePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param table {xmlElementTablePtr | null} xmlElementTablePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, table: xmlElementTablePtr | null): any
                     }
                 
                     xmlDumpEntitiesTable: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param table {xmlEntitiesTablePtr | null} - xmlEntitiesTablePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param table {xmlEntitiesTablePtr | null} xmlEntitiesTablePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, table: xmlEntitiesTablePtr | null): any
                     }
                 
                     xmlDumpEntityDecl: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param ent {xmlEntityPtr | null} - xmlEntityPtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param ent {xmlEntityPtr | null} xmlEntityPtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, ent: xmlEntityPtr | null): any
                     }
                 
                     xmlDumpNotationDecl: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param nota {xmlNotationPtr | null} - xmlNotationPtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param nota {xmlNotationPtr | null} xmlNotationPtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, nota: xmlNotationPtr | null): any
                     }
                 
                     xmlDumpNotationTable: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param table {xmlNotationTablePtr | null} - xmlNotationTablePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param table {xmlNotationTablePtr | null} xmlNotationTablePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, table: xmlNotationTablePtr | null): any
                     }
                 
                     xmlElemDump: {
                         /** 
-                        * @param f {undefined} - p.FILE
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {any - void}
+                        * @param f {undefined} p.FILE
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
                         */
                         (f: undefined, doc: xmlDocPtr | null, cur: xmlNodePtr | null): any
                     }
                 
                     xmlEncodeEntities: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param input {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param input {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (doc: xmlDocPtr | null, input: string | null): string
+                        (doc: xmlDocPtr | null, input: string | Buffer | null): string
                     }
                 
                     xmlEncodeEntitiesReentrant: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param input {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param input {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDocPtr | null, input: string | null): string
+                        (doc: xmlDocPtr | null, input: string | Buffer | null): string
                     }
                 
                     xmlEncodeSpecialChars: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param input {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param input {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDoc, input: string | null): string
+                        (doc: xmlDocPtr | null, input: string | Buffer | null): string
                     }
                 
                     xmlExpCtxtNbCons: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlExpCtxtPtr | null): number
                     }
                 
                     xmlExpCtxtNbNodes: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlExpCtxtPtr | null): number
                     }
                 
                     xmlExpDump: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {any - void}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {any} void
                         */
                         (buf: xmlBufferPtr | null, expr: xmlExpNodePtr | null): any
                     }
                 
                     xmlExpExpDerive: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param sub {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param sub {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
                         (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, sub: xmlExpNodePtr | null): xmlExpNodePtr
                     }
                 
                     xmlExpFree: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null): any
                     }
                 
                     xmlExpFreeCtxt: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlExpCtxtPtr | null): any
                     }
                 
                     xmlExpGetLanguage: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param langList {string | null} - p.p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param langList {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, langList: string | null, len: number): number
+                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, langList: string | Buffer | null, len: number): number
                     }
                 
                     xmlExpGetStart: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param tokList {string | null} - p.p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param tokList {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, tokList: string | null, len: number): number
+                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, tokList: string | Buffer | null, len: number): number
                     }
                 
                     xmlExpIsNillable: {
                         /** 
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {number - int}
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {number} int
                         */
                         (expr: xmlExpNodePtr | null): number
                     }
                 
                     xmlExpMaxToken: {
                         /** 
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {number - int}
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {number} int
                         */
                         (expr: xmlExpNodePtr | null): number
                     }
                 
                     xmlExpNewAtom: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
-                        (ctxt: xmlExpCtxtPtr | null, name: string | null, len: number): xmlExpNodePtr
+                        (ctxt: xmlExpCtxtPtr | null, name: string | Buffer | null, len: number): xmlExpNodePtr
                     }
                 
                     xmlExpNewCtxt: {
                         /** 
-                        * @param maxNodes {number} - int
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {xmlExpCtxtPtr - xmlExpCtxtPtr}
+                        * @param maxNodes {number} int
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {xmlExpCtxtPtr} xmlExpCtxtPtr
                         */
                         (maxNodes: number, dict: xmlDictPtr | null): xmlExpCtxtPtr
                     }
                 
                     xmlExpNewOr: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param left {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param right {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param left {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param right {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
                         (ctxt: xmlExpCtxtPtr | null, left: xmlExpNodePtr | null, right: xmlExpNodePtr | null): xmlExpNodePtr
                     }
                 
                     xmlExpNewRange: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param subset {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param min {number} - int
-                        * @param max {number} - int
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param subset {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param min {number} int
+                        * @param max {number} int
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
                         (ctxt: xmlExpCtxtPtr | null, subset: xmlExpNodePtr | null, min: number, max: number): xmlExpNodePtr
                     }
                 
                     xmlExpNewSeq: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param left {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param right {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param left {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param right {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
                         (ctxt: xmlExpCtxtPtr | null, left: xmlExpNodePtr | null, right: xmlExpNodePtr | null): xmlExpNodePtr
                     }
                 
                     xmlExpParse: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {string | null} - p.q(const).char
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {string | Buffer | null} p.q(const).char
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
-                        (ctxt: xmlExpCtxtPtr | null, expr: string | null): xmlExpNodePtr
+                        (ctxt: xmlExpCtxtPtr | null, expr: string | Buffer | null): xmlExpNodePtr
                     }
                 
                     xmlExpRef: {
                         /** 
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {any - void}
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {any} void
                         */
                         (expr: xmlExpNodePtr | null): any
                     }
                 
                     xmlExpStringDerive: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlExpNodePtr - xmlExpNodePtr}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlExpNodePtr} xmlExpNodePtr
                         */
-                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, str: string | null, len: number): xmlExpNodePtr
+                        (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, str: string | Buffer | null, len: number): xmlExpNodePtr
                     }
                 
                     xmlExpSubsume: {
                         /** 
-                        * @param ctxt {xmlExpCtxtPtr | null} - xmlExpCtxtPtr
-                        * @param expr {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @param sub {xmlExpNodePtr | null} - xmlExpNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlExpCtxtPtr | null} xmlExpCtxtPtr
+                        * @param expr {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @param sub {xmlExpNodePtr | null} xmlExpNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlExpCtxtPtr | null, expr: xmlExpNodePtr | null, sub: xmlExpNodePtr | null): number
                     }
                 
                     xmlFileClose: {
                         /** 
-                        * @param context {any} - p.void
-                        * @returns {number - int}
+                        * @param context {any} p.void
+                        * @returns {number} int
                         */
                         (context: any): number
                     }
                 
                     xmlFileMatch: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (filename: string | null): number
+                        (filename: string | Buffer | null): number
                     }
                 
                     xmlFileOpen: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (filename: string | null): any
+                        (filename: string | Buffer | null): any
                     }
                 
                     xmlFileRead: {
                         /** 
-                        * @param context {any} - p.void
-                        * @param buffer {string | null} - p.char
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param context {any} p.void
+                        * @param buffer {string | Buffer | null} p.char
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (context: any, buffer: string | null, len: number): number
+                        (context: any, buffer: string | Buffer | null, len: number): number
                     }
                 
                     xmlFindCharEncodingHandler: {
                         /** 
-                        * @param name {string | null} - p.q(const).char
-                        * @returns {xmlCharEncodingHandlerPtr - xmlCharEncodingHandlerPtr}
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @returns {xmlCharEncodingHandlerPtr} xmlCharEncodingHandlerPtr
                         */
-                        (name: string | null): xmlCharEncodingHandlerPtr
+                        (name: string | Buffer | null): xmlCharEncodingHandlerPtr
                     }
                 
                     xmlFirstElementChild: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (parent: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlFreeAttributeTable: {
                         /** 
-                        * @param table {xmlAttributeTablePtr | null} - xmlAttributeTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlAttributeTablePtr | null} xmlAttributeTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlAttributeTablePtr | null): any
                     }
                 
                     xmlFreeAutomata: {
                         /** 
-                        * @param am {xmlAutomataPtr | null} - xmlAutomataPtr
-                        * @returns {any - void}
+                        * @param am {xmlAutomataPtr | null} xmlAutomataPtr
+                        * @returns {any} void
                         */
                         (am: xmlAutomataPtr | null): any
                     }
                 
                     xmlFreeCatalog: {
                         /** 
-                        * @param catal {xmlCatalogPtr | null} - xmlCatalogPtr
-                        * @returns {any - void}
+                        * @param catal {xmlCatalogPtr | null} xmlCatalogPtr
+                        * @returns {any} void
                         */
                         (catal: xmlCatalogPtr | null): any
                     }
                 
                     xmlFreeDoc: {
                         /** 
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {any - void}
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @returns {any} void
                         */
                         (cur: xmlDocPtr | null): any
                     }
                 
                     xmlFreeDocElementContent: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {any - void}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {any} void
                         */
                         (doc: xmlDocPtr | null, cur: xmlElementContentPtr | null): any
                     }
                 
                     xmlFreeDtd: {
                         /** 
-                        * @param cur {xmlDtdPtr | null} - xmlDtdPtr
-                        * @returns {any - void}
+                        * @param cur {xmlDtdPtr | null} xmlDtdPtr
+                        * @returns {any} void
                         */
                         (cur: xmlDtdPtr | null): any
                     }
                 
                     xmlFreeElementContent: {
                         /** 
-                        * @param cur {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {any - void}
+                        * @param cur {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {any} void
                         */
                         (cur: xmlElementContentPtr | null): any
                     }
                 
                     xmlFreeElementTable: {
                         /** 
-                        * @param table {xmlElementTablePtr | null} - xmlElementTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlElementTablePtr | null} xmlElementTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlElementTablePtr | null): any
                     }
                 
                     xmlFreeEntitiesTable: {
                         /** 
-                        * @param table {xmlEntitiesTablePtr | null} - xmlEntitiesTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlEntitiesTablePtr | null} xmlEntitiesTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlEntitiesTablePtr | null): any
                     }
                 
                     xmlFreeEnumeration: {
                         /** 
-                        * @param cur {xmlEnumerationPtr | null} - xmlEnumerationPtr
-                        * @returns {any - void}
+                        * @param cur {xmlEnumerationPtr | null} xmlEnumerationPtr
+                        * @returns {any} void
                         */
                         (cur: xmlEnumerationPtr | null): any
                     }
                 
                     xmlFreeIDTable: {
                         /** 
-                        * @param table {xmlIDTablePtr | null} - xmlIDTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlIDTablePtr | null} xmlIDTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlIDTablePtr | null): any
                     }
                 
                     xmlFreeInputStream: {
                         /** 
-                        * @param input {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {any - void}
+                        * @param input {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {any} void
                         */
                         (input: xmlParserInputPtr | null): any
                     }
                 
                     xmlFreeMutex: {
                         /** 
-                        * @param tok {xmlMutexPtr | null} - xmlMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlMutexPtr | null} xmlMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlMutexPtr | null): any
                     }
                 
                     xmlFreeNode: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
                         */
                         (cur: xmlNodePtr | null): any
                     }
                 
                     xmlFreeNodeList: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
                         */
                         (cur: xmlNodePtr | null): any
                     }
                 
                     xmlFreeNotationTable: {
                         /** 
-                        * @param table {xmlNotationTablePtr | null} - xmlNotationTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlNotationTablePtr | null} xmlNotationTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlNotationTablePtr | null): any
                     }
                 
                     xmlFreeNs: {
                         /** 
-                        * @param cur {xmlNsPtr | null} - xmlNsPtr
-                        * @returns {any - void}
+                        * @param cur {xmlNsPtr | null} xmlNsPtr
+                        * @returns {any} void
                         */
                         (cur: xmlNsPtr | null): any
                     }
                 
                     xmlFreeNsList: {
                         /** 
-                        * @param cur {xmlNsPtr | null} - xmlNsPtr
-                        * @returns {any - void}
+                        * @param cur {xmlNsPtr | null} xmlNsPtr
+                        * @returns {any} void
                         */
                         (cur: xmlNsPtr | null): any
                     }
                 
                     xmlFreeParserCtxt: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlFreeParserInputBuffer: {
                         /** 
-                        * @param in {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @returns {any - void}
+                        * @param in {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @returns {any} void
                         */
                         (inArg: xmlParserInputBufferPtr | null): any
                     }
                 
                     xmlFreePattern: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {any - void}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {any} void
                         */
                         (comp: xmlPatternPtr | null): any
                     }
                 
                     xmlFreePatternList: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {any - void}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {any} void
                         */
                         (comp: xmlPatternPtr | null): any
                     }
                 
                     xmlFreeProp: {
                         /** 
-                        * @param cur {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {any - void}
+                        * @param cur {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {any} void
                         */
                         (cur: xmlAttrPtr | null): any
                     }
                 
                     xmlFreePropList: {
                         /** 
-                        * @param cur {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {any - void}
+                        * @param cur {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {any} void
                         */
                         (cur: xmlAttrPtr | null): any
                     }
                 
                     xmlFreeRMutex: {
                         /** 
-                        * @param tok {xmlRMutexPtr | null} - xmlRMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlRMutexPtr | null} xmlRMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlRMutexPtr | null): any
                     }
                 
                     xmlFreeRefTable: {
                         /** 
-                        * @param table {xmlRefTablePtr | null} - xmlRefTablePtr
-                        * @returns {any - void}
+                        * @param table {xmlRefTablePtr | null} xmlRefTablePtr
+                        * @returns {any} void
                         */
                         (table: xmlRefTablePtr | null): any
                     }
                 
                     xmlFreeStreamCtxt: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @returns {any - void}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @returns {any} void
                         */
                         (stream: xmlStreamCtxtPtr | null): any
                     }
                 
                     xmlFreeURI: {
                         /** 
-                        * @param uri {xmlURIPtr | null} - xmlURIPtr
-                        * @returns {any - void}
+                        * @param uri {xmlURIPtr | null} xmlURIPtr
+                        * @returns {any} void
                         */
                         (uri: xmlURIPtr | null): any
                     }
                 
                     xmlFreeValidCtxt: {
                         /** 
-                        * @param arg0 {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @returns {any - void}
+                        * @param arg0 {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @returns {any} void
                         */
                         (arg0: xmlValidCtxtPtr | null): any
                     }
                 
                     xmlGcMemGet: {
                         /** 
-                        * @param freeFunc {xmlFreeFunc} - p.xmlFreeFunc
-                        * @param mallocFunc {xmlMallocFunc} - p.xmlMallocFunc
-                        * @param mallocAtomicFunc {xmlMallocFunc} - p.xmlMallocFunc
-                        * @param reallocFunc {xmlReallocFunc} - p.xmlReallocFunc
-                        * @param strdupFunc {xmlStrdupFunc} - p.xmlStrdupFunc
-                        * @returns {number - int}
+                        * @param freeFunc {xmlFreeFunc} p.xmlFreeFunc
+                        * @param mallocFunc {xmlMallocFunc} p.xmlMallocFunc
+                        * @param mallocAtomicFunc {xmlMallocFunc} p.xmlMallocFunc
+                        * @param reallocFunc {xmlReallocFunc} p.xmlReallocFunc
+                        * @param strdupFunc {xmlStrdupFunc} p.xmlStrdupFunc
+                        * @returns {number} int
                         */
                         (freeFunc: xmlFreeFunc, mallocFunc: xmlMallocFunc, mallocAtomicFunc: xmlMallocFunc, reallocFunc: xmlReallocFunc, strdupFunc: xmlStrdupFunc): number
                     }
                 
                     xmlGcMemSetup: {
                         /** 
-                        * @param freeFunc {xmlFreeFunc} - xmlFreeFunc
-                        * @param mallocFunc {xmlMallocFunc} - xmlMallocFunc
-                        * @param mallocAtomicFunc {xmlMallocFunc} - xmlMallocFunc
-                        * @param reallocFunc {xmlReallocFunc} - xmlReallocFunc
-                        * @param strdupFunc {xmlStrdupFunc} - xmlStrdupFunc
-                        * @returns {number - int}
+                        * @param freeFunc {xmlFreeFunc} xmlFreeFunc
+                        * @param mallocFunc {xmlMallocFunc} xmlMallocFunc
+                        * @param mallocAtomicFunc {xmlMallocFunc} xmlMallocFunc
+                        * @param reallocFunc {xmlReallocFunc} xmlReallocFunc
+                        * @param strdupFunc {xmlStrdupFunc} xmlStrdupFunc
+                        * @returns {number} int
                         */
                         (freeFunc: xmlFreeFunc, mallocFunc: xmlMallocFunc, mallocAtomicFunc: xmlMallocFunc, reallocFunc: xmlReallocFunc, strdupFunc: xmlStrdupFunc): number
                     }
                 
                     xmlGetBufferAllocationScheme: {
                         /** 
-                        * @returns {xmlBufferAllocationScheme - xmlBufferAllocationScheme}
+                        * @returns {xmlBufferAllocationScheme} xmlBufferAllocationScheme
                         */
                         (): xmlBufferAllocationScheme
                     }
                 
                     xmlGetCharEncodingHandler: {
                         /** 
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlCharEncodingHandlerPtr - xmlCharEncodingHandlerPtr}
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlCharEncodingHandlerPtr} xmlCharEncodingHandlerPtr
                         */
                         (enc: xmlCharEncoding): xmlCharEncodingHandlerPtr
                     }
                 
                     xmlGetCharEncodingName: {
                         /** 
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {string - q(const).char}
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {string} q(const).char
                         */
                         (enc: xmlCharEncoding): string
                     }
                 
                     xmlGetCompressMode: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlGetDocCompressMode: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @returns {number} int
                         */
-                        (doc: xmlDoc): number
+                        (doc: xmlDocPtr | null): number
                     }
                 
                     xmlGetDocEntity: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDoc, name: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlGetDtdAttrDesc: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param elem {string | null} - p.q(const).xmlChar
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttributePtr - xmlAttributePtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param elem {string | Buffer | null} p.q(const).xmlChar
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttributePtr} xmlAttributePtr
                         */
-                        (dtd: xmlDtdPtr | null, elem: string | null, name: string | null): xmlAttributePtr
+                        (dtd: xmlDtdPtr | null, elem: string | Buffer | null, name: string | Buffer | null): xmlAttributePtr
                     }
                 
                     xmlGetDtdElementDesc: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlElementPtr - xmlElementPtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlElementPtr} xmlElementPtr
                         */
-                        (dtd: xmlDtdPtr | null, name: string | null): xmlElementPtr
+                        (dtd: xmlDtdPtr | null, name: string | Buffer | null): xmlElementPtr
                     }
                 
                     xmlGetDtdEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlGetDtdNotationDesc: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNotationPtr - xmlNotationPtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNotationPtr} xmlNotationPtr
                         */
-                        (dtd: xmlDtdPtr | null, name: string | null): xmlNotationPtr
+                        (dtd: xmlDtdPtr | null, name: string | Buffer | null): xmlNotationPtr
                     }
                 
                     xmlGetDtdQAttrDesc: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param elem {string | null} - p.q(const).xmlChar
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttributePtr - xmlAttributePtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param elem {string | Buffer | null} p.q(const).xmlChar
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttributePtr} xmlAttributePtr
                         */
-                        (dtd: xmlDtdPtr | null, elem: string | null, name: string | null, prefix: string | null): xmlAttributePtr
+                        (dtd: xmlDtdPtr | null, elem: string | Buffer | null, name: string | Buffer | null, prefix: string | Buffer | null): xmlAttributePtr
                     }
                 
                     xmlGetDtdQElementDesc: {
                         /** 
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {xmlElementPtr - xmlElementPtr}
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlElementPtr} xmlElementPtr
                         */
-                        (dtd: xmlDtdPtr | null, name: string | null, prefix: string | null): xmlElementPtr
+                        (dtd: xmlDtdPtr | null, name: string | Buffer | null, prefix: string | Buffer | null): xmlElementPtr
                     }
                 
                     xmlGetEncodingAlias: {
                         /** 
-                        * @param alias {string | null} - p.q(const).char
-                        * @returns {string - q(const).char}
+                        * @param alias {string | Buffer | null} p.q(const).char
+                        * @returns {string} q(const).char
                         */
-                        (alias: string | null): string
+                        (alias: string | Buffer | null): string
                     }
                 
                     xmlGetExternalEntityLoader: {
                         /** 
-                        * @returns {xmlExternalEntityLoader - xmlExternalEntityLoader}
+                        * @returns {xmlExternalEntityLoader} xmlExternalEntityLoader
                         */
                         (): xmlExternalEntityLoader
                     }
                 
                     xmlGetFeature: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param name {string | null} - p.q(const).char
-                        * @param result {any} - p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @param result {any} p.void
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, name: string | null, result: any): number
+                        (ctxt: xmlParserCtxtPtr | null, name: string | Buffer | null, result: any): number
                     }
                 
                     xmlGetFeaturesList: {
                         /** 
-                        * @param len {number} - p.int
-                        * @param result {string | null} - p.p.q(const).char
-                        * @returns {number - int}
+                        * @param len {number} p.int
+                        * @param result {string | Buffer | null} p.p.q(const).char
+                        * @returns {number} int
                         */
-                        (len: number, result: string | null): number
+                        (len: number, result: string | Buffer | null): number
                     }
                 
                     xmlGetGlobalState: {
                         /** 
-                        * @returns {xmlGlobalStatePtr - xmlGlobalStatePtr}
+                        * @returns {xmlGlobalStatePtr} xmlGlobalStatePtr
                         */
                         (): xmlGlobalStatePtr
                     }
                 
                     xmlGetID: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param ID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param ID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (doc: xmlDocPtr | null, ID: string | null): xmlAttrPtr
+                        (doc: xmlDocPtr | null, ID: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlGetIntSubset: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
-                        (doc: xmlDoc): xmlDtdPtr
+                        (doc: xmlDocPtr | null): xmlDtdPtr
                     }
                 
                     xmlGetLastChild: {
                         /** 
-                        * @param parent {xmlNode} - p.q(const).xmlNode
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (parent: xmlNode): xmlNodePtr
+                        (parent: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlGetLastError: {
                         /** 
-                        * @returns {xmlErrorPtr - xmlErrorPtr}
+                        * @returns {xmlErrorPtr} xmlErrorPtr
                         */
                         (): xmlErrorPtr
                     }
                 
                     xmlGetLineNo: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - long}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} long
                         */
-                        (node: xmlNode): number
+                        (node: xmlNodePtr | null): number
                     }
                 
                     xmlGetNoNsProp: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (node: xmlNode, name: string | null): string
+                        (node: xmlNodePtr | null, name: string | Buffer | null): string
                     }
                 
                     xmlGetNodePath: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @returns {string - xmlChar}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {string} xmlChar
                         */
-                        (node: xmlNode): string
+                        (node: xmlNodePtr | null): string
                     }
                 
                     xmlGetNsList: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {xmlNsPtr[]} xmlNsPtr
                         */
-                        (doc: xmlDoc, node: xmlNode): xmlNsPtr
+                        (doc: xmlDocPtr | null, node: xmlNodePtr | null): xmlNsPtr[]
                     }
                 
                     xmlGetNsProp: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param nameSpace {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param nameSpace {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (node: xmlNode, name: string | null, nameSpace: string | null): string
+                        (node: xmlNodePtr | null, name: string | Buffer | null, nameSpace: string | Buffer | null): string
                     }
                 
                     xmlGetParameterEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlGetPredefinedEntity: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (name: string | null): xmlEntityPtr
+                        (name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlGetProp: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (node: xmlNode, name: string | null): string
+                        (node: xmlNodePtr | null, name: string | Buffer | null): string
                     }
                 
                     xmlGetRefs: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param ID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlListPtr - xmlListPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param ID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlListPtr} xmlListPtr
                         */
-                        (doc: xmlDocPtr | null, ID: string | null): xmlListPtr
+                        (doc: xmlDocPtr | null, ID: string | Buffer | null): xmlListPtr
                     }
                 
                     xmlGetThreadId: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlGetUTF8Char: {
                         /** 
-                        * @param utf {string | null} - p.q(const).unsigned char
-                        * @param len {number} - p.int
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).unsigned char
+                        * @param len {number} p.int
+                        * @returns {number} int
                         */
-                        (utf: string | null, len: number): number
+                        (utf: string | Buffer | null, len: number): number
                     }
                 
                     xmlHandleEntity: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param entity {xmlEntityPtr | null} - xmlEntityPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param entity {xmlEntityPtr | null} xmlEntityPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null, entity: xmlEntityPtr | null): any
                     }
                 
                     xmlHasFeature: {
                         /** 
-                        * @param feature {xmlFeature} - xmlFeature
-                        * @returns {number - int}
+                        * @param feature {xmlFeature} xmlFeature
+                        * @returns {number} int
                         */
                         (feature: xmlFeature): number
                     }
                 
                     xmlHasNsProp: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param nameSpace {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param nameSpace {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNode, name: string | null, nameSpace: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, name: string | Buffer | null, nameSpace: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlHasProp: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNode, name: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, name: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlHashAddEntry: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, userdata: any): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, userdata: any): number
                     }
                 
                     xmlHashAddEntry2: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, userdata: any): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, userdata: any): number
                     }
                 
                     xmlHashAddEntry3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null, userdata: any): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null, userdata: any): number
                     }
                 
                     xmlHashCopy: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param f {xmlHashCopier} - xmlHashCopier
-                        * @returns {xmlHashTablePtr - xmlHashTablePtr}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param f {xmlHashCopier} xmlHashCopier
+                        * @returns {xmlHashTablePtr} xmlHashTablePtr
                         */
                         (table: xmlHashTablePtr | null, f: xmlHashCopier): xmlHashTablePtr
                     }
                 
                     xmlHashCreate: {
                         /** 
-                        * @param size {number} - int
-                        * @returns {xmlHashTablePtr - xmlHashTablePtr}
+                        * @param size {number} int
+                        * @returns {xmlHashTablePtr} xmlHashTablePtr
                         */
                         (size: number): xmlHashTablePtr
                     }
                 
                     xmlHashCreateDict: {
                         /** 
-                        * @param size {number} - int
-                        * @param dict {xmlDictPtr | null} - xmlDictPtr
-                        * @returns {xmlHashTablePtr - xmlHashTablePtr}
+                        * @param size {number} int
+                        * @param dict {xmlDictPtr | null} xmlDictPtr
+                        * @returns {xmlHashTablePtr} xmlHashTablePtr
                         */
                         (size: number, dict: xmlDictPtr | null): xmlHashTablePtr
                     }
                 
                     xmlHashDefaultDeallocator: {
                         /** 
-                        * @param entry {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param entry {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (entry: any, name: string | null): any
+                        (entry: any, name: string | Buffer | null): any
                     }
                 
                     xmlHashFree: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {any} void
                         */
                         (table: xmlHashTablePtr | null, f: xmlHashDeallocator): any
                     }
                 
                     xmlHashLookup: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null): any
                     }
                 
                     xmlHashLookup2: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null): any
                     }
                 
                     xmlHashLookup3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null): any
                     }
                 
                     xmlHashQLookup: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, prefix: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, prefix: string | Buffer | null): any
                     }
                 
                     xmlHashQLookup2: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param prefix2 {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, prefix: string | null, name2: string | null, prefix2: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, prefix: string | Buffer | null, name2: string | Buffer | null, prefix2: string | Buffer | null): any
                     }
                 
                     xmlHashQLookup3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param prefix2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param prefix3 {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix3 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, prefix: string | null, name2: string | null, prefix2: string | null, name3: string | null, prefix3: string | null): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, prefix: string | Buffer | null, name2: string | Buffer | null, prefix2: string | Buffer | null, name3: string | Buffer | null, prefix3: string | Buffer | null): any
                     }
                 
                     xmlHashRemoveEntry: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, f: xmlHashDeallocator): number
                     }
                 
                     xmlHashRemoveEntry2: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, f: xmlHashDeallocator): number
                     }
                 
                     xmlHashRemoveEntry3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null, f: xmlHashDeallocator): number
                     }
                 
                     xmlHashScan: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param f {xmlHashScanner} - xmlHashScanner
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param f {xmlHashScanner} xmlHashScanner
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
                         (table: xmlHashTablePtr | null, f: xmlHashScanner, data: any): any
                     }
                 
                     xmlHashScan3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param f {xmlHashScanner} - xmlHashScanner
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlHashScanner} xmlHashScanner
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null, f: xmlHashScanner, data: any): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null, f: xmlHashScanner, data: any): any
                     }
                 
                     xmlHashScanFull: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param f {xmlHashScannerFull} - xmlHashScannerFull
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param f {xmlHashScannerFull} xmlHashScannerFull
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
                         (table: xmlHashTablePtr | null, f: xmlHashScannerFull, data: any): any
                     }
                 
                     xmlHashScanFull3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param f {xmlHashScannerFull} - xmlHashScannerFull
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlHashScannerFull} xmlHashScannerFull
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null, f: xmlHashScannerFull, data: any): any
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null, f: xmlHashScannerFull, data: any): any
                     }
                 
                     xmlHashSize: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @returns {number} int
                         */
                         (table: xmlHashTablePtr | null): number
                     }
                 
                     xmlHashUpdateEntry: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, userdata: any, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, userdata: any, f: xmlHashDeallocator): number
                     }
                 
                     xmlHashUpdateEntry2: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, userdata: any, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, userdata: any, f: xmlHashDeallocator): number
                     }
                 
                     xmlHashUpdateEntry3: {
                         /** 
-                        * @param table {xmlHashTablePtr | null} - xmlHashTablePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param name2 {string | null} - p.q(const).xmlChar
-                        * @param name3 {string | null} - p.q(const).xmlChar
-                        * @param userdata {any} - p.void
-                        * @param f {xmlHashDeallocator} - xmlHashDeallocator
-                        * @returns {number - int}
+                        * @param table {xmlHashTablePtr | null} xmlHashTablePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param name2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param name3 {string | Buffer | null} p.q(const).xmlChar
+                        * @param userdata {any} p.void
+                        * @param f {xmlHashDeallocator} xmlHashDeallocator
+                        * @returns {number} int
                         */
-                        (table: xmlHashTablePtr | null, name: string | null, name2: string | null, name3: string | null, userdata: any, f: xmlHashDeallocator): number
+                        (table: xmlHashTablePtr | null, name: string | Buffer | null, name2: string | Buffer | null, name3: string | Buffer | null, userdata: any, f: xmlHashDeallocator): number
                     }
                 
                     xmlIOParseDTD: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param input {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param input {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
                         (sax: xmlSAXHandlerPtr | null, input: xmlParserInputBufferPtr | null, enc: xmlCharEncoding): xmlDtdPtr
                     }
                 
                     xmlInitCharEncodingHandlers: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlInitGlobals: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlInitMemory: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlInitNodeInfoSeq: {
                         /** 
-                        * @param seq {xmlParserNodeInfoSeqPtr | null} - xmlParserNodeInfoSeqPtr
-                        * @returns {any - void}
+                        * @param seq {xmlParserNodeInfoSeqPtr | null} xmlParserNodeInfoSeqPtr
+                        * @returns {any} void
                         */
                         (seq: xmlParserNodeInfoSeqPtr | null): any
                     }
                 
                     xmlInitParser: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlInitParserCtxt: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlInitThreads: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlInitializeCatalog: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlInitializeDict: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlInitializeGlobalState: {
                         /** 
-                        * @param gs {xmlGlobalStatePtr | null} - xmlGlobalStatePtr
-                        * @returns {any - void}
+                        * @param gs {xmlGlobalStatePtr | null} xmlGlobalStatePtr
+                        * @returns {any} void
                         */
                         (gs: xmlGlobalStatePtr | null): any
                     }
                 
                     xmlInitializePredefinedEntities: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlIsBaseChar: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsBlank: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsBlankNode: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} int
                         */
-                        (node: xmlNode): number
+                        (node: xmlNodePtr | null): number
                     }
                 
                     xmlIsChar: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsCombining: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsDigit: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsExtender: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsID: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {number} int
                         */
                         (doc: xmlDocPtr | null, elem: xmlNodePtr | null, attr: xmlAttrPtr | null): number
                     }
                 
                     xmlIsIdeographic: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsLetter: {
                         /** 
-                        * @param c {number} - int
-                        * @returns {number - int}
+                        * @param c {number} int
+                        * @returns {number} int
                         */
                         (c: number): number
                     }
                 
                     xmlIsMainThread: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlIsMixedElement: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (doc: xmlDocPtr | null, name: string | null): number
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): number
                     }
                 
                     xmlIsPubidChar: {
                         /** 
-                        * @param ch {number} - unsigned int
-                        * @returns {number - int}
+                        * @param ch {number} unsigned int
+                        * @returns {number} int
                         */
                         (ch: number): number
                     }
                 
                     xmlIsRef: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {number} int
                         */
                         (doc: xmlDocPtr | null, elem: xmlNodePtr | null, attr: xmlAttrPtr | null): number
                     }
                 
                     xmlIsXHTML: {
                         /** 
-                        * @param systemID {string | null} - p.q(const).xmlChar
-                        * @param publicID {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param systemID {string | Buffer | null} p.q(const).xmlChar
+                        * @param publicID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (systemID: string | null, publicID: string | null): number
+                        (systemID: string | Buffer | null, publicID: string | Buffer | null): number
                     }
                 
                     xmlKeepBlanksDefault: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param val {number} int
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlLastElementChild: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (parent: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlLineNumbersDefault: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param val {number} int
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlLinkGetData: {
                         /** 
-                        * @param lk {xmlLinkPtr | null} - xmlLinkPtr
-                        * @returns {any - void}
+                        * @param lk {xmlLinkPtr | null} xmlLinkPtr
+                        * @returns {any} void
                         */
                         (lk: xmlLinkPtr | null): any
                     }
                 
                     xmlListAppend: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListClear: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListCopy: {
                         /** 
-                        * @param cur {xmlListPtr | null} - xmlListPtr
-                        * @param old {xmlListPtr | null} - q(const).xmlListPtr
-                        * @returns {number - int}
+                        * @param cur {xmlListPtr | null} xmlListPtr
+                        * @param old {xmlListPtr | null} q(const).xmlListPtr
+                        * @returns {number} int
                         */
                         (cur: xmlListPtr | null, old: xmlListPtr | null): number
                     }
                 
                     xmlListCreate: {
                         /** 
-                        * @param deallocator {xmlListDeallocator} - xmlListDeallocator
-                        * @param compare {xmlListDataCompare} - xmlListDataCompare
-                        * @returns {xmlListPtr - xmlListPtr}
+                        * @param deallocator {xmlListDeallocator} xmlListDeallocator
+                        * @param compare {xmlListDataCompare} xmlListDataCompare
+                        * @returns {xmlListPtr} xmlListPtr
                         */
                         (deallocator: xmlListDeallocator, compare: xmlListDataCompare): xmlListPtr
                     }
                 
                     xmlListDelete: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListDup: {
                         /** 
-                        * @param old {xmlListPtr | null} - q(const).xmlListPtr
-                        * @returns {xmlListPtr - xmlListPtr}
+                        * @param old {xmlListPtr | null} q(const).xmlListPtr
+                        * @returns {xmlListPtr} xmlListPtr
                         */
                         (old: xmlListPtr | null): xmlListPtr
                     }
                 
                     xmlListEmpty: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null): number
                     }
                 
                     xmlListEnd: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {xmlLinkPtr - xmlLinkPtr}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {xmlLinkPtr} xmlLinkPtr
                         */
                         (l: xmlListPtr | null): xmlLinkPtr
                     }
                 
                     xmlListFront: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {xmlLinkPtr - xmlLinkPtr}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {xmlLinkPtr} xmlLinkPtr
                         */
                         (l: xmlListPtr | null): xmlLinkPtr
                     }
                 
                     xmlListInsert: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListMerge: {
                         /** 
-                        * @param l1 {xmlListPtr | null} - xmlListPtr
-                        * @param l2 {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l1 {xmlListPtr | null} xmlListPtr
+                        * @param l2 {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l1: xmlListPtr | null, l2: xmlListPtr | null): any
                     }
                 
                     xmlListPopBack: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListPopFront: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListPushBack: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListPushFront: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListRemoveAll: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListRemoveFirst: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListRemoveLast: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null, data: any): number
                     }
                 
                     xmlListReverse: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListReverseSearch: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null, data: any): any
                     }
                 
                     xmlListReverseWalk: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param walker {xmlListWalker} - xmlListWalker
-                        * @param user {any} - p.void
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param walker {xmlListWalker} xmlListWalker
+                        * @param user {any} p.void
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null, walker: xmlListWalker, user: any): any
                     }
                 
                     xmlListSearch: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param data {any} - p.void
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param data {any} p.void
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null, data: any): any
                     }
                 
                     xmlListSize: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {number - int}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {number} int
                         */
                         (l: xmlListPtr | null): number
                     }
                 
                     xmlListSort: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null): any
                     }
                 
                     xmlListWalk: {
                         /** 
-                        * @param l {xmlListPtr | null} - xmlListPtr
-                        * @param walker {xmlListWalker} - xmlListWalker
-                        * @param user {any} - p.void
-                        * @returns {any - void}
+                        * @param l {xmlListPtr | null} xmlListPtr
+                        * @param walker {xmlListWalker} xmlListWalker
+                        * @param user {any} p.void
+                        * @returns {any} void
                         */
                         (l: xmlListPtr | null, walker: xmlListWalker, user: any): any
                     }
                 
                     xmlLoadACatalog: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlCatalogPtr - xmlCatalogPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlCatalogPtr} xmlCatalogPtr
                         */
-                        (filename: string | null): xmlCatalogPtr
+                        (filename: string | Buffer | null): xmlCatalogPtr
                     }
                 
                     xmlLoadCatalog: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (filename: string | null): number
+                        (filename: string | Buffer | null): number
                     }
                 
                     xmlLoadCatalogs: {
                         /** 
-                        * @param paths {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param paths {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (paths: string | null): any
+                        (paths: string | Buffer | null): any
                     }
                 
                     xmlLoadExternalEntity: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @param ID {string | null} - p.q(const).char
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param ID {string | Buffer | null} p.q(const).char
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (URL: string | null, ID: string | null, ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
+                        (URL: string | Buffer | null, ID: string | Buffer | null, ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
                     }
                 
                     xmlLoadSGMLSuperCatalog: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlCatalogPtr - xmlCatalogPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlCatalogPtr} xmlCatalogPtr
                         */
-                        (filename: string | null): xmlCatalogPtr
+                        (filename: string | Buffer | null): xmlCatalogPtr
                     }
                 
                     xmlLockLibrary: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlMallocAtomicLoc: {
                         /** 
-                        * @param size {number} - size_t
-                        * @param file {string | null} - p.q(const).char
-                        * @param line {number} - int
-                        * @returns {any - void}
+                        * @param size {number} size_t
+                        * @param file {string | Buffer | null} p.q(const).char
+                        * @param line {number} int
+                        * @returns {any} void
                         */
-                        (size: number, file: string | null, line: number): any
+                        (size: number, file: string | Buffer | null, line: number): any
                     }
                 
                     xmlMallocLoc: {
                         /** 
-                        * @param size {number} - size_t
-                        * @param file {string | null} - p.q(const).char
-                        * @param line {number} - int
-                        * @returns {any - void}
+                        * @param size {number} size_t
+                        * @param file {string | Buffer | null} p.q(const).char
+                        * @param line {number} int
+                        * @returns {any} void
                         */
-                        (size: number, file: string | null, line: number): any
+                        (size: number, file: string | Buffer | null, line: number): any
                     }
                 
                     xmlMemBlocks: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlMemDisplay: {
                         /** 
-                        * @param fp {undefined} - p.FILE
-                        * @returns {any - void}
+                        * @param fp {undefined} p.FILE
+                        * @returns {any} void
                         */
                         (fp: undefined): any
                     }
                 
                     xmlMemDisplayLast: {
                         /** 
-                        * @param fp {undefined} - p.FILE
-                        * @param nbBytes {number} - long
-                        * @returns {any - void}
+                        * @param fp {undefined} p.FILE
+                        * @param nbBytes {number} long
+                        * @returns {any} void
                         */
                         (fp: undefined, nbBytes: number): any
                     }
                 
                     xmlMemFree: {
                         /** 
-                        * @param ptr {any} - p.void
-                        * @returns {any - void}
+                        * @param ptr {any} p.void
+                        * @returns {any} void
                         */
                         (ptr: any): any
                     }
                 
                     xmlMemGet: {
                         /** 
-                        * @param freeFunc {xmlFreeFunc} - p.xmlFreeFunc
-                        * @param mallocFunc {xmlMallocFunc} - p.xmlMallocFunc
-                        * @param reallocFunc {xmlReallocFunc} - p.xmlReallocFunc
-                        * @param strdupFunc {xmlStrdupFunc} - p.xmlStrdupFunc
-                        * @returns {number - int}
+                        * @param freeFunc {xmlFreeFunc} p.xmlFreeFunc
+                        * @param mallocFunc {xmlMallocFunc} p.xmlMallocFunc
+                        * @param reallocFunc {xmlReallocFunc} p.xmlReallocFunc
+                        * @param strdupFunc {xmlStrdupFunc} p.xmlStrdupFunc
+                        * @returns {number} int
                         */
                         (freeFunc: xmlFreeFunc, mallocFunc: xmlMallocFunc, reallocFunc: xmlReallocFunc, strdupFunc: xmlStrdupFunc): number
                     }
                 
                     xmlMemMalloc: {
                         /** 
-                        * @param size {number} - size_t
-                        * @returns {any - void}
+                        * @param size {number} size_t
+                        * @returns {any} void
                         */
                         (size: number): any
                     }
                 
                     xmlMemRealloc: {
                         /** 
-                        * @param ptr {any} - p.void
-                        * @param size {number} - size_t
-                        * @returns {any - void}
+                        * @param ptr {any} p.void
+                        * @param size {number} size_t
+                        * @returns {any} void
                         */
                         (ptr: any, size: number): any
                     }
                 
                     xmlMemSetup: {
                         /** 
-                        * @param freeFunc {xmlFreeFunc} - xmlFreeFunc
-                        * @param mallocFunc {xmlMallocFunc} - xmlMallocFunc
-                        * @param reallocFunc {xmlReallocFunc} - xmlReallocFunc
-                        * @param strdupFunc {xmlStrdupFunc} - xmlStrdupFunc
-                        * @returns {number - int}
+                        * @param freeFunc {xmlFreeFunc} xmlFreeFunc
+                        * @param mallocFunc {xmlMallocFunc} xmlMallocFunc
+                        * @param reallocFunc {xmlReallocFunc} xmlReallocFunc
+                        * @param strdupFunc {xmlStrdupFunc} xmlStrdupFunc
+                        * @returns {number} int
                         */
                         (freeFunc: xmlFreeFunc, mallocFunc: xmlMallocFunc, reallocFunc: xmlReallocFunc, strdupFunc: xmlStrdupFunc): number
                     }
                 
                     xmlMemShow: {
                         /** 
-                        * @param fp {undefined} - p.FILE
-                        * @param nr {number} - int
-                        * @returns {any - void}
+                        * @param fp {undefined} p.FILE
+                        * @param nr {number} int
+                        * @returns {any} void
                         */
                         (fp: undefined, nr: number): any
                     }
                 
                     xmlMemStrdupLoc: {
                         /** 
-                        * @param str {string | null} - p.q(const).char
-                        * @param file {string | null} - p.q(const).char
-                        * @param line {number} - int
-                        * @returns {string - char}
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @param file {string | Buffer | null} p.q(const).char
+                        * @param line {number} int
+                        * @returns {string} char
                         */
-                        (str: string | null, file: string | null, line: number): string
+                        (str: string | Buffer | null, file: string | Buffer | null, line: number): string
                     }
                 
                     xmlMemUsed: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlMemoryDump: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlMemoryStrdup: {
                         /** 
-                        * @param str {string | null} - p.q(const).char
-                        * @returns {string - char}
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @returns {string} char
                         */
-                        (str: string | null): string
+                        (str: string | Buffer | null): string
                     }
                 
                     xmlModuleClose: {
                         /** 
-                        * @param module {xmlModulePtr | null} - xmlModulePtr
-                        * @returns {number - int}
+                        * @param module {xmlModulePtr | null} xmlModulePtr
+                        * @returns {number} int
                         */
                         (module: xmlModulePtr | null): number
                     }
                 
                     xmlModuleFree: {
                         /** 
-                        * @param module {xmlModulePtr | null} - xmlModulePtr
-                        * @returns {number - int}
+                        * @param module {xmlModulePtr | null} xmlModulePtr
+                        * @returns {number} int
                         */
                         (module: xmlModulePtr | null): number
                     }
                 
                     xmlModuleOpen: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlModulePtr - xmlModulePtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlModulePtr} xmlModulePtr
                         */
-                        (filename: string | null, options: number): xmlModulePtr
+                        (filename: string | Buffer | null, options: number): xmlModulePtr
                     }
                 
                     xmlModuleSymbol: {
                         /** 
-                        * @param module {xmlModulePtr | null} - xmlModulePtr
-                        * @param name {string | null} - p.q(const).char
-                        * @param result {any} - p.p.void
-                        * @returns {number - int}
+                        * @param module {xmlModulePtr | null} xmlModulePtr
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @param result {any} p.p.void
+                        * @returns {number} int
                         */
-                        (module: xmlModulePtr | null, name: string | null, result: any): number
+                        (module: xmlModulePtr | null, name: string | Buffer | null, result: any): number
                     }
                 
                     xmlMutexLock: {
                         /** 
-                        * @param tok {xmlMutexPtr | null} - xmlMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlMutexPtr | null} xmlMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlMutexPtr | null): any
                     }
                 
                     xmlMutexUnlock: {
                         /** 
-                        * @param tok {xmlMutexPtr | null} - xmlMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlMutexPtr | null} xmlMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlMutexPtr | null): any
                     }
                 
                     xmlNamespaceParseNCName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlNamespaceParseNSDef: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlNamespaceParseQName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param prefix {string | null} - p.p.xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param prefix {string | Buffer | null} p.p.xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, prefix: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, prefix: string | Buffer | null): string
                     }
                 
                     xmlNewAutomata: {
                         /** 
-                        * @returns {xmlAutomataPtr - xmlAutomataPtr}
+                        * @returns {xmlAutomataPtr} xmlAutomataPtr
                         */
                         (): xmlAutomataPtr
                     }
                 
                     xmlNewCDataBlock: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, content: string | null, len: number): xmlNodePtr
+                        (doc: xmlDocPtr | null, content: string | Buffer | null, len: number): xmlNodePtr
                     }
                 
                     xmlNewCatalog: {
                         /** 
-                        * @param sgml {number} - int
-                        * @returns {xmlCatalogPtr - xmlCatalogPtr}
+                        * @param sgml {number} int
+                        * @returns {xmlCatalogPtr} xmlCatalogPtr
                         */
                         (sgml: number): xmlCatalogPtr
                     }
                 
                     xmlNewCharEncodingHandler: {
                         /** 
-                        * @param name {string | null} - p.q(const).char
-                        * @param input {xmlCharEncodingInputFunc} - xmlCharEncodingInputFunc
-                        * @param output {xmlCharEncodingOutputFunc} - xmlCharEncodingOutputFunc
-                        * @returns {xmlCharEncodingHandlerPtr - xmlCharEncodingHandlerPtr}
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @param input {xmlCharEncodingInputFunc} xmlCharEncodingInputFunc
+                        * @param output {xmlCharEncodingOutputFunc} xmlCharEncodingOutputFunc
+                        * @returns {xmlCharEncodingHandlerPtr} xmlCharEncodingHandlerPtr
                         */
-                        (name: string | null, input: xmlCharEncodingInputFunc, output: xmlCharEncodingOutputFunc): xmlCharEncodingHandlerPtr
+                        (name: string | Buffer | null, input: xmlCharEncodingInputFunc, output: xmlCharEncodingOutputFunc): xmlCharEncodingHandlerPtr
                     }
                 
                     xmlNewCharRef: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewChild: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (parent: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (parent: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewComment: {
                         /** 
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (content: string | null): xmlNodePtr
+                        (content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDoc: {
                         /** 
-                        * @param version {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param version {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (version: string | null): xmlDocPtr
+                        (version: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlNewDocComment: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocElementContent: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {xmlElementContentType} - xmlElementContentType
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {xmlElementContentType} xmlElementContentType
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, type: xmlElementContentType): xmlElementContentPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, type: xmlElementContentType): xmlElementContentPtr
                     }
                 
                     xmlNewDocFragment: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (doc: xmlDocPtr | null): xmlNodePtr
                     }
                 
                     xmlNewDocNode: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocNodeEatName: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocPI: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocProp: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlNewDocRawNode: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocText: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDoc, content: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewDocTextLen: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDocPtr | null, content: string | null, len: number): xmlNodePtr
+                        (doc: xmlDocPtr | null, content: string | Buffer | null, len: number): xmlNodePtr
                     }
                 
                     xmlNewDtd: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, ExternalID: string | null, SystemID: string | null): xmlDtdPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): xmlDtdPtr
                     }
                 
                     xmlNewElementContent: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {xmlElementContentType} - xmlElementContentType
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {xmlElementContentType} xmlElementContentType
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
-                        (name: string | null, type: xmlElementContentType): xmlElementContentPtr
+                        (name: string | Buffer | null, type: xmlElementContentType): xmlElementContentPtr
                     }
                 
                     xmlNewEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (doc: xmlDocPtr | null, name: string | null, type: number, ExternalID: string | null, SystemID: string | null, content: string | null): xmlEntityPtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null, type: number, ExternalID: string | Buffer | null, SystemID: string | Buffer | null, content: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlNewEntityInputStream: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param entity {xmlEntityPtr | null} - xmlEntityPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param entity {xmlEntityPtr | null} xmlEntityPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null, entity: xmlEntityPtr | null): xmlParserInputPtr
                     }
                 
                     xmlNewGlobalNs: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param href {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param href {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
-                        (doc: xmlDocPtr | null, href: string | null, prefix: string | null): xmlNsPtr
+                        (doc: xmlDocPtr | null, href: string | Buffer | null, prefix: string | Buffer | null): xmlNsPtr
                     }
                 
                     xmlNewIOInputStream: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param input {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param input {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null, input: xmlParserInputBufferPtr | null, enc: xmlCharEncoding): xmlParserInputPtr
                     }
                 
                     xmlNewInputFromFile: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, filename: string | null): xmlParserInputPtr
+                        (ctxt: xmlParserCtxtPtr | null, filename: string | Buffer | null): xmlParserInputPtr
                     }
                 
                     xmlNewInputStream: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
                     }
                 
                     xmlNewMutex: {
                         /** 
-                        * @returns {xmlMutexPtr - xmlMutexPtr}
+                        * @returns {xmlMutexPtr} xmlMutexPtr
                         */
                         (): xmlMutexPtr
                     }
                 
                     xmlNewNode: {
                         /** 
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (ns: xmlNsPtr | null, name: string | null): xmlNodePtr
+                        (ns: xmlNsPtr | null, name: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewNodeEatName: {
                         /** 
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (ns: xmlNsPtr | null, name: string | null): xmlNodePtr
+                        (ns: xmlNsPtr | null, name: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewNs: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param href {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param href {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
-                        (node: xmlNodePtr | null, href: string | null, prefix: string | null): xmlNsPtr
+                        (node: xmlNodePtr | null, href: string | Buffer | null, prefix: string | Buffer | null): xmlNsPtr
                     }
                 
                     xmlNewNsProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlNewNsPropEatName: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlNewPI: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (name: string | null, content: string | null): xmlNodePtr
+                        (name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewParserCtxt: {
                         /** 
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
                         (): xmlParserCtxtPtr
                     }
                 
                     xmlNewProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNodePtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlNewRMutex: {
                         /** 
-                        * @returns {xmlRMutexPtr - xmlRMutexPtr}
+                        * @returns {xmlRMutexPtr} xmlRMutexPtr
                         */
                         (): xmlRMutexPtr
                     }
                 
                     xmlNewReference: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDoc, name: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, name: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewStringInputStream: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param buffer {string | null} - p.q(const).xmlChar
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param buffer {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (ctxt: xmlParserCtxtPtr | null, buffer: string | null): xmlParserInputPtr
+                        (ctxt: xmlParserCtxtPtr | null, buffer: string | Buffer | null): xmlParserInputPtr
                     }
                 
                     xmlNewText: {
                         /** 
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (content: string | null): xmlNodePtr
+                        (content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewTextChild: {
                         /** 
-                        * @param parent {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param parent {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (parent: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null, content: string | null): xmlNodePtr
+                        (parent: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, content: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlNewTextLen: {
                         /** 
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (content: string | null, len: number): xmlNodePtr
+                        (content: string | Buffer | null, len: number): xmlNodePtr
                     }
                 
                     xmlNewValidCtxt: {
                         /** 
-                        * @returns {xmlValidCtxtPtr - xmlValidCtxtPtr}
+                        * @returns {xmlValidCtxtPtr} xmlValidCtxtPtr
                         */
                         (): xmlValidCtxtPtr
                     }
                 
                     xmlNextChar: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlNextElementSibling: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (node: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlNoNetExternalEntityLoader: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @param ID {string | null} - p.q(const).char
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param ID {string | Buffer | null} p.q(const).char
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (URL: string | null, ID: string | null, ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
+                        (URL: string | Buffer | null, ID: string | Buffer | null, ctxt: xmlParserCtxtPtr | null): xmlParserInputPtr
                     }
                 
                     xmlNodeAddContent: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, content: string | null): any
+                        (cur: xmlNodePtr | null, content: string | Buffer | null): any
                     }
                 
                     xmlNodeAddContentLen: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, content: string | null, len: number): any
+                        (cur: xmlNodePtr | null, content: string | Buffer | null, len: number): any
                     }
                 
                     xmlNodeBufGetContent: {
                         /** 
-                        * @param buffer {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - int}
+                        * @param buffer {xmlBufferPtr | null} xmlBufferPtr
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} int
                         */
-                        (buffer: xmlBufferPtr | null, cur: xmlNode): number
+                        (buffer: xmlBufferPtr | null, cur: xmlNodePtr | null): number
                     }
                 
                     xmlNodeDump: {
                         /** 
-                        * @param buf {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param level {number} - int
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param buf {xmlBufferPtr | null} xmlBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param level {number} int
+                        * @param format {number} int
+                        * @returns {number} int
                         */
                         (buf: xmlBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, level: number, format: number): number
                     }
                 
                     xmlNodeDumpOutput: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param level {number} - int
-                        * @param format {number} - int
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param level {number} int
+                        * @param format {number} int
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, level: number, format: number, encoding: string | null): any
+                        (buf: xmlOutputBufferPtr | null, doc: xmlDocPtr | null, cur: xmlNodePtr | null, level: number, format: number, encoding: string | Buffer | null): any
                     }
                 
                     xmlNodeGetBase: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDoc, cur: xmlNode): string
+                        (doc: xmlDocPtr | null, cur: xmlNodePtr | null): string
                     }
                 
                     xmlNodeGetContent: {
                         /** 
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {string - xmlChar}
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {string} xmlChar
                         */
-                        (cur: xmlNode): string
+                        (cur: xmlNodePtr | null): string
                     }
                 
                     xmlNodeGetLang: {
                         /** 
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {string - xmlChar}
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {string} xmlChar
                         */
-                        (cur: xmlNode): string
+                        (cur: xmlNodePtr | null): string
                     }
                 
                     xmlNodeGetSpacePreserve: {
                         /** 
-                        * @param cur {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - int}
+                        * @param cur {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} int
                         */
-                        (cur: xmlNode): number
+                        (cur: xmlNodePtr | null): number
                     }
                 
                     xmlNodeIsText: {
                         /** 
-                        * @param node {xmlNode} - p.q(const).xmlNode
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} p.q(const).xmlNode
+                        * @returns {number} int
                         */
-                        (node: xmlNode): number
+                        (node: xmlNodePtr | null): number
                     }
                 
                     xmlNodeListGetRawString: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param list {xmlNode} - p.q(const).xmlNode
-                        * @param inLine {number} - int
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param list {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param inLine {number} int
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDoc, list: xmlNode, inLine: number): string
+                        (doc: xmlDocPtr | null, list: xmlNodePtr | null, inLine: number): string
                     }
                 
                     xmlNodeListGetString: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param list {xmlNode} - p.q(const).xmlNode
-                        * @param inLine {number} - int
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param list {xmlNodePtr | null} p.q(const).xmlNode
+                        * @param inLine {number} int
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDocPtr | null, list: xmlNode, inLine: number): string
+                        (doc: xmlDocPtr | null, list: xmlNodePtr | null, inLine: number): string
                     }
                 
                     xmlNodeSetBase: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param uri {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param uri {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, uri: string | null): any
+                        (cur: xmlNodePtr | null, uri: string | Buffer | null): any
                     }
                 
                     xmlNodeSetContent: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, content: string | null): any
+                        (cur: xmlNodePtr | null, content: string | Buffer | null): any
                     }
                 
                     xmlNodeSetContentLen: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, content: string | null, len: number): any
+                        (cur: xmlNodePtr | null, content: string | Buffer | null, len: number): any
                     }
                 
                     xmlNodeSetLang: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param lang {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param lang {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, lang: string | null): any
+                        (cur: xmlNodePtr | null, lang: string | Buffer | null): any
                     }
                 
                     xmlNodeSetName: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (cur: xmlNodePtr | null, name: string | null): any
+                        (cur: xmlNodePtr | null, name: string | Buffer | null): any
                     }
                 
                     xmlNodeSetSpacePreserve: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @param val {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @param val {number} int
+                        * @returns {any} void
                         */
                         (cur: xmlNodePtr | null, val: number): any
                     }
                 
                     xmlNormalizeURIPath: {
                         /** 
-                        * @param path {string | null} - p.char
-                        * @returns {number - int}
+                        * @param path {string | Buffer | null} p.char
+                        * @returns {number} int
                         */
-                        (path: string | null): number
+                        (path: string | Buffer | null): number
                     }
                 
                     xmlNormalizeWindowsPath: {
                         /** 
-                        * @param path {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param path {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (path: string | null): string
+                        (path: string | Buffer | null): string
                     }
                 
                     xmlOutputBufferClose: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @returns {number - int}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @returns {number} int
                         */
                         (out: xmlOutputBufferPtr | null): number
                     }
                 
                     xmlOutputBufferCreateBuffer: {
                         /** 
-                        * @param buffer {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param buffer {xmlBufferPtr | null} xmlBufferPtr
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
                         (buffer: xmlBufferPtr | null, encoder: xmlCharEncodingHandlerPtr | null): xmlOutputBufferPtr
                     }
                 
                     xmlOutputBufferCreateFd: {
                         /** 
-                        * @param fd {number} - int
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param fd {number} int
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
                         (fd: number, encoder: xmlCharEncodingHandlerPtr | null): xmlOutputBufferPtr
                     }
                 
                     xmlOutputBufferCreateFile: {
                         /** 
-                        * @param file {undefined} - p.FILE
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param file {undefined} p.FILE
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
                         (file: undefined, encoder: xmlCharEncodingHandlerPtr | null): xmlOutputBufferPtr
                     }
                 
                     xmlOutputBufferCreateFilename: {
                         /** 
-                        * @param URI {string | null} - p.q(const).char
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @param compression {number} - int
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param URI {string | Buffer | null} p.q(const).char
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @param compression {number} int
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
-                        (URI: string | null, encoder: xmlCharEncodingHandlerPtr | null, compression: number): xmlOutputBufferPtr
+                        (URI: string | Buffer | null, encoder: xmlCharEncodingHandlerPtr | null, compression: number): xmlOutputBufferPtr
                     }
                 
                     xmlOutputBufferCreateFilenameDefault: {
                         /** 
-                        * @param func {xmlOutputBufferCreateFilenameFunc} - xmlOutputBufferCreateFilenameFunc
-                        * @returns {xmlOutputBufferCreateFilenameFunc - xmlOutputBufferCreateFilenameFunc}
+                        * @param func {xmlOutputBufferCreateFilenameFunc} xmlOutputBufferCreateFilenameFunc
+                        * @returns {xmlOutputBufferCreateFilenameFunc} xmlOutputBufferCreateFilenameFunc
                         */
                         (func: xmlOutputBufferCreateFilenameFunc): xmlOutputBufferCreateFilenameFunc
                     }
                 
                     xmlOutputBufferCreateIO: {
                         /** 
-                        * @param iowrite {xmlOutputWriteCallback} - xmlOutputWriteCallback
-                        * @param ioclose {xmlOutputCloseCallback} - xmlOutputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param encoder {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {xmlOutputBufferPtr - xmlOutputBufferPtr}
+                        * @param iowrite {xmlOutputWriteCallback} xmlOutputWriteCallback
+                        * @param ioclose {xmlOutputCloseCallback} xmlOutputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param encoder {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {xmlOutputBufferPtr} xmlOutputBufferPtr
                         */
                         (iowrite: xmlOutputWriteCallback, ioclose: xmlOutputCloseCallback, ioctx: any, encoder: xmlCharEncodingHandlerPtr | null): xmlOutputBufferPtr
                     }
                 
                     xmlOutputBufferFlush: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @returns {number - int}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @returns {number} int
                         */
                         (out: xmlOutputBufferPtr | null): number
                     }
                 
                     xmlOutputBufferGetContent: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (out: xmlOutputBufferPtr | null): string
                     }
                 
                     xmlOutputBufferGetSize: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @returns {number - size_t}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @returns {number} size_t
                         */
                         (out: xmlOutputBufferPtr | null): number
                     }
                 
                     xmlOutputBufferWrite: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param len {number} - int
-                        * @param buf {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param len {number} int
+                        * @param buf {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (out: xmlOutputBufferPtr | null, len: number, buf: string | null): number
+                        (out: xmlOutputBufferPtr | null, len: number, buf: string | Buffer | null): number
                     }
                 
                     xmlOutputBufferWriteEscape: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param escaping {xmlCharEncodingOutputFunc} - xmlCharEncodingOutputFunc
-                        * @returns {number - int}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param escaping {xmlCharEncodingOutputFunc} xmlCharEncodingOutputFunc
+                        * @returns {number} int
                         */
-                        (out: xmlOutputBufferPtr | null, str: string | null, escaping: xmlCharEncodingOutputFunc): number
+                        (out: xmlOutputBufferPtr | null, str: string | Buffer | null, escaping: xmlCharEncodingOutputFunc): number
                     }
                 
                     xmlOutputBufferWriteString: {
                         /** 
-                        * @param out {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param str {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param out {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (out: xmlOutputBufferPtr | null, str: string | null): number
+                        (out: xmlOutputBufferPtr | null, str: string | Buffer | null): number
                     }
                 
                     xmlParseAttValue: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseAttribute: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param value {string | null} - p.p.xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param value {string | Buffer | null} p.p.xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, value: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, value: string | Buffer | null): string
                     }
                 
                     xmlParseAttributeListDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseAttributeType: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param tree {xmlEnumerationPtr | null} - p.xmlEnumerationPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param tree {xmlEnumerationPtr | null} p.xmlEnumerationPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, tree: xmlEnumerationPtr | null): number
                     }
                 
                     xmlParseBalancedChunkMemory: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param depth {number} - int
-                        * @param string {string | null} - p.q(const).xmlChar
-                        * @param lst {xmlNodePtr | null} - p.xmlNodePtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param depth {number} int
+                        * @param string {string | Buffer | null} p.q(const).xmlChar
+                        * @param lst {xmlNodePtr | null} p.xmlNodePtr
+                        * @returns {number} int
                         */
-                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, string: string | null, lst: xmlNodePtr | null): number
+                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, string: string | Buffer | null, lst: xmlNodePtr | null): number
                     }
                 
                     xmlParseBalancedChunkMemoryRecover: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param depth {number} - int
-                        * @param string {string | null} - p.q(const).xmlChar
-                        * @param lst {xmlNodePtr | null} - p.xmlNodePtr
-                        * @param recover {number} - int
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param depth {number} int
+                        * @param string {string | Buffer | null} p.q(const).xmlChar
+                        * @param lst {xmlNodePtr | null} p.xmlNodePtr
+                        * @param recover {number} int
+                        * @returns {number} int
                         */
-                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, string: string | null, lst: xmlNodePtr | null, recover: number): number
+                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, string: string | Buffer | null, lst: xmlNodePtr | null, recover: number): number
                     }
                 
                     xmlParseCDSect: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseCatalogFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (filename: string | null): xmlDocPtr
+                        (filename: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlParseCharData: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param cdata {number} - int
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param cdata {number} int
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null, cdata: number): any
                     }
                 
                     xmlParseCharEncoding: {
                         /** 
-                        * @param name {string | null} - p.q(const).char
-                        * @returns {xmlCharEncoding - xmlCharEncoding}
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @returns {xmlCharEncoding} xmlCharEncoding
                         */
-                        (name: string | null): xmlCharEncoding
+                        (name: string | Buffer | null): xmlCharEncoding
                     }
                 
                     xmlParseCharRef: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlParseChunk: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param chunk {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param terminate {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param chunk {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param terminate {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, chunk: string | null, size: number, terminate: number): number
+                        (ctxt: xmlParserCtxtPtr | null, chunk: string | Buffer | null, size: number, terminate: number): number
                     }
                 
                     xmlParseComment: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseContent: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseCtxtExternalEntity: {
                         /** 
-                        * @param ctx {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param URL {string | null} - p.q(const).xmlChar
-                        * @param ID {string | null} - p.q(const).xmlChar
-                        * @param lst {xmlNodePtr | null} - p.xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctx {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param URL {string | Buffer | null} p.q(const).xmlChar
+                        * @param ID {string | Buffer | null} p.q(const).xmlChar
+                        * @param lst {xmlNodePtr | null} p.xmlNodePtr
+                        * @returns {number} int
                         */
-                        (ctx: xmlParserCtxtPtr | null, URL: string | null, ID: string | null, lst: xmlNodePtr | null): number
+                        (ctx: xmlParserCtxtPtr | null, URL: string | Buffer | null, ID: string | Buffer | null, lst: xmlNodePtr | null): number
                     }
                 
                     xmlParseDTD: {
                         /** 
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
-                        (ExternalID: string | null, SystemID: string | null): xmlDtdPtr
+                        (ExternalID: string | Buffer | null, SystemID: string | Buffer | null): xmlDtdPtr
                     }
                 
                     xmlParseDefaultDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param value {string | null} - p.p.xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param value {string | Buffer | null} p.p.xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, value: string | null): number
+                        (ctxt: xmlParserCtxtPtr | null, value: string | Buffer | null): number
                     }
                 
                     xmlParseDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (cur: string | null): xmlDocPtr
+                        (cur: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlParseDocTypeDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseDocument: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlParseElement: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseElementChildrenContentDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param inputchk {number} - int
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param inputchk {number} int
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null, inputchk: number): xmlElementContentPtr
                     }
                 
                     xmlParseElementContentDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param result {xmlElementContentPtr | null} - p.xmlElementContentPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param result {xmlElementContentPtr | null} p.xmlElementContentPtr
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, name: string | null, result: xmlElementContentPtr | null): number
+                        (ctxt: xmlParserCtxtPtr | null, name: string | Buffer | null, result: xmlElementContentPtr | null): number
                     }
                 
                     xmlParseElementDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlParseElementMixedContentDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param inputchk {number} - int
-                        * @returns {xmlElementContentPtr - xmlElementContentPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param inputchk {number} int
+                        * @returns {xmlElementContentPtr} xmlElementContentPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null, inputchk: number): xmlElementContentPtr
                     }
                 
                     xmlParseEncName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseEncodingDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseEndTag: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseEntity: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (filename: string | null): xmlDocPtr
+                        (filename: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlParseEntityDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseEntityRef: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlEntityPtr
                     }
                 
                     xmlParseEntityValue: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param orig {string | null} - p.p.xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param orig {string | Buffer | null} p.p.xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, orig: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, orig: string | Buffer | null): string
                     }
                 
                     xmlParseEnumeratedType: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param tree {xmlEnumerationPtr | null} - p.xmlEnumerationPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param tree {xmlEnumerationPtr | null} p.xmlEnumerationPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, tree: xmlEnumerationPtr | null): number
                     }
                 
                     xmlParseEnumerationType: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlEnumerationPtr - xmlEnumerationPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlEnumerationPtr} xmlEnumerationPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlEnumerationPtr
                     }
                 
                     xmlParseExtParsedEnt: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlParseExternalEntity: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param depth {number} - int
-                        * @param URL {string | null} - p.q(const).xmlChar
-                        * @param ID {string | null} - p.q(const).xmlChar
-                        * @param lst {xmlNodePtr | null} - p.xmlNodePtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param depth {number} int
+                        * @param URL {string | Buffer | null} p.q(const).xmlChar
+                        * @param ID {string | Buffer | null} p.q(const).xmlChar
+                        * @param lst {xmlNodePtr | null} p.xmlNodePtr
+                        * @returns {number} int
                         */
-                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, URL: string | null, ID: string | null, lst: xmlNodePtr | null): number
+                        (doc: xmlDocPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any, depth: number, URL: string | Buffer | null, ID: string | Buffer | null, lst: xmlNodePtr | null): number
                     }
                 
                     xmlParseExternalID: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param publicID {string | null} - p.p.xmlChar
-                        * @param strict {number} - int
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param publicID {string | Buffer | null} p.p.xmlChar
+                        * @param strict {number} int
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, publicID: string | null, strict: number): string
+                        (ctxt: xmlParserCtxtPtr | null, publicID: string | Buffer | null, strict: number): string
                     }
                 
                     xmlParseExternalSubset: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctxt: xmlParserCtxtPtr | null, ExternalID: string | null, SystemID: string | null): any
+                        (ctxt: xmlParserCtxtPtr | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): any
                     }
                 
                     xmlParseFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (filename: string | null): xmlDocPtr
+                        (filename: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlParseInNodeContext: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param data {string | null} - p.q(const).char
-                        * @param datalen {number} - int
-                        * @param options {number} - int
-                        * @param lst {xmlNodePtr | null} - p.xmlNodePtr
-                        * @returns {xmlParserErrors - xmlParserErrors}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param data {string | Buffer | null} p.q(const).char
+                        * @param datalen {number} int
+                        * @param options {number} int
+                        * @param lst {xmlNodePtr | null} p.xmlNodePtr
+                        * @returns {xmlParserErrors} xmlParserErrors
                         */
-                        (node: xmlNodePtr | null, data: string | null, datalen: number, options: number, lst: xmlNodePtr | null): xmlParserErrors
+                        (node: xmlNodePtr | null, data: string | Buffer | null, datalen: number, options: number, lst: xmlNodePtr | null): xmlParserErrors
                     }
                 
                     xmlParseMarkupDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseMemory: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (buffer: string | null, size: number): xmlDocPtr
+                        (buffer: string | Buffer | null, size: number): xmlDocPtr
                     }
                 
                     xmlParseMisc: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseNamespace: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseNmtoken: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseNotationDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseNotationType: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {xmlEnumerationPtr - xmlEnumerationPtr}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {xmlEnumerationPtr} xmlEnumerationPtr
                         */
                         (ctxt: xmlParserCtxtPtr | null): xmlEnumerationPtr
                     }
                 
                     xmlParsePEReference: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParsePI: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParsePITarget: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParsePubidLiteral: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseQuotedString: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseReference: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseSDDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlParseStartTag: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseSystemLiteral: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseTextDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParseURI: {
                         /** 
-                        * @param str {string | null} - p.q(const).char
-                        * @returns {xmlURIPtr - xmlURIPtr}
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @returns {xmlURIPtr} xmlURIPtr
                         */
-                        (str: string | null): xmlURIPtr
+                        (str: string | Buffer | null): xmlURIPtr
                     }
                 
                     xmlParseURIRaw: {
                         /** 
-                        * @param str {string | null} - p.q(const).char
-                        * @param raw {number} - int
-                        * @returns {xmlURIPtr - xmlURIPtr}
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @param raw {number} int
+                        * @returns {xmlURIPtr} xmlURIPtr
                         */
-                        (str: string | null, raw: number): xmlURIPtr
+                        (str: string | Buffer | null, raw: number): xmlURIPtr
                     }
                 
                     xmlParseURIReference: {
                         /** 
-                        * @param uri {xmlURIPtr | null} - xmlURIPtr
-                        * @param str {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param uri {xmlURIPtr | null} xmlURIPtr
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (uri: xmlURIPtr | null, str: string | null): number
+                        (uri: xmlURIPtr | null, str: string | Buffer | null): number
                     }
                 
                     xmlParseVersionInfo: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseVersionNum: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlParseXMLDecl: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParserAddNodeInfo: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param info {xmlParserNodeInfoPtr | null} - q(const).xmlParserNodeInfoPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param info {xmlParserNodeInfoPtr | null} q(const).xmlParserNodeInfoPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null, info: xmlParserNodeInfoPtr | null): any
                     }
                 
                     xmlParserError: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param msg {string | null} - p.q(const).char
-                        * @param arg2 {undefined} - v(...)
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param msg {string | Buffer | null} p.q(const).char
+                        * @param arg2 {undefined} v(...)
+                        * @returns {any} void
                         */
-                        (ctx: any, msg: string | null, arg2: undefined): any
+                        (ctx: any, msg: string | Buffer | null, arg2: undefined): any
                     }
                 
                     xmlParserFindNodeInfo: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - q(const).xmlParserCtxtPtr
-                        * @param node {xmlNodePtr | null} - q(const).xmlNodePtr
-                        * @returns {xmlParserNodeInfo - q(const).xmlParserNodeInfo}
+                        * @param ctxt {xmlParserCtxtPtr | null} q(const).xmlParserCtxtPtr
+                        * @param node {xmlNodePtr | null} q(const).xmlNodePtr
+                        * @returns {xmlParserNodeInfo} q(const).xmlParserNodeInfo
                         */
                         (ctxt: xmlParserCtxtPtr | null, node: xmlNodePtr | null): xmlParserNodeInfo
                     }
                 
                     xmlParserFindNodeInfoIndex: {
                         /** 
-                        * @param seq {xmlParserNodeInfoSeqPtr | null} - q(const).xmlParserNodeInfoSeqPtr
-                        * @param node {xmlNodePtr | null} - q(const).xmlNodePtr
-                        * @returns {number - unsigned long}
+                        * @param seq {xmlParserNodeInfoSeqPtr | null} q(const).xmlParserNodeInfoSeqPtr
+                        * @param node {xmlNodePtr | null} q(const).xmlNodePtr
+                        * @returns {number} unsigned long
                         */
                         (seq: xmlParserNodeInfoSeqPtr | null, node: xmlNodePtr | null): number
                     }
                 
                     xmlParserGetDirectory: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {string - char}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {string} char
                         */
-                        (filename: string | null): string
+                        (filename: string | Buffer | null): string
                     }
                 
                     xmlParserHandlePEReference: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParserHandleReference: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlParserInputBufferCreateFd: {
                         /** 
-                        * @param fd {number} - int
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param fd {number} int
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
                         (fd: number, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferCreateFile: {
                         /** 
-                        * @param file {undefined} - p.FILE
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param file {undefined} p.FILE
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
                         (file: undefined, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferCreateFilename: {
                         /** 
-                        * @param URI {string | null} - p.q(const).char
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param URI {string | Buffer | null} p.q(const).char
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
-                        (URI: string | null, enc: xmlCharEncoding): xmlParserInputBufferPtr
+                        (URI: string | Buffer | null, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferCreateFilenameDefault: {
                         /** 
-                        * @param func {xmlParserInputBufferCreateFilenameFunc} - xmlParserInputBufferCreateFilenameFunc
-                        * @returns {xmlParserInputBufferCreateFilenameFunc - xmlParserInputBufferCreateFilenameFunc}
+                        * @param func {xmlParserInputBufferCreateFilenameFunc} xmlParserInputBufferCreateFilenameFunc
+                        * @returns {xmlParserInputBufferCreateFilenameFunc} xmlParserInputBufferCreateFilenameFunc
                         */
                         (func: xmlParserInputBufferCreateFilenameFunc): xmlParserInputBufferCreateFilenameFunc
                     }
                 
                     xmlParserInputBufferCreateIO: {
                         /** 
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
                         (ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferCreateMem: {
                         /** 
-                        * @param mem {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param mem {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
-                        (mem: string | null, size: number, enc: xmlCharEncoding): xmlParserInputBufferPtr
+                        (mem: string | Buffer | null, size: number, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferCreateStatic: {
                         /** 
-                        * @param mem {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {xmlParserInputBufferPtr - xmlParserInputBufferPtr}
+                        * @param mem {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {xmlParserInputBufferPtr} xmlParserInputBufferPtr
                         */
-                        (mem: string | null, size: number, enc: xmlCharEncoding): xmlParserInputBufferPtr
+                        (mem: string | Buffer | null, size: number, enc: xmlCharEncoding): xmlParserInputBufferPtr
                     }
                 
                     xmlParserInputBufferGrow: {
                         /** 
-                        * @param in {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param in {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param len {number} int
+                        * @returns {number} int
                         */
                         (inArg: xmlParserInputBufferPtr | null, len: number): number
                     }
                 
                     xmlParserInputBufferPush: {
                         /** 
-                        * @param in {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param len {number} - int
-                        * @param buf {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param in {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param len {number} int
+                        * @param buf {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (inArg: xmlParserInputBufferPtr | null, len: number, buf: string | null): number
+                        (inArg: xmlParserInputBufferPtr | null, len: number, buf: string | Buffer | null): number
                     }
                 
                     xmlParserInputBufferRead: {
                         /** 
-                        * @param in {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param in {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param len {number} int
+                        * @returns {number} int
                         */
                         (inArg: xmlParserInputBufferPtr | null, len: number): number
                     }
                 
                     xmlParserInputGrow: {
                         /** 
-                        * @param in {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param in {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @param len {number} int
+                        * @returns {number} int
                         */
                         (inArg: xmlParserInputPtr | null, len: number): number
                     }
                 
                     xmlParserInputRead: {
                         /** 
-                        * @param in {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param in {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @param len {number} int
+                        * @returns {number} int
                         */
                         (inArg: xmlParserInputPtr | null, len: number): number
                     }
                 
                     xmlParserInputShrink: {
                         /** 
-                        * @param in {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {any - void}
+                        * @param in {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {any} void
                         */
                         (inArg: xmlParserInputPtr | null): any
                     }
                 
                     xmlParserPrintFileContext: {
                         /** 
-                        * @param input {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {any - void}
+                        * @param input {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {any} void
                         */
                         (input: xmlParserInputPtr | null): any
                     }
                 
                     xmlParserPrintFileInfo: {
                         /** 
-                        * @param input {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {any - void}
+                        * @param input {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {any} void
                         */
                         (input: xmlParserInputPtr | null): any
                     }
                 
                     xmlParserValidityError: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param msg {string | null} - p.q(const).char
-                        * @param arg2 {undefined} - v(...)
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param msg {string | Buffer | null} p.q(const).char
+                        * @param arg2 {undefined} v(...)
+                        * @returns {any} void
                         */
-                        (ctx: any, msg: string | null, arg2: undefined): any
+                        (ctx: any, msg: string | Buffer | null, arg2: undefined): any
                     }
                 
                     xmlParserValidityWarning: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param msg {string | null} - p.q(const).char
-                        * @param arg2 {undefined} - v(...)
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param msg {string | Buffer | null} p.q(const).char
+                        * @param arg2 {undefined} v(...)
+                        * @returns {any} void
                         */
-                        (ctx: any, msg: string | null, arg2: undefined): any
+                        (ctx: any, msg: string | Buffer | null, arg2: undefined): any
                     }
                 
                     xmlParserWarning: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param msg {string | null} - p.q(const).char
-                        * @param arg2 {undefined} - v(...)
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param msg {string | Buffer | null} p.q(const).char
+                        * @param arg2 {undefined} v(...)
+                        * @returns {any} void
                         */
-                        (ctx: any, msg: string | null, arg2: undefined): any
+                        (ctx: any, msg: string | Buffer | null, arg2: undefined): any
                     }
                 
                     xmlPathToURI: {
                         /** 
-                        * @param path {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param path {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (path: string | null): string
+                        (path: string | Buffer | null): string
                     }
                 
                     xmlPatternFromRoot: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {number - int}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {number} int
                         */
                         (comp: xmlPatternPtr | null): number
                     }
                 
                     xmlPatternGetStreamCtxt: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {xmlStreamCtxtPtr - xmlStreamCtxtPtr}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {xmlStreamCtxtPtr} xmlStreamCtxtPtr
                         */
                         (comp: xmlPatternPtr | null): xmlStreamCtxtPtr
                     }
                 
                     xmlPatternMatch: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (comp: xmlPatternPtr | null, node: xmlNodePtr | null): number
                     }
                 
                     xmlPatternMaxDepth: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {number - int}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {number} int
                         */
                         (comp: xmlPatternPtr | null): number
                     }
                 
                     xmlPatternMinDepth: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {number - int}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {number} int
                         */
                         (comp: xmlPatternPtr | null): number
                     }
                 
                     xmlPatternStreamable: {
                         /** 
-                        * @param comp {xmlPatternPtr | null} - xmlPatternPtr
-                        * @returns {number - int}
+                        * @param comp {xmlPatternPtr | null} xmlPatternPtr
+                        * @returns {number} int
                         */
                         (comp: xmlPatternPtr | null): number
                     }
                 
                     xmlPatterncompile: {
                         /** 
-                        * @param pattern {string | null} - p.q(const).xmlChar
-                        * @param dict {xmlDict} - p.xmlDict
-                        * @param flags {number} - int
-                        * @param namespaces {string | null} - p.p.q(const).xmlChar
-                        * @returns {xmlPatternPtr - xmlPatternPtr}
+                        * @param pattern {string | Buffer | null} p.q(const).xmlChar
+                        * @param dict {xmlDict} p.xmlDict
+                        * @param flags {number} int
+                        * @param namespaces {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {xmlPatternPtr} xmlPatternPtr
                         */
-                        (pattern: string | null, dict: xmlDict, flags: number, namespaces: string | null): xmlPatternPtr
+                        (pattern: string | Buffer | null, dict: xmlDict, flags: number, namespaces: string | Buffer | null): xmlPatternPtr
                     }
                 
                     xmlPedanticParserDefault: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param val {number} int
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlPopInput: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlPopInputCallbacks: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlPopOutputCallbacks: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlPreviousElementSibling: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (node: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlPrintURI: {
                         /** 
-                        * @param stream {undefined} - p.FILE
-                        * @param uri {xmlURIPtr | null} - xmlURIPtr
-                        * @returns {any - void}
+                        * @param stream {undefined} p.FILE
+                        * @param uri {xmlURIPtr | null} xmlURIPtr
+                        * @returns {any} void
                         */
                         (stream: undefined, uri: xmlURIPtr | null): any
                     }
                 
                     xmlPushInput: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param input {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param input {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, input: xmlParserInputPtr | null): number
                     }
                 
                     xmlRMutexLock: {
                         /** 
-                        * @param tok {xmlRMutexPtr | null} - xmlRMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlRMutexPtr | null} xmlRMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlRMutexPtr | null): any
                     }
                 
                     xmlRMutexUnlock: {
                         /** 
-                        * @param tok {xmlRMutexPtr | null} - xmlRMutexPtr
-                        * @returns {any - void}
+                        * @param tok {xmlRMutexPtr | null} xmlRMutexPtr
+                        * @returns {any} void
                         */
                         (tok: xmlRMutexPtr | null): any
                     }
                 
                     xmlReadDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (cur: string | null, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (cur: string | Buffer | null, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlReadFd: {
                         /** 
-                        * @param fd {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param fd {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (fd: number, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (fd: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlReadFile: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlReadIO: {
                         /** 
-                        * @param ioread {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param ioclose {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param ioread {xmlInputReadCallback} xmlInputReadCallback
+                        * @param ioclose {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (ioread: xmlInputReadCallback, ioclose: xmlInputCloseCallback, ioctx: any, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlReadMemory: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param URL {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (buffer: string | null, size: number, URL: string | null, encoding: string | null, options: number): xmlDocPtr
+                        (buffer: string | Buffer | null, size: number, URL: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlDocPtr
                     }
                 
                     xmlReallocLoc: {
                         /** 
-                        * @param ptr {any} - p.void
-                        * @param size {number} - size_t
-                        * @param file {string | null} - p.q(const).char
-                        * @param line {number} - int
-                        * @returns {any - void}
+                        * @param ptr {any} p.void
+                        * @param size {number} size_t
+                        * @param file {string | Buffer | null} p.q(const).char
+                        * @param line {number} int
+                        * @returns {any} void
                         */
-                        (ptr: any, size: number, file: string | null, line: number): any
+                        (ptr: any, size: number, file: string | Buffer | null, line: number): any
                     }
                 
                     xmlReconciliateNs: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param tree {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param tree {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (doc: xmlDocPtr | null, tree: xmlNodePtr | null): number
                     }
                 
                     xmlRecoverDoc: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (cur: string | null): xmlDocPtr
+                        (cur: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlRecoverFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (filename: string | null): xmlDocPtr
+                        (filename: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlRecoverMemory: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (buffer: string | null, size: number): xmlDocPtr
+                        (buffer: string | Buffer | null, size: number): xmlDocPtr
                     }
                 
                     xmlRegExecErrInfo: {
                         /** 
-                        * @param exec {xmlRegExecCtxtPtr | null} - xmlRegExecCtxtPtr
-                        * @param string {string | null} - p.p.q(const).xmlChar
-                        * @param nbval {number} - p.int
-                        * @param nbneg {number} - p.int
-                        * @param values {string | null} - p.p.xmlChar
-                        * @param terminal {number} - p.int
-                        * @returns {number - int}
+                        * @param exec {xmlRegExecCtxtPtr | null} xmlRegExecCtxtPtr
+                        * @param string {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param nbval {number} p.int
+                        * @param nbneg {number} p.int
+                        * @param values {string | Buffer | null} p.p.xmlChar
+                        * @param terminal {number} p.int
+                        * @returns {number} int
                         */
-                        (exec: xmlRegExecCtxtPtr | null, string: string | null, nbval: number, nbneg: number, values: string | null, terminal: number): number
+                        (exec: xmlRegExecCtxtPtr | null, string: string | Buffer | null, nbval: number, nbneg: number, values: string | Buffer | null, terminal: number): number
                     }
                 
                     xmlRegExecNextValues: {
                         /** 
-                        * @param exec {xmlRegExecCtxtPtr | null} - xmlRegExecCtxtPtr
-                        * @param nbval {number} - p.int
-                        * @param nbneg {number} - p.int
-                        * @param values {string | null} - p.p.xmlChar
-                        * @param terminal {number} - p.int
-                        * @returns {number - int}
+                        * @param exec {xmlRegExecCtxtPtr | null} xmlRegExecCtxtPtr
+                        * @param nbval {number} p.int
+                        * @param nbneg {number} p.int
+                        * @param values {string | Buffer | null} p.p.xmlChar
+                        * @param terminal {number} p.int
+                        * @returns {number} int
                         */
-                        (exec: xmlRegExecCtxtPtr | null, nbval: number, nbneg: number, values: string | null, terminal: number): number
+                        (exec: xmlRegExecCtxtPtr | null, nbval: number, nbneg: number, values: string | Buffer | null, terminal: number): number
                     }
                 
                     xmlRegExecPushString: {
                         /** 
-                        * @param exec {xmlRegExecCtxtPtr | null} - xmlRegExecCtxtPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param exec {xmlRegExecCtxtPtr | null} xmlRegExecCtxtPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
-                        (exec: xmlRegExecCtxtPtr | null, value: string | null, data: any): number
+                        (exec: xmlRegExecCtxtPtr | null, value: string | Buffer | null, data: any): number
                     }
                 
                     xmlRegExecPushString2: {
                         /** 
-                        * @param exec {xmlRegExecCtxtPtr | null} - xmlRegExecCtxtPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param value2 {string | null} - p.q(const).xmlChar
-                        * @param data {any} - p.void
-                        * @returns {number - int}
+                        * @param exec {xmlRegExecCtxtPtr | null} xmlRegExecCtxtPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param value2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {any} p.void
+                        * @returns {number} int
                         */
-                        (exec: xmlRegExecCtxtPtr | null, value: string | null, value2: string | null, data: any): number
+                        (exec: xmlRegExecCtxtPtr | null, value: string | Buffer | null, value2: string | Buffer | null, data: any): number
                     }
                 
                     xmlRegFreeExecCtxt: {
                         /** 
-                        * @param exec {xmlRegExecCtxtPtr | null} - xmlRegExecCtxtPtr
-                        * @returns {any - void}
+                        * @param exec {xmlRegExecCtxtPtr | null} xmlRegExecCtxtPtr
+                        * @returns {any} void
                         */
                         (exec: xmlRegExecCtxtPtr | null): any
                     }
                 
                     xmlRegFreeRegexp: {
                         /** 
-                        * @param regexp {xmlRegexpPtr | null} - xmlRegexpPtr
-                        * @returns {any - void}
+                        * @param regexp {xmlRegexpPtr | null} xmlRegexpPtr
+                        * @returns {any} void
                         */
                         (regexp: xmlRegexpPtr | null): any
                     }
                 
                     xmlRegNewExecCtxt: {
                         /** 
-                        * @param comp {xmlRegexpPtr | null} - xmlRegexpPtr
-                        * @param callback {xmlRegExecCallbacks} - xmlRegExecCallbacks
-                        * @param data {any} - p.void
-                        * @returns {xmlRegExecCtxtPtr - xmlRegExecCtxtPtr}
+                        * @param comp {xmlRegexpPtr | null} xmlRegexpPtr
+                        * @param callback {xmlRegExecCallbacks} xmlRegExecCallbacks
+                        * @param data {any} p.void
+                        * @returns {xmlRegExecCtxtPtr} xmlRegExecCtxtPtr
                         */
                         (comp: xmlRegexpPtr | null, callback: xmlRegExecCallbacks, data: any): xmlRegExecCtxtPtr
                     }
                 
                     xmlRegexpCompile: {
                         /** 
-                        * @param regexp {string | null} - p.q(const).xmlChar
-                        * @returns {xmlRegexpPtr - xmlRegexpPtr}
+                        * @param regexp {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlRegexpPtr} xmlRegexpPtr
                         */
-                        (regexp: string | null): xmlRegexpPtr
+                        (regexp: string | Buffer | null): xmlRegexpPtr
                     }
                 
                     xmlRegexpExec: {
                         /** 
-                        * @param comp {xmlRegexpPtr | null} - xmlRegexpPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param comp {xmlRegexpPtr | null} xmlRegexpPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (comp: xmlRegexpPtr | null, value: string | null): number
+                        (comp: xmlRegexpPtr | null, value: string | Buffer | null): number
                     }
                 
                     xmlRegexpIsDeterminist: {
                         /** 
-                        * @param comp {xmlRegexpPtr | null} - xmlRegexpPtr
-                        * @returns {number - int}
+                        * @param comp {xmlRegexpPtr | null} xmlRegexpPtr
+                        * @returns {number} int
                         */
                         (comp: xmlRegexpPtr | null): number
                     }
                 
                     xmlRegexpPrint: {
                         /** 
-                        * @param output {undefined} - p.FILE
-                        * @param regexp {xmlRegexpPtr | null} - xmlRegexpPtr
-                        * @returns {any - void}
+                        * @param output {undefined} p.FILE
+                        * @param regexp {xmlRegexpPtr | null} xmlRegexpPtr
+                        * @returns {any} void
                         */
                         (output: undefined, regexp: xmlRegexpPtr | null): any
                     }
                 
                     xmlRegisterCharEncodingHandler: {
                         /** 
-                        * @param handler {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {any - void}
+                        * @param handler {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {any} void
                         */
                         (handler: xmlCharEncodingHandlerPtr | null): any
                     }
                 
                     xmlRegisterDefaultInputCallbacks: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlRegisterDefaultOutputCallbacks: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlRegisterInputCallbacks: {
                         /** 
-                        * @param matchFunc {xmlInputMatchCallback} - xmlInputMatchCallback
-                        * @param openFunc {xmlInputOpenCallback} - xmlInputOpenCallback
-                        * @param readFunc {xmlInputReadCallback} - xmlInputReadCallback
-                        * @param closeFunc {xmlInputCloseCallback} - xmlInputCloseCallback
-                        * @returns {number - int}
+                        * @param matchFunc {xmlInputMatchCallback} xmlInputMatchCallback
+                        * @param openFunc {xmlInputOpenCallback} xmlInputOpenCallback
+                        * @param readFunc {xmlInputReadCallback} xmlInputReadCallback
+                        * @param closeFunc {xmlInputCloseCallback} xmlInputCloseCallback
+                        * @returns {number} int
                         */
                         (matchFunc: xmlInputMatchCallback, openFunc: xmlInputOpenCallback, readFunc: xmlInputReadCallback, closeFunc: xmlInputCloseCallback): number
                     }
                 
                     xmlRegisterNodeDefault: {
                         /** 
-                        * @param func {xmlRegisterNodeFunc} - xmlRegisterNodeFunc
-                        * @returns {xmlRegisterNodeFunc - xmlRegisterNodeFunc}
+                        * @param func {xmlRegisterNodeFunc} xmlRegisterNodeFunc
+                        * @returns {xmlRegisterNodeFunc} xmlRegisterNodeFunc
                         */
                         (func: xmlRegisterNodeFunc): xmlRegisterNodeFunc
                     }
                 
                     xmlRegisterOutputCallbacks: {
                         /** 
-                        * @param matchFunc {xmlOutputMatchCallback} - xmlOutputMatchCallback
-                        * @param openFunc {xmlOutputOpenCallback} - xmlOutputOpenCallback
-                        * @param writeFunc {xmlOutputWriteCallback} - xmlOutputWriteCallback
-                        * @param closeFunc {xmlOutputCloseCallback} - xmlOutputCloseCallback
-                        * @returns {number - int}
+                        * @param matchFunc {xmlOutputMatchCallback} xmlOutputMatchCallback
+                        * @param openFunc {xmlOutputOpenCallback} xmlOutputOpenCallback
+                        * @param writeFunc {xmlOutputWriteCallback} xmlOutputWriteCallback
+                        * @param closeFunc {xmlOutputCloseCallback} xmlOutputCloseCallback
+                        * @returns {number} int
                         */
                         (matchFunc: xmlOutputMatchCallback, openFunc: xmlOutputOpenCallback, writeFunc: xmlOutputWriteCallback, closeFunc: xmlOutputCloseCallback): number
                     }
                 
                     xmlRelaxNGCleanupTypes: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlRelaxNGDump: {
                         /** 
-                        * @param output {undefined} - p.FILE
-                        * @param schema {xmlRelaxNGPtr | null} - xmlRelaxNGPtr
-                        * @returns {any - void}
+                        * @param output {undefined} p.FILE
+                        * @param schema {xmlRelaxNGPtr | null} xmlRelaxNGPtr
+                        * @returns {any} void
                         */
                         (output: undefined, schema: xmlRelaxNGPtr | null): any
                     }
                 
                     xmlRelaxNGDumpTree: {
                         /** 
-                        * @param output {undefined} - p.FILE
-                        * @param schema {xmlRelaxNGPtr | null} - xmlRelaxNGPtr
-                        * @returns {any - void}
+                        * @param output {undefined} p.FILE
+                        * @param schema {xmlRelaxNGPtr | null} xmlRelaxNGPtr
+                        * @returns {any} void
                         */
                         (output: undefined, schema: xmlRelaxNGPtr | null): any
                     }
                 
                     xmlRelaxNGFree: {
                         /** 
-                        * @param schema {xmlRelaxNGPtr | null} - xmlRelaxNGPtr
-                        * @returns {any - void}
+                        * @param schema {xmlRelaxNGPtr | null} xmlRelaxNGPtr
+                        * @returns {any} void
                         */
                         (schema: xmlRelaxNGPtr | null): any
                     }
                 
                     xmlRelaxNGFreeParserCtxt: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null): any
                     }
                 
                     xmlRelaxNGFreeValidCtxt: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null): any
                     }
                 
                     xmlRelaxNGGetParserErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @param err {xmlRelaxNGValidityErrorFunc} - p.xmlRelaxNGValidityErrorFunc
-                        * @param warn {xmlRelaxNGValidityWarningFunc} - p.xmlRelaxNGValidityWarningFunc
-                        * @param ctx {any} - p.p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @param err {xmlRelaxNGValidityErrorFunc} p.xmlRelaxNGValidityErrorFunc
+                        * @param warn {xmlRelaxNGValidityWarningFunc} p.xmlRelaxNGValidityWarningFunc
+                        * @param ctx {any} p.p.void
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null, err: xmlRelaxNGValidityErrorFunc, warn: xmlRelaxNGValidityWarningFunc, ctx: any): number
                     }
                 
                     xmlRelaxNGGetValidErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param err {xmlRelaxNGValidityErrorFunc} - p.xmlRelaxNGValidityErrorFunc
-                        * @param warn {xmlRelaxNGValidityWarningFunc} - p.xmlRelaxNGValidityWarningFunc
-                        * @param ctx {any} - p.p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param err {xmlRelaxNGValidityErrorFunc} p.xmlRelaxNGValidityErrorFunc
+                        * @param warn {xmlRelaxNGValidityWarningFunc} p.xmlRelaxNGValidityWarningFunc
+                        * @param ctx {any} p.p.void
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, err: xmlRelaxNGValidityErrorFunc, warn: xmlRelaxNGValidityWarningFunc, ctx: any): number
                     }
                 
                     xmlRelaxNGInitTypes: {
                         /** 
-                        * @returns {number - int}
+                        * @returns {number} int
                         */
                         (): number
                     }
                 
                     xmlRelaxNGNewDocParserCtxt: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {xmlRelaxNGParserCtxtPtr - xmlRelaxNGParserCtxtPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {xmlRelaxNGParserCtxtPtr} xmlRelaxNGParserCtxtPtr
                         */
                         (doc: xmlDocPtr | null): xmlRelaxNGParserCtxtPtr
                     }
                 
                     xmlRelaxNGNewMemParserCtxt: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {xmlRelaxNGParserCtxtPtr - xmlRelaxNGParserCtxtPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {xmlRelaxNGParserCtxtPtr} xmlRelaxNGParserCtxtPtr
                         */
-                        (buffer: string | null, size: number): xmlRelaxNGParserCtxtPtr
+                        (buffer: string | Buffer | null, size: number): xmlRelaxNGParserCtxtPtr
                     }
                 
                     xmlRelaxNGNewParserCtxt: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @returns {xmlRelaxNGParserCtxtPtr - xmlRelaxNGParserCtxtPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @returns {xmlRelaxNGParserCtxtPtr} xmlRelaxNGParserCtxtPtr
                         */
-                        (URL: string | null): xmlRelaxNGParserCtxtPtr
+                        (URL: string | Buffer | null): xmlRelaxNGParserCtxtPtr
                     }
                 
                     xmlRelaxNGNewValidCtxt: {
                         /** 
-                        * @param schema {xmlRelaxNGPtr | null} - xmlRelaxNGPtr
-                        * @returns {xmlRelaxNGValidCtxtPtr - xmlRelaxNGValidCtxtPtr}
+                        * @param schema {xmlRelaxNGPtr | null} xmlRelaxNGPtr
+                        * @returns {xmlRelaxNGValidCtxtPtr} xmlRelaxNGValidCtxtPtr
                         */
                         (schema: xmlRelaxNGPtr | null): xmlRelaxNGValidCtxtPtr
                     }
                 
                     xmlRelaxNGParse: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @returns {xmlRelaxNGPtr - xmlRelaxNGPtr}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @returns {xmlRelaxNGPtr} xmlRelaxNGPtr
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null): xmlRelaxNGPtr
                     }
                 
                     xmlRelaxNGSetParserErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @param err {xmlRelaxNGValidityErrorFunc} - xmlRelaxNGValidityErrorFunc
-                        * @param warn {xmlRelaxNGValidityWarningFunc} - xmlRelaxNGValidityWarningFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @param err {xmlRelaxNGValidityErrorFunc} xmlRelaxNGValidityErrorFunc
+                        * @param warn {xmlRelaxNGValidityWarningFunc} xmlRelaxNGValidityWarningFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null, err: xmlRelaxNGValidityErrorFunc, warn: xmlRelaxNGValidityWarningFunc, ctx: any): any
                     }
                 
                     xmlRelaxNGSetParserStructuredErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @param serror {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @param serror {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null, serror: xmlStructuredErrorFunc, ctx: any): any
                     }
                 
                     xmlRelaxNGSetValidErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param err {xmlRelaxNGValidityErrorFunc} - xmlRelaxNGValidityErrorFunc
-                        * @param warn {xmlRelaxNGValidityWarningFunc} - xmlRelaxNGValidityWarningFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param err {xmlRelaxNGValidityErrorFunc} xmlRelaxNGValidityErrorFunc
+                        * @param warn {xmlRelaxNGValidityWarningFunc} xmlRelaxNGValidityWarningFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, err: xmlRelaxNGValidityErrorFunc, warn: xmlRelaxNGValidityWarningFunc, ctx: any): any
                     }
                 
                     xmlRelaxNGSetValidStructuredErrors: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param serror {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param serror {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, serror: xmlStructuredErrorFunc, ctx: any): any
                     }
                 
                     xmlRelaxNGValidateDoc: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
                     xmlRelaxNGValidateFullElement: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlRelaxNGValidatePopElement: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlRelaxNGValidatePushCData: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param data {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param data {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlRelaxNGValidCtxtPtr | null, data: string | null, len: number): number
+                        (ctxt: xmlRelaxNGValidCtxtPtr | null, data: string | Buffer | null, len: number): number
                     }
                 
                     xmlRelaxNGValidatePushElement: {
                         /** 
-                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} - xmlRelaxNGValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGValidCtxtPtr | null} xmlRelaxNGValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlRelaxParserSetFlag: {
                         /** 
-                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} - xmlRelaxNGParserCtxtPtr
-                        * @param flag {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlRelaxNGParserCtxtPtr | null} xmlRelaxNGParserCtxtPtr
+                        * @param flag {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlRelaxNGParserCtxtPtr | null, flag: number): number
                     }
                 
                     xmlRemoveID: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {number} int
                         */
                         (doc: xmlDocPtr | null, attr: xmlAttrPtr | null): number
                     }
                 
                     xmlRemoveProp: {
                         /** 
-                        * @param cur {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {number - int}
+                        * @param cur {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {number} int
                         */
                         (cur: xmlAttrPtr | null): number
                     }
                 
                     xmlRemoveRef: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @returns {number - int}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @returns {number} int
                         */
                         (doc: xmlDocPtr | null, attr: xmlAttrPtr | null): number
                     }
                 
                     xmlReplaceNode: {
                         /** 
-                        * @param old {xmlNodePtr | null} - xmlNodePtr
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param old {xmlNodePtr | null} xmlNodePtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (old: xmlNodePtr | null, cur: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlResetError: {
                         /** 
-                        * @param err {xmlErrorPtr | null} - xmlErrorPtr
-                        * @returns {any - void}
+                        * @param err {xmlErrorPtr | null} xmlErrorPtr
+                        * @returns {any} void
                         */
                         (err: xmlErrorPtr | null): any
                     }
                 
                     xmlResetLastError: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlSAX2AttributeDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param elem {string | null} - p.q(const).xmlChar
-                        * @param fullname {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param def {number} - int
-                        * @param defaultValue {string | null} - p.q(const).xmlChar
-                        * @param tree {xmlEnumerationPtr | null} - xmlEnumerationPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param elem {string | Buffer | null} p.q(const).xmlChar
+                        * @param fullname {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param def {number} int
+                        * @param defaultValue {string | Buffer | null} p.q(const).xmlChar
+                        * @param tree {xmlEnumerationPtr | null} xmlEnumerationPtr
+                        * @returns {any} void
                         */
-                        (ctx: any, elem: string | null, fullname: string | null, type: number, def: number, defaultValue: string | null, tree: xmlEnumerationPtr | null): any
+                        (ctx: any, elem: string | Buffer | null, fullname: string | Buffer | null, type: number, def: number, defaultValue: string | Buffer | null, tree: xmlEnumerationPtr | null): any
                     }
                 
                     xmlSAX2CDataBlock: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, value: string | null, len: number): any
+                        (ctx: any, value: string | Buffer | null, len: number): any
                     }
                 
                     xmlSAX2Characters: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param ch {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param ch {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, ch: string | null, len: number): any
+                        (ctx: any, ch: string | Buffer | null, len: number): any
                     }
                 
                     xmlSAX2Comment: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, value: string | null): any
+                        (ctx: any, value: string | Buffer | null): any
                     }
                 
                     xmlSAX2ElementDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, type: number, content: xmlElementContentPtr | null): any
+                        (ctx: any, name: string | Buffer | null, type: number, content: xmlElementContentPtr | null): any
                     }
                 
                     xmlSAX2EndDocument: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctx: any): any
                     }
                 
                     xmlSAX2EndElement: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null): any
+                        (ctx: any, name: string | Buffer | null): any
                     }
                 
                     xmlSAX2EndElementNs: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param localname {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param localname {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, localname: string | null, prefix: string | null, URI: string | null): any
+                        (ctx: any, localname: string | Buffer | null, prefix: string | Buffer | null, URI: string | Buffer | null): any
                     }
                 
                     xmlSAX2EntityDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param type {number} - int
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @param content {string | null} - p.xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param type {number} int
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @param content {string | Buffer | null} p.xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, type: number, publicId: string | null, systemId: string | null, content: string | null): any
+                        (ctx: any, name: string | Buffer | null, type: number, publicId: string | Buffer | null, systemId: string | Buffer | null, content: string | Buffer | null): any
                     }
                 
                     xmlSAX2ExternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, ExternalID: string | null, SystemID: string | null): any
+                        (ctx: any, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): any
                     }
                 
                     xmlSAX2GetColumnNumber: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     xmlSAX2GetEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (ctx: any, name: string | null): xmlEntityPtr
+                        (ctx: any, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlSAX2GetLineNumber: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     xmlSAX2GetParameterEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {xmlEntityPtr - xmlEntityPtr}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlEntityPtr} xmlEntityPtr
                         */
-                        (ctx: any, name: string | null): xmlEntityPtr
+                        (ctx: any, name: string | Buffer | null): xmlEntityPtr
                     }
                 
                     xmlSAX2GetPublicId: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctx {any} p.void
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctx: any): string
                     }
                 
                     xmlSAX2GetSystemId: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {string - q(const).xmlChar}
+                        * @param ctx {any} p.void
+                        * @returns {string} q(const).xmlChar
                         */
                         (ctx: any): string
                     }
                 
                     xmlSAX2HasExternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     xmlSAX2HasInternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     xmlSAX2IgnorableWhitespace: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param ch {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param ch {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {any} void
                         */
-                        (ctx: any, ch: string | null, len: number): any
+                        (ctx: any, ch: string | Buffer | null, len: number): any
                     }
                 
                     xmlSAX2InitDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandler} - p.xmlSAXHandler
-                        * @param warning {number} - int
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandler} p.xmlSAXHandler
+                        * @param warning {number} int
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandler, warning: number): any
                     }
                 
                     xmlSAX2InitDocbDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandler} - p.xmlSAXHandler
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandler} p.xmlSAXHandler
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandler): any
                     }
                 
                     xmlSAX2InitHtmlDefaultSAXHandler: {
                         /** 
-                        * @param hdlr {xmlSAXHandler} - p.xmlSAXHandler
-                        * @returns {any - void}
+                        * @param hdlr {xmlSAXHandler} p.xmlSAXHandler
+                        * @returns {any} void
                         */
                         (hdlr: xmlSAXHandler): any
                     }
                 
                     xmlSAX2InternalSubset: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, ExternalID: string | null, SystemID: string | null): any
+                        (ctx: any, name: string | Buffer | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): any
                     }
                 
                     xmlSAX2IsStandalone: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {number - int}
+                        * @param ctx {any} p.void
+                        * @returns {number} int
                         */
                         (ctx: any): number
                     }
                 
                     xmlSAX2NotationDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, publicId: string | null, systemId: string | null): any
+                        (ctx: any, name: string | Buffer | null, publicId: string | Buffer | null, systemId: string | Buffer | null): any
                     }
                 
                     xmlSAX2ProcessingInstruction: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param target {string | null} - p.q(const).xmlChar
-                        * @param data {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param target {string | Buffer | null} p.q(const).xmlChar
+                        * @param data {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, target: string | null, data: string | null): any
+                        (ctx: any, target: string | Buffer | null, data: string | Buffer | null): any
                     }
                 
                     xmlSAX2Reference: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null): any
+                        (ctx: any, name: string | Buffer | null): any
                     }
                 
                     xmlSAX2ResolveEntity: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @returns {xmlParserInputPtr - xmlParserInputPtr}
+                        * @param ctx {any} p.void
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlParserInputPtr} xmlParserInputPtr
                         */
-                        (ctx: any, publicId: string | null, systemId: string | null): xmlParserInputPtr
+                        (ctx: any, publicId: string | Buffer | null, systemId: string | Buffer | null): xmlParserInputPtr
                     }
                 
                     xmlSAX2SetDocumentLocator: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param loc {xmlSAXLocatorPtr | null} - xmlSAXLocatorPtr
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param loc {xmlSAXLocatorPtr | null} xmlSAXLocatorPtr
+                        * @returns {any} void
                         */
                         (ctx: any, loc: xmlSAXLocatorPtr | null): any
                     }
                 
                     xmlSAX2StartDocument: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctx: any): any
                     }
                 
                     xmlSAX2StartElement: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param fullname {string | null} - p.q(const).xmlChar
-                        * @param atts {string | null} - p.p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param fullname {string | Buffer | null} p.q(const).xmlChar
+                        * @param atts {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, fullname: string | null, atts: string | null): any
+                        (ctx: any, fullname: string | Buffer | null, atts: string | Buffer | null): any
                     }
                 
                     xmlSAX2StartElementNs: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param localname {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param URI {string | null} - p.q(const).xmlChar
-                        * @param nb_namespaces {number} - int
-                        * @param namespaces {string | null} - p.p.q(const).xmlChar
-                        * @param nb_attributes {number} - int
-                        * @param nb_defaulted {number} - int
-                        * @param attributes {string | null} - p.p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param localname {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param URI {string | Buffer | null} p.q(const).xmlChar
+                        * @param nb_namespaces {number} int
+                        * @param namespaces {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param nb_attributes {number} int
+                        * @param nb_defaulted {number} int
+                        * @param attributes {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, localname: string | null, prefix: string | null, URI: string | null, nb_namespaces: number, namespaces: string | null, nb_attributes: number, nb_defaulted: number, attributes: string | null): any
+                        (ctx: any, localname: string | Buffer | null, prefix: string | Buffer | null, URI: string | Buffer | null, nb_namespaces: number, namespaces: string | Buffer | null, nb_attributes: number, nb_defaulted: number, attributes: string | Buffer | null): any
                     }
                 
                     xmlSAX2UnparsedEntityDecl: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param publicId {string | null} - p.q(const).xmlChar
-                        * @param systemId {string | null} - p.q(const).xmlChar
-                        * @param notationName {string | null} - p.q(const).xmlChar
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param publicId {string | Buffer | null} p.q(const).xmlChar
+                        * @param systemId {string | Buffer | null} p.q(const).xmlChar
+                        * @param notationName {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {any} void
                         */
-                        (ctx: any, name: string | null, publicId: string | null, systemId: string | null, notationName: string | null): any
+                        (ctx: any, name: string | Buffer | null, publicId: string | Buffer | null, systemId: string | Buffer | null, notationName: string | Buffer | null): any
                     }
                 
                     xmlSAXDefaultVersion: {
                         /** 
-                        * @param version {number} - int
-                        * @returns {number - int}
+                        * @param version {number} int
+                        * @returns {number} int
                         */
                         (version: number): number
                     }
                 
                     xmlSAXParseDTD: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param ExternalID {string | null} - p.q(const).xmlChar
-                        * @param SystemID {string | null} - p.q(const).xmlChar
-                        * @returns {xmlDtdPtr - xmlDtdPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param ExternalID {string | Buffer | null} p.q(const).xmlChar
+                        * @param SystemID {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlDtdPtr} xmlDtdPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, ExternalID: string | null, SystemID: string | null): xmlDtdPtr
+                        (sax: xmlSAXHandlerPtr | null, ExternalID: string | Buffer | null, SystemID: string | Buffer | null): xmlDtdPtr
                     }
                 
                     xmlSAXParseDoc: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param recovery {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param recovery {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, cur: string | null, recovery: number): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, cur: string | Buffer | null, recovery: number): xmlDocPtr
                     }
                 
                     xmlSAXParseEntity: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, filename: string | null): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, filename: string | Buffer | null): xmlDocPtr
                     }
                 
                     xmlSAXParseFile: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @param recovery {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param recovery {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, filename: string | null, recovery: number): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, filename: string | Buffer | null, recovery: number): xmlDocPtr
                     }
                 
                     xmlSAXParseFileWithData: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @param recovery {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param recovery {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, filename: string | null, recovery: number, data: any): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, filename: string | Buffer | null, recovery: number, data: any): xmlDocPtr
                     }
                 
                     xmlSAXParseMemory: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param recovery {number} - int
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param recovery {number} int
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, buffer: string | null, size: number, recovery: number): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, buffer: string | Buffer | null, size: number, recovery: number): xmlDocPtr
                     }
                 
                     xmlSAXParseMemoryWithData: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @param recovery {number} - int
-                        * @param data {any} - p.void
-                        * @returns {xmlDocPtr - xmlDocPtr}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @param recovery {number} int
+                        * @param data {any} p.void
+                        * @returns {xmlDocPtr} xmlDocPtr
                         */
-                        (sax: xmlSAXHandlerPtr | null, buffer: string | null, size: number, recovery: number, data: any): xmlDocPtr
+                        (sax: xmlSAXHandlerPtr | null, buffer: string | Buffer | null, size: number, recovery: number, data: any): xmlDocPtr
                     }
                 
                     xmlSAXUserParseFile: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (sax: xmlSAXHandlerPtr | null, user_data: any, filename: string | null): number
+                        (sax: xmlSAXHandlerPtr | null, user_data: any, filename: string | Buffer | null): number
                     }
                 
                     xmlSAXUserParseMemory: {
                         /** 
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {number - int}
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {number} int
                         */
-                        (sax: xmlSAXHandlerPtr | null, user_data: any, buffer: string | null, size: number): number
+                        (sax: xmlSAXHandlerPtr | null, user_data: any, buffer: string | Buffer | null, size: number): number
                     }
                 
                     xmlSAXVersion: {
                         /** 
-                        * @param hdlr {xmlSAXHandler} - p.xmlSAXHandler
-                        * @param version {number} - int
-                        * @returns {number - int}
+                        * @param hdlr {xmlSAXHandler} p.xmlSAXHandler
+                        * @param version {number} int
+                        * @returns {number} int
                         */
                         (hdlr: xmlSAXHandler, version: number): number
                     }
                 
                     xmlSaveClose: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSaveCtxtPtr | null): number
                     }
                 
                     xmlSaveDoc: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - long}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} long
                         */
                         (ctxt: xmlSaveCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
                     xmlSaveFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null): number
                     }
                 
                     xmlSaveFileEnc: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null, encoding: string | null): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null, encoding: string | Buffer | null): number
                     }
                 
                     xmlSaveFileTo: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | null): number
+                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | Buffer | null): number
                     }
                 
                     xmlSaveFlush: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSaveCtxtPtr | null): number
                     }
                 
                     xmlSaveFormatFile: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param format {number} int
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null, format: number): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null, format: number): number
                     }
                 
                     xmlSaveFormatFileEnc: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {number} int
                         */
-                        (filename: string | null, cur: xmlDocPtr | null, encoding: string | null, format: number): number
+                        (filename: string | Buffer | null, cur: xmlDocPtr | null, encoding: string | Buffer | null, format: number): number
                     }
                 
                     xmlSaveFormatFileTo: {
                         /** 
-                        * @param buf {xmlOutputBufferPtr | null} - xmlOutputBufferPtr
-                        * @param cur {xmlDocPtr | null} - xmlDocPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param format {number} - int
-                        * @returns {number - int}
+                        * @param buf {xmlOutputBufferPtr | null} xmlOutputBufferPtr
+                        * @param cur {xmlDocPtr | null} xmlDocPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param format {number} int
+                        * @returns {number} int
                         */
-                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | null, format: number): number
+                        (buf: xmlOutputBufferPtr | null, cur: xmlDocPtr | null, encoding: string | Buffer | null, format: number): number
                     }
                 
                     xmlSaveSetAttrEscape: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @param escape {xmlCharEncodingOutputFunc} - xmlCharEncodingOutputFunc
-                        * @returns {number - int}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @param escape {xmlCharEncodingOutputFunc} xmlCharEncodingOutputFunc
+                        * @returns {number} int
                         */
                         (ctxt: xmlSaveCtxtPtr | null, escape: xmlCharEncodingOutputFunc): number
                     }
                 
                     xmlSaveSetEscape: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @param escape {xmlCharEncodingOutputFunc} - xmlCharEncodingOutputFunc
-                        * @returns {number - int}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @param escape {xmlCharEncodingOutputFunc} xmlCharEncodingOutputFunc
+                        * @returns {number} int
                         */
                         (ctxt: xmlSaveCtxtPtr | null, escape: xmlCharEncodingOutputFunc): number
                     }
                 
                     xmlSaveToBuffer: {
                         /** 
-                        * @param buffer {xmlBufferPtr | null} - xmlBufferPtr
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlSaveCtxtPtr - xmlSaveCtxtPtr}
+                        * @param buffer {xmlBufferPtr | null} xmlBufferPtr
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlSaveCtxtPtr} xmlSaveCtxtPtr
                         */
-                        (buffer: xmlBufferPtr | null, encoding: string | null, options: number): xmlSaveCtxtPtr
+                        (buffer: xmlBufferPtr | null, encoding: string | Buffer | null, options: number): xmlSaveCtxtPtr
                     }
                 
                     xmlSaveToFd: {
                         /** 
-                        * @param fd {number} - int
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlSaveCtxtPtr - xmlSaveCtxtPtr}
+                        * @param fd {number} int
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlSaveCtxtPtr} xmlSaveCtxtPtr
                         */
-                        (fd: number, encoding: string | null, options: number): xmlSaveCtxtPtr
+                        (fd: number, encoding: string | Buffer | null, options: number): xmlSaveCtxtPtr
                     }
                 
                     xmlSaveToFilename: {
                         /** 
-                        * @param filename {string | null} - p.q(const).char
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlSaveCtxtPtr - xmlSaveCtxtPtr}
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlSaveCtxtPtr} xmlSaveCtxtPtr
                         */
-                        (filename: string | null, encoding: string | null, options: number): xmlSaveCtxtPtr
+                        (filename: string | Buffer | null, encoding: string | Buffer | null, options: number): xmlSaveCtxtPtr
                     }
                 
                     xmlSaveToIO: {
                         /** 
-                        * @param iowrite {xmlOutputWriteCallback} - xmlOutputWriteCallback
-                        * @param ioclose {xmlOutputCloseCallback} - xmlOutputCloseCallback
-                        * @param ioctx {any} - p.void
-                        * @param encoding {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {xmlSaveCtxtPtr - xmlSaveCtxtPtr}
+                        * @param iowrite {xmlOutputWriteCallback} xmlOutputWriteCallback
+                        * @param ioclose {xmlOutputCloseCallback} xmlOutputCloseCallback
+                        * @param ioctx {any} p.void
+                        * @param encoding {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {xmlSaveCtxtPtr} xmlSaveCtxtPtr
                         */
-                        (iowrite: xmlOutputWriteCallback, ioclose: xmlOutputCloseCallback, ioctx: any, encoding: string | null, options: number): xmlSaveCtxtPtr
+                        (iowrite: xmlOutputWriteCallback, ioclose: xmlOutputCloseCallback, ioctx: any, encoding: string | Buffer | null, options: number): xmlSaveCtxtPtr
                     }
                 
                     xmlSaveTree: {
                         /** 
-                        * @param ctxt {xmlSaveCtxtPtr | null} - xmlSaveCtxtPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - long}
+                        * @param ctxt {xmlSaveCtxtPtr | null} xmlSaveCtxtPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} long
                         */
                         (ctxt: xmlSaveCtxtPtr | null, node: xmlNodePtr | null): number
                     }
                 
                     xmlSaveUri: {
                         /** 
-                        * @param uri {xmlURIPtr | null} - xmlURIPtr
-                        * @returns {string - xmlChar}
+                        * @param uri {xmlURIPtr | null} xmlURIPtr
+                        * @returns {string} xmlChar
                         */
                         (uri: xmlURIPtr | null): string
                     }
                 
                     xmlScanName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {string} xmlChar
                         */
                         (ctxt: xmlParserCtxtPtr | null): string
                     }
                 
                     xmlSchemaCheckFacet: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param typeDecl {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param typeDecl {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (facet: xmlSchemaFacetPtr | null, typeDecl: xmlSchemaTypePtr | null, ctxt: xmlSchemaParserCtxtPtr | null, name: string | null): number
+                        (facet: xmlSchemaFacetPtr | null, typeDecl: xmlSchemaTypePtr | null, ctxt: xmlSchemaParserCtxtPtr | null, name: string | Buffer | null): number
                     }
                 
                     xmlSchemaCleanupTypes: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlSchemaCollapseString: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (value: string | null): string
+                        (value: string | Buffer | null): string
                     }
                 
                     xmlSchemaCompareValues: {
                         /** 
-                        * @param x {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param y {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {number - int}
+                        * @param x {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param y {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {number} int
                         */
                         (x: xmlSchemaValPtr | null, y: xmlSchemaValPtr | null): number
                     }
                 
                     xmlSchemaCompareValuesWhtsp: {
                         /** 
-                        * @param x {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param xws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @param y {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param yws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @returns {number - int}
+                        * @param x {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param xws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @param y {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param yws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @returns {number} int
                         */
                         (x: xmlSchemaValPtr | null, xws: xmlSchemaWhitespaceValueType, y: xmlSchemaValPtr | null, yws: xmlSchemaWhitespaceValueType): number
                     }
                 
                     xmlSchemaCopyValue: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {xmlSchemaValPtr - xmlSchemaValPtr}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {xmlSchemaValPtr} xmlSchemaValPtr
                         */
                         (val: xmlSchemaValPtr | null): xmlSchemaValPtr
                     }
                 
                     xmlSchemaDump: {
                         /** 
-                        * @param output {undefined} - p.FILE
-                        * @param schema {xmlSchemaPtr | null} - xmlSchemaPtr
-                        * @returns {any - void}
+                        * @param output {undefined} p.FILE
+                        * @param schema {xmlSchemaPtr | null} xmlSchemaPtr
+                        * @returns {any} void
                         */
                         (output: undefined, schema: xmlSchemaPtr | null): any
                     }
                 
                     xmlSchemaFree: {
                         /** 
-                        * @param schema {xmlSchemaPtr | null} - xmlSchemaPtr
-                        * @returns {any - void}
+                        * @param schema {xmlSchemaPtr | null} xmlSchemaPtr
+                        * @returns {any} void
                         */
                         (schema: xmlSchemaPtr | null): any
                     }
                 
                     xmlSchemaFreeFacet: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @returns {any - void}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @returns {any} void
                         */
                         (facet: xmlSchemaFacetPtr | null): any
                     }
                 
                     xmlSchemaFreeParserCtxt: {
                         /** 
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaParserCtxtPtr | null): any
                     }
                 
                     xmlSchemaFreeType: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @returns {any - void}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @returns {any} void
                         */
                         (type: xmlSchemaTypePtr | null): any
                     }
                 
                     xmlSchemaFreeValidCtxt: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null): any
                     }
                 
                     xmlSchemaFreeValue: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {any - void}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {any} void
                         */
                         (val: xmlSchemaValPtr | null): any
                     }
                 
                     xmlSchemaFreeWildcard: {
                         /** 
-                        * @param wildcard {xmlSchemaWildcardPtr | null} - xmlSchemaWildcardPtr
-                        * @returns {any - void}
+                        * @param wildcard {xmlSchemaWildcardPtr | null} xmlSchemaWildcardPtr
+                        * @returns {any} void
                         */
                         (wildcard: xmlSchemaWildcardPtr | null): any
                     }
                 
                     xmlSchemaGetBuiltInListSimpleTypeItemType: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @returns {xmlSchemaTypePtr - xmlSchemaTypePtr}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @returns {xmlSchemaTypePtr} xmlSchemaTypePtr
                         */
                         (type: xmlSchemaTypePtr | null): xmlSchemaTypePtr
                     }
                 
                     xmlSchemaGetBuiltInType: {
                         /** 
-                        * @param type {xmlSchemaValType} - xmlSchemaValType
-                        * @returns {xmlSchemaTypePtr - xmlSchemaTypePtr}
+                        * @param type {xmlSchemaValType} xmlSchemaValType
+                        * @returns {xmlSchemaTypePtr} xmlSchemaTypePtr
                         */
                         (type: xmlSchemaValType): xmlSchemaTypePtr
                     }
                 
                     xmlSchemaGetCanonValue: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param retValue {string | null} - p.p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param retValue {string | Buffer | null} p.p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (val: xmlSchemaValPtr | null, retValue: string | null): number
+                        (val: xmlSchemaValPtr | null, retValue: string | Buffer | null): number
                     }
                 
                     xmlSchemaGetCanonValueWhtsp: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param retValue {string | null} - p.p.q(const).xmlChar
-                        * @param ws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @returns {number - int}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param retValue {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param ws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @returns {number} int
                         */
-                        (val: xmlSchemaValPtr | null, retValue: string | null, ws: xmlSchemaWhitespaceValueType): number
+                        (val: xmlSchemaValPtr | null, retValue: string | Buffer | null, ws: xmlSchemaWhitespaceValueType): number
                     }
                 
                     xmlSchemaGetFacetValueAsULong: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @returns {number - unsigned long}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @returns {number} unsigned long
                         */
                         (facet: xmlSchemaFacetPtr | null): number
                     }
                 
                     xmlSchemaGetParserErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @param err {xmlSchemaValidityErrorFunc} - p.xmlSchemaValidityErrorFunc
-                        * @param warn {xmlSchemaValidityWarningFunc} - p.xmlSchemaValidityWarningFunc
-                        * @param ctx {any} - p.p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @param err {xmlSchemaValidityErrorFunc} p.xmlSchemaValidityErrorFunc
+                        * @param warn {xmlSchemaValidityWarningFunc} p.xmlSchemaValidityWarningFunc
+                        * @param ctx {any} p.p.void
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaParserCtxtPtr | null, err: xmlSchemaValidityErrorFunc, warn: xmlSchemaValidityWarningFunc, ctx: any): number
                     }
                 
                     xmlSchemaGetPredefinedType: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @returns {xmlSchemaTypePtr - xmlSchemaTypePtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlSchemaTypePtr} xmlSchemaTypePtr
                         */
-                        (name: string | null, ns: string | null): xmlSchemaTypePtr
+                        (name: string | Buffer | null, ns: string | Buffer | null): xmlSchemaTypePtr
                     }
                 
                     xmlSchemaGetValType: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {xmlSchemaValType - xmlSchemaValType}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {xmlSchemaValType} xmlSchemaValType
                         */
                         (val: xmlSchemaValPtr | null): xmlSchemaValType
                     }
                 
                     xmlSchemaGetValidErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param err {xmlSchemaValidityErrorFunc} - p.xmlSchemaValidityErrorFunc
-                        * @param warn {xmlSchemaValidityWarningFunc} - p.xmlSchemaValidityWarningFunc
-                        * @param ctx {any} - p.p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param err {xmlSchemaValidityErrorFunc} p.xmlSchemaValidityErrorFunc
+                        * @param warn {xmlSchemaValidityWarningFunc} p.xmlSchemaValidityWarningFunc
+                        * @param ctx {any} p.p.void
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, err: xmlSchemaValidityErrorFunc, warn: xmlSchemaValidityWarningFunc, ctx: any): number
                     }
                 
                     xmlSchemaInitTypes: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlSchemaIsBuiltInTypeFacet: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param facetType {number} - int
-                        * @returns {number - int}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param facetType {number} int
+                        * @returns {number} int
                         */
                         (type: xmlSchemaTypePtr | null, facetType: number): number
                     }
                 
                     xmlSchemaIsValid: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null): number
                     }
                 
                     xmlSchemaNewDocParserCtxt: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {xmlSchemaParserCtxtPtr - xmlSchemaParserCtxtPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {xmlSchemaParserCtxtPtr} xmlSchemaParserCtxtPtr
                         */
                         (doc: xmlDocPtr | null): xmlSchemaParserCtxtPtr
                     }
                 
                     xmlSchemaNewFacet: {
                         /** 
-                        * @returns {xmlSchemaFacetPtr - xmlSchemaFacetPtr}
+                        * @returns {xmlSchemaFacetPtr} xmlSchemaFacetPtr
                         */
                         (): xmlSchemaFacetPtr
                     }
                 
                     xmlSchemaNewMemParserCtxt: {
                         /** 
-                        * @param buffer {string | null} - p.q(const).char
-                        * @param size {number} - int
-                        * @returns {xmlSchemaParserCtxtPtr - xmlSchemaParserCtxtPtr}
+                        * @param buffer {string | Buffer | null} p.q(const).char
+                        * @param size {number} int
+                        * @returns {xmlSchemaParserCtxtPtr} xmlSchemaParserCtxtPtr
                         */
-                        (buffer: string | null, size: number): xmlSchemaParserCtxtPtr
+                        (buffer: string | Buffer | null, size: number): xmlSchemaParserCtxtPtr
                     }
                 
                     xmlSchemaNewNOTATIONValue: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @returns {xmlSchemaValPtr - xmlSchemaValPtr}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlSchemaValPtr} xmlSchemaValPtr
                         */
-                        (name: string | null, ns: string | null): xmlSchemaValPtr
+                        (name: string | Buffer | null, ns: string | Buffer | null): xmlSchemaValPtr
                     }
                 
                     xmlSchemaNewParserCtxt: {
                         /** 
-                        * @param URL {string | null} - p.q(const).char
-                        * @returns {xmlSchemaParserCtxtPtr - xmlSchemaParserCtxtPtr}
+                        * @param URL {string | Buffer | null} p.q(const).char
+                        * @returns {xmlSchemaParserCtxtPtr} xmlSchemaParserCtxtPtr
                         */
-                        (URL: string | null): xmlSchemaParserCtxtPtr
+                        (URL: string | Buffer | null): xmlSchemaParserCtxtPtr
                     }
                 
                     xmlSchemaNewQNameValue: {
                         /** 
-                        * @param namespaceName {string | null} - p.q(const).xmlChar
-                        * @param localName {string | null} - p.q(const).xmlChar
-                        * @returns {xmlSchemaValPtr - xmlSchemaValPtr}
+                        * @param namespaceName {string | Buffer | null} p.q(const).xmlChar
+                        * @param localName {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlSchemaValPtr} xmlSchemaValPtr
                         */
-                        (namespaceName: string | null, localName: string | null): xmlSchemaValPtr
+                        (namespaceName: string | Buffer | null, localName: string | Buffer | null): xmlSchemaValPtr
                     }
                 
                     xmlSchemaNewStringValue: {
                         /** 
-                        * @param type {xmlSchemaValType} - xmlSchemaValType
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlSchemaValPtr - xmlSchemaValPtr}
+                        * @param type {xmlSchemaValType} xmlSchemaValType
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlSchemaValPtr} xmlSchemaValPtr
                         */
-                        (type: xmlSchemaValType, value: string | null): xmlSchemaValPtr
+                        (type: xmlSchemaValType, value: string | Buffer | null): xmlSchemaValPtr
                     }
                 
                     xmlSchemaNewValidCtxt: {
                         /** 
-                        * @param schema {xmlSchemaPtr | null} - xmlSchemaPtr
-                        * @returns {xmlSchemaValidCtxtPtr - xmlSchemaValidCtxtPtr}
+                        * @param schema {xmlSchemaPtr | null} xmlSchemaPtr
+                        * @returns {xmlSchemaValidCtxtPtr} xmlSchemaValidCtxtPtr
                         */
                         (schema: xmlSchemaPtr | null): xmlSchemaValidCtxtPtr
                     }
                 
                     xmlSchemaParse: {
                         /** 
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @returns {xmlSchemaPtr - xmlSchemaPtr}
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @returns {xmlSchemaPtr} xmlSchemaPtr
                         */
                         (ctxt: xmlSchemaParserCtxtPtr | null): xmlSchemaPtr
                     }
                 
                     xmlSchemaSAXPlug: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param sax {xmlSAXHandlerPtr | null} - p.xmlSAXHandlerPtr
-                        * @param user_data {any} - p.p.void
-                        * @returns {xmlSchemaSAXPlugPtr - xmlSchemaSAXPlugPtr}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param sax {xmlSAXHandlerPtr | null} p.xmlSAXHandlerPtr
+                        * @param user_data {any} p.p.void
+                        * @returns {xmlSchemaSAXPlugPtr} xmlSchemaSAXPlugPtr
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, sax: xmlSAXHandlerPtr | null, user_data: any): xmlSchemaSAXPlugPtr
                     }
                 
                     xmlSchemaSAXUnplug: {
                         /** 
-                        * @param plug {xmlSchemaSAXPlugPtr | null} - xmlSchemaSAXPlugPtr
-                        * @returns {number - int}
+                        * @param plug {xmlSchemaSAXPlugPtr | null} xmlSchemaSAXPlugPtr
+                        * @returns {number} int
                         */
                         (plug: xmlSchemaSAXPlugPtr | null): number
                     }
                 
                     xmlSchemaSetParserErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @param err {xmlSchemaValidityErrorFunc} - xmlSchemaValidityErrorFunc
-                        * @param warn {xmlSchemaValidityWarningFunc} - xmlSchemaValidityWarningFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @param err {xmlSchemaValidityErrorFunc} xmlSchemaValidityErrorFunc
+                        * @param warn {xmlSchemaValidityWarningFunc} xmlSchemaValidityWarningFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaParserCtxtPtr | null, err: xmlSchemaValidityErrorFunc, warn: xmlSchemaValidityWarningFunc, ctx: any): any
                     }
                 
                     xmlSchemaSetParserStructuredErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaParserCtxtPtr | null} - xmlSchemaParserCtxtPtr
-                        * @param serror {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaParserCtxtPtr | null} xmlSchemaParserCtxtPtr
+                        * @param serror {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaParserCtxtPtr | null, serror: xmlStructuredErrorFunc, ctx: any): any
                     }
                 
                     xmlSchemaSetValidErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param err {xmlSchemaValidityErrorFunc} - xmlSchemaValidityErrorFunc
-                        * @param warn {xmlSchemaValidityWarningFunc} - xmlSchemaValidityWarningFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param err {xmlSchemaValidityErrorFunc} xmlSchemaValidityErrorFunc
+                        * @param warn {xmlSchemaValidityWarningFunc} xmlSchemaValidityWarningFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, err: xmlSchemaValidityErrorFunc, warn: xmlSchemaValidityWarningFunc, ctx: any): any
                     }
                 
                     xmlSchemaSetValidOptions: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, options: number): number
                     }
                 
                     xmlSchemaSetValidStructuredErrors: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param serror {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @param ctx {any} - p.void
-                        * @returns {any - void}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param serror {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @param ctx {any} p.void
+                        * @returns {any} void
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, serror: xmlStructuredErrorFunc, ctx: any): any
                     }
                 
                     xmlSchemaValPredefTypeNode: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - p.xmlSchemaValPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} p.xmlSchemaValPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
-                        (type: xmlSchemaTypePtr | null, value: string | null, val: xmlSchemaValPtr | null, node: xmlNodePtr | null): number
+                        (type: xmlSchemaTypePtr | null, value: string | Buffer | null, val: xmlSchemaValPtr | null, node: xmlNodePtr | null): number
                     }
                 
                     xmlSchemaValPredefTypeNodeNoNorm: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - p.xmlSchemaValPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} p.xmlSchemaValPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
-                        (type: xmlSchemaTypePtr | null, value: string | null, val: xmlSchemaValPtr | null, node: xmlNodePtr | null): number
+                        (type: xmlSchemaTypePtr | null, value: string | Buffer | null, val: xmlSchemaValPtr | null, node: xmlNodePtr | null): number
                     }
                 
                     xmlSchemaValidCtxtGetOptions: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null): number
                     }
                 
                     xmlSchemaValidCtxtGetParserCtxt: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @returns {xmlParserCtxtPtr - xmlParserCtxtPtr}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @returns {xmlParserCtxtPtr} xmlParserCtxtPtr
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null): xmlParserCtxtPtr
                     }
                 
                     xmlSchemaValidateDoc: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param instance {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param instance {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, instance: xmlDocPtr | null): number
                     }
                 
                     xmlSchemaValidateFacet: {
                         /** 
-                        * @param base {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {number - int}
+                        * @param base {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {number} int
                         */
-                        (base: xmlSchemaTypePtr | null, facet: xmlSchemaFacetPtr | null, value: string | null, val: xmlSchemaValPtr | null): number
+                        (base: xmlSchemaTypePtr | null, facet: xmlSchemaFacetPtr | null, value: string | Buffer | null, val: xmlSchemaValPtr | null): number
                     }
                 
                     xmlSchemaValidateFacetWhtsp: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param fws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @param valType {xmlSchemaValType} - xmlSchemaValType
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param ws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @returns {number - int}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param fws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @param valType {xmlSchemaValType} xmlSchemaValType
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param ws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @returns {number} int
                         */
-                        (facet: xmlSchemaFacetPtr | null, fws: xmlSchemaWhitespaceValueType, valType: xmlSchemaValType, value: string | null, val: xmlSchemaValPtr | null, ws: xmlSchemaWhitespaceValueType): number
+                        (facet: xmlSchemaFacetPtr | null, fws: xmlSchemaWhitespaceValueType, valType: xmlSchemaValType, value: string | Buffer | null, val: xmlSchemaValPtr | null, ws: xmlSchemaWhitespaceValueType): number
                     }
                 
                     xmlSchemaValidateFile: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @param options {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlSchemaValidCtxtPtr | null, filename: string | null, options: number): number
+                        (ctxt: xmlSchemaValidCtxtPtr | null, filename: string | Buffer | null, options: number): number
                     }
                 
                     xmlSchemaValidateLengthFacet: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param length {number} - p.unsigned long
-                        * @returns {number - int}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param length {number} p.unsigned long
+                        * @returns {number} int
                         */
-                        (type: xmlSchemaTypePtr | null, facet: xmlSchemaFacetPtr | null, value: string | null, val: xmlSchemaValPtr | null, length: number): number
+                        (type: xmlSchemaTypePtr | null, facet: xmlSchemaFacetPtr | null, value: string | Buffer | null, val: xmlSchemaValPtr | null, length: number): number
                     }
                 
                     xmlSchemaValidateLengthFacetWhtsp: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param valType {xmlSchemaValType} - xmlSchemaValType
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param length {number} - p.unsigned long
-                        * @param ws {xmlSchemaWhitespaceValueType} - xmlSchemaWhitespaceValueType
-                        * @returns {number - int}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param valType {xmlSchemaValType} xmlSchemaValType
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param length {number} p.unsigned long
+                        * @param ws {xmlSchemaWhitespaceValueType} xmlSchemaWhitespaceValueType
+                        * @returns {number} int
                         */
-                        (facet: xmlSchemaFacetPtr | null, valType: xmlSchemaValType, value: string | null, val: xmlSchemaValPtr | null, length: number, ws: xmlSchemaWhitespaceValueType): number
+                        (facet: xmlSchemaFacetPtr | null, valType: xmlSchemaValType, value: string | Buffer | null, val: xmlSchemaValPtr | null, length: number, ws: xmlSchemaWhitespaceValueType): number
                     }
                 
                     xmlSchemaValidateListSimpleTypeFacet: {
                         /** 
-                        * @param facet {xmlSchemaFacetPtr | null} - xmlSchemaFacetPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param actualLen {number} - unsigned long
-                        * @param expectedLen {number} - p.unsigned long
-                        * @returns {number - int}
+                        * @param facet {xmlSchemaFacetPtr | null} xmlSchemaFacetPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param actualLen {number} unsigned long
+                        * @param expectedLen {number} p.unsigned long
+                        * @returns {number} int
                         */
-                        (facet: xmlSchemaFacetPtr | null, value: string | null, actualLen: number, expectedLen: number): number
+                        (facet: xmlSchemaFacetPtr | null, value: string | Buffer | null, actualLen: number, expectedLen: number): number
                     }
                 
                     xmlSchemaValidateOneElement: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlSchemaValidatePredefinedType: {
                         /** 
-                        * @param type {xmlSchemaTypePtr | null} - xmlSchemaTypePtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param val {xmlSchemaValPtr | null} - p.xmlSchemaValPtr
-                        * @returns {number - int}
+                        * @param type {xmlSchemaTypePtr | null} xmlSchemaTypePtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {xmlSchemaValPtr | null} p.xmlSchemaValPtr
+                        * @returns {number} int
                         */
-                        (type: xmlSchemaTypePtr | null, value: string | null, val: xmlSchemaValPtr | null): number
+                        (type: xmlSchemaTypePtr | null, value: string | Buffer | null, val: xmlSchemaValPtr | null): number
                     }
                 
                     xmlSchemaValidateSetFilename: {
                         /** 
-                        * @param vctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param vctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (vctxt: xmlSchemaValidCtxtPtr | null, filename: string | null): any
+                        (vctxt: xmlSchemaValidCtxtPtr | null, filename: string | Buffer | null): any
                     }
                 
                     xmlSchemaValidateSetLocator: {
                         /** 
-                        * @param vctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param f {xmlSchemaValidityLocatorFunc} - xmlSchemaValidityLocatorFunc
-                        * @param ctxt {any} - p.void
-                        * @returns {any - void}
+                        * @param vctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param f {xmlSchemaValidityLocatorFunc} xmlSchemaValidityLocatorFunc
+                        * @param ctxt {any} p.void
+                        * @returns {any} void
                         */
                         (vctxt: xmlSchemaValidCtxtPtr | null, f: xmlSchemaValidityLocatorFunc, ctxt: any): any
                     }
                 
                     xmlSchemaValidateStream: {
                         /** 
-                        * @param ctxt {xmlSchemaValidCtxtPtr | null} - xmlSchemaValidCtxtPtr
-                        * @param input {xmlParserInputBufferPtr | null} - xmlParserInputBufferPtr
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @param sax {xmlSAXHandlerPtr | null} - xmlSAXHandlerPtr
-                        * @param user_data {any} - p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlSchemaValidCtxtPtr | null} xmlSchemaValidCtxtPtr
+                        * @param input {xmlParserInputBufferPtr | null} xmlParserInputBufferPtr
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @param sax {xmlSAXHandlerPtr | null} xmlSAXHandlerPtr
+                        * @param user_data {any} p.void
+                        * @returns {number} int
                         */
                         (ctxt: xmlSchemaValidCtxtPtr | null, input: xmlParserInputBufferPtr | null, enc: xmlCharEncoding, sax: xmlSAXHandlerPtr | null, user_data: any): number
                     }
                 
                     xmlSchemaValueAppend: {
                         /** 
-                        * @param prev {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @param cur {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {number - int}
+                        * @param prev {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @param cur {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {number} int
                         */
                         (prev: xmlSchemaValPtr | null, cur: xmlSchemaValPtr | null): number
                     }
                 
                     xmlSchemaValueGetAsBoolean: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {number - int}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {number} int
                         */
                         (val: xmlSchemaValPtr | null): number
                     }
                 
                     xmlSchemaValueGetAsString: {
                         /** 
-                        * @param val {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {string - q(const).xmlChar}
+                        * @param val {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {string} q(const).xmlChar
                         */
                         (val: xmlSchemaValPtr | null): string
                     }
                 
                     xmlSchemaValueGetNext: {
                         /** 
-                        * @param cur {xmlSchemaValPtr | null} - xmlSchemaValPtr
-                        * @returns {xmlSchemaValPtr - xmlSchemaValPtr}
+                        * @param cur {xmlSchemaValPtr | null} xmlSchemaValPtr
+                        * @returns {xmlSchemaValPtr} xmlSchemaValPtr
                         */
                         (cur: xmlSchemaValPtr | null): xmlSchemaValPtr
                     }
                 
                     xmlSchemaWhiteSpaceReplace: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (value: string | null): string
+                        (value: string | Buffer | null): string
                     }
                 
                     xmlSearchNs: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param nameSpace {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param nameSpace {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
-                        (doc: xmlDocPtr | null, node: xmlNodePtr | null, nameSpace: string | null): xmlNsPtr
+                        (doc: xmlDocPtr | null, node: xmlNodePtr | null, nameSpace: string | Buffer | null): xmlNsPtr
                     }
                 
                     xmlSearchNsByHref: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param href {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNsPtr - xmlNsPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param href {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNsPtr} xmlNsPtr
                         */
-                        (doc: xmlDocPtr | null, node: xmlNodePtr | null, href: string | null): xmlNsPtr
+                        (doc: xmlDocPtr | null, node: xmlNodePtr | null, href: string | Buffer | null): xmlNsPtr
                     }
                 
                     xmlSetBufferAllocationScheme: {
                         /** 
-                        * @param scheme {xmlBufferAllocationScheme} - xmlBufferAllocationScheme
-                        * @returns {any - void}
+                        * @param scheme {xmlBufferAllocationScheme} xmlBufferAllocationScheme
+                        * @returns {any} void
                         */
                         (scheme: xmlBufferAllocationScheme): any
                     }
                 
                     xmlSetCompressMode: {
                         /** 
-                        * @param mode {number} - int
-                        * @returns {any - void}
+                        * @param mode {number} int
+                        * @returns {any} void
                         */
                         (mode: number): any
                     }
                 
                     xmlSetDocCompressMode: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param mode {number} - int
-                        * @returns {any - void}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param mode {number} int
+                        * @returns {any} void
                         */
                         (doc: xmlDocPtr | null, mode: number): any
                     }
                 
                     xmlSetEntityReferenceFunc: {
                         /** 
-                        * @param func {xmlEntityReferenceFunc} - xmlEntityReferenceFunc
-                        * @returns {any - void}
+                        * @param func {xmlEntityReferenceFunc} xmlEntityReferenceFunc
+                        * @returns {any} void
                         */
                         (func: xmlEntityReferenceFunc): any
                     }
                 
                     xmlSetExternalEntityLoader: {
                         /** 
-                        * @param f {xmlExternalEntityLoader} - xmlExternalEntityLoader
-                        * @returns {any - void}
+                        * @param f {xmlExternalEntityLoader} xmlExternalEntityLoader
+                        * @returns {any} void
                         */
                         (f: xmlExternalEntityLoader): any
                     }
                 
                     xmlSetFeature: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param name {string | null} - p.q(const).char
-                        * @param value {any} - p.void
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).char
+                        * @param value {any} p.void
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, name: string | null, value: any): number
+                        (ctxt: xmlParserCtxtPtr | null, name: string | Buffer | null, value: any): number
                     }
                 
                     xmlSetGenericErrorFunc: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param handler {xmlGenericErrorFunc} - xmlGenericErrorFunc
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param handler {xmlGenericErrorFunc} xmlGenericErrorFunc
+                        * @returns {any} void
                         */
                         (ctx: any, handler: xmlGenericErrorFunc): any
                     }
                 
                     xmlSetListDoc: {
                         /** 
-                        * @param list {xmlNodePtr | null} - xmlNodePtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {any - void}
+                        * @param list {xmlNodePtr | null} xmlNodePtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {any} void
                         */
                         (list: xmlNodePtr | null, doc: xmlDocPtr | null): any
                     }
                 
                     xmlSetNs: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @returns {any - void}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @returns {any} void
                         */
                         (node: xmlNodePtr | null, ns: xmlNsPtr | null): any
                     }
                 
                     xmlSetNsProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlSetProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlAttrPtr - xmlAttrPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlAttrPtr} xmlAttrPtr
                         */
-                        (node: xmlNodePtr | null, name: string | null, value: string | null): xmlAttrPtr
+                        (node: xmlNodePtr | null, name: string | Buffer | null, value: string | Buffer | null): xmlAttrPtr
                     }
                 
                     xmlSetStructuredErrorFunc: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param handler {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param handler {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @returns {any} void
                         */
                         (ctx: any, handler: xmlStructuredErrorFunc): any
                     }
                 
                     xmlSetTreeDoc: {
                         /** 
-                        * @param tree {xmlNodePtr | null} - xmlNodePtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {any - void}
+                        * @param tree {xmlNodePtr | null} xmlNodePtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {any} void
                         */
                         (tree: xmlNodePtr | null, doc: xmlDocPtr | null): any
                     }
                 
                     xmlSetupParserForBuffer: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param buffer {string | null} - p.q(const).xmlChar
-                        * @param filename {string | null} - p.q(const).char
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param buffer {string | Buffer | null} p.q(const).xmlChar
+                        * @param filename {string | Buffer | null} p.q(const).char
+                        * @returns {any} void
                         */
-                        (ctxt: xmlParserCtxtPtr | null, buffer: string | null, filename: string | null): any
+                        (ctxt: xmlParserCtxtPtr | null, buffer: string | Buffer | null, filename: string | Buffer | null): any
                     }
                 
                     xmlSkipBlankChars: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null): number
                     }
                 
                     xmlSnprintfElementContent: {
                         /** 
-                        * @param buf {string | null} - p.char
-                        * @param size {number} - int
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @param englob {number} - int
-                        * @returns {any - void}
+                        * @param buf {string | Buffer | null} p.char
+                        * @param size {number} int
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @param englob {number} int
+                        * @returns {any} void
                         */
-                        (buf: string | null, size: number, content: xmlElementContentPtr | null, englob: number): any
+                        (buf: string | Buffer | null, size: number, content: xmlElementContentPtr | null, englob: number): any
                     }
                 
                     xmlSplitQName: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.p.xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.p.xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, name: string | null, prefix: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, name: string | Buffer | null, prefix: string | Buffer | null): string
                     }
                 
                     xmlSplitQName2: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param prefix {string | null} - p.p.xmlChar
-                        * @returns {string - xmlChar}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param prefix {string | Buffer | null} p.p.xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (name: string | null, prefix: string | null): string
+                        (name: string | Buffer | null, prefix: string | Buffer | null): string
                     }
                 
                     xmlSplitQName3: {
                         /** 
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param len {number} - p.int
-                        * @returns {string - q(const).xmlChar}
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} p.int
+                        * @returns {string} q(const).xmlChar
                         */
-                        (name: string | null, len: number): string
+                        (name: string | Buffer | null, len: number): string
                     }
                 
                     xmlSprintfElementContent: {
                         /** 
-                        * @param buf {string | null} - p.char
-                        * @param content {xmlElementContentPtr | null} - xmlElementContentPtr
-                        * @param englob {number} - int
-                        * @returns {any - void}
+                        * @param buf {string | Buffer | null} p.char
+                        * @param content {xmlElementContentPtr | null} xmlElementContentPtr
+                        * @param englob {number} int
+                        * @returns {any} void
                         */
-                        (buf: string | null, content: xmlElementContentPtr | null, englob: number): any
+                        (buf: string | Buffer | null, content: xmlElementContentPtr | null, englob: number): any
                     }
                 
                     xmlStopParser: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlParserCtxtPtr | null): any
                     }
                 
                     xmlStrEqual: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (str1: string | null, str2: string | null): number
+                        (str1: string | Buffer | null, str2: string | Buffer | null): number
                     }
                 
                     xmlStrPrintf: {
                         /** 
-                        * @param buf {string | null} - p.xmlChar
-                        * @param len {number} - int
-                        * @param msg {string | null} - p.q(const).char
-                        * @param arg3 {undefined} - v(...)
-                        * @returns {number - int}
+                        * @param buf {string | Buffer | null} p.xmlChar
+                        * @param len {number} int
+                        * @param msg {string | Buffer | null} p.q(const).char
+                        * @param arg3 {undefined} v(...)
+                        * @returns {number} int
                         */
-                        (buf: string | null, len: number, msg: string | null, arg3: undefined): number
+                        (buf: string | Buffer | null, len: number, msg: string | Buffer | null, arg3: undefined): number
                     }
                 
                     xmlStrQEqual: {
                         /** 
-                        * @param pref {string | null} - p.q(const).xmlChar
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param pref {string | Buffer | null} p.q(const).xmlChar
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (pref: string | null, name: string | null, str: string | null): number
+                        (pref: string | Buffer | null, name: string | Buffer | null, str: string | Buffer | null): number
                     }
                 
                     xmlStrcasecmp: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (str1: string | null, str2: string | null): number
+                        (str1: string | Buffer | null, str2: string | Buffer | null): number
                     }
                 
                     xmlStrcasestr: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param val {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (str: string | null, val: string | null): string
+                        (str: string | Buffer | null, val: string | Buffer | null): string
                     }
                 
                     xmlStrcat: {
                         /** 
-                        * @param cur {string | null} - p.xmlChar
-                        * @param add {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.xmlChar
+                        * @param add {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null, add: string | null): string
+                        (cur: string | Buffer | null, add: string | Buffer | null): string
                     }
                 
                     xmlStrchr: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param val {string | null} - xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {string | Buffer | null} xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (str: string | null, val: string | null): string
+                        (str: string | Buffer | null, val: string | Buffer | null): string
                     }
                 
                     xmlStrcmp: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (str1: string | null, str2: string | null): number
+                        (str1: string | Buffer | null, str2: string | Buffer | null): number
                     }
                 
                     xmlStrdup: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null): string
+                        (cur: string | Buffer | null): string
                     }
                 
                     xmlStreamPop: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @returns {number - int}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @returns {number} int
                         */
                         (stream: xmlStreamCtxtPtr | null): number
                     }
                 
                     xmlStreamPush: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (stream: xmlStreamCtxtPtr | null, name: string | null, ns: string | null): number
+                        (stream: xmlStreamCtxtPtr | null, name: string | Buffer | null, ns: string | Buffer | null): number
                     }
                 
                     xmlStreamPushAttr: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (stream: xmlStreamCtxtPtr | null, name: string | null, ns: string | null): number
+                        (stream: xmlStreamCtxtPtr | null, name: string | Buffer | null, ns: string | Buffer | null): number
                     }
                 
                     xmlStreamPushNode: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param ns {string | null} - p.q(const).xmlChar
-                        * @param nodeType {number} - int
-                        * @returns {number - int}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {string | Buffer | null} p.q(const).xmlChar
+                        * @param nodeType {number} int
+                        * @returns {number} int
                         */
-                        (stream: xmlStreamCtxtPtr | null, name: string | null, ns: string | null, nodeType: number): number
+                        (stream: xmlStreamCtxtPtr | null, name: string | Buffer | null, ns: string | Buffer | null, nodeType: number): number
                     }
                 
                     xmlStreamWantsAnyNode: {
                         /** 
-                        * @param stream {xmlStreamCtxtPtr | null} - xmlStreamCtxtPtr
-                        * @returns {number - int}
+                        * @param stream {xmlStreamCtxtPtr | null} xmlStreamCtxtPtr
+                        * @returns {number} int
                         */
                         (stream: xmlStreamCtxtPtr | null): number
                     }
                 
                     xmlStringCurrentChar: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param len {number} - p.int
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} p.int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlParserCtxtPtr | null, cur: string | null, len: number): number
+                        (ctxt: xmlParserCtxtPtr | null, cur: string | Buffer | null, len: number): number
                     }
                 
                     xmlStringDecodeEntities: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param what {number} - int
-                        * @param end {string | null} - xmlChar
-                        * @param end2 {string | null} - xmlChar
-                        * @param end3 {string | null} - xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param what {number} int
+                        * @param end {string | Buffer | null} xmlChar
+                        * @param end2 {string | Buffer | null} xmlChar
+                        * @param end3 {string | Buffer | null} xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, str: string | null, what: number, end: string | null, end2: string | null, end3: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, str: string | Buffer | null, what: number, end: string | Buffer | null, end2: string | Buffer | null, end3: string | Buffer | null): string
                     }
                 
                     xmlStringGetNodeList: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDoc, value: string | null): xmlNodePtr
+                        (doc: xmlDocPtr | null, value: string | Buffer | null): xmlNodePtr
                     }
                 
                     xmlStringLenDecodeEntities: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @param what {number} - int
-                        * @param end {string | null} - xmlChar
-                        * @param end2 {string | null} - xmlChar
-                        * @param end3 {string | null} - xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @param what {number} int
+                        * @param end {string | Buffer | null} xmlChar
+                        * @param end2 {string | Buffer | null} xmlChar
+                        * @param end3 {string | Buffer | null} xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlParserCtxtPtr | null, str: string | null, len: number, what: number, end: string | null, end2: string | null, end3: string | null): string
+                        (ctxt: xmlParserCtxtPtr | null, str: string | Buffer | null, len: number, what: number, end: string | Buffer | null, end2: string | Buffer | null, end3: string | Buffer | null): string
                     }
                 
                     xmlStringLenGetNodeList: {
                         /** 
-                        * @param doc {xmlDoc} - p.q(const).xmlDoc
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param doc {xmlDocPtr | null} p.q(const).xmlDoc
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
-                        (doc: xmlDoc, value: string | null, len: number): xmlNodePtr
+                        (doc: xmlDocPtr | null, value: string | Buffer | null, len: number): xmlNodePtr
                     }
                 
                     xmlStrlen: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (str: string | null): number
+                        (str: string | Buffer | null): number
                     }
                 
                     xmlStrncasecmp: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (str1: string | null, str2: string | null, len: number): number
+                        (str1: string | Buffer | null, str2: string | Buffer | null, len: number): number
                     }
                 
                     xmlStrncat: {
                         /** 
-                        * @param cur {string | null} - p.xmlChar
-                        * @param add {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.xmlChar
+                        * @param add {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null, add: string | null, len: number): string
+                        (cur: string | Buffer | null, add: string | Buffer | null, len: number): string
                     }
                 
                     xmlStrncatNew: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (str1: string | null, str2: string | null, len: number): string
+                        (str1: string | Buffer | null, str2: string | Buffer | null, len: number): string
                     }
                 
                     xmlStrncmp: {
                         /** 
-                        * @param str1 {string | null} - p.q(const).xmlChar
-                        * @param str2 {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param str1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param str2 {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (str1: string | null, str2: string | null, len: number): number
+                        (str1: string | Buffer | null, str2: string | Buffer | null, len: number): number
                     }
                 
                     xmlStrndup: {
                         /** 
-                        * @param cur {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param cur {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (cur: string | null, len: number): string
+                        (cur: string | Buffer | null, len: number): string
                     }
                 
                     xmlStrstr: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param val {string | null} - p.q(const).xmlChar
-                        * @returns {string - q(const).xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param val {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
                         */
-                        (str: string | null, val: string | null): string
+                        (str: string | Buffer | null, val: string | Buffer | null): string
                     }
                 
                     xmlStrsub: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param start {number} - int
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param start {number} int
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (str: string | null, start: number, len: number): string
+                        (str: string | Buffer | null, start: number, len: number): string
                     }
                 
                     xmlSubstituteEntitiesDefault: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - int}
+                        * @param val {number} int
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlSwitchEncoding: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param enc {xmlCharEncoding} - xmlCharEncoding
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param enc {xmlCharEncoding} xmlCharEncoding
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, enc: xmlCharEncoding): number
                     }
                 
                     xmlSwitchInputEncoding: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param input {xmlParserInputPtr | null} - xmlParserInputPtr
-                        * @param handler {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param input {xmlParserInputPtr | null} xmlParserInputPtr
+                        * @param handler {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, input: xmlParserInputPtr | null, handler: xmlCharEncodingHandlerPtr | null): number
                     }
                 
                     xmlSwitchToEncoding: {
                         /** 
-                        * @param ctxt {xmlParserCtxtPtr | null} - xmlParserCtxtPtr
-                        * @param handler {xmlCharEncodingHandlerPtr | null} - xmlCharEncodingHandlerPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlParserCtxtPtr | null} xmlParserCtxtPtr
+                        * @param handler {xmlCharEncodingHandlerPtr | null} xmlCharEncodingHandlerPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlParserCtxtPtr | null, handler: xmlCharEncodingHandlerPtr | null): number
                     }
                 
                     xmlTextConcat: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param content {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param content {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (node: xmlNodePtr | null, content: string | null, len: number): number
+                        (node: xmlNodePtr | null, content: string | Buffer | null, len: number): number
                     }
                 
                     xmlTextMerge: {
                         /** 
-                        * @param first {xmlNodePtr | null} - xmlNodePtr
-                        * @param second {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param first {xmlNodePtr | null} xmlNodePtr
+                        * @param second {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (first: xmlNodePtr | null, second: xmlNodePtr | null): xmlNodePtr
                     }
                 
                     xmlThrDefBufferAllocScheme: {
                         /** 
-                        * @param v {xmlBufferAllocationScheme} - xmlBufferAllocationScheme
-                        * @returns {xmlBufferAllocationScheme - xmlBufferAllocationScheme}
+                        * @param v {xmlBufferAllocationScheme} xmlBufferAllocationScheme
+                        * @returns {xmlBufferAllocationScheme} xmlBufferAllocationScheme
                         */
                         (v: xmlBufferAllocationScheme): xmlBufferAllocationScheme
                     }
                 
                     xmlThrDefDefaultBufferSize: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefDeregisterNodeDefault: {
                         /** 
-                        * @param func {xmlDeregisterNodeFunc} - xmlDeregisterNodeFunc
-                        * @returns {xmlDeregisterNodeFunc - xmlDeregisterNodeFunc}
+                        * @param func {xmlDeregisterNodeFunc} xmlDeregisterNodeFunc
+                        * @returns {xmlDeregisterNodeFunc} xmlDeregisterNodeFunc
                         */
                         (func: xmlDeregisterNodeFunc): xmlDeregisterNodeFunc
                     }
                 
                     xmlThrDefDoValidityCheckingDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefGetWarningsDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefIndentTreeOutput: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefKeepBlanksDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefLineNumbersDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefLoadExtDtdDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefOutputBufferCreateFilenameDefault: {
                         /** 
-                        * @param func {xmlOutputBufferCreateFilenameFunc} - xmlOutputBufferCreateFilenameFunc
-                        * @returns {xmlOutputBufferCreateFilenameFunc - xmlOutputBufferCreateFilenameFunc}
+                        * @param func {xmlOutputBufferCreateFilenameFunc} xmlOutputBufferCreateFilenameFunc
+                        * @returns {xmlOutputBufferCreateFilenameFunc} xmlOutputBufferCreateFilenameFunc
                         */
                         (func: xmlOutputBufferCreateFilenameFunc): xmlOutputBufferCreateFilenameFunc
                     }
                 
                     xmlThrDefParserDebugEntities: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefParserInputBufferCreateFilenameDefault: {
                         /** 
-                        * @param func {xmlParserInputBufferCreateFilenameFunc} - xmlParserInputBufferCreateFilenameFunc
-                        * @returns {xmlParserInputBufferCreateFilenameFunc - xmlParserInputBufferCreateFilenameFunc}
+                        * @param func {xmlParserInputBufferCreateFilenameFunc} xmlParserInputBufferCreateFilenameFunc
+                        * @returns {xmlParserInputBufferCreateFilenameFunc} xmlParserInputBufferCreateFilenameFunc
                         */
                         (func: xmlParserInputBufferCreateFilenameFunc): xmlParserInputBufferCreateFilenameFunc
                     }
                 
                     xmlThrDefPedanticParserDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefRegisterNodeDefault: {
                         /** 
-                        * @param func {xmlRegisterNodeFunc} - xmlRegisterNodeFunc
-                        * @returns {xmlRegisterNodeFunc - xmlRegisterNodeFunc}
+                        * @param func {xmlRegisterNodeFunc} xmlRegisterNodeFunc
+                        * @returns {xmlRegisterNodeFunc} xmlRegisterNodeFunc
                         */
                         (func: xmlRegisterNodeFunc): xmlRegisterNodeFunc
                     }
                 
                     xmlThrDefSaveNoEmptyTags: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefSetGenericErrorFunc: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param handler {xmlGenericErrorFunc} - xmlGenericErrorFunc
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param handler {xmlGenericErrorFunc} xmlGenericErrorFunc
+                        * @returns {any} void
                         */
                         (ctx: any, handler: xmlGenericErrorFunc): any
                     }
                 
                     xmlThrDefSetStructuredErrorFunc: {
                         /** 
-                        * @param ctx {any} - p.void
-                        * @param handler {xmlStructuredErrorFunc} - xmlStructuredErrorFunc
-                        * @returns {any - void}
+                        * @param ctx {any} p.void
+                        * @param handler {xmlStructuredErrorFunc} xmlStructuredErrorFunc
+                        * @returns {any} void
                         */
                         (ctx: any, handler: xmlStructuredErrorFunc): any
                     }
                 
                     xmlThrDefSubstituteEntitiesDefaultValue: {
                         /** 
-                        * @param v {number} - int
-                        * @returns {number - int}
+                        * @param v {number} int
+                        * @returns {number} int
                         */
                         (v: number): number
                     }
                 
                     xmlThrDefTreeIndentString: {
                         /** 
-                        * @param v {string | null} - p.q(const).char
-                        * @returns {string - q(const).char}
+                        * @param v {string | Buffer | null} p.q(const).char
+                        * @returns {string} q(const).char
                         */
-                        (v: string | null): string
+                        (v: string | Buffer | null): string
                     }
                 
                     xmlUCSIsAegeanNumbers: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsAlphabeticPresentationForms: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsArabic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsArabicPresentationFormsA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsArabicPresentationFormsB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsArmenian: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsArrows: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBasicLatin: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBengali: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBlock: {
                         /** 
-                        * @param code {number} - int
-                        * @param block {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @param block {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (code: number, block: string | null): number
+                        (code: number, block: string | Buffer | null): number
                     }
                 
                     xmlUCSIsBlockElements: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBopomofo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBopomofoExtended: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBoxDrawing: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBraillePatterns: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsBuhid: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsByzantineMusicalSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKCompatibility: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKCompatibilityForms: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKCompatibilityIdeographs: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKCompatibilityIdeographsSupplement: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKRadicalsSupplement: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKSymbolsandPunctuation: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKUnifiedIdeographs: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKUnifiedIdeographsExtensionA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCJKUnifiedIdeographsExtensionB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCat: {
                         /** 
-                        * @param code {number} - int
-                        * @param cat {string | null} - p.q(const).char
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @param cat {string | Buffer | null} p.q(const).char
+                        * @returns {number} int
                         */
-                        (code: number, cat: string | null): number
+                        (code: number, cat: string | Buffer | null): number
                     }
                 
                     xmlUCSIsCatC: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatCc: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatCf: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatCo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatCs: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatL: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatLl: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatLm: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatLo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatLt: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatLu: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatM: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatMc: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatMe: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatMn: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatN: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatNd: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatNl: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatNo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatP: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPc: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPd: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPe: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPf: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPi: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatPs: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatS: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatSc: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatSk: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatSm: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatSo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatZ: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatZl: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatZp: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCatZs: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCherokee: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCombiningDiacriticalMarks: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCombiningDiacriticalMarksforSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCombiningHalfMarks: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCombiningMarksforSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsControlPictures: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCurrencySymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCypriotSyllabary: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCyrillic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsCyrillicSupplement: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsDeseret: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsDevanagari: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsDingbats: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsEnclosedAlphanumerics: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsEnclosedCJKLettersandMonths: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsEthiopic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGeneralPunctuation: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGeometricShapes: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGeorgian: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGothic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGreek: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGreekExtended: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGreekandCoptic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGujarati: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsGurmukhi: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHalfwidthandFullwidthForms: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHangulCompatibilityJamo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHangulJamo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHangulSyllables: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHanunoo: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHebrew: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHighPrivateUseSurrogates: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHighSurrogates: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsHiragana: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsIPAExtensions: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsIdeographicDescriptionCharacters: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKanbun: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKangxiRadicals: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKannada: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKatakana: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKatakanaPhoneticExtensions: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKhmer: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsKhmerSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLao: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLatin1Supplement: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLatinExtendedA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLatinExtendedAdditional: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLatinExtendedB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLetterlikeSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLimbu: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLinearBIdeograms: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLinearBSyllabary: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsLowSurrogates: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMalayalam: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMathematicalAlphanumericSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMathematicalOperators: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMiscellaneousMathematicalSymbolsA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMiscellaneousMathematicalSymbolsB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMiscellaneousSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMiscellaneousSymbolsandArrows: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMiscellaneousTechnical: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMongolian: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMusicalSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsMyanmar: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsNumberForms: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsOgham: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsOldItalic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsOpticalCharacterRecognition: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsOriya: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsOsmanya: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsPhoneticExtensions: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsPrivateUse: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsPrivateUseArea: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsRunic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsShavian: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSinhala: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSmallFormVariants: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSpacingModifierLetters: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSpecials: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSuperscriptsandSubscripts: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSupplementalArrowsA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSupplementalArrowsB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSupplementalMathematicalOperators: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSupplementaryPrivateUseAreaA: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSupplementaryPrivateUseAreaB: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsSyriac: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTagalog: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTagbanwa: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTags: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTaiLe: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTaiXuanJingSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTamil: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTelugu: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsThaana: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsThai: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsTibetan: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsUgaritic: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsUnifiedCanadianAboriginalSyllabics: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsVariationSelectors: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsVariationSelectorsSupplement: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsYiRadicals: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsYiSyllables: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlUCSIsYijingHexagramSymbols: {
                         /** 
-                        * @param code {number} - int
-                        * @returns {number - int}
+                        * @param code {number} int
+                        * @returns {number} int
                         */
                         (code: number): number
                     }
                 
                     xmlURIEscape: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (str: string | null): string
+                        (str: string | Buffer | null): string
                     }
                 
                     xmlURIEscapeStr: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param list {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param list {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (str: string | null, list: string | null): string
+                        (str: string | Buffer | null, list: string | Buffer | null): string
                     }
                 
                     xmlURIUnescapeString: {
                         /** 
-                        * @param str {string | null} - p.q(const).char
-                        * @param len {number} - int
-                        * @param target {string | null} - p.char
-                        * @returns {string - char}
+                        * @param str {string | Buffer | null} p.q(const).char
+                        * @param len {number} int
+                        * @param target {string | Buffer | null} p.char
+                        * @returns {string} char
                         */
-                        (str: string | null, len: number, target: string | null): string
+                        (str: string | Buffer | null, len: number, target: string | Buffer | null): string
                     }
                 
                     xmlUTF8Charcmp: {
                         /** 
-                        * @param utf1 {string | null} - p.q(const).xmlChar
-                        * @param utf2 {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param utf1 {string | Buffer | null} p.q(const).xmlChar
+                        * @param utf2 {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (utf1: string | null, utf2: string | null): number
+                        (utf1: string | Buffer | null, utf2: string | Buffer | null): number
                     }
                 
                     xmlUTF8Size: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (utf: string | null): number
+                        (utf: string | Buffer | null): number
                     }
                 
                     xmlUTF8Strlen: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (utf: string | null): number
+                        (utf: string | Buffer | null): number
                     }
                 
                     xmlUTF8Strloc: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @param utfchar {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @param utfchar {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (utf: string | null, utfchar: string | null): number
+                        (utf: string | Buffer | null, utfchar: string | Buffer | null): number
                     }
                 
                     xmlUTF8Strndup: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (utf: string | null, len: number): string
+                        (utf: string | Buffer | null, len: number): string
                     }
                 
                     xmlUTF8Strpos: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @param pos {number} - int
-                        * @returns {string - q(const).xmlChar}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @param pos {number} int
+                        * @returns {string} q(const).xmlChar
                         */
-                        (utf: string | null, pos: number): string
+                        (utf: string | Buffer | null, pos: number): string
                     }
                 
                     xmlUTF8Strsize: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (utf: string | null, len: number): number
+                        (utf: string | Buffer | null, len: number): number
                     }
                 
                     xmlUTF8Strsub: {
                         /** 
-                        * @param utf {string | null} - p.q(const).xmlChar
-                        * @param start {number} - int
-                        * @param len {number} - int
-                        * @returns {string - xmlChar}
+                        * @param utf {string | Buffer | null} p.q(const).xmlChar
+                        * @param start {number} int
+                        * @param len {number} int
+                        * @returns {string} xmlChar
                         */
-                        (utf: string | null, start: number, len: number): string
+                        (utf: string | Buffer | null, start: number, len: number): string
                     }
                 
                     xmlUnlinkNode: {
                         /** 
-                        * @param cur {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {any - void}
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
                         */
                         (cur: xmlNodePtr | null): any
                     }
                 
                     xmlUnlockLibrary: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
                     xmlUnsetNsProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | null): number
+                        (node: xmlNodePtr | null, ns: xmlNsPtr | null, name: string | Buffer | null): number
                     }
                 
                     xmlUnsetProp: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (node: xmlNodePtr | null, name: string | null): number
+                        (node: xmlNodePtr | null, name: string | Buffer | null): number
                     }
                 
                     xmlValidBuildContentModel: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param elem {xmlElementPtr | null} - xmlElementPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param elem {xmlElementPtr | null} xmlElementPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, elem: xmlElementPtr | null): number
                     }
                 
                     xmlValidCtxtNormalizeAttributeValue: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, name: string | null, value: string | null): string
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, name: string | Buffer | null, value: string | Buffer | null): string
                     }
                 
                     xmlValidGetPotentialChildren: {
                         /** 
-                        * @param ctree {xmlElementContent} - p.xmlElementContent
-                        * @param names {string | null} - p.p.q(const).xmlChar
-                        * @param len {number} - p.int
-                        * @param max {number} - int
-                        * @returns {number - int}
+                        * @param ctree {xmlElementContent} p.xmlElementContent
+                        * @param names {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param len {number} p.int
+                        * @param max {number} int
+                        * @returns {number} int
                         */
-                        (ctree: xmlElementContent, names: string | null, len: number, max: number): number
+                        (ctree: xmlElementContent, names: string | Buffer | null, len: number, max: number): number
                     }
                 
                     xmlValidGetValidElements: {
                         /** 
-                        * @param prev {xmlNode} - p.xmlNode
-                        * @param next {xmlNode} - p.xmlNode
-                        * @param names {string | null} - p.p.q(const).xmlChar
-                        * @param max {number} - int
-                        * @returns {number - int}
+                        * @param prev {xmlNode} p.xmlNode
+                        * @param next {xmlNode} p.xmlNode
+                        * @param names {string | Buffer | null} p.p.q(const).xmlChar
+                        * @param max {number} int
+                        * @returns {number} int
                         */
-                        (prev: xmlNode, next: xmlNode, names: string | null, max: number): number
+                        (prev: xmlNode, next: xmlNode, names: string | Buffer | null, max: number): number
                     }
                 
                     xmlValidNormalizeAttributeValue: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param name {string | null} - p.q(const).xmlChar
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {string - xmlChar}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} xmlChar
                         */
-                        (doc: xmlDocPtr | null, elem: xmlNodePtr | null, name: string | null, value: string | null): string
+                        (doc: xmlDocPtr | null, elem: xmlNodePtr | null, name: string | Buffer | null, value: string | Buffer | null): string
                     }
                 
                     xmlValidateAttributeDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param attr {xmlAttributePtr | null} - xmlAttributePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param attr {xmlAttributePtr | null} xmlAttributePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, attr: xmlAttributePtr | null): number
                     }
                 
                     xmlValidateAttributeValue: {
                         /** 
-                        * @param type {xmlAttributeType} - xmlAttributeType
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param type {xmlAttributeType} xmlAttributeType
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (type: xmlAttributeType, value: string | null): number
+                        (type: xmlAttributeType, value: string | Buffer | null): number
                     }
                 
                     xmlValidateDocument: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
                     xmlValidateDocumentFinal: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
                     xmlValidateDtd: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param dtd {xmlDtdPtr | null} - xmlDtdPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param dtd {xmlDtdPtr | null} xmlDtdPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, dtd: xmlDtdPtr | null): number
                     }
                 
                     xmlValidateDtdFinal: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
                     xmlValidateElement: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlValidateElementDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlElementPtr | null} - xmlElementPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlElementPtr | null} xmlElementPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlElementPtr | null): number
                     }
                 
                     xmlValidateNCName: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param space {number} - int
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param space {number} int
+                        * @returns {number} int
                         */
-                        (value: string | null, space: number): number
+                        (value: string | Buffer | null, space: number): number
                     }
                 
                     xmlValidateNMToken: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param space {number} - int
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param space {number} int
+                        * @returns {number} int
                         */
-                        (value: string | null, space: number): number
+                        (value: string | Buffer | null, space: number): number
                     }
                 
                     xmlValidateName: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param space {number} - int
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param space {number} int
+                        * @returns {number} int
                         */
-                        (value: string | null, space: number): number
+                        (value: string | Buffer | null, space: number): number
                     }
                 
                     xmlValidateNameValue: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (value: string | null): number
+                        (value: string | Buffer | null): number
                     }
                 
                     xmlValidateNamesValue: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (value: string | null): number
+                        (value: string | Buffer | null): number
                     }
                 
                     xmlValidateNmtokenValue: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (value: string | null): number
+                        (value: string | Buffer | null): number
                     }
                 
                     xmlValidateNmtokensValue: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (value: string | null): number
+                        (value: string | Buffer | null): number
                     }
                 
                     xmlValidateNotationDecl: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param nota {xmlNotationPtr | null} - xmlNotationPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param nota {xmlNotationPtr | null} xmlNotationPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, nota: xmlNotationPtr | null): number
                     }
                 
                     xmlValidateNotationUse: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param notationName {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param notationName {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, notationName: string | null): number
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, notationName: string | Buffer | null): number
                     }
                 
                     xmlValidateOneAttribute: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param attr {xmlAttrPtr | null} - xmlAttrPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param attr {xmlAttrPtr | null} xmlAttrPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, attr: xmlAttrPtr | null, value: string | null): number
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, attr: xmlAttrPtr | null, value: string | Buffer | null): number
                     }
                 
                     xmlValidateOneElement: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null): number
                     }
                 
                     xmlValidateOneNamespace: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param prefix {string | null} - p.q(const).xmlChar
-                        * @param ns {xmlNsPtr | null} - xmlNsPtr
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, prefix: string | null, ns: xmlNsPtr | null, value: string | null): number
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, prefix: string | Buffer | null, ns: xmlNsPtr | null, value: string | Buffer | null): number
                     }
                 
                     xmlValidatePopElement: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param qname {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param qname {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, qname: string | null): number
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, qname: string | Buffer | null): number
                     }
                 
                     xmlValidatePushCData: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param data {string | null} - p.q(const).xmlChar
-                        * @param len {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param data {string | Buffer | null} p.q(const).xmlChar
+                        * @param len {number} int
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, data: string | null, len: number): number
+                        (ctxt: xmlValidCtxtPtr | null, data: string | Buffer | null, len: number): number
                     }
                 
                     xmlValidatePushElement: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param elem {xmlNodePtr | null} - xmlNodePtr
-                        * @param qname {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param elem {xmlNodePtr | null} xmlNodePtr
+                        * @param qname {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, qname: string | null): number
+                        (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null, elem: xmlNodePtr | null, qname: string | Buffer | null): number
                     }
                 
                     xmlValidateQName: {
                         /** 
-                        * @param value {string | null} - p.q(const).xmlChar
-                        * @param space {number} - int
-                        * @returns {number - int}
+                        * @param value {string | Buffer | null} p.q(const).xmlChar
+                        * @param space {number} int
+                        * @returns {number} int
                         */
-                        (value: string | null, space: number): number
+                        (value: string | Buffer | null, space: number): number
                     }
                 
                     xmlValidateRoot: {
                         /** 
-                        * @param ctxt {xmlValidCtxtPtr | null} - xmlValidCtxtPtr
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlValidCtxtPtr | null} xmlValidCtxtPtr
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlValidCtxtPtr | null, doc: xmlDocPtr | null): number
                     }
                 
+                    xmlXPathAddValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathBooleanFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathCastBooleanToNumber: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {number - double}
+                        * @param val {number} int
+                        * @returns {number} double
                         */
                         (val: number): number
                     }
                 
                     xmlXPathCastBooleanToString: {
                         /** 
-                        * @param val {number} - int
-                        * @returns {string - xmlChar}
+                        * @param val {number} int
+                        * @returns {string} xmlChar
                         */
                         (val: number): string
                     }
                 
                     xmlXPathCastNodeSetToBoolean: {
                         /** 
-                        * @param ns {xmlNodePtr[]} - xmlNodeSetPtr
-                        * @returns {number - int}
+                        * @param ns {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {number} int
                         */
                         (ns: xmlNodePtr[]): number
                     }
                 
                     xmlXPathCastNodeSetToNumber: {
                         /** 
-                        * @param ns {xmlNodePtr[]} - xmlNodeSetPtr
-                        * @returns {number - double}
+                        * @param ns {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {number} double
                         */
                         (ns: xmlNodePtr[]): number
                     }
                 
                     xmlXPathCastNodeSetToString: {
                         /** 
-                        * @param ns {xmlNodePtr[]} - xmlNodeSetPtr
-                        * @returns {string - xmlChar}
+                        * @param ns {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {string} xmlChar
                         */
                         (ns: xmlNodePtr[]): string
                     }
                 
                     xmlXPathCastNodeToNumber: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - double}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} double
                         */
                         (node: xmlNodePtr | null): number
                     }
                 
                     xmlXPathCastNodeToString: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {string - xmlChar}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {string} xmlChar
                         */
                         (node: xmlNodePtr | null): string
                     }
                 
                     xmlXPathCastNumberToBoolean: {
                         /** 
-                        * @param val {number} - double
-                        * @returns {number - int}
+                        * @param val {number} double
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlXPathCastNumberToString: {
                         /** 
-                        * @param val {number} - double
-                        * @returns {string - xmlChar}
+                        * @param val {number} double
+                        * @returns {string} xmlChar
                         */
                         (val: number): string
                     }
                 
                     xmlXPathCastStringToBoolean: {
                         /** 
-                        * @param val {string | null} - p.q(const).xmlChar
-                        * @returns {number - int}
+                        * @param val {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
                         */
-                        (val: string | null): number
+                        (val: string | Buffer | null): number
                     }
                 
                     xmlXPathCastStringToNumber: {
                         /** 
-                        * @param val {string | null} - p.q(const).xmlChar
-                        * @returns {number - double}
+                        * @param val {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} double
                         */
-                        (val: string | null): number
+                        (val: string | Buffer | null): number
                     }
                 
                     xmlXPathCastToBoolean: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {number - int}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
                         */
                         (val: xmlXPathObjectPtr | null): number
                     }
                 
                     xmlXPathCastToNumber: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {number - double}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} double
                         */
                         (val: xmlXPathObjectPtr | null): number
                     }
                 
                     xmlXPathCastToString: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {string - xmlChar}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {string} xmlChar
                         */
                         (val: xmlXPathObjectPtr | null): string
                     }
                 
+                    xmlXPathCeilingFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathCmpNodes: {
                         /** 
-                        * @param node1 {xmlNodePtr | null} - xmlNodePtr
-                        * @param node2 {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {number - int}
+                        * @param node1 {xmlNodePtr | null} xmlNodePtr
+                        * @param node2 {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
                         */
                         (node1: xmlNodePtr | null, node2: xmlNodePtr | null): number
                     }
                 
+                    xmlXPathCompareValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param inf {number} int
+                        * @param strict {number} int
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, inf: number, strict: number): number
+                    }
+                
                     xmlXPathCompile: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {xmlXPathCompExprPtr - xmlXPathCompExprPtr}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathCompExprPtr} xmlXPathCompExprPtr
                         */
-                        (str: string | null): xmlXPathCompExprPtr
+                        (str: string | Buffer | null): xmlXPathCompExprPtr
                     }
                 
                     xmlXPathCompiledEval: {
                         /** 
-                        * @param comp {xmlXPathCompExprPtr | null} - xmlXPathCompExprPtr
-                        * @param ctx {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param comp {xmlXPathCompExprPtr | null} xmlXPathCompExprPtr
+                        * @param ctx {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (comp: xmlXPathCompExprPtr | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPathCompiledEvalToBoolean: {
                         /** 
-                        * @param comp {xmlXPathCompExprPtr | null} - xmlXPathCompExprPtr
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {number - int}
+                        * @param comp {xmlXPathCompExprPtr | null} xmlXPathCompExprPtr
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {number} int
                         */
                         (comp: xmlXPathCompExprPtr | null, ctxt: xmlXPathContextPtr | null): number
                     }
                 
+                    xmlXPathConcatFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathContainsFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathContextSetCache: {
                         /** 
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @param active {number} - int
-                        * @param value {number} - int
-                        * @param options {number} - int
-                        * @returns {number - int}
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param active {number} int
+                        * @param value {number} int
+                        * @param options {number} int
+                        * @returns {number} int
                         */
                         (ctxt: xmlXPathContextPtr | null, active: number, value: number, options: number): number
                     }
                 
                     xmlXPathConvertBoolean: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (val: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPathConvertNumber: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (val: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPathConvertString: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (val: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
+                    xmlXPathCountFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathCtxtCompile: {
                         /** 
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @returns {xmlXPathCompExprPtr - xmlXPathCompExprPtr}
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathCompExprPtr} xmlXPathCompExprPtr
                         */
-                        (ctxt: xmlXPathContextPtr | null, str: string | null): xmlXPathCompExprPtr
+                        (ctxt: xmlXPathContextPtr | null, str: string | Buffer | null): xmlXPathCompExprPtr
+                    }
+                
+                    xmlXPathDifference: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathDistinct: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathDistinctSorted: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathDivValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathEqualValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): number
+                    }
+                
+                    xmlXPathErr: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param error {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, error: number): any
                     }
                 
                     xmlXPathEval: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param ctx {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param ctx {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
-                        (str: string | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                        (str: string | Buffer | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathEvalExpr: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
                     }
                 
                     xmlXPathEvalExpression: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
-                        (str: string | null, ctxt: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                        (str: string | Buffer | null, ctxt: xmlXPathContextPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPathEvalPredicate: {
                         /** 
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @param res {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {number - int}
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param res {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
                         */
                         (ctxt: xmlXPathContextPtr | null, res: xmlXPathObjectPtr | null): number
                     }
                 
+                    xmlXPathEvaluatePredicateResult: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param res {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, res: xmlXPathObjectPtr | null): number
+                    }
+                
+                    xmlXPathFalseFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathFloorFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathFreeCompExpr: {
                         /** 
-                        * @param comp {xmlXPathCompExprPtr | null} - xmlXPathCompExprPtr
-                        * @returns {any - void}
+                        * @param comp {xmlXPathCompExprPtr | null} xmlXPathCompExprPtr
+                        * @returns {any} void
                         */
                         (comp: xmlXPathCompExprPtr | null): any
                     }
                 
                     xmlXPathFreeContext: {
                         /** 
-                        * @param ctxt {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlXPathContextPtr | null): any
                     }
                 
                     xmlXPathFreeNodeSet: {
                         /** 
-                        * @param obj {xmlNodePtr[]} - xmlNodeSetPtr
-                        * @returns {any - void}
+                        * @param obj {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {any} void
                         */
                         (obj: xmlNodePtr[]): any
                     }
                 
                     xmlXPathFreeNodeSetList: {
                         /** 
-                        * @param obj {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {any - void}
+                        * @param obj {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {any} void
                         */
                         (obj: xmlXPathObjectPtr | null): any
                     }
                 
                     xmlXPathFreeObject: {
                         /** 
-                        * @param obj {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {any - void}
+                        * @param obj {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {any} void
                         */
                         (obj: xmlXPathObjectPtr | null): any
                     }
                 
+                    xmlXPathFreeParserContext: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathFunctionLookup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathFunction} xmlXPathFunction
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null): xmlXPathFunction
+                    }
+                
+                    xmlXPathFunctionLookupNS: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns_uri {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathFunction} xmlXPathFunction
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, ns_uri: string | Buffer | null): xmlXPathFunction
+                    }
+                
+                    xmlXPathHasSameNodes: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {number} int
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): number
+                    }
+                
+                    xmlXPathIdFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathInit: {
                         /** 
-                        * @returns {any - void}
+                        * @returns {any} void
                         */
                         (): any
                     }
                 
+                    xmlXPathIntersection: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
                     xmlXPathIsInf: {
                         /** 
-                        * @param val {number} - double
-                        * @returns {number - int}
+                        * @param val {number} double
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
                     xmlXPathIsNaN: {
                         /** 
-                        * @param val {number} - double
-                        * @returns {number - int}
+                        * @param val {number} double
+                        * @returns {number} int
                         */
                         (val: number): number
                     }
                 
+                    xmlXPathIsNodeType: {
+                        /** 
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
+                        */
+                        (name: string | Buffer | null): number
+                    }
+                
+                    xmlXPathLangFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathLastFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathLeading: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathLeadingSorted: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathLocalNameFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathModValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathMultValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathNamespaceURIFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathNewBoolean: {
+                        /** 
+                        * @param val {number} int
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: number): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNewCString: {
+                        /** 
+                        * @param val {string | Buffer | null} p.q(const).char
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
                     xmlXPathNewContext: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {xmlXPathContextPtr - xmlXPathContextPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {xmlXPathContextPtr} xmlXPathContextPtr
                         */
                         (doc: xmlDocPtr | null): xmlXPathContextPtr
                     }
                 
+                    xmlXPathNewFloat: {
+                        /** 
+                        * @param val {number} double
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: number): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNewNodeSet: {
+                        /** 
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: xmlNodePtr | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNewNodeSetList: {
+                        /** 
+                        * @param val {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: xmlNodePtr[]): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNewParserContext: {
+                        /** 
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathParserContextPtr} xmlXPathParserContextPtr
+                        */
+                        (str: string | Buffer | null, ctxt: xmlXPathContextPtr | null): xmlXPathParserContextPtr
+                    }
+                
+                    xmlXPathNewString: {
+                        /** 
+                        * @param val {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNewValueTree: {
+                        /** 
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: xmlNodePtr | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNextAncestor: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextAncestorOrSelf: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextAttribute: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextChild: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextDescendant: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextDescendantOrSelf: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextFollowing: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextFollowingSibling: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextNamespace: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextParent: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextPreceding: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextPrecedingSibling: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
+                    xmlXPathNextSelf: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param cur {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr} xmlNodePtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, cur: xmlNodePtr | null): xmlNodePtr
+                    }
+                
                     xmlXPathNodeEval: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param ctx {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param ctx {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
-                        (node: xmlNodePtr | null, str: string | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                        (node: xmlNodePtr | null, str: string | Buffer | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathNodeLeading: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[], node: xmlNodePtr | null): xmlNodePtr[]
+                    }
+                
+                    xmlXPathNodeLeadingSorted: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[], node: xmlNodePtr | null): xmlNodePtr[]
+                    }
+                
+                    xmlXPathNodeSetAdd: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
+                        */
+                        (cur: xmlNodePtr[], val: xmlNodePtr | null): number
+                    }
+                
+                    xmlXPathNodeSetAddNs: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @returns {number} int
+                        */
+                        (cur: xmlNodePtr[], node: xmlNodePtr | null, ns: xmlNsPtr | null): number
+                    }
+                
+                    xmlXPathNodeSetAddUnique: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
+                        */
+                        (cur: xmlNodePtr[], val: xmlNodePtr | null): number
+                    }
+                
+                    xmlXPathNodeSetContains: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {number} int
+                        */
+                        (cur: xmlNodePtr[], val: xmlNodePtr | null): number
                     }
                 
                     xmlXPathNodeSetCreate: {
                         /** 
-                        * @param val {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlNodePtr[] - xmlNodeSetPtr}
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
                         */
                         (val: xmlNodePtr | null): xmlNodePtr[]
                     }
                 
+                    xmlXPathNodeSetDel: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val {xmlNodePtr | null} xmlNodePtr
+                        * @returns {any} void
+                        */
+                        (cur: xmlNodePtr[], val: xmlNodePtr | null): any
+                    }
+                
+                    xmlXPathNodeSetFreeNs: {
+                        /** 
+                        * @param ns {xmlNsPtr | null} xmlNsPtr
+                        * @returns {any} void
+                        */
+                        (ns: xmlNsPtr | null): any
+                    }
+                
+                    xmlXPathNodeSetMerge: {
+                        /** 
+                        * @param val1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (val1: xmlNodePtr[], val2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathNodeSetRemove: {
+                        /** 
+                        * @param cur {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param val {number} int
+                        * @returns {any} void
+                        */
+                        (cur: xmlNodePtr[], val: number): any
+                    }
+                
+                    xmlXPathNodeSetSort: {
+                        /** 
+                        * @param set {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {any} void
+                        */
+                        (set: xmlNodePtr[]): any
+                    }
+                
+                    xmlXPathNodeTrailing: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[], node: xmlNodePtr | null): xmlNodePtr[]
+                    }
+                
+                    xmlXPathNodeTrailingSorted: {
+                        /** 
+                        * @param nodes {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes: xmlNodePtr[], node: xmlNodePtr | null): xmlNodePtr[]
+                    }
+                
+                    xmlXPathNormalizeFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathNotEqualValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): number
+                    }
+                
+                    xmlXPathNotFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathNsLookup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {string} q(const).xmlChar
+                        */
+                        (ctxt: xmlXPathContextPtr | null, prefix: string | Buffer | null): string
+                    }
+                
+                    xmlXPathNumberFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathObjectCopy: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (val: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPathOrderDocElems: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @returns {number - long}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @returns {number} long
                         */
                         (doc: xmlDocPtr | null): number
                     }
                 
+                    xmlXPathParseNCName: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {string} xmlChar
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): string
+                    }
+                
+                    xmlXPathParseName: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {string} xmlChar
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): string
+                    }
+                
+                    xmlXPathPopBoolean: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): number
+                    }
+                
+                    xmlXPathPopExternal: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathPopNodeSet: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): xmlNodePtr[]
+                    }
+                
+                    xmlXPathPopNumber: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {number} double
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): number
+                    }
+                
+                    xmlXPathPopString: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {string} xmlChar
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): string
+                    }
+                
+                    xmlXPathPositionFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathRegisterAllFunctions: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null): any
+                    }
+                
+                    xmlXPathRegisterFunc: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlXPathFunction} xmlXPathFunction
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, f: xmlXPathFunction): number
+                    }
+                
+                    xmlXPathRegisterFuncLookup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param f {xmlXPathFuncLookupFunc} xmlXPathFuncLookupFunc
+                        * @param funcCtxt {any} p.void
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null, f: xmlXPathFuncLookupFunc, funcCtxt: any): any
+                    }
+                
+                    xmlXPathRegisterFuncNS: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns_uri {string | Buffer | null} p.q(const).xmlChar
+                        * @param f {xmlXPathFunction} xmlXPathFunction
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, ns_uri: string | Buffer | null, f: xmlXPathFunction): number
+                    }
+                
+                    xmlXPathRegisterNs: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param prefix {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns_uri {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathContextPtr | null, prefix: string | Buffer | null, ns_uri: string | Buffer | null): number
+                    }
+                
+                    xmlXPathRegisterVariable: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, value: xmlXPathObjectPtr | null): number
+                    }
+                
+                    xmlXPathRegisterVariableLookup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param f {xmlXPathVariableLookupFunc} xmlXPathVariableLookupFunc
+                        * @param data {any} p.void
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null, f: xmlXPathVariableLookupFunc, data: any): any
+                    }
+                
+                    xmlXPathRegisterVariableNS: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns_uri {string | Buffer | null} p.q(const).xmlChar
+                        * @param value {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {number} int
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, ns_uri: string | Buffer | null, value: xmlXPathObjectPtr | null): number
+                    }
+                
+                    xmlXPathRegisteredFuncsCleanup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null): any
+                    }
+                
+                    xmlXPathRegisteredNsCleanup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null): any
+                    }
+                
+                    xmlXPathRegisteredVariablesCleanup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathContextPtr | null): any
+                    }
+                
+                    xmlXPathRoot: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathRoundFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
                     xmlXPathSetContextNode: {
                         /** 
-                        * @param node {xmlNodePtr | null} - xmlNodePtr
-                        * @param ctx {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {number - int}
+                        * @param node {xmlNodePtr | null} xmlNodePtr
+                        * @param ctx {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {number} int
                         */
                         (node: xmlNodePtr | null, ctx: xmlXPathContextPtr | null): number
                     }
                 
+                    xmlXPathStartsWithFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathStringEvalNumber: {
+                        /** 
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {number} double
+                        */
+                        (str: string | Buffer | null): number
+                    }
+                
+                    xmlXPathStringFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathStringLengthFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathSubValues: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathSubstringAfterFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathSubstringBeforeFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathSubstringFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathSumFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathTrailing: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathTrailingSorted: {
+                        /** 
+                        * @param nodes1 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @param nodes2 {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlNodePtr[]} xmlNodeSetPtr
+                        */
+                        (nodes1: xmlNodePtr[], nodes2: xmlNodePtr[]): xmlNodePtr[]
+                    }
+                
+                    xmlXPathTranslateFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathTrueFunction: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
+                    }
+                
+                    xmlXPathValueFlipSign: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null): any
+                    }
+                
+                    xmlXPathVariableLookup: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathVariableLookupNS: {
+                        /** 
+                        * @param ctxt {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @param name {string | Buffer | null} p.q(const).xmlChar
+                        * @param ns_uri {string | Buffer | null} p.q(const).xmlChar
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (ctxt: xmlXPathContextPtr | null, name: string | Buffer | null, ns_uri: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathWrapCString: {
+                        /** 
+                        * @param val {string | Buffer | null} p.char
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathWrapExternal: {
+                        /** 
+                        * @param val {any} p.void
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: any): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathWrapNodeSet: {
+                        /** 
+                        * @param val {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: xmlNodePtr[]): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPathWrapString: {
+                        /** 
+                        * @param val {string | Buffer | null} p.xmlChar
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
+                        */
+                        (val: string | Buffer | null): xmlXPathObjectPtr
+                    }
+                
+                    xmlXPatherror: {
+                        /** 
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param file {string | Buffer | null} p.q(const).char
+                        * @param line {number} int
+                        * @param no {number} int
+                        * @returns {any} void
+                        */
+                        (ctxt: xmlXPathParserContextPtr | null, file: string | Buffer | null, line: number, no: number): any
+                    }
+                
                     xmlXPtrBuildNodeList: {
                         /** 
-                        * @param obj {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlNodePtr - xmlNodePtr}
+                        * @param obj {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlNodePtr} xmlNodePtr
                         */
                         (obj: xmlXPathObjectPtr | null): xmlNodePtr
                     }
                 
                     xmlXPtrEval: {
                         /** 
-                        * @param str {string | null} - p.q(const).xmlChar
-                        * @param ctx {xmlXPathContextPtr | null} - xmlXPathContextPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param str {string | Buffer | null} p.q(const).xmlChar
+                        * @param ctx {xmlXPathContextPtr | null} xmlXPathContextPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
-                        (str: string | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
+                        (str: string | Buffer | null, ctx: xmlXPathContextPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrEvalRangePredicate: {
                         /** 
-                        * @param ctxt {xmlXPathParserContextPtr | null} - xmlXPathParserContextPtr
-                        * @returns {any - void}
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @returns {any} void
                         */
                         (ctxt: xmlXPathParserContextPtr | null): any
                     }
                 
                     xmlXPtrFreeLocationSet: {
                         /** 
-                        * @param obj {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @returns {any - void}
+                        * @param obj {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @returns {any} void
                         */
                         (obj: xmlLocationSetPtr | null): any
                     }
                 
                     xmlXPtrLocationSetAdd: {
                         /** 
-                        * @param cur {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {any - void}
+                        * @param cur {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {any} void
                         */
                         (cur: xmlLocationSetPtr | null, val: xmlXPathObjectPtr | null): any
                     }
                 
                     xmlXPtrLocationSetCreate: {
                         /** 
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlLocationSetPtr - xmlLocationSetPtr}
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlLocationSetPtr} xmlLocationSetPtr
                         */
                         (val: xmlXPathObjectPtr | null): xmlLocationSetPtr
                     }
                 
                     xmlXPtrLocationSetDel: {
                         /** 
-                        * @param cur {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @param val {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {any - void}
+                        * @param cur {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @param val {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {any} void
                         */
                         (cur: xmlLocationSetPtr | null, val: xmlXPathObjectPtr | null): any
                     }
                 
                     xmlXPtrLocationSetMerge: {
                         /** 
-                        * @param val1 {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @param val2 {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @returns {xmlLocationSetPtr - xmlLocationSetPtr}
+                        * @param val1 {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @param val2 {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @returns {xmlLocationSetPtr} xmlLocationSetPtr
                         */
                         (val1: xmlLocationSetPtr | null, val2: xmlLocationSetPtr | null): xmlLocationSetPtr
                     }
                 
                     xmlXPtrLocationSetRemove: {
                         /** 
-                        * @param cur {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @param val {number} - int
-                        * @returns {any - void}
+                        * @param cur {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @param val {number} int
+                        * @returns {any} void
                         */
                         (cur: xmlLocationSetPtr | null, val: number): any
                     }
                 
                     xmlXPtrNewCollapsedRange: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewContext: {
                         /** 
-                        * @param doc {xmlDocPtr | null} - xmlDocPtr
-                        * @param here {xmlNodePtr | null} - xmlNodePtr
-                        * @param origin {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlXPathContextPtr - xmlXPathContextPtr}
+                        * @param doc {xmlDocPtr | null} xmlDocPtr
+                        * @param here {xmlNodePtr | null} xmlNodePtr
+                        * @param origin {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathContextPtr} xmlXPathContextPtr
                         */
                         (doc: xmlDocPtr | null, here: xmlNodePtr | null, origin: xmlNodePtr | null): xmlXPathContextPtr
                     }
                 
                     xmlXPtrNewLocationSetNodeSet: {
                         /** 
-                        * @param set {xmlNodePtr[]} - xmlNodeSetPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param set {xmlNodePtr[]} xmlNodeSetPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (set: xmlNodePtr[]): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewLocationSetNodes: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @param end {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @param end {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null, end: xmlNodePtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRange: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @param startindex {number} - int
-                        * @param end {xmlNodePtr | null} - xmlNodePtr
-                        * @param endindex {number} - int
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @param startindex {number} int
+                        * @param end {xmlNodePtr | null} xmlNodePtr
+                        * @param endindex {number} int
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null, startindex: number, end: xmlNodePtr | null, endindex: number): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRangeNodeObject: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @param end {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @param end {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null, end: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRangeNodePoint: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @param end {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @param end {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null, end: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRangeNodes: {
                         /** 
-                        * @param start {xmlNodePtr | null} - xmlNodePtr
-                        * @param end {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlNodePtr | null} xmlNodePtr
+                        * @param end {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlNodePtr | null, end: xmlNodePtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRangePointNode: {
                         /** 
-                        * @param start {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @param end {xmlNodePtr | null} - xmlNodePtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @param end {xmlNodePtr | null} xmlNodePtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlXPathObjectPtr | null, end: xmlNodePtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrNewRangePoints: {
                         /** 
-                        * @param start {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @param end {xmlXPathObjectPtr | null} - xmlXPathObjectPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param start {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @param end {xmlXPathObjectPtr | null} xmlXPathObjectPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (start: xmlXPathObjectPtr | null, end: xmlXPathObjectPtr | null): xmlXPathObjectPtr
                     }
                 
                     xmlXPtrRangeToFunction: {
                         /** 
-                        * @param ctxt {xmlXPathParserContextPtr | null} - xmlXPathParserContextPtr
-                        * @param nargs {number} - int
-                        * @returns {any - void}
+                        * @param ctxt {xmlXPathParserContextPtr | null} xmlXPathParserContextPtr
+                        * @param nargs {number} int
+                        * @returns {any} void
                         */
                         (ctxt: xmlXPathParserContextPtr | null, nargs: number): any
                     }
                 
                     xmlXPtrWrapLocationSet: {
                         /** 
-                        * @param val {xmlLocationSetPtr | null} - xmlLocationSetPtr
-                        * @returns {xmlXPathObjectPtr - xmlXPathObjectPtr}
+                        * @param val {xmlLocationSetPtr | null} xmlLocationSetPtr
+                        * @returns {xmlXPathObjectPtr} xmlXPathObjectPtr
                         */
                         (val: xmlLocationSetPtr | null): xmlXPathObjectPtr
                     }
@@ -13913,7 +14969,7 @@ getCPtr: {
         fromBufferAsync: {
             /** 
             * @param type {FROM_BUFFER_ASYNC_TYPE} - type
-            * @param buffer {string} - p.q(const).char
+            * @param buffer {string | Buffer} - p.q(const).char
             * @param size {number} - int
             * @param URL {string} - p.q(const).char
             * @param encoding {string} - p.q(const).char
@@ -13921,7 +14977,7 @@ getCPtr: {
             * @param callback {Function} - callback
             * @returns xmlDocPtr - xmlDocPtr
             */
-            (type: FROM_BUFFER_ASYNC_TYPE, buffer: string, size: number, URL: string, encoding: string, options: number, callback: Function): xmlDocPtr
+            (type: FROM_BUFFER_ASYNC_TYPE, buffer: string | Buffer, size: number, URL: string, encoding: string, options: number, callback: Function): xmlDocPtr
         }
                 
         xmlPtrToXmlAttr: {

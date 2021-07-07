@@ -65,21 +65,6 @@
 
     };
 
-    void set_string_field(v8::Local<v8::Object> obj,
-            const char* name, const char* value) {
-        Nan::HandleScope scope;
-        if (!value) {
-            return;
-        }
-        Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::String>(value, strlen(value)).ToLocalChecked());
-    }
-
-    void set_numeric_field(v8::Local<v8::Object> obj,
-            const char* name, const int value) {
-        Nan::HandleScope scope;
-        Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::Int32>(value));
-    }
-
     XmlSyntaxErrorsSync::XmlSyntaxErrorsSync() {
         errors = Nan::New<v8::Array>();
         xmlResetLastError();
@@ -252,7 +237,7 @@
                                             ("Could not parse XML string")
                                             .ToLocalChecked());
             }
-            callback->Call(1, argv);
+            Nan::Call(*callback, Nan::GetCurrentContext()->Global(), 1, argv);
         } else {
             auto doc_handle = getXmlNodeWrap((xmlNode*) doc);
             auto doc_object = SWIGV8_TO_OBJECT(doc_handle);
@@ -264,7 +249,7 @@
                 Nan::Null(),
                 doc_object
             };
-            callback->Call(2, argv);
+            Nan::Call(*callback, Nan::GetCurrentContext()->Global(), 2, argv);
         }
     }
 

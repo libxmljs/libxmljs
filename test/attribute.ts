@@ -45,8 +45,8 @@ module.exports.getters = function (assert: any) {
     assert.ok("attribute", node.attr("attr-two-key")?.type());
 
     // siblings
-    assert.equal("attr-one-key", node.attr("attr-two-key")?.prevSibling().name());
-    assert.equal("attr-three-key", node.attr("attr-two-key")?.nextSibling().name());
+    assert.equal("attr-one-key", node.attr("attr-two-key")?.prevSibling()!.name());
+    assert.equal("attr-three-key", node.attr("attr-two-key")?.nextSibling()!.name());
 
     assert.done();
 };

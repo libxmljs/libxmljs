@@ -1,6 +1,6 @@
 void setDebugEnable();
 void setDebugDisable();
-xmlNode* getChildAtIndex(xmlNode* node, int index);
+// xmlNode* getChildAtIndex(xmlNode* node, int index);
 
 int libxmljs_debug;
 
@@ -23,6 +23,21 @@ int libxmljs_debug;
 
     void setDebugDisable() {
         libxmljs_debug = 0;
+    }
+
+    void set_string_field(v8::Local<v8::Object> obj,
+            const char* name, const char* value) {
+        Nan::HandleScope scope;
+        if (!value) {
+            return;
+        }
+        Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::String>(value, strlen(value)).ToLocalChecked());
+    }
+
+    void set_numeric_field(v8::Local<v8::Object> obj,
+            const char* name, const int value) {
+        Nan::HandleScope scope;
+        Nan::Set(obj, Nan::New<v8::String>(name).ToLocalChecked(), Nan::New<v8::Int32>(value));
     }
 
     SWIGV8_Proxy* getSwigProxy(SWIGV8_OBJECT objRef) {
@@ -153,29 +168,95 @@ int libxmljs_debug;
             // case XML_XINCLUDE_END: {
             //     result = getXmlNodeWrap(node, NULL, SWIGTYPE_p__xmlNode);
             // }
-            case XML_ENTITY_DECL: {
+            case XML_ENTITY_DECL: 
                 return SWIGTYPE_p__xmlEntity;
-            }
-            case XML_NAMESPACE_DECL:{
+
+            case XML_NAMESPACE_DECL:
                 return SWIGTYPE_p__xmlNs;
-            }
+
             case XML_DOCUMENT_NODE:
-            case XML_DOCB_DOCUMENT_NODE:
-            case XML_HTML_DOCUMENT_NODE:{
                 return SWIGTYPE_p__xmlDoc;
-            }
-            case XML_ATTRIBUTE_NODE:{
+
+            case XML_HTML_DOCUMENT_NODE:
+                return SWIGTYPE_p__xmlDoc;
+
+            case XML_DOCB_DOCUMENT_NODE: 
+                return SWIGTYPE_p__xmlDoc;
+
+            case XML_ATTRIBUTE_NODE:
                 return SWIGTYPE_p__xmlAttr;
-            }
-            case XML_DTD_NODE:{
+
+            case XML_DTD_NODE:
                 return SWIGTYPE_p__xmlDtd;
-            }
-            case XML_ELEMENT_DECL:{
+
+            case XML_ELEMENT_DECL:
                 return SWIGTYPE_p__xmlElement;
-            }
-            default: {
+
+            default:
                 return SWIGTYPE_p__xmlNode;
+        }
+    }
+
+    int countNamespaces(xmlNs* ns) {
+        int count = 0;
+        
+        while (ns != NULL) {
+            count++;
+
+            ns = ns->next;
+        }
+
+        return count;
+    }
+
+    xmlNs* getNodeNamespace(xmlNode* node) {
+        if ((node->type == XML_ELEMENT_NODE) ||
+            (node->type == XML_ATTRIBUTE_NODE)) {
+            return node->ns;
+        }
+
+        return NULL;
+    }
+
+    xmlNs* getNodeNamespaceDef(xmlNode* xml_obj) {
+        if ((xml_obj->type == XML_DOCUMENT_NODE) ||
+    #ifdef LIBXML_DOCB_ENABLED
+            (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
+    #endif
+            (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
+            return reinterpret_cast<xmlDoc*>(xml_obj)->oldNs;
+        } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
+                (xml_obj->type == XML_XINCLUDE_START) ||
+                (xml_obj->type == XML_XINCLUDE_END)) {
+            return xml_obj->nsDef;
+        } else {
+            return NULL;
+        }
+    }
+    
+    void setNodeNamespaceDef(xmlNode* xml_obj, xmlNs* newNs) {
+        if (xml_obj == NULL) {
+            return;
+        }
+
+        if (xml_obj->type == XML_NAMESPACE_DECL) {
+            xmlNs* ns = (xmlNs*) xml_obj;
+
+            while (ns->next != NULL) {
+                ns = ns->next;
             }
+
+            ns->next = newNs;
+        } else if ((xml_obj->type == XML_DOCUMENT_NODE) ||
+    #ifdef LIBXML_DOCB_ENABLED
+            (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
+    #endif
+            (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
+            reinterpret_cast<xmlDoc*>(xml_obj)->oldNs = newNs;
+        } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
+                (xml_obj->type == XML_XINCLUDE_START) ||
+                (xml_obj->type == XML_XINCLUDE_END)) {
+            xml_obj->nsDef = newNs;
         }
     }
 

@@ -1,6 +1,6 @@
 import bindings from "./bindings";
 
-import { XMLElement, XMLDTD } from "./node";
+import { XMLElement, XMLDTD, XPathNamespace, XMLNode } from "./node";
 
 import {
     XMLParseOptions,
@@ -13,7 +13,7 @@ import {
 
 import { XMLReference, createXMLReference } from "./bindings";
 
-import { xmlDocPtr, XMLReferenceType } from "./bindings/types";
+import { xmlDocPtr, XMLReferenceType, XMLStructuredError } from "./bindings/types";
 
 import {
     xmlRelaxNGFree,
@@ -48,6 +48,7 @@ import {
     xmlSchemaFree,
     xmlSchemaFreeParserCtxt,
     xmlGetLastError,
+    withStructuredErrors,
 } from "./bindings/functions";
 
 export enum XMLDocumentError {
@@ -85,24 +86,37 @@ export type XMLSaveOptions = {
     // drop the xml declaration
     declaration?: boolean;
 
-    // format save output
-    format?: boolean;
+    /**
+     * @param {"none" | "pretty" | "full"} format - Inject additional whitespace
+     * @description none - output no additional whitespace
+     * @description pretty - output minimum additional whitespace for pretty formatting (XML_SAVE_FORMAT)
+     * @description full - output all additional whitespace for verbose formatting (XML_SAVE_WSNONSIG)
+     * @description Note: this option does not remove or format whitespace that has been explicitly preserved with `preserveWhitespace: true`
+     * @see {XMLParseOptions.preserveWhitespace}
+     * @default "pretty"
+     */
+    formatting?: "none" | "pretty" | "full";
 
     // no empty tags (only works with XML) ex: <title></title> becomes <title/>
     selfCloseEmpty?: boolean;
 
-    // format with non-significant whitespace
-    whitespace?: boolean;
-
-    // "XML" or "HTML"
-    type?: string;
+    type?: "html" | "xml" | "xhtml";
 
     // override flags
     flags?: XMLSaveFlags[];
+} & {
+    /**
+     * @deprecated Use `formatting` instead
+     */
+    whitespace?: boolean;
+
+    /**
+     * @deprecated Use `formatting` instead
+     */
+    format?: boolean;
 };
 
 export const DEFAULT_XML_SAVE_OPTIONS: XMLSaveOptions = {
-    type: "XML",
     format: true,
 };
 
@@ -117,11 +131,13 @@ const flagsToOptions = (array: XMLSaveFlags[]): number => {
 };
 
 export class XMLDocument extends XMLReference<xmlDocPtr> {
+    public errors: XMLStructuredError[];
     public validationErrors: any[];
 
     constructor(_ref: XMLReferenceType) {
         super(xmlPtrToXmlDoc(_ref));
 
+        this.errors = [];
         this.validationErrors = [];
     }
 
@@ -135,6 +151,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         });
     }
 
+    public doc() {
+        return this;
+    }
+
     public childNodes() {
         const root = this.root();
 
@@ -145,24 +165,24 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return root.childNodes();
     }
 
-    public find(xpath: string) {
+    public find(xpath: string, namespace?: XPathNamespace) {
         const root = this.root();
 
         if (root === null) {
             throw new Error(XMLDocumentError.NO_ROOT);
         }
 
-        return root.find(xpath);
+        return root.find(xpath, namespace);
     }
 
-    public get(xpath: string) {
+    public get(xpath: string, namespace?: XPathNamespace) {
         const root = this.root();
 
         if (root === null) {
             throw new Error(XMLDocumentError.NO_ROOT);
         }
 
-        return root.get(xpath);
+        return root.get(xpath, namespace);
     }
 
     public child(index: number) {
@@ -186,80 +206,74 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     public validate(schemaDoc: XMLDocument) {
-        this.validationErrors = [];
-
-        const parser_ctxt = xmlSchemaNewDocParserCtxt(schemaDoc.getNativeReferenceOrThrow(XMLDocumentError.NO_REF));
-
-        if (parser_ctxt === null) {
-            throw new Error("Could not create context for schema parser");
-        }
-
-        const schema = xmlSchemaParse(parser_ctxt);
-
-        if (schema === null) {
-            throw new Error("Invalid XSD schema");
-        }
-
-        const valid_ctxt = xmlSchemaNewValidCtxt(schema);
-
-        if (valid_ctxt === null) {
-            throw new Error("Unable to create a validation context for the schema");
-        }
-
         xmlResetLastError();
 
-        const valid = xmlSchemaValidateDoc(valid_ctxt, this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF)) == 0;
+        return withStructuredErrors((errors) => {
+            const parser_ctxt = xmlSchemaNewDocParserCtxt(schemaDoc.getNativeReferenceOrThrow(XMLDocumentError.NO_REF));
 
-        const error = xmlGetLastError();
+            if (parser_ctxt === null) {
+                throw new Error("Could not create context for schema parser");
+            }
 
-        if (error !== null) {
-            this.validationErrors.push(error);
-            xmlResetLastError();
-        }
+            const schema = xmlSchemaParse(parser_ctxt);
 
-        xmlSchemaFree(schema);
-        xmlSchemaFreeValidCtxt(valid_ctxt);
-        xmlSchemaFreeParserCtxt(parser_ctxt);
+            if (schema === null) {
+                throw new Error("Invalid XSD schema");
+            }
 
-        return valid;
+            const valid_ctxt = xmlSchemaNewValidCtxt(schema);
+
+            if (valid_ctxt === null) {
+                throw new Error("Unable to create a validation context for the schema");
+            }
+
+            const valid =
+                xmlSchemaValidateDoc(valid_ctxt, this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF)) == 0;
+
+            xmlSchemaFree(schema);
+            xmlSchemaFreeValidCtxt(valid_ctxt);
+            xmlSchemaFreeParserCtxt(parser_ctxt);
+
+            this.validationErrors = errors;
+
+            return valid;
+        });
     }
 
     public rngValidate(schemaDoc: XMLDocument) {
-        // this.validationErrors = [];
-
-        const parser_ctxt = xmlRelaxNGNewDocParserCtxt(schemaDoc.getNativeReferenceOrThrow(XMLDocumentError.NO_REF));
-
-        if (parser_ctxt === null) {
-            throw new Error("Could not create context for schema parser");
-        }
-        const schema = xmlRelaxNGParse(parser_ctxt);
-
-        if (schema === null) {
-            throw new Error("Invalid XSD schema");
-        }
-
-        const valid_ctxt = xmlRelaxNGNewValidCtxt(schema);
-
-        if (valid_ctxt === null) {
-            throw new Error("Unable to create a validation context for the schema");
-        }
-
         xmlResetLastError();
 
-        const valid = xmlRelaxNGValidateDoc(valid_ctxt, this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF)) == 0;
+        return withStructuredErrors((errors) => {
+            const parser_ctxt = xmlRelaxNGNewDocParserCtxt(
+                schemaDoc.getNativeReferenceOrThrow(XMLDocumentError.NO_REF)
+            );
 
-        const error = xmlGetLastError();
+            if (parser_ctxt === null) {
+                throw new Error("Could not create context for schema parser");
+            }
+            const schema = xmlRelaxNGParse(parser_ctxt);
 
-        if (error !== null) {
-            this.validationErrors.push(error);
-            xmlResetLastError();
-        }
+            if (schema === null) {
+                throw new Error("Invalid XSD schema");
+            }
 
-        xmlRelaxNGFree(schema);
-        xmlRelaxNGFreeValidCtxt(valid_ctxt);
-        xmlRelaxNGFreeParserCtxt(parser_ctxt);
+            const valid_ctxt = xmlRelaxNGNewValidCtxt(schema);
 
-        return valid;
+            if (valid_ctxt === null) {
+                throw new Error("Unable to create a validation context for the schema");
+            }
+
+            const valid =
+                xmlRelaxNGValidateDoc(valid_ctxt, this.getNativeReferenceOrThrow(XMLDocumentError.NO_REF)) == 0;
+
+            xmlRelaxNGFree(schema);
+            xmlRelaxNGFreeValidCtxt(valid_ctxt);
+            xmlRelaxNGFreeParserCtxt(parser_ctxt);
+
+            this.validationErrors = errors;
+
+            return valid;
+        });
     }
 
     public name(): string {
@@ -365,29 +379,32 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return "document";
     }
 
-    public toString(options: XMLSaveOptions | false = DEFAULT_XML_SAVE_OPTIONS): string {
+    public toString(options: XMLSaveOptions | boolean = DEFAULT_XML_SAVE_OPTIONS): string {
+        if (typeof options === "boolean") {
+            return this.toString({
+                ...DEFAULT_XML_SAVE_OPTIONS,
+                format: options,
+            });
+        }
+
         return (
             this.getNativeReferenceOrReturnNull((_ref) => {
-                return XMLDocument.toString(_ref, options);
+                return XMLDocument.toString(_ref, {
+                    ...DEFAULT_XML_SAVE_OPTIONS,
+                    ...options,
+                });
             }) || ""
         );
     }
 
-    public static toString(node: XMLReferenceType, options: XMLSaveOptions | false = DEFAULT_XML_SAVE_OPTIONS): string {
+    public static toString(node: XMLReferenceType, options: XMLSaveOptions | boolean = {}): string {
         if (typeof options === "boolean") {
             return this.toString(node, {
                 format: options,
             });
         }
 
-        const flags: XMLSaveFlags[] = options.flags || DEFAULT_XML_SAVE_OPTIONS.flags || [];
-
-        if (
-            (options.type === "html" || options.type === "HTML") &&
-            flags.indexOf(XMLSaveFlags.XML_SAVE_AS_HTML) === -1
-        ) {
-            flags.push(XMLSaveFlags.XML_SAVE_AS_HTML);
-        }
+        const flags: XMLSaveFlags[] = options.flags || [];
 
         if (options.declaration === false && flags.indexOf(XMLSaveFlags.XML_SAVE_NO_DECL) === -1) {
             flags.push(XMLSaveFlags.XML_SAVE_NO_DECL);
@@ -405,6 +422,21 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
             flags.push(XMLSaveFlags.XML_SAVE_WSNONSIG);
         }
 
+        if (/^html$/i.test(options.type || "") && flags.indexOf(XMLSaveFlags.XML_SAVE_AS_HTML) === -1) {
+            flags.push(XMLSaveFlags.XML_SAVE_AS_HTML);
+
+            // if the document is XML and we want formatted HTML output
+            // we must use the XHTML serializer because the default HTML
+            // serializer only formats node->type = HTML_NODE and not XML_NODEs
+            if (flags.indexOf(XMLSaveFlags.XML_SAVE_FORMAT) > -1 && flags.indexOf(XMLSaveFlags.XML_SAVE_XHTML) === -1) {
+                flags.push(XMLSaveFlags.XML_SAVE_XHTML);
+            }
+        } else if (/^xhtml$/i.test(options.type || "") && flags.indexOf(XMLSaveFlags.XML_SAVE_XHTML) === -1) {
+            flags.push(XMLSaveFlags.XML_SAVE_XHTML);
+        } else if (/^xml$/i.test(options.type || "") && flags.indexOf(XMLSaveFlags.XML_SAVE_AS_XML) === -1) {
+            flags.push(XMLSaveFlags.XML_SAVE_AS_XML);
+        }
+
         const buffer = xmlBufferCreate();
         const context = xmlSaveToBuffer(buffer, "UTF-8", flagsToOptions(flags));
 
@@ -419,13 +451,17 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return content || "";
     }
 
-    public static fromHtml(buffer: string, options?: HTMLParseOptions): XMLDocument {
+    public static fromXml(buffer: string, options?: XMLParseOptions): XMLDocument {
+        return parseXml(buffer, options);
+    }
+
+    public static fromHtml(buffer: string, options?: HTMLParseOptions): HTMLDocument {
         return parseHtml(buffer, options);
     }
 
-    public static fromHtmlFragment(buffer: string, options?: HTMLParseOptions): XMLDocument {
+    public static fromHtmlFragment(buffer: string, options?: HTMLParseOptions): HTMLDocument {
         if (options === undefined) {
-            return XMLDocument.fromHtmlFragment(buffer, {});
+            return HTMLDocument.fromHtmlFragment(buffer, {});
         }
 
         options.doctype = false;
@@ -436,9 +472,15 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
 }
 
 export class HTMLDocument extends XMLDocument {
-    public toString(options: XMLSaveOptions = {}): string {
+    public toString(options: XMLSaveOptions | boolean = {}): string {
+        if (typeof options === "boolean") {
+            return this.toString({
+                format: options,
+            });
+        }
+
         if (!options?.type) {
-            options.type = "HTML";
+            options.type = "html";
         }
 
         return super.toString(options);
