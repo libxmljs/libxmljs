@@ -1,0 +1,11 @@
+PID 2799 received SIGSEGV for address: 0x0
+0   segfault-handler.node               0x0000000102dd2fe0 _ZL16segfault_handleriP9__siginfoPv + 304
+1   libsystem_platform.dylib            0x00007fff6a8be5fd _sigtramp + 29
+2   ???                                 0x0000000000000000 0x0 + 0
+3   xmljs.node                          0x00000001068067e8 _Z14checkParentRefP8_xmlNodeS0_i + 104
+4   xmljs.node                          0x0000000106806f22 _Z14getXmlNodeWrapP8_xmlNode + 450
+5   xmljs.node                          0x0000000106a87475 _ZL16_wrap_xmlSetPropRKN2v820FunctionCallbackInfoINS_5ValueEEE + 4133
+6   node                                0x000000010024ff68 _ZN2v88internal25FunctionCallbackArguments4CallENS0_15CallHandlerInfoE + 616
+7   node                                0x000000010024f529 _ZN2v88internal12_GLOBAL__N_119HandleApiCallHelperILb0EEENS0_11MaybeHandleINS0_6ObjectEEEPNS0_7IsolateENS0_6HandleINS0_10HeapObjectEEESA_NS8_INS0_20FunctionTemplateInfoEEENS8_IS4_EENS0_16BuiltinArgumentsE + 521
+8   node                                0x000000010024ec52 _ZN2v88internalL26Builtin_Impl_HandleApiCallENS0_16BuiltinArgumentsEPNS0_7IsolateE + 258
+9   node                                0x00000001009dccd9 Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_BuiltinExit + 57

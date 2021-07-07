@@ -1,0 +1,8 @@
+{
+    "useTabs": false,
+    "tabWidth": 4,
+    "arrowParens": "always",
+    "trailingComma": "es5",
+    "proseWrap": "always",
+    "printWidth": 120
+}
