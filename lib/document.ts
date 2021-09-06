@@ -102,6 +102,9 @@ export type XMLSaveOptions = {
 
     type?: "html" | "xml" | "xhtml";
 
+    /** @default "UTF-8" */
+    encoding?: "HTML" | "ASCII" | "UTF-8" | "UTF-16" | "ISO-Latin-1" | "ISO-8859-1";
+
     // override flags
     flags?: XMLSaveFlags[];
 } & {
@@ -437,8 +440,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
             flags.push(XMLSaveFlags.XML_SAVE_AS_XML);
         }
 
+        const encoding = options.encoding || "UTF-8";
+
         const buffer = xmlBufferCreate();
-        const context = xmlSaveToBuffer(buffer, "UTF-8", flagsToOptions(flags));
+        const context = xmlSaveToBuffer(buffer, encoding, flagsToOptions(flags));
 
         xmlSaveTree(context, xmlPtrToXmlNode(node));
         xmlSaveFlush(context);
