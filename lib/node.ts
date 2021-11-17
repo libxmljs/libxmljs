@@ -163,6 +163,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         super(xmlPtrToXmlNode(_ref));
     }
 
+    /**
+     * Get the parent node for the current
+     *
+     * @returns {XMLElement} parent node
+     */
     public parent() {
         return this.getNativeReferenceOrReturnNull((_ref) => {
             if (_ref.parent === null) {
@@ -173,6 +178,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         });
     }
 
+    /**
+     * Get the tag name of current node
+     *
+     * @returns {string} name
+     */
     public name(): string {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
@@ -199,12 +209,24 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return this.type();
     }
 
+    /**
+     * Get the line number that this node starts on in the original parsed document
+     *
+     * @returns {number} line number
+     */
     public line() {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
         return xmlGetLineNo(_ref);
     }
 
+    /**
+     * Get the type of element (XMLElementType)
+     *
+     * "text" | "cdata" | "comment" | "element" | "node"
+     *
+     * @returns {string} the node type
+     */
     public type() {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
@@ -290,6 +312,12 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         );
     }
 
+    /**
+     * Append node after the last node child
+     *
+     * @param node the XMLElement to append
+     * @returns the appended child
+     */
     public addChild(node: XMLElement): XMLElement {
         const _parentRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _childRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
@@ -354,6 +382,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return createXMLReference(XMLElement, xmlAddPrevSibling(_parentRef, childNode));
     }
 
+    /**
+     * Get an array of child nodes
+     *
+     * @returns {XMLElement[]} array of child nodes
+     */
     public childNodes() {
         return (
             this.getNativeReferenceOrReturnNull((_ref) => {
@@ -379,6 +412,13 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return createXMLReference(XMLNode, this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).next).getSelfOrNull();
     }
 
+    /**
+     * Find decendant nodes matching the given xpath selector
+     *
+     * @param xpath XPath selector
+     * @param namespace optional namespace
+     * @returns {XMLElement[]} array of matching decendant nodes
+     */
     public find(xpath: string, namespace?: XPathNamespace): XMLXPathResult[] {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
@@ -415,10 +455,22 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return [null];
     }
 
+    /**
+     * Find the first decendant node matching the given xpath selector
+     *
+     * @param xpath XPath selector
+     * @param namespace optional namespace
+     * @returns {XMLElement} first matching decendant node
+     */
     public get(xpath: string, namespace?: XPathNamespace): XMLXPathResult {
         return this.find(xpath, namespace)[0];
     }
 
+    /**
+     * Return the child at the given index
+     * @param index the index of the child
+     * @returns {XMLElement | null} the child to return
+     */
     public child(index: number) {
         let currIndex = 0;
         let _childRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF).children;
@@ -440,6 +492,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         xmlUnlinkNode(this.getNativeReferenceOrThrow(XMLNodeError.NO_REF));
     }
 
+    /**
+     * Get the associated XMLDocument for the current node
+     *
+     * @returns {XMLDocument}
+     */
     public doc(): XMLDocument {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
@@ -454,9 +511,17 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         );
     }
 
-    // TODO(refactor): overloaded return value
+    /**
+     * Get or set the namespace for the current node
+     *
+     * @param prefix namespace prefix
+     * @param href namespace URL
+     * @returns {XMLNamespace} the current namespace
+     */
     public namespace(prefix?: string | XMLNamespace | null, href?: string | null) {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
+
+        // TODO(refactor): legacy overloaded return value
 
         if (prefix === null) {
             _ref.ns = xmlPtrToXmlNs(null);
@@ -494,6 +559,12 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return createXMLReference(XMLNamespace, _ref.ns).getSelfOrNull();
     }
 
+    /**
+     * Get an array of namespaces that appy to the current node
+     *
+     * @param onlyLocal whether to include inherited namespaces
+     * @returns {XMLNamespace[]} an array of namespaces for the current node
+     */
     public namespaces(onlyLocal: boolean = false) {
         const namespaces = [];
 

@@ -141,6 +141,12 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         this.validationErrors = [];
     }
 
+    /**
+     * Get or set the document root
+     *
+     * @param node the node to set as the document root
+     * @returns the root node for the document
+     */
     public root(node?: XMLElement): XMLElement | null {
         return this.getNativeReferenceOrReturnNull((_docRef) => {
             if (node !== undefined) {
@@ -151,10 +157,16 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         });
     }
 
+    /**
+     * @see XMLNode.doc
+     */
     public doc() {
         return this;
     }
 
+    /**
+     * @see XMLNode.childNodes
+     */
     public childNodes() {
         const root = this.root();
 
@@ -165,6 +177,9 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return root.childNodes();
     }
 
+    /**
+     * @see XMLNode.find
+     */
     public find(xpath: string, namespace?: XPathNamespace) {
         const root = this.root();
 
@@ -175,6 +190,9 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return root.find(xpath, namespace);
     }
 
+    /**
+     * see XMLNode.get
+     */
     public get(xpath: string, namespace?: XPathNamespace) {
         const root = this.root();
 
@@ -185,6 +203,9 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return root.get(xpath, namespace);
     }
 
+    /**
+     * @see XMLNode.child
+     */
     public child(index: number) {
         const root = this.root();
 
@@ -205,6 +226,12 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         // return root.namespaces();
     }
 
+    /**
+     * Validate the current document against the given schema
+     *
+     * @param schemaDoc document to validate against
+     * @returns {boolean} valid
+     */
     public validate(schemaDoc: XMLDocument) {
         xmlResetLastError();
 
