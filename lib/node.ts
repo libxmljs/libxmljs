@@ -249,10 +249,26 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return "node";
     }
 
+    /**
+     * Create a new element with the given name and content,
+     * then append it as a child of the current node
+     *
+     * @see XMLNode.createElement
+     * @param name
+     * @param content
+     * @returns the appended element
+     */
     public node(name: string, content?: string): XMLElement {
         return this.addChild(this.createElement(name, content));
     }
 
+    /**
+     * Create a new element with the given name and content
+     *
+     * @param name
+     * @param content
+     * @returns the created element
+     */
     public createElement(name: string, content?: string): XMLElement {
         const _ref = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
 
@@ -266,6 +282,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         );
     }
 
+    /**
+     * Get the previous sibling relative to the current node
+     *
+     * @returns {XMLElement | null} previous element
+     */
     public prevElement() {
         let node = this.prevSibling();
 
@@ -276,6 +297,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return node;
     }
 
+    /**
+     * Get the next sibling relative to the current node
+     *
+     * @returns {XMLElement | null} next element
+     */
     public nextElement() {
         let node = this.nextSibling();
 
@@ -345,6 +371,12 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         ); // libxml2 bug?
     }
 
+    /**
+     * Insert a node directly after the current node
+     *
+     * @param node the node to be inserted
+     * @returns the inserted sibling
+     */
     public addNextSibling(node: XMLElement) {
         const _parentRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _childRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
@@ -370,6 +402,12 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         );
     }
 
+    /**
+     * Insert a node directly before the current node
+     *
+     * @param node the node to be inserted
+     * @returns the inserted sibling
+     */
     public addPrevSibling(node: XMLElement) {
         const _parentRef = this.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
         const _childRef = node.getNativeReferenceOrThrow(XMLNodeError.NO_REF);
