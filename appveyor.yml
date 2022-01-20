@@ -50,7 +50,6 @@ artifacts:
 
 install:
     - ps: Install-Product node $env:nodejs_version $env:platform
-    - cmd: set NODE_OPTIONS=--es_staging
     - npm --version
     - npm config set msvs_version 2015
     - npm config set python C:\Python27\python.exe
