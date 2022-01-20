@@ -16,11 +16,11 @@ environment:
         - nodejs_version: 4
           npm_version: 4.0.3
           gyp_version: 3.5.0
-          pre_gyp_version: 0.6.36
+          pre_gyp_version: 0.4.0
         - nodejs_version: 5
           npm_version: 4.0.3
           gyp_version: 3.5.0
-          pre_gyp_version: 0.6.36
+          pre_gyp_version: 0.4.0
         - nodejs_version: 6
           npm_version: 4.0.3
           gyp_version: 3.5.0
@@ -72,9 +72,9 @@ build_script:
 
 test_script:
     # - npm run test
-    - node --stack_size=100000 --es_staging -e
+    - node --max-old-space-size=5000 --stack_size=100000 --es_staging -e
       "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles','--sourceMap','false','--removeComments','true','--skipLibCheck','true'];require('./node_modules/typescript/lib/tsc.js')"
-    - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
+    - node --max-old-space-size=5000 --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
 
 after_test:
     - node-pre-gyp package 2>&1
@@ -96,5 +96,4 @@ after_deploy:
     - node-pre-gyp clean
     - npm install --fallback-to-build=false
     # - npm run test
-    - cmd: set NODE_OPTIONS=--max-old-space-size=5000
     - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
