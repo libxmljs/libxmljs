@@ -72,7 +72,7 @@ build_script:
 test_script:
     # - npm run test
     - node --max-old-space-size=5000 --stack_size=100000 --es_staging -e
-      "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles','--sourceMap','false','--removeComments','true','--skipLibCheck','true'];require('./node_modules/typescript/lib/tsc.js')"
+      "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles','--sourceMap','false','--removeComments','true'];require('./node_modules/typescript/lib/tsc.js')"
     - node --max-old-space-size=5000 --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
 
 after_test:
