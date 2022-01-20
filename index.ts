@@ -32,11 +32,13 @@ import {
 import { SaxParser, SaxPushParser } from "./lib/sax";
 export { SaxParser, SaxPushParser };
 
-function Document(_ref: XMLReferenceType | null | string = null, encoding: string = "utf8"): XMLDocument {
+function Document(_ref: XMLReferenceType | null | string | Buffer = null, encoding: string = "utf8"): XMLDocument {
     let _docRef: xmlDocPtr;
 
-    if (_ref === null || typeof _ref === "string") {
-        _docRef = xmlNewDoc(_ref || "1.0");
+    if (_ref === null) {
+        _docRef = xmlNewDoc("1.0");
+    } else if (typeof _ref === "string" || _ref instanceof Buffer) {
+        _docRef = xmlNewDoc(_ref);
     } else {
         _docRef = xmlPtrToXmlDoc(_ref);
     }

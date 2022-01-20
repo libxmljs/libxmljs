@@ -26,7 +26,9 @@ environment:
         - nodejs_version: 9
           npm_version: 5.6.0
         - nodejs_version: 10
+          npm_version: 6.7.0
         - nodejs_version: 11
+          npm_version: 6.7.0
         - nodejs_version: 12
         - nodejs_version: 14
 
@@ -64,7 +66,7 @@ build_script:
 test_script:
     # - npm run test
     - node --stack_size=100000 --es_staging -e
-      "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--sourceMap','false','--removeComments','true'];require('./node_modules/typescript/lib/tsc.js')"
+      "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles','--sourceMap','false','--removeComments','true','--skipLibCheck','true'];require('./node_modules/typescript/lib/tsc.js')"
     - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
 
 after_test:
