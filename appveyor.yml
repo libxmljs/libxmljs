@@ -50,6 +50,7 @@ artifacts:
 
 install:
     - ps: Install-Product node $env:nodejs_version $env:platform
+    - cmd: set NODE_OPTIONS=--es_staging
     - npm --version
     - npm config set msvs_version 2015
     - npm config set python C:\Python27\python.exe
@@ -95,4 +96,5 @@ after_deploy:
     - node-pre-gyp clean
     - npm install --fallback-to-build=false
     # - npm run test
+    - cmd: set NODE_OPTIONS=--max-old-space-size=5000
     - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
