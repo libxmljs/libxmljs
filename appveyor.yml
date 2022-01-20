@@ -1,7 +1,4 @@
 environment:
-    npm_version: latest
-    gyp_version: latest
-    pre_gyp_version: latest
     github_release_token:
         secure: fNm9+m4cngLwXcaUAk0vTM7Dp3pwjzU0H6tTb9YA+6Yh5Xng4fpSHIl257+H8mHB
     matrix:
@@ -27,16 +24,32 @@ environment:
           pre_gyp_version: 0.6.36
         - nodejs_version: 7
           npm_version: 4.2.0
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 8
           npm_version: 6.13.4
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 9
           npm_version: 5.6.0
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 10
           npm_version: 6.7.0
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 11
           npm_version: 6.7.0
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 12
+          npm_version: latest
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
         - nodejs_version: 14
+          npm_version: latest
+          gyp_version: latest
+          pre_gyp_version: 0.11.0
 
 platform:
     - x86
@@ -53,10 +66,10 @@ install:
     - npm --version
     - npm config set msvs_version 2015
     - npm config set python C:\Python27\python.exe
-    - npm install -g npm@%npm_version%
+    - npm install -g npm@$env:npm_version
     - npm --version
-    - npm install -g node-gyp@%gyp_version%
-    - npm install -g node-pre-gyp@%pre_gyp_version%
+    - npm install -g node-gyp@$env:gyp_version
+    - npm install -g node-pre-gyp@$env:pre_gyp_version
 
     # work around an issue with node-gyp v3.3.1 and node 4x
     # https://github.com/nodejs/node-gyp/issues/921
