@@ -15,10 +15,16 @@ environment:
         #   pre_gyp_version: 0.6.36
         - nodejs_version: 4
           npm_version: 4.0.3
+          gyp_version: 3.5.0
+          pre_gyp_version: 0.6.36
         - nodejs_version: 5
           npm_version: 4.0.3
+          gyp_version: 3.5.0
+          pre_gyp_version: 0.6.36
         - nodejs_version: 6
           npm_version: 4.0.3
+          gyp_version: 3.5.0
+          pre_gyp_version: 0.6.36
         - nodejs_version: 7
           npm_version: 4.2.0
         - nodejs_version: 8
