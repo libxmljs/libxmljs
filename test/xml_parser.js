@@ -21,6 +21,17 @@ module.exports.parse = function(assert) {
     assert.done();
 };
 
+module.exports.invalid_input = function(assert) {
+    try {
+        libxml.parseXml({object: true});
+        assert.ok(false);
+    } catch(err) {
+        assert.ok(true)
+    }
+
+    assert.done();
+};
+
 module.exports.parse_buffer = function(assert) {
     var filename = __dirname + '/fixtures/parser-utf16.xml';
     var buf = fs.readFileSync(filename);

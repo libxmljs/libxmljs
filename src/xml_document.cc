@@ -375,16 +375,18 @@ NAN_METHOD(XmlDocument::FromHtml)
         opts |= HTML_PARSE_NOIMPLIED | HTML_PARSE_NODEFDTD;
 
     htmlDocPtr doc;
-    if (!node::Buffer::HasInstance(info[0])) {
+    if (info[0]->IsString()) {
         // Parse a string
         Nan::Utf8String str(Nan::To<v8::String>(info[0]).ToLocalChecked());
         doc = htmlReadMemory(*str, str.length(), baseUrl, encoding, opts);
     }
-    else {
+    else if (node::Buffer::HasInstance(info[0])) {
         // Parse a buffer
         v8::Local<v8::Object> buf = Nan::To<v8::Object>(info[0]).ToLocalChecked();
         doc = htmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
                             baseUrl, encoding, opts);
+    } else {
+        return Nan::ThrowError("XML must be a string or buffer");
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);
@@ -439,16 +441,18 @@ NAN_METHOD(XmlDocument::FromXml)
 
     int opts = (int) getParserOptions(options);
     xmlDocPtr doc;
-    if (!node::Buffer::HasInstance(info[0])) {
+    if (info[0]->IsString()) {
       // Parse a string
       Nan::Utf8String str(Nan::To<v8::String>(info[0]).ToLocalChecked());
       doc = xmlReadMemory(*str, str.length(), baseUrl, "UTF-8", opts);
     }
-    else {
+    else if (node::Buffer::HasInstance(info[0])) {
       // Parse a buffer
       v8::Local<v8::Object> buf = Nan::To<v8::Object>(info[0]).ToLocalChecked();
       doc = xmlReadMemory(node::Buffer::Data(buf), node::Buffer::Length(buf),
                           baseUrl, encoding, opts);
+    } else {
+        return Nan::ThrowError("XML must be a string or buffer");
     }
 
     xmlSetStructuredErrorFunc(NULL, NULL);

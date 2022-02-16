@@ -32,6 +32,17 @@ module.exports.parse = function(assert) {
     assert.done();
 };
 
+module.exports.invalid_input = function(assert) {
+    try {
+        libxml.parseHtml({object: true});
+        assert.ok(false);
+    } catch(err) {
+        assert.ok(true)
+    }
+
+    assert.done();
+};
+
 // Although libxml defaults to a utf-8 encoding, if not specifically specified
 // it will guess the encoding based on meta http-equiv tags available
 // This test shows that the "guessed" encoding can be overridden
