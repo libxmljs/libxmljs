@@ -18,6 +18,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+      - run: git submodule update --init --recursive
       - run: npm install --build-from-source
       - run: npm run tsc
       - run: npm run test
