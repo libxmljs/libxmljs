@@ -8,8 +8,8 @@ jobs:
       matrix:
         node-version: [12.x, 14.x, 16.x]
         config:
-          - { os: macos-latest, arch: x64 }
-          - { os: ubuntu-latest, arch: x64 }
+          # - { os: macos-latest, arch: x64 }
+          # - { os: ubuntu-latest, arch: x64 }
           - { os: windows-latest, arch: x64 }
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
         if: matrix.config.os == 'windows-latest'
         uses: microsoft/setup-msbuild@v1.1
         with:
-          vs-version: '[16.4,16.5)'
+          vs-version: 15.0
       - run: git submodule update --init --recursive
       - run: npm install --build-from-source
       - run: npm run tsc
