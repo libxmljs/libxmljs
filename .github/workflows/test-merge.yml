@@ -24,6 +24,8 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
         with:
           vs-version: 15.0
+      - name: Install windows-build-tools
+        if: matrix.config.os == 'windows-latest'
         run: npm --vs2015 install --global windows-build-tools
       - run: npm config set msvs_version 2015
       - run: git submodule update --init --recursive
