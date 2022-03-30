@@ -69,7 +69,7 @@
           # node-gyp 2.x doesn't add this anymore
           # https://github.com/TooTallNate/node-gyp/pull/612
           'xcode_settings': {
-            'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',
+            'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
             'OTHER_LDFLAGS': [
               '-undefined dynamic_lookup'
             ],
