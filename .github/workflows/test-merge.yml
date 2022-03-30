@@ -26,6 +26,22 @@ jobs:
           vs-version: 15.0
       - run: npm config set msvs_version 2015
       - run: git submodule update --init --recursive
-      - run: npm install --build-from-source
+      - run: npm ci --build-from-source
       - run: npm run tsc
       - run: npm run test
+
+
+  # publish:
+  #   if: ${{ github.event_name == 'release' }}
+  #   name: Publishing to NPM
+  #   runs-on: ubuntu-18.04
+  #   needs: test
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 16
+  #         registry-url: https://registry.npmjs.org
+  #     - run: npm publish
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
