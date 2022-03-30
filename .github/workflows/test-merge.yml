@@ -18,6 +18,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+      - name: Add msbuild to PATH
+        if: matrix.config.os == 'windows-latest'
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: '[16.4,16.5)'
       - run: git submodule update --init --recursive
       - run: npm install --build-from-source
       - run: npm run tsc
