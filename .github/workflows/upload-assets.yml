@@ -1,0 +1,51 @@
+name: Upload Assets to GitHub
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  upload:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - { node-version: 8, npm-version: 6 }
+        - { node-version: 9, npm-version: 6 }
+        - { node-version: 10, npm-version: 6 }
+        - { node-version: 11, npm-version: 6 }
+        - { node-version: 12, npm-version: 8 }
+        - { node-version: 13, npm-version: 8 }
+        - { node-version: 14, npm-version: 8 }
+        - { node-version: 15, npm-version: 8 }
+        - { node-version: 16, npm-version: 8 }
+        - { node-version: 17, npm-version: 8 }
+        - { node-version: 18, npm-version: 8 }
+        os: [ ubuntu-latest, macos-latest, windows-2019 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.config.node-version }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Package prebuilt binary
+        run: |
+          npm install -g npm@${{ matrix.config.npm-version }}
+          npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --global
+          npm config set progress false
+          npm config set spin false
+          npm i @mapbox/node-pre-gyp node-gyp -g
+
+          npm install --build-from-source
+          node-pre-gyp package 2>&1
+      - name: Upload release binary
+        uses: alexellis/upload-assets@0.3.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
