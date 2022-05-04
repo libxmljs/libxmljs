@@ -70,6 +70,23 @@ module.exports.toString = function (assert: any) {
     assert.done();
 };
 
+module.exports.toStringWithEncoding = function (assert: any) {
+    var doc = libxml.Document();
+    var elem = doc.node("name1");
+    assert.equal("<name1></name1>", elem.toString({ type: "xhtml" }));
+    elem.node("child1").text("Something\xA0with a non-breaking space");
+    assert.equal("<name1><child1>Something\xA0with a non-breaking space</child1></name1>", elem.toString({ type: "xhtml" }));
+    assert.equal("<name1><child1>Something\xA0with a non-breaking space</child1></name1>", elem.toString({ type: "xhtml", encoding: "UTF-8" }));
+    assert.equal("<name1><child1>Something&nbsp;with a non-breaking space</child1></name1>", elem.toString({ type: "xhtml", encoding: "HTML" }));
+    assert.equal("<name1><child1>Something&#160;with a non-breaking space</child1></name1>", elem.toString({ type: "xhtml", encoding: "ASCII" }));
+    elem.node("child2").text("😀");
+    assert.equal("<name1><child1>Something\xA0with a non-breaking space</child1><child2>😀</child2></name1>", elem.toString({ type: "xhtml" }));
+    assert.equal("<name1><child1>Something\xA0with a non-breaking space</child1><child2>😀</child2></name1>", elem.toString({ type: "xhtml", encoding: "UTF-8" }));
+    assert.equal("<name1><child1>Something&nbsp;with a non-breaking space</child1><child2>&#128512;</child2></name1>", elem.toString({ type: "xhtml", encoding: "HTML" }));
+    assert.equal("<name1><child1>Something&#160;with a non-breaking space</child1><child2>&#128512;</child2></name1>", elem.toString({ type: "xhtml", encoding: "ASCII" }));
+    assert.done();
+};
+
 module.exports.path = function (assert: any) {
     var doc = libxml.Document();
     var root = doc.node("root");
