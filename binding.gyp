@@ -74,6 +74,11 @@
               '-undefined dynamic_lookup'
             ],
           },
+        }],
+        ['OS=="win"', {
+          'defines': [
+            'BUILDING_NODE_EXTENSION',
+          ],
         }]
       ]
     }
