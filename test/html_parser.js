@@ -151,5 +151,13 @@ module.exports.toString = function(assert) {
     assert.ok(doc.toString({ type: 'xml' }).indexOf('<?xml') > -1);
     assert.ok(doc.toString({ type: 'xhtml' }).indexOf('<?xml') > -1);
     assert.ok(doc.toString({ type: 'xml', selfCloseEmpty:true }).indexOf('<a/>') > -1);
+
+    doc = libxml.parseHtml("<a>Something&nbsp;with a space</a>");
+    assert.ok(doc.toString().indexOf('<?xml') === -1);
+    assert.ok(doc.toString({ type: 'xml' }).indexOf('<?xml') > -1);
+    assert.ok(doc.toString({ type: 'xhtml' }).indexOf('<?xml') > -1);
+    assert.ok(doc.toString({ type: 'xhtml' }).indexOf('&nbsp;') === -1);
+    assert.ok(doc.toString({ type: 'xhtml', encoding: 'HTML' }).indexOf('&nbsp;') > -1);
+    assert.ok(doc.toString({ type: 'xhtml', encoding: 'ASCII' }).indexOf('&#160;') > -1);
     assert.done();
 }
