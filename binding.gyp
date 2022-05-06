@@ -3,7 +3,7 @@
     {
       'target_name': 'xmljs',
       'product_extension': 'node',
-      'type': 'shared_library',
+      'type': 'static_library',
       'include_dirs': [
         'vendor/libxml/include',
         "<!(node -e \"require('nan')\")"
