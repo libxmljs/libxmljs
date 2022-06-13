@@ -40,12 +40,9 @@ jobs:
 
           npm install --build-from-source
           node-pre-gyp package 2>&1
-      - name: Upload release binary
-        uses: alexellis/upload-assets@0.3.0
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+      - name: List files
+        run:
+          ls ./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz
   
   upload-arm:
     strategy:
@@ -80,7 +77,14 @@ jobs:
           distro: ubuntu18.04
           githubToken: ${{ github.token }}
 
-          # Set an output parameter `uname` for use in subsequent steps
+          # Create an artifacts directory
+          setup: |
+            mkdir -p "${PWD}/build"
+
+          # Mount the artifacts directory as /artifacts in the container
+          dockerRunArgs: |
+            --volume "${PWD}/build:/build"
+          
           run: |
             npm install -g npm@${{ matrix.config.npm-version }}
             npm config set progress false
@@ -90,7 +94,9 @@ jobs:
             npm install --build-from-source
             node-pre-gyp package 2>&1
 
-      - name: Get the output
-        # Echo the `uname` output parameter from the `runcmd` step
-        run: |
-          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
+      - name: Upload release binary
+        uses: alexellis/upload-assets@0.3.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
