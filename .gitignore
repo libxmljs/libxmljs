@@ -3,3 +3,10 @@
 build/
 node_modules/
 npm-debug.log
+.DS_Store
+dist/
+.vscode
+crash.log
+swig.xml
+appveyor.yml
+docs/

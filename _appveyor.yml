@@ -1,0 +1,98 @@
+# environment:
+#     npm_version: latest
+#     gyp_version: latest
+#     pre_gyp_version: latest
+#     github_release_token:
+#         secure: fNm9+m4cngLwXcaUAk0vTM7Dp3pwjzU0H6tTb9YA+6Yh5Xng4fpSHIl257+H8mHB
+#     matrix:
+#         # - nodejs_version: 0.10
+#         #   npm_version: 4.0.3
+#         #   gyp_version: 3.5.0
+#         #   pre_gyp_version: 0.6.36
+#         # - nodejs_version: 0.12
+#         #   npm_version: 4.0.3
+#         #   gyp_version: 3.5.0
+#         #   pre_gyp_version: 0.6.36
+#         - nodejs_version: 4
+#           npm_version: 4.0.3
+#           gyp_version: 3.5.0
+#           pre_gyp_version: 0.4.0
+#         - nodejs_version: 5
+#           npm_version: 4.0.3
+#           gyp_version: 3.5.0
+#           pre_gyp_version: 0.4.0
+#         - nodejs_version: 6
+#           npm_version: 4.0.3
+#           gyp_version: 3.5.0
+#           pre_gyp_version: 0.6.36
+#         - nodejs_version: 7
+#           npm_version: 4.2.0
+#         - nodejs_version: 8
+#           npm_version: 6.13.4
+#         - nodejs_version: 9
+#           npm_version: 5.6.0
+#         - nodejs_version: 10
+#           npm_version: 6.7.0
+#         - nodejs_version: 11
+#           npm_version: 6.7.0
+#         - nodejs_version: 12
+#         - nodejs_version: 14
+
+# platform:
+#     - x86
+#     - x64
+
+# image: Visual Studio 2015
+
+# artifacts:
+#     - path: build\**\*.tar.gz
+#       name: libxml_binary
+
+# install:
+#     - ps: Install-Product node $env:nodejs_version $env:platform
+#     - npm --version
+#     - npm config set msvs_version 2015
+#     - npm config set python C:\Python27\python.exe
+#     # - npm install -g npm@%npm_version%
+#     - npm --version
+#     - npm install -g node-gyp@%gyp_version%
+#     - npm install -g node-pre-gyp@%pre_gyp_version%
+
+#     # work around an issue with node-gyp v3.3.1 and node 4x
+#     # https://github.com/nodejs/node-gyp/issues/921
+#     - npm config set -g cafile=package.json
+#     - npm config set -g strict-ssl=false
+#     - npm config set registry http://registry.npmjs.org/
+
+#     - git submodule update --init --recursive
+
+# build_script:
+#     - npm install --msvs_version=2015
+
+# test_script:
+#     # - npm run test
+#     - node --max-old-space-size=5000 --stack_size=100000 --es_staging -e
+#       "process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles','--sourceMap','false','--removeComments','true'];require('./node_modules/typescript/lib/tsc.js')"
+#     - node --max-old-space-size=5000 --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test
+
+# after_test:
+#     - node-pre-gyp package 2>&1
+
+# deploy:
+#     - provider: GitHub
+#       release: $(APPVEYOR_REPO_TAG_NAME)
+#       artifact: libxml_binary
+#       auth_token: $(github_release_token)
+#       draft: false
+#       prerelease: false
+#       on:
+#           appveyor_repo_tag: true
+
+# after_deploy:
+#     - npm config delete -g cafile
+#     - npm config delete -g strict-ssl
+#     - npm config delete registry
+#     - node-pre-gyp clean
+#     - npm install --fallback-to-build=false
+#     # - npm run test
+#     - node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test

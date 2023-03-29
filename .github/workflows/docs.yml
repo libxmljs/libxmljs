@@ -1,0 +1,84 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+on:
+    push:
+        branches: ["master"]
+
+# on:
+# Runs on pushes targeting the default branch
+# push:
+#     branches: ["master"]
+# pull_request:
+#     branches: ["v1.0.0-rc1"]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+    pull-requests: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+    group: "pages"
+    cancel-in-progress: false
+
+# jobs:
+#     # Single deploy job since we're just deploying
+#     deploy-docs:
+#         runs-on: ubuntu-latest
+#         environment:
+#             name: github-pages
+#             url: ${{ steps.deployment.outputs.page_url }}
+#         steps:
+#             - name: Checkout
+#               uses: actions/checkout@v3
+
+#             - name: Use Node.js 12.x
+#               uses: actions/setup-node@v3
+#               with:
+#                   node-version: 12.x
+#                   cache: "npm"
+#             - run: git submodule update --init --recursive
+#             - run: npm ci --build-from-source
+#             - run: npm run docs
+#             - name: Setup Pages
+#               uses: actions/configure-pages@v3
+#             - name: Upload artifact
+#               uses: actions/upload-pages-artifact@v1
+#               with:
+#                   # Upload entire repository
+#                   path: "docs/"
+#             - name: Deploy to GitHub Pages
+#               id: deployment
+#               uses: actions/deploy-pages@v2
+
+jobs:
+    build-docs:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+              with:
+                  persist-credentials: false
+                  submodules: true # TODO remove this if not using submodules in Hexo
+
+            - name: Submodule
+              run: git submodule update --init --recursive
+
+            - name: Install
+              run: npm install
+
+            - name: Build Docs
+              run: npm run docs
+
+            - name: Add docs
+              run: git add --force docs
+
+            - name: Deploy to GH Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: docs
