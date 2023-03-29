@@ -1,8 +1,11 @@
-# Libxmljs
+# libxmljs
 
+[![npm version](https://badge.fury.io/js/libxmljs.svg)](https://badge.fury.io/js/libxmljs)
 [![Test & Upload](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml)
 
-LibXML bindings for [node.js](http://nodejs.org/)
+`npm install libxmljs`
+
+Native NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in [Typescript](https://www.typescriptlang.org/)
 
 ```javascript
 var libxmljs = require("libxmljs");
@@ -31,31 +34,3 @@ console.log(child.attr("foo").value()); // prints "bar"
 ## Docs
 
 [https://libxmljs.github.io/libxmljs/](https://libxmljs.github.io/libxmljs/)
-
-## Support
-
--   Docs - [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki)
--   Mailing list - [http://groups.google.com/group/libxmljs](http://groups.google.com/group/libxmljs)
-
-## API and Examples
-
-Check out the wiki [http://github.com/libxmljs/libxmljs/wiki](http://github.com/libxmljs/libxmljs/wiki).
-
-See the [examples](https://github.com/libxmljs/libxmljs/tree/master/examples) folder.
-
-## Installation via [npm](https://npmjs.org)
-
-```shell
-npm install libxmljs
-```
-
-## Contribute
-
-Start by checking out the [open issues](https://github.com/libxmljs/libxmljs/issues?labels=&page=1&state=open).
-Specifically the [desired feature](https://github.com/libxmljs/libxmljs/issues?labels=desired+feature&page=1&state=open)
-ones.
-
-### Requirements
-
-Make sure you have met the requirements for [node-gyp](https://github.com/TooTallNate/node-gyp#installation). You DO NOT
-need to manually install node-gyp; it comes bundled with node.
