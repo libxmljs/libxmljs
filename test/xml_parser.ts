@@ -85,7 +85,7 @@ module.exports.baseurl_xml = function (assert: any) {
 module.exports.fatal_error = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/errors/comment.xml";
     var str = fs.readFileSync(filename, "utf8");
-    var err = null;
+    var err: XMLStructuredError | null = null;
 
     try {
         libxml.parseXml(str);
