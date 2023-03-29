@@ -21,32 +21,56 @@ concurrency:
     group: "pages"
     cancel-in-progress: false
 
-jobs:
-    # Single deploy job since we're just deploying
-    deploy-docs:
-        runs-on: ubuntu-latest
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+# jobs:
+#     # Single deploy job since we're just deploying
+#     deploy-docs:
+#         runs-on: ubuntu-latest
+#         environment:
+#             name: github-pages
+#             url: ${{ steps.deployment.outputs.page_url }}
+#         steps:
+#             - name: Checkout
+#               uses: actions/checkout@v3
 
-            - name: Use Node.js 12.x
-              uses: actions/setup-node@v3
+#             - name: Use Node.js 12.x
+#               uses: actions/setup-node@v3
+#               with:
+#                   node-version: 12.x
+#                   cache: "npm"
+#             - run: git submodule update --init --recursive
+#             - run: npm ci --build-from-source
+#             - run: npm run docs
+#             - name: Setup Pages
+#               uses: actions/configure-pages@v3
+#             - name: Upload artifact
+#               uses: actions/upload-pages-artifact@v1
+#               with:
+#                   # Upload entire repository
+#                   path: "docs/"
+#             - name: Deploy to GitHub Pages
+#               id: deployment
+#               uses: actions/deploy-pages@v2
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout 🛎️
+              uses: actions/checkout@master
               with:
-                  node-version: 12.x
-                  cache: "npm"
-            - run: git submodule update --init --recursive
-            - run: npm ci --build-from-source
-            - run: npm run docs
-            - name: Setup Pages
-              uses: actions/configure-pages@v3
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v1
+                  persist-credentials: false
+                  submodules: true # TODO remove this if not using submodules in Hexo
+
+            - name: Install 🔧
+              run: yarn install
+
+            - name: Build 🏗️
+              run: |
+                  yarn clean
+                  yarn build
+            - name: Deploy to GH Pages 🚀
+              uses: peaceiris/actions-gh-pages@v3
               with:
-                  # Upload entire repository
-                  path: "docs/"
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v2
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: public
