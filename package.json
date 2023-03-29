@@ -34,7 +34,7 @@
     "swig": "bash scripts/swig.sh && node scripts/swigfix.js",
     "tsgenerate": "node scripts/swig2ts.js",
     "tsgenerate-debug": "lldb -- `which node` scripts/swig2ts.js",
-    "tsc": "node --stack_size=10000 --es_staging -e \"process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles'];require('./node_modules/typescript/lib/tsc.js')\"",
+    "tsc": "node --stack_size=10000 -e \"process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles'];require('./node_modules/typescript/lib/tsc.js')\"",
     "dev": "node --stack-size=10000 -e \"process.argv=['node','tsc','-w'];require('./node_modules/typescript/lib/tsc.js')\"",
     "lint": "tslint -p tsconfig.json",
     "test": "node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test",
