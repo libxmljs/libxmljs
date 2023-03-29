@@ -1,5 +1,6 @@
 node_modules/
 build/
-src/
+docs/
+src/*.i
 vendor/
 swig.xml

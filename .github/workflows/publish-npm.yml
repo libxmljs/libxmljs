@@ -1,9 +1,13 @@
 name: Publish to NPM
 
+# on:
+#     push:
+#         tags:
+#             - "*"
+
 on:
     push:
-        tags:
-            - "*"
+        branches: ["master"]
 
 jobs:
     publish:
@@ -20,6 +24,10 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: https://registry.npmjs.org
+            - run: npm install
+            - run: npm run tsc
+            - run: npm run test
+            - run: find .
             - run: npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
