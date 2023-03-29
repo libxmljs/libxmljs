@@ -740,6 +740,10 @@ export class XMLElement extends XMLNode {
 }
 
 export class XMLNamespace extends XMLReference<xmlNsPtr> {
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
     }
@@ -756,12 +760,20 @@ export class XMLNamespace extends XMLReference<xmlNsPtr> {
         return this.getNativeReference().href;
     }
 
+    /**
+     * @private
+     * @param _nodeRef
+     */
     public _applyToNode(_nodeRef: xmlNodePtr) {
         xmlSetNs(_nodeRef, this.getNativeReference());
     }
 }
 
 export class XMLAttribute extends XMLNode {
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
     }
@@ -813,6 +825,10 @@ export class XMLDTD extends XMLReference<xmlDtdPtr> {
 
     public systemId: string | null;
 
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
 
@@ -839,6 +855,10 @@ export class XMLDTD extends XMLReference<xmlDtdPtr> {
 }
 
 export class XMLText extends XMLElement {
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
     }
