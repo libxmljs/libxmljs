@@ -23,6 +23,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "init-submodules": "git submodule update --init --recursive",
     "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "build": "node-gyp rebuild",
