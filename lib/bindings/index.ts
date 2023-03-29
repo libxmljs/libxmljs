@@ -66,6 +66,10 @@ export class XMLReference<T> {
     //     return this._ref === null;
     // }
 
+    /**
+     * @private
+     * @returns 
+     */
     protected getNativeReference(): T {
         if (this._ref === null) {
             throw new Error("Unexpected null reference");
