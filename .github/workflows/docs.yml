@@ -52,23 +52,28 @@ concurrency:
 #               uses: actions/deploy-pages@v2
 
 jobs:
-    build:
+    build-docs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout 🛎️
+            - name: Checkout
               uses: actions/checkout@master
               with:
                   persist-credentials: false
                   submodules: true # TODO remove this if not using submodules in Hexo
 
-            - name: Install 🔧
-              run: yarn install
+            - name: Submodule
+              run: git submodule update --init --recursive
 
-            - name: Build 🏗️
-              run: |
-                  yarn clean
-                  yarn build
+            - name: Install
+              run: npm install
+
+            - name: Build
+              run: npm ci --build-from-source
+
+            - name: Build Docs
+              run: npm run docs
+
             - name: Deploy to GH Pages 🚀
               uses: peaceiris/actions-gh-pages@v3
               with:
