@@ -39,7 +39,7 @@
     "lint": "tslint -p tsconfig.json",
     "test": "node --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test",
     "test-debug": "lldb -- `which node` --stack-size=10000 --expose_gc ./node_modules/nodeunit/bin/nodeunit dist/test",
-    "docs": "typedoc --excludePrivate --out docs lib/index.ts"
+    "docs": "typedoc --includeVersion --excludePrivate --out docs lib/index.ts"
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.9",
