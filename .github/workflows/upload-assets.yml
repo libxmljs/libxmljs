@@ -103,6 +103,7 @@ jobs:
                       npm config set progress false
                       npm config set spin false
                       npm i @mapbox/node-pre-gyp node-gyp -g
+                      git submodule update --init --recursive
 
                       npm install --build-from-source --unsafe-perm
                       node-pre-gyp package 2>&1
