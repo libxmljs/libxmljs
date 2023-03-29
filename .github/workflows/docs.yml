@@ -11,9 +11,10 @@ on: pull_request
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-    contents: read
+    contents: write
     pages: write
     id-token: write
+    pull-requests: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -68,14 +69,11 @@ jobs:
             - name: Install
               run: npm install
 
-            - name: Build
-              run: npm ci --build-from-source
-
             - name: Build Docs
               run: npm run docs
 
-            - name: Deploy to GH Pages 🚀
+            - name: Deploy to GH Pages
               uses: peaceiris/actions-gh-pages@v3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: public
+                  publish_dir: docs
