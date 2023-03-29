@@ -1,9 +1,5 @@
 {
   "name": "libxmljs",
-  "author": "Marco Rogers",
-  "contributors": [
-    "Jeff Smick"
-  ],
   "binary": {
     "module_name": "xmljs",
     "module_path": "./build/Release/",
