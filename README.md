@@ -1,6 +1,6 @@
 # Libxmljs
 
-![build status](https://github.com/github/docs/actions/workflows/upload-assets.yml/badge.svg?branch=master)
+[![Test & Upload](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
