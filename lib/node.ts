@@ -268,7 +268,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
      * @private
      * @param _docRef 
      */
-    private setDocumentRoot(_docRef: xmlDocPtr) {
+    public setDocumentRoot(_docRef: xmlDocPtr) {
         xmlDocSetRootElement(_docRef, this.getNativeReference());
     }
 
