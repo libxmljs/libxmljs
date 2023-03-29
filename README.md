@@ -7,9 +7,13 @@
 
 Native NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in [Typescript](https://www.typescriptlang.org/)
 
-## API Docs
+## Documentation
 
 [https://libxmljs.github.io/libxmljs/](https://libxmljs.github.io/libxmljs/)
+
+## Examples
+
+For more examples, check out the [test suite](https://github.com/libxmljs/libxmljs/tree/master/test).
 
 ```javascript
 var libxmljs = require("libxmljs");
