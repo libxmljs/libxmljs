@@ -1,11 +1,10 @@
-var fs = require("fs");
-
+import * as fs from "fs";
 import * as libxml from "../index";
 import { XMLSaveOptions, XMLElement, XMLParseOptions, XMLStructuredError } from "../index";
 
 module.exports.parse = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/parser.xml";
-    var str = fs.readFileSync(filename, "utf8");
+    var str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
 
     var doc = libxml.parseXml(str);
     assert.equal("1.0", doc.version());
