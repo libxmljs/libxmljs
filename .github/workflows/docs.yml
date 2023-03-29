@@ -72,6 +72,9 @@ jobs:
             - name: Build Docs
               run: npm run docs
 
+            - name: Add docs
+              run: git add --force docs
+
             - name: Deploy to GH Pages
               uses: peaceiris/actions-gh-pages@v3
               with:

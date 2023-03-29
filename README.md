@@ -1,8 +1,6 @@
 # Libxmljs
 
-[![Build Status](https://secure.travis-ci.org/libxmljs/libxmljs.svg?branch=master)](http://travis-ci.org/libxmljs/libxmljs)
-
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/cf862a98w7qsajpl/branch/master?svg=true)](https://ci.appveyor.com/project/rchipka/libxmljs/branch/master)
+![build status](https://github.com/github/docs/actions/workflows/upload-assets.yml/badge.svg?branch=master)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
