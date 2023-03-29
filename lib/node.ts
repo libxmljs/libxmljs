@@ -95,6 +95,10 @@ function refToNodeType(node: xmlNodePtr | xmlDocPtr | null): XMLNode | XMLAttrib
 }
 
 export class XMLNode extends XMLReference<xmlNodePtr> {
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
     }
@@ -611,6 +615,10 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return refToNodeType(xmlDocCopyNode(_ref, _ref.doc, 1));
     }
 
+    /**
+     * @private
+     * @param context 
+     */
     public _xmlSaveTree(context: xmlSaveCtxtPtr) {
         xmlSaveTree(context, this.getNativeReference());
     }

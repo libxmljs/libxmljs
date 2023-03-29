@@ -17,7 +17,7 @@ module.exports.detect_leaks = function (assert: any) {
         console.log("tests leak " + libxml.nodeCount() + " nodes");
         assert.ok(false);
     }
-    console.log(libxml.memoryUsage());
+    // console.log(libxml.memoryUsage());
     assert.done();
 };
 

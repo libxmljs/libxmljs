@@ -3,8 +3,6 @@ import { XMLElement, XMLDTD, XPathNamespace, XMLNode, XMLText, XMLNodeError, XML
 import {
     parseHtml,
     parseXml,
-    DEFAULT_HTML_PARSE_OPTIONS,
-    DEFAULT_XML_PARSE_OPTIONS,
     parseXmlAsync,
     parseHtmlAsync,
 } from "./parse";
@@ -16,6 +14,8 @@ import {
     XMLSaveOptions,
     XMLSaveFlags,
     XMLDocumentError,
+    DEFAULT_XML_PARSE_OPTIONS,
+    DEFAULT_HTML_PARSE_OPTIONS,
 } from "./types";
 
 import { XMLReference, createXMLReference, createXMLReferenceOrThrow } from "./bindings";
@@ -82,6 +82,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     public errors: XMLStructuredError[];
     public validationErrors: any[];
 
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: any) {
         super(_ref);
 
@@ -89,6 +93,12 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         this.validationErrors = [];
     }
 
+    /**
+     * @private
+     * @param _ref 
+     * @param encoding 
+     * @returns 
+     */
     public static createDocument(_ref: null | string | Buffer = null, encoding: string = "utf8"): XMLDocument {
         let _docRef: xmlDocPtr | null;
 
@@ -131,6 +141,12 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         );
     }
 
+    /**
+     * @private
+     * @param _nodeRef 
+     * @param prefix 
+     * @param href 
+     */
     public _findNamespace(_nodeRef: xmlNodePtr, prefix?: string | null, href?: string | null) {
         const _docRef = this.doc().getNativeReference();
 
@@ -274,7 +290,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         });
     }
 
-    public rngValidate(schemaDoc: XMLDocument) {
+    public rngValidate(schemaDoc: XMLDocument): boolean {
         xmlResetLastError();
 
         return withStructuredErrors((errors) => {
@@ -479,6 +495,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return content || "";
     }
 
+    /**
+     * @private
+     * @param context 
+     */
     public _xmlSaveTree(context: xmlSaveCtxtPtr) {
         xmlSaveTree(context, this.getNativeReference() as any);
     }
@@ -498,7 +518,7 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return parseHtml(buffer, options);
     }
 
-    public static async fromeHtmlAsync(
+    public static async fromHtmlAsync(
         buffer: string | Buffer,
         options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS
     ) {

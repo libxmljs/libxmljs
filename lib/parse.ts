@@ -2,7 +2,7 @@
 
 import { createXMLReference, createXMLReferenceOrThrow } from "./bindings";
 import { xmlDocPtr } from "./bindings/types";
-import { FROM_BUFFER_ASYNC_TYPE, HTMLParseFlags, HTMLParseOptions, XMLDocumentError, XMLParseFlags, XMLParseOptions, XMLStructuredError } from "./types";
+import { DEFAULT_HTML_PARSE_OPTIONS, DEFAULT_XML_PARSE_OPTIONS, FROM_BUFFER_ASYNC_TYPE, HTMLParseFlags, HTMLParseOptions, XMLDocumentError, XMLParseFlags, XMLParseOptions, XMLStructuredError } from "./types";
 import {
     xmlReadMemory,
     htmlReadMemory,
@@ -16,17 +16,6 @@ import {
 
 import { XMLDocument, HTMLDocument } from "./document";
 import { XMLNodeError } from "./node";
-
-
-export const DEFAULT_XML_PARSE_OPTIONS: XMLParseOptions = {
-    baseUrl: "",
-    flags: [],
-};
-
-export const DEFAULT_HTML_PARSE_OPTIONS: HTMLParseOptions = {
-    url: "",
-    flags: [HTMLParseFlags.HTML_PARSE_COMPACT],
-};
 
 const htmlOptionsToFlags = (options: HTMLParseOptions) => {
     const flags: HTMLParseFlags[] = [];

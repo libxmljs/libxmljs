@@ -1,6 +1,6 @@
 var fs = require("fs");
-import * as libxml from "../index";
-import { XMLAttribute, HTMLParseOptions } from "../index";
+import libxml from "../index";
+import { XMLAttribute, HTMLParseOptions, parseHtml } from "../index";
 
 const TEST_DIR = __dirname + "/../../test";
 
@@ -20,7 +20,7 @@ module.exports.parse = function (assert: any) {
     function attempt_parse(encoding: any) {
         var str = fs.readFileSync(filename, encoding);
 
-        var doc = libxml.parseHtml(str);
+        var doc = parseHtml(str);
 
         assert.equal("html", doc.root()?.name());
         assert.equal("Test HTML document", (doc.get("head/title") as any).text());

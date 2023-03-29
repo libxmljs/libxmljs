@@ -1,6 +1,6 @@
 "use strict";
 
-import { XMLDocument } from "./document";
+import { HTMLDocument, XMLDocument } from "./document";
 import { XMLElement, XMLText, XMLNamespace, XMLNodeError, XMLNode } from "./node";
 import { parseHtml, parseHtmlAsync, parseXml, parseXmlAsync } from "./parse";
 import { SaxParser, SaxPushParser } from "./sax";
@@ -15,15 +15,15 @@ Document.fromXml = (buffer: string | Buffer, options?: XMLParseOptions) => {
 };
 
 Document.fromXmlAsync = (buffer: string | Buffer, options: HTMLParseOptions) => {
-    return XMLDocument.fromeHtmlAsync(buffer, options);
+    return XMLDocument.fromHtmlAsync(buffer, options);
 };
 
-Document.fromHtml = (buffer: string | Buffer, options?: HTMLParseOptions) => {
+Document.fromHtml = (buffer: string | Buffer, options?: HTMLParseOptions): HTMLDocument => {
     return XMLDocument.fromHtml(buffer, options);
 };
 
-Document.fromHtmlAsync = (buffer: string | Buffer, options: HTMLParseOptions) => {
-    return XMLDocument.fromeHtmlAsync(buffer, options);
+Document.fromHtmlAsync = (buffer: string | Buffer, options: HTMLParseOptions): Promise<HTMLDocument> => {
+    return XMLDocument.fromHtmlAsync(buffer, options);
 };
 
 Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions) => {

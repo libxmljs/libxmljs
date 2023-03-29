@@ -93,6 +93,16 @@ export enum XMLParseFlags {
     XML_PARSE_BIG_LINES = bindings.XML_PARSE_BIG_LINES, // 4194304 : Store big lines numbers in text PSVI field
 }
 
+export const DEFAULT_XML_PARSE_OPTIONS: XMLParseOptions = {
+    baseUrl: "",
+    flags: [],
+};
+
+export const DEFAULT_HTML_PARSE_OPTIONS: HTMLParseOptions = {
+    url: "",
+    flags: [HTMLParseFlags.HTML_PARSE_COMPACT],
+};
+
 export type XMLParseOptions = {
     url?: string;
     encoding?: string;

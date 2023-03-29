@@ -33,8 +33,15 @@ export function createXMLReferenceOrThrow<T>(constructorFn: new (_ref: XMLRefere
 
 
 export class XMLReference<T> {
+    /**
+     * @private
+     */
     private _ref: T;
 
+    /**
+     * @private
+     * @param _ref 
+     */
     constructor(_ref: T) {
         this._ref = _ref;
     }

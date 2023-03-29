@@ -1,0 +1,13 @@
+{
+
+    "excludeNotDocumented": false,
+    "excludeNotDocumentedKinds": [],
+    "visibilityFilters": {
+        "protected": true,
+        "private": false,
+        "inherited": true,
+        "external": false,
+        "@alpha": false,
+        "@beta": false
+    }
+}
