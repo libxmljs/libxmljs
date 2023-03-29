@@ -90,6 +90,10 @@ export class XMLReference<T> {
     //     return this._ref;
     // }
 
+    /**
+     * @private
+     * @param ref 
+     */
     protected setNativeReference(ref: T): void {
         if (ref === null) {
             throw new Error("Unexpected null reference");
