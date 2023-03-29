@@ -21,6 +21,31 @@ module.exports.parse = function (assert: any) {
     assert.done();
 };
 
+module.exports.parseAsync = function (assert: any) {
+    var filename = __dirname + "/../../test/fixtures/parser.xml";
+    var str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
+
+    let x = 0;
+
+    libxml.parseXmlAsync(str).then((doc) => {
+        assert.equal(++x, 2);
+        assert.equal("1.0", doc.version());
+        assert.equal("UTF-8", doc.encoding());
+        assert.equal("root", doc.root()?.name());
+        assert.equal("child", (doc.get("child") as XMLElement).name());
+        assert.equal("grandchild", ((doc.get("child") as XMLElement).get("grandchild") as XMLElement).name());
+        assert.equal("with love", (doc.get("child/grandchild") as XMLElement).text());
+        assert.equal("sibling", (doc.get("sibling") as XMLElement).name());
+        assert.equal(6, (doc.get("sibling") as XMLElement).line());
+        assert.equal(3, (doc.get("child") as XMLElement).getAttribute("to")?.line());
+        assert.equal("with content!", (doc.get("sibling") as XMLElement).text());
+        assert.equal(str, doc.toString());
+        assert.done();
+    });
+
+    assert.equal(++x, 1);
+};
+
 module.exports.parse_buffer = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/parser-utf16.xml";
     var buf = fs.readFileSync(filename);
@@ -29,11 +54,6 @@ module.exports.parse_buffer = function (assert: any) {
     assert.equal("1.0", doc.version());
     assert.equal("UTF-16", doc.encoding());
     assert.equal("root", doc.root()?.name());
-    assert.done();
-};
-
-module.exports.parse_synonym = function (assert: any) {
-    assert.strictEqual(libxml.parseXml, libxml.parseXmlString);
     assert.done();
 };
 

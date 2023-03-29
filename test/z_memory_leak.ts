@@ -17,6 +17,7 @@ module.exports.detect_leaks = function (assert: any) {
         console.log("tests leak " + libxml.nodeCount() + " nodes");
         assert.ok(false);
     }
+    console.log(libxml.memoryUsage());
     assert.done();
 };
 
@@ -28,7 +29,7 @@ function collectGarbage(minCycles: number, maxCycles?: number) {
     var freedRss = 0;
     var usage = process.memoryUsage();
     do {
-        global.gc();
+        global.gc?.();
 
         var usageAfterGc = process.memoryUsage();
         freedRss = usage.rss - usageAfterGc.rss;

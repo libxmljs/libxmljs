@@ -1,24 +1,23 @@
 import * as libxml from "../index";
-import { XMLElement } from "../index";
 
 module.exports.getDtd = function (assert: any) {
-    var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
+    var doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
     var dtd = doc.getDtd();
     assert.equal(null, dtd);
-    doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<root></root>');
+    doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<root></root>');
     assert.ok(doc);
     dtd = doc.getDtd();
     assert.equal("html", dtd?.name);
     assert.equal(null, dtd?.externalId);
     assert.equal(null, dtd?.systemId);
-    doc = libxml.parseXmlString(
+    doc = libxml.parseXml(
         '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html SYSTEM "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>'
     );
     dtd = doc.getDtd();
     assert.equal("html", dtd?.name);
     assert.equal(null, dtd?.externalId);
     assert.equal("http://www.w3.org/TR/html4/strict.dtd", dtd?.systemId);
-    doc = libxml.parseXmlString(
+    doc = libxml.parseXml(
         '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>'
     );
     dtd = doc.getDtd();
@@ -314,7 +313,7 @@ module.exports.errors = {
         }
 
         var xml_only_comments = "<!-- empty -->";
-        var doc = libxml.parseHtmlString(xml_only_comments);
+        var doc = libxml.parseHtml(xml_only_comments);
         assert.equal(null, doc.root());
 
         assertDocRootError(function () {
@@ -416,7 +415,7 @@ module.exports.validate_rng_memory_usage = function (assert: any) {
     }
 
     // libxml.bindings.xmlCleanupParser();
-    console.log(rssAfterGarbageCollection(), rssBefore, VALIDATE_RSS_TOLERANCE);
+    // console.log(rssAfterGarbageCollection(), rssBefore, VALIDATE_RSS_TOLERANCE);
     assert.ok(rssAfterGarbageCollection() - rssBefore < VALIDATE_RSS_TOLERANCE);
     assert.done();
 };
@@ -429,7 +428,7 @@ function rssAfterGarbageCollection(maxCycles?: any): number {
     var rss = libxml.memoryUsage();
     var freedMemory = 0;
     do {
-        global.gc();
+        global.gc?.();
 
         var rssAfterGc = libxml.memoryUsage();
         freedMemory = rss - rssAfterGc;

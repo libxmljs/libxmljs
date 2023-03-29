@@ -190,11 +190,11 @@
 
         this->type = type;
 
-        // if (buffer->IsString()) {
+        if (buffer->IsString()) {
             SWIG_AsCharPtrAndSize(buffer, &this->buffer, NULL, NULL);
-        // } else {
-        //     this->buffer = node::Buffer::Data(buffer);
-        // }
+        } else {
+            this->buffer = node::Buffer::Data(buffer);
+        }
 
         this->length = length;
         
@@ -226,7 +226,7 @@
     void FromXmlWorker::WorkComplete() {
         Nan::HandleScope scope;
         if (!doc) {
-            v8::Local<v8::Value> argv[1];
+            v8::Local<v8::Value> argv[2];
             if (lastError) {
                 v8::Local<v8::Value> error =
                     XmlSyntaxErrorsSync::BuildSyntaxError(lastError);
@@ -237,7 +237,8 @@
                                             ("Could not parse XML string")
                                             .ToLocalChecked());
             }
-            Nan::Call(*callback, Nan::GetCurrentContext()->Global(), 1, argv);
+            argv[1] = Nan::Null();
+            Nan::Call(*callback, Nan::GetCurrentContext()->Global(), 2, argv);
         } else {
             auto doc_handle = createWrap((xmlNode*) doc, SWIGTYPE_p__xmlDoc);
             auto doc_object = SWIGV8_TO_OBJECT(doc_handle);

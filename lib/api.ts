@@ -2,7 +2,7 @@
 
 import { XMLDocument } from "./document";
 import { XMLElement, XMLText, XMLNamespace, XMLNodeError, XMLNode } from "./node";
-import { parseHtml, parseXml } from "./parse";
+import { parseHtml, parseHtmlAsync, parseXml, parseXmlAsync } from "./parse";
 import { SaxParser, SaxPushParser } from "./sax";
 import { HTMLParseOptions, XMLParseOptions } from "./types";
 
@@ -10,16 +10,20 @@ function Document(_ref: null | string | Buffer = null, encoding: string = "utf8"
     return XMLDocument.createDocument(_ref, encoding);
 }
 
-Document.fromXml = (buffer: string, options?: XMLParseOptions) => {
+Document.fromXml = (buffer: string | Buffer, options?: XMLParseOptions) => {
     return XMLDocument.fromXml(buffer, options);
 };
 
-Document.fromHtml = (buffer: string, options?: HTMLParseOptions) => {
+Document.fromXmlAsync = (buffer: string | Buffer, options: HTMLParseOptions) => {
+    return XMLDocument.fromeHtmlAsync(buffer, options);
+};
+
+Document.fromHtml = (buffer: string | Buffer, options?: HTMLParseOptions) => {
     return XMLDocument.fromHtml(buffer, options);
 };
 
-Document.fromHtmlAsync = (buffer: string, options?: HTMLParseOptions) => {
-
+Document.fromHtmlAsync = (buffer: string | Buffer, options: HTMLParseOptions) => {
+    return XMLDocument.fromeHtmlAsync(buffer, options);
 };
 
 Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions) => {
@@ -78,6 +82,17 @@ function Namespace(node: XMLElement, prefix: string, href: string): XMLNamespace
     return node.defineNamespace(prefix, href);
 }
 
-export { Document, Element, Text, Comment, ProcessingInstruction,Namespace, parseXml, parseHtml, SaxParser, SaxPushParser };
-export { parseHtml as parseHtmlString };
-export { parseXml as parseXmlString };
+export {
+    Document,
+    Element,
+    Text,
+    Comment,
+    ProcessingInstruction,
+    Namespace,
+    parseXml,
+    parseXmlAsync,
+    parseHtml,
+    parseHtmlAsync,
+    SaxParser,
+    SaxPushParser
+};

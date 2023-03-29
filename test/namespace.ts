@@ -145,7 +145,7 @@ module.exports.nested = function (assert: any) {
 module.exports.xmlns = function (assert: any) {
     var str =
         '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><div>BACON</div><div>ROCKS</div><p>WUT?</p></body></html>';
-    var doc = libxml.parseXmlString(str);
+    var doc = libxml.parseXml(str);
 
     var divs = doc.find("//xmlns:div", "http://www.w3.org/1999/xhtml");
     assert.equal(divs.length, 2);
@@ -162,7 +162,7 @@ module.exports.xmlns = function (assert: any) {
 module.exports.custom_ns = function (assert: any) {
     var str =
         '<html xmlns:bacon="http://www.example.com/fake/uri"><head></head><body><bacon:div>BACON</bacon:div><bacon:div>ROCKS</bacon:div><p>WUT?</p></body></html>';
-    var doc = libxml.parseXmlString(str);
+    var doc = libxml.parseXml(str);
 
     var divs = doc.find("//bacon:div", { bacon: "http://www.example.com/fake/uri" });
     assert.equal(divs.length, 2);
@@ -178,7 +178,7 @@ module.exports.custom_ns = function (assert: any) {
 
 module.exports.local_namespaces = function (assert: any) {
     var str = '<html xmlns="urn:example" xmlns:ex1="urn:example:1"><body xmlns:ex2="urn:example:2"/></html>';
-    var doc = libxml.parseXmlString(str);
+    var doc = libxml.parseXml(str);
     assert.ok(doc);
     var root = doc.root() as XMLElement;
     assert.ok(root);

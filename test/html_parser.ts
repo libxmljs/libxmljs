@@ -36,6 +36,33 @@ module.exports.parse = function (assert: any) {
     assert.done();
 };
 
+module.exports.parseAsync = function (assert: any) {
+    var filename = TEST_DIR + "/fixtures/parser.html";
+
+    function attempt_parse(encoding: any) {
+        var str = fs.readFileSync(filename, encoding);
+
+        let x = 0;
+
+        libxml.parseHtmlAsync(str).then((doc) => {
+            assert.equal(++x, 2);
+            assert.equal("html", doc.root()?.name());
+            assert.equal("Test HTML document", (doc.get("head/title") as any).text());
+            assert.equal("HTML content!", (doc.get("body/span") as any).text());
+        });
+
+        assert.equal(++x, 1);
+    }
+
+    // Parse via a string
+    attempt_parse("utf-8");
+
+    // Parse via a Buffer
+    attempt_parse(null);
+
+    assert.done();
+};
+
 // Although libxml defaults to a utf-8 encoding, if not specifically specified
 // it will guess the encoding based on meta http-equiv tags available
 // This test shows that the "guessed" encoding can be overridden
@@ -69,11 +96,6 @@ module.exports.parse_force_encoding = function (assert: any) {
     // Parse via a Buffer
     attempt_parse(null, { encoding: "utf-8" });
 
-    assert.done();
-};
-
-module.exports.parse_synonym = function (assert: any) {
-    assert.strictEqual(libxml.parseHtml, libxml.parseHtmlString);
     assert.done();
 };
 

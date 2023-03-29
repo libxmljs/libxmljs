@@ -409,7 +409,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
      */
     public childNodes() {
         const _ref = this.getNativeReference()
-        const children = [];
+        const children: XMLElement[] = [];
 
         let child = _ref.children;
 
@@ -585,7 +585,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
      * @returns {XMLNamespace[]} an array of namespaces for the current node
      */
     public namespaces(onlyLocal: boolean = false) {
-        const namespaces = [];
+        const namespaces: XMLNamespace[] = [];
 
         const _ref = this.getNativeReference();
 

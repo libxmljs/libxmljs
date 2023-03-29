@@ -5,6 +5,8 @@ import {
     parseXml,
     DEFAULT_HTML_PARSE_OPTIONS,
     DEFAULT_XML_PARSE_OPTIONS,
+    parseXmlAsync,
+    parseHtmlAsync,
 } from "./parse";
 
 import {
@@ -481,12 +483,26 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         xmlSaveTree(context, this.getNativeReference() as any);
     }
 
-    public static fromXml(buffer: string, options?: XMLParseOptions): XMLDocument {
+    public static fromXml(buffer: string | Buffer, options?: XMLParseOptions): XMLDocument {
         return parseXml(buffer, options);
     }
 
-    public static fromHtml(buffer: string, options?: HTMLParseOptions): HTMLDocument {
+    public static async fromXmlAsync(
+        buffer: string | Buffer,
+        options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS
+    ) {
+        return parseXmlAsync(buffer, options)
+    }
+
+    public static fromHtml(buffer: string | Buffer, options?: HTMLParseOptions): HTMLDocument {
         return parseHtml(buffer, options);
+    }
+
+    public static async fromeHtmlAsync(
+        buffer: string | Buffer,
+        options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS
+    ) {
+        return parseHtmlAsync(buffer, options)
     }
 
     public static fromHtmlFragment(buffer: string, options?: HTMLParseOptions): HTMLDocument {
