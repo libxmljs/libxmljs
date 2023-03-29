@@ -4,13 +4,6 @@ on:
     push:
         branches: ["master"]
 
-# on:
-# Runs on pushes targeting the default branch
-# push:
-#     branches: ["master"]
-# pull_request:
-#     branches: ["v1.0.0-rc1"]
-
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
     contents: write

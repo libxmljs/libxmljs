@@ -4,3 +4,4 @@ docs/
 src/*.i
 vendor/
 swig.xml
+.github/
