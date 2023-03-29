@@ -7,6 +7,7 @@
 %import "std_except.i"
 %include "helpers.i"
 %include "memory.i"
+%include "guards.i"
 %include "refcounting.i"
 %include "casting.i"
 %include "threads.i"
@@ -39,7 +40,7 @@
 //   }
 
 //   $1 = reinterpret_cast< char * >(buffer);
-//   $2 = static_cast<int>(length & std::numeric_limits<int>::max());
+//   $2 = ((int) length & std::numeric_limits<int>::max());
 // }
 
 %typemap(in, noblock=1) char* (int res, char *buf = 0, size_t size = 0, int alloc = 0), const char* (int res, char *buf = 0, size_t size = 0, int alloc = 0) {
@@ -82,26 +83,33 @@
 // }
 
 %typemap(out) xmlNodeSet* {
-  $result = SWIGV8_ARRAY_NEW();
+  $result = SWIGV8_ARRAY_NEW(0);
 
   for (int index = 0; $1 != NULL && index < $1->nodeNr; index++) {
     // SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1->nodeTab[index]), SWIGTYPE_p__xmlNode, 0 |  0 ));
-    SWIGV8_AppendOutput($result, getXmlNodeWrap(reinterpret_cast<xmlNode*>($1->nodeTab[index])));
+    xmlNode* node = ((xmlNode*) $1->nodeTab[index]);
+    SWIGV8_AppendOutput($result, createWrap(node, xmlNodeGetSwigPtrInfo(node)));
   }
 }
 
 %typemap(out) xmlNsPtr* {
-  $result = SWIGV8_ARRAY_NEW();
+  $result = SWIGV8_ARRAY_NEW(0);
 
   for (int index = 0; $1 != NULL && $1[index] != NULL; index++) {
     // SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1[index]), SWIGTYPE_p__xmlNs, 0 |  0 ));
-    SWIGV8_AppendOutput($result, getXmlNodeWrap(reinterpret_cast<xmlNode*>($1[index])));
+    SWIGV8_AppendOutput($result, createWrap(((xmlNode*) $1[index]), SWIGTYPE_p__xmlNs));
   }
+  
+  xmlFree($1);
 }
 
 %typemap(out) char** (char* temp) {
   temp = (char*) $1;
   $result = SWIGV8_STRING_NEW2(temp, strlen(temp));
+}
+
+%typemap(in, noblock=1) void* {
+    $1 = getSwigCObjectPtr($input);
 }
 
 %typemap(out) xmlChar* {

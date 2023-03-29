@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement } from "../lib/node";
+import { XMLElement } from "../index";
 
 module.exports.new = function (assert: any) {
     var doc = libxml.Document();
@@ -142,7 +142,7 @@ module.exports.add_next_sibling = function (assert: any) {
     var child1 = elem.node("child1");
     var child2 = elem.node("child2");
     assert.equal(elem.childNodes().length, 2);
-    var nextSibling = libxml.Element(elem.doc(), "next-sibling");
+    var nextSibling = libxml.Element(elem.doc()!, "next-sibling");
     var addedSibling = child1.addNextSibling(nextSibling);
     var children = elem.childNodes();
     assert.equal(3, children.length);
@@ -155,7 +155,7 @@ module.exports.import = function (assert: any) {
     var elem = doc.node("name1");
 
     var child1 = elem.node("child1");
-    doc = child1.doc();
+    doc = child1.doc()!;
 
     var newdoc = libxml.Document();
     newdoc.node("newdoc");

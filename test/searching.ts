@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLAttribute, XMLElement, XMLNamespace } from "../lib/node";
+import { XMLAttribute, XMLElement, XMLNamespace } from "../index";
 
 module.exports.get = function (assert: any) {
     var doc = libxml.Document();
@@ -28,8 +28,8 @@ module.exports.get_attr = function (assert: any) {
     var doc = libxml.Document();
     var root = doc.node("root");
     var child = root.node("child");
-    child.attr("attr", "val");
-    var attr = child.attr("attr");
+    child.setAttribute("attr", "val");
+    var attr = child.getAttribute("attr");
 
     // on document
     assert.equal(attr, doc.get("//@attr"));
@@ -103,7 +103,7 @@ module.exports.namespace = {
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = (children[0].namespace(uri) as XMLElement).namespace() as XMLNamespace;
+        var ns = children[0].namespace(uri) as XMLNamespace;
         children[1].namespace(ns);
 
         var results = doc.find("xmlns:child", uri);
@@ -142,7 +142,7 @@ module.exports.prefixed_namespace = {
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = (children[0].namespace(prefix, uri) as XMLElement).namespace() as XMLNamespace;
+        var ns = children[0].namespace(prefix, uri) as XMLNamespace;
         children[1].namespace(ns);
 
         var ns_params = {

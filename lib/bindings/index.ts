@@ -5,9 +5,9 @@ const bindings = getBindings("xmljs");
 
 const refMap = new WeakMap();
 
-export function createXMLReference<T>(constructorFn: new (_ref: XMLReferenceType) => T, _ref: any): T {
+export function createXMLReference<T>(constructorFn: new (_ref: XMLReferenceType) => T, _ref: any): T | null {
     if (_ref === null) {
-        return new constructorFn(_ref);
+        return null;
     }
 
     let instance = refMap.get(_ref);
@@ -21,54 +21,73 @@ export function createXMLReference<T>(constructorFn: new (_ref: XMLReferenceType
     return instance;
 }
 
+export function createXMLReferenceOrThrow<T>(constructorFn: new (_ref: XMLReferenceType) => T, _ref: any, error: string): T {
+    const ref = createXMLReference(constructorFn, _ref);
+
+    if (ref === null) {
+        throw new Error(error);
+    }
+
+    return ref;
+}
+
+
 export class XMLReference<T> {
-    private _ref: T | null;
+    private _ref: T;
 
     constructor(_ref: T) {
         this._ref = _ref;
     }
 
-    public getSelfOrThrow(error: string) {
+    // public getSelfOrThrow(error: string) {
+    //     if (this._ref === null) {
+    //         throw new Error(error);
+    //     }
+
+    //     return this;
+    // }
+
+    // public getSelfOrNull() {
+    //     if (this._ref === null) {
+    //         return null;
+    //     }
+
+    //     return this;
+    // }
+
+    // public isNull(): boolean {
+    //     return this._ref === null;
+    // }
+
+    protected getNativeReference(): T {
         if (this._ref === null) {
-            throw new Error(error);
-        }
-
-        return this;
-    }
-
-    public getSelfOrNull() {
-        if (this._ref === null) {
-            return null;
-        }
-
-        return this;
-    }
-
-    public isNull(): boolean {
-        return this._ref === null;
-    }
-
-    public getNativeReference(): T | null {
-        return this._ref;
-    }
-
-    public getNativeReferenceOrReturnNull<returnType>(callback: (_ref: T) => returnType): returnType | null {
-        if (this._ref !== null) {
-            return callback(this._ref);
-        }
-
-        return null;
-    }
-
-    public getNativeReferenceOrThrow(error: string): T {
-        if (this._ref === null) {
-            throw new Error(error);
+            throw new Error("Unexpected null reference");
         }
 
         return this._ref;
     }
+
+    // protected getNativeReference()OrReturnNull<returnType>(callback: (_ref: T) => returnType): returnType | null {
+    //     if (this._ref !== null) {
+    //         return callback(this._ref);
+    //     }
+
+    //     return null;
+    // }
+
+    // protected getNativeReference(): T {
+    //     if (this._ref === null) {
+    //         throw new Error(error);
+    //     }
+
+    //     return this._ref;
+    // }
 
     protected setNativeReference(ref: T): void {
+        if (ref === null) {
+            throw new Error("Unexpected null reference");
+        }
+
         this._ref = ref;
 
         refMap.set(ref as Object, this);

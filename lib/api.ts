@@ -1,0 +1,83 @@
+"use strict";
+
+import { XMLDocument } from "./document";
+import { XMLElement, XMLText, XMLNamespace, XMLNodeError, XMLNode } from "./node";
+import { parseHtml, parseXml } from "./parse";
+import { SaxParser, SaxPushParser } from "./sax";
+import { HTMLParseOptions, XMLParseOptions } from "./types";
+
+function Document(_ref: null | string | Buffer = null, encoding: string = "utf8"): XMLDocument {
+    return XMLDocument.createDocument(_ref, encoding);
+}
+
+Document.fromXml = (buffer: string, options?: XMLParseOptions) => {
+    return XMLDocument.fromXml(buffer, options);
+};
+
+Document.fromHtml = (buffer: string, options?: HTMLParseOptions) => {
+    return XMLDocument.fromHtml(buffer, options);
+};
+
+Document.fromHtmlAsync = (buffer: string, options?: HTMLParseOptions) => {
+
+};
+
+Document.fromHtmlFragment = (buffer: string, options?: HTMLParseOptions) => {
+    return XMLDocument.fromHtmlFragment(buffer, options);
+};
+
+function Element(_ref: XMLDocument, name: string, content: string = ""): XMLElement {
+    return _ref.createElement(name, content);
+}
+
+function Text(document: XMLDocument, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    if (!content) {
+        throw new Error("content argument required");
+    }
+
+    return document.createText(content);
+}
+
+function Comment(document: XMLDocument, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    return document.createComment(content)
+}
+
+function ProcessingInstruction(document: XMLDocument, name: string, content?: string): XMLText {
+    if (!document) {
+        throw new Error("document argument required");
+    }
+
+    if (!(document instanceof XMLDocument)) {
+        throw new Error("document argument must be an instance of Document");
+    }
+
+    if (!name) {
+        throw new Error("name argument required");
+    }
+
+    return document.createProcessingInstruction(name, content);
+}
+
+function Namespace(node: XMLElement, prefix: string, href: string): XMLNamespace {
+    return node.defineNamespace(prefix, href);
+}
+
+export { Document, Element, Text, Comment, ProcessingInstruction,Namespace, parseXml, parseHtml, SaxParser, SaxPushParser };
+export { parseHtml as parseHtmlString };
+export { parseXml as parseXmlString };

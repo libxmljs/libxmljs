@@ -1,6 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement } from "../lib/node";
-import { XMLDocument } from "../lib/document";
+import { XMLElement } from "../index";
 var semver = require("semver");
 
 if (!global.gc) {
@@ -32,20 +31,26 @@ module.exports.inaccessible_document_freed_when_node_freed = function (assert: a
         return;
     }
 
+    var xmlCountBefore = libxml.nodeCount();
     var xml_memory_before_document = libxml.memoryUsage();
-    var nodes = [];
-    for (var i = 0; i < 10; i++) {
-        nodes.push(makeDocument().get("//center"));
-    }
-    // @ts-ignore
-    nodes = null;
+    
+    (() => {
+        var nodes: any[] | null = [];
+        for (var i = 0; i < 10; i++) {
+            nodes.push(makeDocument().get("//center"));
+        }
+        nodes = null;
+    })();
+
     collectGarbage();
+    assert.equal(libxml.nodeCount(), xmlCountBefore);
     assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
     assert.done();
 };
 
 module.exports.inaccessible_document_freed_after_middle_nodes_proxied = function (assert: any) {
     var xml_memory_before_document = libxml.memoryUsage();
+    var xmlCountBefore = libxml.nodeCount();
     var doc = makeDocument();
     var middle = doc.get("//middle") as XMLElement;
     var inner = doc.get("//inner") as XMLElement;
@@ -53,7 +58,7 @@ module.exports.inaccessible_document_freed_after_middle_nodes_proxied = function
     //@ts-ignore
     doc = middle = inner = null;
     collectGarbage();
-    console.log(libxml.memoryUsage(), xml_memory_before_document);
+    assert.equal(libxml.nodeCount(), xmlCountBefore);
     assert.ok(libxml.memoryUsage() <= xml_memory_before_document);
     assert.done();
 };
@@ -67,7 +72,9 @@ module.exports.inaccessible_tree_freed = function (assert: any) {
 
     var doc = makeDocument();
     var xml_memory_after_document = libxml.memoryUsage();
-    (doc.get("//middle") as XMLElement).remove();
+    (() => {
+        (doc.get("//middle") as XMLElement).remove();
+    })();
     collectGarbage();
     assert.ok(libxml.memoryUsage() < xml_memory_after_document);
     assert.done();
@@ -76,12 +83,14 @@ module.exports.inaccessible_tree_freed = function (assert: any) {
 module.exports.namespace_list_freed = function (assert: any) {
     var doc = makeDocument();
     var el = doc.get("//center") as XMLElement;
-    (el as XMLElement).namespace("bar", null);
+    el.namespace("bar", null);
     var xmlMemBefore = libxml.memoryUsage();
+    var xmlCountBefore = libxml.nodeCount();
     for (var i = 0; i < 1000; i++) {
-        (el as XMLElement).namespaces();
+        el.namespaces();
     }
     collectGarbage();
+    assert.equal(libxml.nodeCount(), xmlCountBefore);
     assert.ok(libxml.memoryUsage() <= xmlMemBefore);
     assert.done();
 };
@@ -90,7 +99,7 @@ function makeDocument() {
     var body =
         "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<root><outer><middle><inner><center/></inner></middle></outer></root>";
-    return libxml.parseXml(body) as XMLDocument;
+    return libxml.parseXml(body);
 }
 
 function collectGarbage(minCycles?: number, maxCycles?: number) {

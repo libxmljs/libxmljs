@@ -43,9 +43,9 @@ int libxmljs_debug;
     SWIGV8_Proxy* getSwigProxy(SWIGV8_OBJECT objRef) {
         #if (V8_MAJOR_VERSION-0) < 4 && (SWIG_V8_VERSION < 0x031511)
             v8::Handle<v8::Value> cdataRef = objRef->GetInternalField(0);
-            return static_cast<SWIGV8_Proxy *>(v8::External::Unwrap(cdataRef));
+            return ((SWIGV8_Proxy *) v8::External::Unwrap(cdataRef));
         #else
-            return static_cast<SWIGV8_Proxy *>(objRef->GetAlignedPointerFromInternalField(0));
+            return ((SWIGV8_Proxy *) objRef->GetAlignedPointerFromInternalField(0));
         #endif
     }
 
@@ -112,12 +112,12 @@ int libxmljs_debug;
         
         switch (node->type) {
             case XML_ENTITY_DECL: {
-                xmlEntityPtr castedNode = reinterpret_cast<xmlEntityPtr>(node);
+                xmlEntityPtr castedNode = (xmlEntityPtr) node;
                 return (xmlNode*) castedNode->parent;
             }
 
             case XML_NAMESPACE_DECL: {
-                // xmlNsPtr castedNode = reinterpret_cast<xmlNsPtr>(node);
+                // xmlNsPtr castedNode = (xmlNsPtr)(node);
                 // return (xmlNode*) castedNode->context;
                 return NULL;
             }
@@ -129,12 +129,12 @@ int libxmljs_debug;
             }
 
             case XML_ATTRIBUTE_NODE: {
-                xmlAttrPtr castedNode = reinterpret_cast<xmlAttrPtr>(node);
+                xmlAttrPtr castedNode = (xmlAttrPtr) node;
                 return (xmlNode*) castedNode->parent;
             }
 
             case XML_DTD_NODE: {
-                xmlDtdPtr castedNode = reinterpret_cast<xmlDtdPtr>(node);
+                xmlDtdPtr castedNode = (xmlDtdPtr) node;
 
                 if (castedNode->parent == NULL) {
                     return (xmlNode*) castedNode->doc;
@@ -144,7 +144,7 @@ int libxmljs_debug;
             }
 
             case XML_ELEMENT_DECL: {
-                xmlElementPtr castedNode = reinterpret_cast<xmlElementPtr>(node);
+                xmlElementPtr castedNode = (xmlElementPtr) node;
                 return (xmlNode*) castedNode->parent;
             }
 
@@ -166,7 +166,7 @@ int libxmljs_debug;
         switch (node->type) {
             // case XML_XINCLUDE_START:
             // case XML_XINCLUDE_END: {
-            //     result = getXmlNodeWrap(node, NULL, SWIGTYPE_p__xmlNode);
+            //     result = createWrap(node, NULL, SWIGTYPE_p__xmlNode);
             // }
             case XML_ENTITY_DECL: 
                 return SWIGTYPE_p__xmlEntity;
@@ -224,7 +224,7 @@ int libxmljs_debug;
             (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
     #endif
             (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
-            return reinterpret_cast<xmlDoc*>(xml_obj)->oldNs;
+            return ((xmlDoc*) xml_obj)->oldNs;
         } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
                 (xml_obj->type == XML_XINCLUDE_START) ||
                 (xml_obj->type == XML_XINCLUDE_END)) {
@@ -252,7 +252,7 @@ int libxmljs_debug;
             (xml_obj->type == XML_DOCB_DOCUMENT_NODE) ||
     #endif
             (xml_obj->type == XML_HTML_DOCUMENT_NODE)) {
-            reinterpret_cast<xmlDoc*>(xml_obj)->oldNs = newNs;
+            ((xmlDoc*) xml_obj)->oldNs = newNs;
         } else if ((xml_obj->type == XML_ELEMENT_NODE) ||
                 (xml_obj->type == XML_XINCLUDE_START) ||
                 (xml_obj->type == XML_XINCLUDE_END)) {

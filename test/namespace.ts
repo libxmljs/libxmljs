@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement, XMLNamespace } from "../lib/node";
+import { XMLElement } from "../index";
 
 module.exports.create = function (assert: any) {
     var doc = libxml.Document();
@@ -18,11 +18,11 @@ module.exports.set = function (assert: any) {
     var elem = doc.node("name1");
 
     // this will set a namespace on the node
-    var ns = (elem.namespace("http://my-namespace.com") as XMLElement).namespace();
+    var ns = elem.namespace("http://my-namespace.com");
     assert.ok(ns);
     assert.equal(ns, elem.namespace());
-    assert.equal(null, (elem.namespace() as XMLNamespace).prefix());
-    assert.equal("http://my-namespace.com", (elem.namespace() as XMLNamespace).href());
+    assert.equal(null, elem.namespace()?.prefix());
+    assert.equal("http://my-namespace.com", elem.namespace()?.href());
     assert.done();
 };
 
@@ -35,12 +35,12 @@ module.exports.with_prefix = function (assert: any) {
     assert.equal("http://my-namespace.com", ns.href());
 
     // this should detect existing namespace object
-    var ns2 = (elem.namespace("pref", "http://my-namespace.com") as XMLElement).namespace();
+    var ns2 = elem.namespace("pref", "http://my-namespace.com");
     assert.ok(ns2);
     assert.equal(ns, ns2);
     assert.equal(ns, elem.namespace());
-    assert.equal("pref", (elem.namespace() as XMLNamespace).prefix());
-    assert.equal("http://my-namespace.com", (elem.namespace() as XMLNamespace).href());
+    assert.equal("pref", elem.namespace()?.prefix());
+    assert.equal("http://my-namespace.com", elem.namespace()?.href());
     assert.done();
 };
 
@@ -48,8 +48,8 @@ module.exports.from_parsing = function (assert: any) {
     var doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>' + '<name1 xmlns="http://my-namespace.com"/>');
     var elem = doc.root() as XMLElement;
     assert.ok(elem.namespace());
-    assert.equal(null, (elem.namespace() as XMLNamespace).prefix());
-    assert.equal("http://my-namespace.com", (elem.namespace() as XMLNamespace).href());
+    assert.equal(null, elem.namespace()?.prefix());
+    assert.equal("http://my-namespace.com", elem.namespace()?.href());
 
     // no prefix from parsing
     var doc = libxml.parseXml(
@@ -63,8 +63,8 @@ module.exports.from_parsing = function (assert: any) {
     );
     var elem = doc.root() as XMLElement;
     assert.ok(elem.namespace());
-    assert.equal("pref", (elem.namespace() as XMLNamespace).prefix());
-    assert.equal("http://my-namespace.com", (elem.namespace() as XMLNamespace).href());
+    assert.equal("pref", elem.namespace()?.prefix());
+    assert.equal("http://my-namespace.com", elem.namespace()?.href());
 
     assert.done();
 };
@@ -89,7 +89,7 @@ module.exports.existing = function (assert: any) {
 module.exports.remove = function (assert: any) {
     var doc = libxml.Document();
     var elem = doc.node("name1");
-    var ns = (elem.namespace("http://my-namespace.com") as XMLElement).namespace();
+    var ns = elem.namespace("http://my-namespace.com");
     assert.ok(ns);
     assert.ok(ns == elem.namespace());
     elem.namespace(null);
@@ -102,9 +102,9 @@ module.exports.all = function (assert: any) {
     var root = document.node("root");
     var list: any = [];
 
-    list.push((root.namespace("com", "http://example.com") as XMLElement).namespace());
-    list.push((root.namespace("net", "http://example.net") as XMLElement).namespace());
-    list.push((root.namespace("http://example.org") as XMLElement).namespace());
+    list.push(root.namespace("com", "http://example.com"));
+    list.push(root.namespace("net", "http://example.net"));
+    list.push(root.namespace("http://example.org"));
 
     assert.ok(
         root.namespaces().every(function (ns, index) {
@@ -151,6 +151,7 @@ module.exports.xmlns = function (assert: any) {
     assert.equal(divs.length, 2);
 
     var div = doc.get("//xmlns:div", "http://www.w3.org/1999/xhtml") as XMLElement;
+    assert.ok(div instanceof XMLElement);
     assert.ok(div != null);
     var exp = doc.root()?.child(1)?.child(0) as XMLElement;
     assert.ok(exp != null);
@@ -167,6 +168,7 @@ module.exports.custom_ns = function (assert: any) {
     assert.equal(divs.length, 2);
 
     var div = doc.get("//bacon:div", { bacon: "http://www.example.com/fake/uri" }) as XMLElement;
+    assert.ok(div instanceof XMLElement);
     assert.ok(div != null);
     var exp = doc.root()?.child(1)?.child(0) as XMLElement;
     assert.ok(exp != null);
@@ -205,11 +207,9 @@ module.exports.local_namespaces = function (assert: any) {
     assert.equal(3, decls.length);
     decls = body.namespaces(false);
     assert.equal(3, decls.length);
-    //@ts-ignore
-    decls = body.namespaces(0);
+    decls = body.namespaces(0 as any);
     assert.equal(3, decls.length);
-    //@ts-ignore
-    decls = body.namespaces(1);
+    decls = body.namespaces(1 as any);
     assert.equal(3, decls.length);
     assert.done();
 };

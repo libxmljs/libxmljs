@@ -104,7 +104,7 @@
     void
     XmlSyntaxErrorsSync::ErrorFunc(void* errs, xmlError* error) {
         Nan::HandleScope scope;
-        XmlSyntaxErrorsSync* self = static_cast<XmlSyntaxErrorsSync*>(errs);
+        XmlSyntaxErrorsSync* self = ((XmlSyntaxErrorsSync*) errs);
         SWIGV8_AppendOutput(self->errors, BuildSyntaxError(error));
     }
 
@@ -125,7 +125,7 @@
 
     void
     XmlSyntaxErrorsStore::ErrorFunc(void* errs, xmlError* error) {
-        XmlSyntaxErrorsStore* self = static_cast<XmlSyntaxErrorsStore*>(errs);
+        XmlSyntaxErrorsStore* self = ((XmlSyntaxErrorsStore*) errs);
         xmlError* clone = CloneError(error);
         if (clone)
             self->errors.push_back(clone);
@@ -134,7 +134,7 @@
     xmlError*
     XmlSyntaxErrorsStore::CloneError(xmlError* err1) {
         if (!err1) return NULL;
-        xmlError* err2 = static_cast<xmlError*>(xmlMalloc(sizeof(xmlError)));
+        xmlError* err2 = ((xmlError*) xmlMalloc(sizeof(xmlError)));
         if (!err2) return NULL;
         *err2 = *err1;
         if(err1->message) err2->message = xmlMemStrdup(err1->message);
@@ -239,7 +239,7 @@
             }
             Nan::Call(*callback, Nan::GetCurrentContext()->Global(), 1, argv);
         } else {
-            auto doc_handle = getXmlNodeWrap((xmlNode*) doc);
+            auto doc_handle = createWrap((xmlNode*) doc, SWIGTYPE_p__xmlDoc);
             auto doc_object = SWIGV8_TO_OBJECT(doc_handle);
 
             Nan::Set(doc_object,

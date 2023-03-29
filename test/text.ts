@@ -31,7 +31,6 @@ module.exports.setters = function (assert: any) {
     assert.equal("node content", elem.text());
     elem.text("content && more content <>");
     assert.equal("content &amp;&amp; more content &lt;&gt;", elem.text());
-
     assert.done();
 };
 

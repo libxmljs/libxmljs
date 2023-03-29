@@ -1,9 +1,7 @@
 var fs = require("fs");
 
 import * as libxml from "../index";
-import { XMLSaveOptions } from "../lib/document";
-import { XMLElement } from "../lib/node";
-import { XMLParseOptions } from "../lib/parse";
+import { XMLSaveOptions, XMLElement, XMLParseOptions, XMLStructuredError } from "../index";
 
 module.exports.parse = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/parser.xml";
@@ -18,7 +16,7 @@ module.exports.parse = function (assert: any) {
     assert.equal("with love", (doc.get("child/grandchild") as XMLElement).text());
     assert.equal("sibling", (doc.get("sibling") as XMLElement).name());
     assert.equal(6, (doc.get("sibling") as XMLElement).line());
-    assert.equal(3, (doc.get("child") as XMLElement).attr("to")?.line());
+    assert.equal(3, (doc.get("child") as XMLElement).getAttribute("to")?.line());
     assert.equal("with content!", (doc.get("sibling") as XMLElement).text());
     assert.equal(str, doc.toString());
     assert.done();
@@ -69,19 +67,18 @@ module.exports.baseurl_xml = function (assert: any) {
 
     // First verify it fails when we don't give baseUrl
     var doc = libxml.Document.fromXml(str, {
-        dtdvalid: true,
-        nonet: true,
+        validateEntities: true,
+        replaceEntities: true,
     });
     assert.ok(doc.errors.length > 0);
 
     // Now it should work
     var doc = libxml.Document.fromXml(str, {
-        dtdvalid: true,
-        nonet: true,
+        validateEntities: true,
+        replaceEntities: true,
         baseUrl: __dirname + "/../../test/fixtures/example.xml",
     });
-    console.log(doc.errors);
-    assert.ok(!doc.errors || doc.errors.length == 0);
+    assert.equal(doc.errors.length, 0);
 
     assert.done();
 };
@@ -94,7 +91,9 @@ module.exports.fatal_error = function (assert: any) {
     try {
         libxml.parseXml(str);
     } catch (e) {
-        err = e;
+        if (e instanceof XMLStructuredError) {
+            err = e;
+        }
     }
 
     var errorControl = {
@@ -111,7 +110,7 @@ module.exports.fatal_error = function (assert: any) {
         column: 10,
     };
     assert.ok(err instanceof Error);
-    assert.equal(errorControl.code, err.code);
+    assert.equal(errorControl.code, err?.code);
     assert.done();
 };
 
@@ -126,13 +125,13 @@ module.exports.parse_options = function (assert: any) {
     test_parser_option("<x>&</x>", { recover: true }, "<x/>"); // without this option, this document would raise an exception during parsing
     test_parser_option(
         "<!DOCTYPE x [ <!ENTITY foo 'bar'> ]> <x>&foo;</x>",
-        { noent: true },
+        { replaceEntities: true },
         '<!DOCTYPE x [\n<!ENTITY foo "bar">\n]>\n<x>bar</x>'
     ); // foo => bar
     test_parser_option("<x> <a>123</a> </x>", {}, "<x> <a>123</a> </x>"); // no indentation even though the toString() default called for formatting
-    test_parser_option("<x> <a>123</a> </x>", { noblanks: true }, "<x>\n  <a>123</a>\n</x>"); // ah, now we have indentation!
+    test_parser_option("<x> <a>123</a> </x>", { preserveWhitespace: false }, "<x>\n  <a>123</a>\n</x>"); // ah, now we have indentation!
     test_parser_option("<x><![CDATA[hi]]></x>", {}, "<x><![CDATA[hi]]></x>"); // normally CDATA stays as CDATA
-    test_parser_option("<x><![CDATA[hi]]></x>", { nocdata: true }, "<x>hi</x>"); // but here CDATA is removed!
+    test_parser_option("<x><![CDATA[hi]]></x>", { preserveCDATA: false }, "<x>hi</x>"); // but here CDATA is removed!
 
     const TAB = "    ";
     const TEXT_CONTENT = `\n${TAB}${TAB}test test\n${TAB}`;

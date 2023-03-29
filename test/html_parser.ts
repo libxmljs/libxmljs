@@ -1,7 +1,6 @@
 var fs = require("fs");
 import * as libxml from "../index";
-import { XMLAttribute, XMLElement } from "../lib/node";
-import { HTMLParseOptions } from "../lib/parse";
+import { XMLAttribute, HTMLParseOptions } from "../index";
 
 const TEST_DIR = __dirname + "/../../test";
 
@@ -24,8 +23,8 @@ module.exports.parse = function (assert: any) {
         var doc = libxml.parseHtml(str);
 
         assert.equal("html", doc.root()?.name());
-        assert.equal("Test HTML document", (doc.get("head/title") as XMLElement).text());
-        assert.equal("HTML content!", (doc.get("body/span") as XMLElement).text());
+        assert.equal("Test HTML document", (doc.get("head/title") as any).text());
+        assert.equal("HTML content!", (doc.get("body/span") as any).text());
     }
 
     // Parse via a string
@@ -55,11 +54,13 @@ module.exports.parse_force_encoding = function (assert: any) {
         // calling toString on the document ensure that it is converted to the
         // correct internal format and the new meta tag is replaced
         doc.root()?.toString();
-        var fixedCharset = (doc.find("/html/head/meta/@content")?.[0] as XMLAttribute).value();
+        
+        let result = doc.find("/html/head/meta/@content")[0];
+        var fixedCharset = (result as XMLAttribute).value();
         assert.ok(fixedCharset.indexOf(opts.encoding!.toUpperCase()) !== -1);
 
-        assert.equal("テスト", (doc.get("head/title") as XMLElement).text());
-        assert.equal("テスト", (doc.get("body/div") as XMLElement).text());
+        assert.equal("テスト", (doc.get("head/title") as any).text());
+        assert.equal("テスト", (doc.get("body/div") as any).text());
     }
 
     // Parse via a string

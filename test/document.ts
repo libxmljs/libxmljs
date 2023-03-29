@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement } from "../lib/node";
+import { XMLElement } from "../index";
 
 module.exports.getDtd = function (assert: any) {
     var doc = libxml.parseXmlString('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
@@ -98,7 +98,7 @@ module.exports.new_root = function (assert: any) {
 
     root.node("child").parent()?.node("child");
 
-    assert.equal(doc.root()?.name(), (doc.get("/root") as XMLElement).name());
+    assert.equal(doc.root()?.name(), (doc.get("/root") as any).name());
     assert.done();
 };
 
@@ -130,8 +130,8 @@ module.exports.xpath = function (assert: any) {
 module.exports.xpath_child = function (assert: any) {
     var doc = libxml.Document();
     doc.node("root").node("child-one").parent()?.node("child-two");
-    assert.equal("child-one", (doc.get("child-one") as XMLElement).name());
-    assert.equal("child-two", (doc.get("child-two") as XMLElement).name());
+    assert.equal("child-one", (doc.get("child-one") as any).name());
+    assert.equal("child-two", (doc.get("child-two") as any).name());
     assert.done();
 };
 

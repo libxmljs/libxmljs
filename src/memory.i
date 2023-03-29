@@ -1,3 +1,7 @@
+int getMemUsed();
+int getNodeCount();
+int getWrapCount();
+
 %header %{
     // extern "C" {
     //     #include "dynbuf.h"
@@ -36,6 +40,8 @@
 
     // track how many nodes haven't been freed
     int xml_node_count = 0;
+    
+    int xml_wrap_count = 0;
 
     int getMemUsed() {
         return xml_memory_used;
@@ -43,6 +49,10 @@
 
     int getNodeCount() {
         return xml_node_count;
+    }
+
+    int getWrapCount() {
+        return xml_wrap_count;
     }
 
     bool tlsInitialized = false;
@@ -115,52 +125,142 @@
         actuallyAdjustMem(diff);
     }
 
-    void* xmlMemMallocWrap(size_t size) {
-        if (libxmljs_debug) {
-            printf("xmlMemMallocWrap\n");
-        }
-        size_t totalSize = size + HDR_SIZE;
-        memHdr* mem = static_cast<memHdr*>(malloc(totalSize));
-        if (!mem) return NULL;
-        mem->size = size;
-        adjustMem(totalSize);
-        return hdr2client(mem);
-    }
+    // void* xmlMemMallocWrap(size_t size) {
+    //     if (libxmljs_debug) {
+    //         printf("xmlMemMallocWrap\n");
+    //     }
+    //     size_t totalSize = size + HDR_SIZE;
+    //     memHdr* mem = static_cast<memHdr*>(malloc(totalSize));
+    //     if (!mem) return NULL;
+    //     mem->size = size;
+    //     adjustMem(totalSize);
+    //     return hdr2client(mem);
+    // }
 
-    void xmlMemFreeWrap(void* p) {
-        if (libxmljs_debug) {
-            printf("xmlMemFreeWrap\n");
-        }
-        if (!p) return;
-        memHdr* mem = client2hdr(p);
-        ssize_t totalSize = mem->size + HDR_SIZE;
-        adjustMem(-totalSize);
-        free(mem);
-    }
+    // void xmlMemFreeWrap(void* p) {
+    //     if (libxmljs_debug) {
+    //         printf("xmlMemFreeWrap\n");
+    //     }
+    //     memHdr* mem = client2hdr(p);
+    //     ssize_t totalSize = mem->size + HDR_SIZE;
+    //     adjustMem(-totalSize);
+    //     free(mem);
+    // }
 
-    void* xmlMemReallocWrap(void* ptr, size_t size) {
-        if (libxmljs_debug) {
-            printf("xmlMemReallocWrap\n");
-        }
-        if (!ptr) return xmlMemMallocWrap(size);
-        memHdr* mem1 = client2hdr(ptr);
-        ssize_t oldSize = mem1->size;
-        memHdr* mem2 = static_cast<memHdr*>(realloc(mem1, size + HDR_SIZE));
-        if (!mem2) return NULL;
-        mem2->size = size;
-        adjustMem(ssize_t(size) - oldSize);
-        return hdr2client(mem2);
-    }
+    // void* xmlMemReallocWrap(void* ptr, size_t size) {
+    //     if (libxmljs_debug) {
+    //         printf("xmlMemReallocWrap\n");
+    //     }
+    //     if (!ptr) return xmlMemMallocWrap(size);
+    //     memHdr* mem1 = client2hdr(ptr);
+    //     ssize_t oldSize = mem1->size;
+    //     memHdr* mem2 = static_cast<memHdr*>(realloc(mem1, size + HDR_SIZE));
+    //     if (!mem2) return NULL;
+    //     mem2->size = size;
+    //     adjustMem(ssize_t(size) - oldSize);
+    //     return hdr2client(mem2);
+    // }
 
-    char* xmlMemoryStrdupWrap(const char* str) {
-        if (libxmljs_debug) {
-            printf("xmlMemoryStrdupWrap\n");
+    // char* xmlMemoryStrdupWrap(const char* str) {
+    //     if (libxmljs_debug) {
+    //         printf("xmlMemoryStrdupWrap\n");
+    //     }
+    //     size_t size = strlen(str) + 1;
+    //     char* res = static_cast<char*>(xmlMemMallocWrap(size));
+    //     if (res) memcpy(res, str, size);
+    //     return res;
+    // }
+
+        // wrapper for xmlMemMalloc to update v8's knowledge of memory used
+        // the GC relies on this information
+        void* xmlMemMallocWrap(size_t size)
+        {
+            void* res = xmlMemMalloc(size);
+
+            // no need to udpate memory if we didn't allocate
+            if (!res)
+            {
+                return res;
+            }
+
+            const int diff = xmlMemUsed() - xml_memory_used;
+            // xml_memory_used += diff;
+            // Nan::AdjustExternalMemory(diff);
+            adjustMem(diff);
+            return res;
         }
-        size_t size = strlen(str) + 1;
-        char* res = static_cast<char*>(xmlMemMallocWrap(size));
-        if (res) memcpy(res, str, size);
-        return res;
-    }
+
+        // wrapper for xmlMemFree to update v8's knowledge of memory used
+        // the GC relies on this information
+        void xmlMemFreeWrap(void* p)
+        {
+            xmlMemFree(p);
+
+            // if v8 is no longer running, don't try to adjust memory
+            // this happens when the v8 vm is shutdown and the program is exiting
+            // our cleanup routines for libxml will be called (freeing memory)
+            // but v8 is already offline and does not need to be informed
+            // trying to adjust after shutdown will result in a fatal error
+        #if (NODE_MODULE_VERSION > 14)
+            if (v8::Isolate::GetCurrent() == 0 ||
+                v8::Isolate::GetCurrent()->IsDead())
+            {
+                return;
+            }
+        #elif (NODE_MODULE_VERSION > 0x000B)
+            if (v8::Isolate::GetCurrent() == 0)
+            {
+                return;
+            }
+        #else
+            if (v8::V8::IsDead())
+            {
+                return;
+            }
+        #endif
+
+            const int diff = xmlMemUsed() - xml_memory_used;
+            // xml_memory_used += diff;
+            // Nan::AdjustExternalMemory(diff);
+            adjustMem(diff);
+        }
+
+        // wrapper for xmlMemRealloc to update v8's knowledge of memory used
+        void* xmlMemReallocWrap(void* ptr, size_t size)
+        {
+            void* res = xmlMemRealloc(ptr, size);
+
+            // if realloc fails, no need to update v8 memory state
+            if (!res)
+            {
+                return res;
+            }
+
+            const int diff = xmlMemUsed() - xml_memory_used;
+            // xml_memory_used += diff;
+            // Nan::AdjustExternalMemory(diff);
+            adjustMem(diff);
+            return res;
+        }
+
+        // wrapper for xmlMemoryStrdupWrap to update v8's knowledge of memory used
+        char* xmlMemoryStrdupWrap(const char* str)
+        {
+            char* res = xmlMemoryStrdup(str);
+
+            // if strdup fails, no need to update v8 memory state
+            if (!res)
+            {
+                return res;
+            }
+
+            const int diff = xmlMemUsed() - xml_memory_used;
+            // xml_memory_used += diff;
+            // Nan::AdjustExternalMemory(diff);
+            adjustMem(diff);
+            return res;
+        }
+
 
     // Set up in V8 thread
     WorkerParent::WorkerParent() : memAdjustments(0) {

@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement, XMLNode } from "../lib/node";
+import { XMLElement, XMLNode } from "../index";
 
 module.exports.built = function (assert: any) {
     var doc = libxml.Document();

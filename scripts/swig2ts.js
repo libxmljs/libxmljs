@@ -1,21 +1,15 @@
-'use strict';
+"use strict";
 
-// var SegfaultHandler = require('segfault-handler');
+const fs = require("fs");
 
-// SegfaultHandler.registerHandler("crash.log");
-
-const fs = require('fs');
-
-const libxml = require('bindings')('xmljs');
-
-// console.log(libxml);
+const libxml = require("bindings")("xmljs");
 
 // libxml.setDebugEnable();
 
-const xml = fs.readFileSync('swig.xml').toString();
+const xml = fs.readFileSync("swig.xml").toString();
 
 libxml.xmlLineNumbersDefault(1);
-const doc = libxml.xmlReadMemory(xml, xml.length, '', 'utf8', libxml.XML_PARSE_HUGE + libxml.XML_PARSE_BIG_LINES);
+const doc = libxml.xmlReadMemory(xml, xml.length, "", "utf8", libxml.XML_PARSE_HUGE + libxml.XML_PARSE_BIG_LINES);
 
 const xpathContext = libxml.xmlXPathNewContext(doc);
 
@@ -28,51 +22,55 @@ const constants = [];
 const variables = [];
 
 const reserved = [
-    'break',
-    'case',
-    'catch',
-    'class',
-    'const',
-    'continue',
-    'debugger',
-    'default',
-    'delete',
-    'do',
-    'else',
-    'enum',
-    'export',
-    'extends',
-    'false',
-    'finally',
-    'for',
-    'function',
-    'if',
-    'import',
-    'in',
-    'instanceof',
-    'new',
-    'null',
-    'return',
-    'super',
-    'switch',
-    'this',
-    'throw',
-    'true',
-    'try',
-    'typeof',
-    'var',
-    'void',
-    'while',
-    'with',
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "false",
+    "finally",
+    "for",
+    "function",
+    "if",
+    "import",
+    "in",
+    "instanceof",
+    "new",
+    "null",
+    "return",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "var",
+    "void",
+    "while",
+    "with",
 ];
 
+function couldBeNullPointer(name) {
+    return /(Doc|Node|Element|Attr|Ns|Dtd)Ptr$/.test(name);
+}
+
 function sortByName(array) {
-    return array.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    return array.sort((a, b) => (a.name > b.name ? 1 : -1));
 }
 
 function sanitizeName(name) {
     if (reserved.indexOf(name) > -1) {
-        return sanitizeName(`${name}Arg`)
+        return sanitizeName(`${name}Arg`);
     }
 
     return name;
@@ -86,133 +84,125 @@ function addSymbol(name) {
     }
 }
 
-function cType2JS(str, wrap_action) {    
+function cType2JS(str, wrap_action) {
     if (/\b(string|char|xmlChar)\b/.test(str)) {
-        return 'string';
+        return "string";
     }
-    
+
     if (/\b(int|float|long|short|double|size_t)\b/.test(str)) {
-        return 'number';
+        return "number";
+    }
+
+    if (/\b(bool)\b/.test(str)) {
+        return "boolean";
     }
 
     if (/\b(void)\b/.test(str)) {
-        return 'any';
+        return "any";
     }
 
     str = str.replace(/^p\.q\(const\)\.(.*)/, "$1Ptr");
 
     if (/xmlNs/.test(str)) {
         if (wrap_action && /Ptr\s*\*/.test(wrap_action)) {
-            return 'xmlNsPtr[]';
+            return "xmlNsPtr[]";
         }
 
-        return 'xmlNsPtr';
+        return "xmlNsPtr";
     }
 
     if (/xmlNodeSetPtr/.test(str)) {
-        return 'xmlNodePtr[]';
+        return "xmlNodePtr[]";
     }
 
-    str = str.replace('struct ', '');
+    str = str.replace("struct ", "");
 
     if (/^_/.test(str)) {
-        return `${str.replace(/^_/, '')}Ptr`;
+        return `${str.replace(/^_/, "")}Ptr`;
     }
 
     const typeObj = typedefs.find((obj) => {
-        return (new RegExp(`\\b${obj.name}$`)).test(str);
+        return new RegExp(`\\b${obj.name}$`).test(str);
     });
 
     if (typeObj) {
         // if (/Ptr$/.test(typeObj.name)) {
         //     return `${typeObj.name} | null`;
         // }
-        
+
         return typeObj.name;
     }
 
-    return 'undefined';
+    return "undefined";
 }
 
 function getAttributes(node, attributes) {
-    libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(node), './attribute|./attributelist/attribute', xpathContext)
-        .nodesetval
-        .forEach((attr) => {
-            // console.log(attr.type);
-            let prop = attr.properties;
-            let name = '';
-            let value = '';
+    libxml.xmlXPathNodeEval(node, "./attribute|./attributelist/attribute", xpathContext).nodesetval.forEach((attr) => {
+        // console.log(attr.type);
+        let prop = attr.properties;
+        let name = "";
+        let value = "";
 
-            while (prop !== null) {
-                // console.log(prop.type);
+        while (prop !== null) {
+            // console.log(prop.type);
 
-                if (prop.name === 'name') {
-                    name = prop.children.content;
-                }
-
-                if (prop.name === 'value') {
-                    value = prop.children.content;
-                }
-
-                prop = prop.next;
+            if (prop.name === "name") {
+                name = prop.children.content;
             }
 
-            attributes[name] = value;
-        });
+            if (prop.name === "value") {
+                value = prop.children.content;
+            }
+
+            prop = prop.next;
+        }
+
+        attributes[name] = value;
+    });
 
     return attributes;
 }
 
 let root = libxml.xmlDocGetRootElement(doc);
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/class', xpathContext)
-    .nodesetval
-    .forEach((node) => {
-        const attributes = {
-            props: [],
-        };
+libxml.xmlXPathNodeEval(root, ".//class", xpathContext).nodesetval.forEach((node) => {
+    const attributes = {
+        props: [],
+    };
 
-        getAttributes(node, attributes);
+    getAttributes(node, attributes);
 
-        libxml.xmlXPathNodeEval(node, './cdecl', xpathContext)
-            .nodesetval
-            .forEach((param) => {
-                attributes.props.push(getAttributes(param, {}));
-            });
-
-            addSymbol(attributes.name);
-            classes.push(attributes);
+    libxml.xmlXPathNodeEval(node, "./cdecl", xpathContext).nodesetval.forEach((param) => {
+        attributes.props.push(getAttributes(param, {}));
     });
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/enum', xpathContext)
-.nodesetval
-.forEach((node) => {
+    addSymbol(attributes.name);
+    classes.push(attributes);
+});
+
+libxml.xmlXPathNodeEval(root, ".//enum", xpathContext).nodesetval.forEach((node) => {
     const attributes = {
         items: [],
     };
 
     getAttributes(node, attributes);
 
-    libxml.xmlXPathNodeEval(node, './enumitem', xpathContext)
-        .nodesetval
-        .forEach((param) => {
-            const paramAttrs = getAttributes(param, {});
+    libxml.xmlXPathNodeEval(node, "./enumitem", xpathContext).nodesetval.forEach((param) => {
+        const paramAttrs = getAttributes(param, {});
 
-            attributes.items.push(paramAttrs);
+        attributes.items.push(paramAttrs);
 
-            if (constants.indexOf(paramAttrs.name) === -1) {
-                constants.push(paramAttrs);
-            }
+        if (constants.indexOf(paramAttrs.name) === -1) {
+            constants.push(paramAttrs);
+        }
 
-            addSymbol(paramAttrs.name);
-        });
+        addSymbol(paramAttrs.name);
+    });
 
     enums.push(attributes);
 });
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/constant', xpathContext)
-.nodesetval
-.forEach((node) => {
+libxml.xmlXPathNodeEval(root, ".//constant", xpathContext).nodesetval.forEach((node) => {
     const attributes = {
         props: [],
     };
@@ -222,14 +212,13 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/constant', xpathContex
     constants.push(attributes);
 });
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"][@value="variable"]', xpathContext)
-    .nodesetval
-    .map((node) => {
+libxml
+    .xmlXPathNodeEval(root, './/attribute[@name="kind"][@value="variable"]', xpathContext)
+    .nodesetval.map((node) => {
         return node.parent;
     })
     .forEach((node) => {
-        const attributes = {
-        };
+        const attributes = {};
 
         getAttributes(node, attributes);
 
@@ -238,9 +227,9 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
         variables.push(attributes);
     });
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"][@value="typedef"]', xpathContext)
-    .nodesetval
-    .map((node) => {
+libxml
+    .xmlXPathNodeEval(root, './/attribute[@name="kind"][@value="typedef"]', xpathContext)
+    .nodesetval.map((node) => {
         return node.parent;
     })
     .forEach((node) => {
@@ -251,26 +240,21 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
 
         getAttributes(node, attributes);
 
-        libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(node), './ancestor-or-self::template', xpathContext)
-            .nodesetval
-            .forEach((param) => {
-                attributes.template = getAttributes(param, {});
-            });
+        libxml.xmlXPathNodeEval(node, "./ancestor-or-self::template", xpathContext).nodesetval.forEach((param) => {
+            attributes.template = getAttributes(param, {});
+        });
 
-
-        libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(node), './cdecl', xpathContext)
-            .nodesetval
-            .forEach((param) => {
-                attributes.props.push(getAttributes(param, {}));
-            });
+        libxml.xmlXPathNodeEval(node, "./cdecl", xpathContext).nodesetval.forEach((param) => {
+            attributes.props.push(getAttributes(param, {}));
+        });
 
         addSymbol(attributes.name);
         typedefs.push(attributes);
     });
 
-libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"][@value="function"]', xpathContext)
-    .nodesetval
-    .map((node) => {
+libxml
+    .xmlXPathNodeEval(root, './/attribute[@name="kind"][@value="function"]', xpathContext)
+    .nodesetval.map((node) => {
         return node.parent;
     })
     .forEach((node, index) => {
@@ -282,152 +266,108 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
         getAttributes(node, attributes);
         // console.log(attributes);
 
-        libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(node), './ancestor-or-self::constructor|./ancestor-or-self::template', xpathContext)
-            .nodesetval
-            .forEach((param) => {
+        libxml
+            .xmlXPathNodeEval(node, "./ancestor-or-self::constructor|./ancestor-or-self::template", xpathContext)
+            .nodesetval.forEach((param) => {
                 // console.log(Object.keys(param).forEach((key) => {
                 //     console.log(key);
                 //     console.log(param[key]);
                 // }));
-                
+
                 attributes.constructor = getAttributes(param, {});
             });
 
+        libxml.xmlXPathNodeEval(node, "./parmlist/parm", xpathContext).nodesetval.forEach((param) => {
+            const paramAttrs = getAttributes(param, {});
 
-        libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(node), './parmlist/parm', xpathContext)
-            .nodesetval
-            .forEach((param) => {
-                const paramAttrs = getAttributes(param, {});
-
-                if (!(paramAttrs.type === 'void' && !paramAttrs.name)) {
-                    attributes.params.push(paramAttrs);
-                }
-            });
+            if (!(paramAttrs.type === "void" && !paramAttrs.name)) {
+                attributes.params.push(paramAttrs);
+            }
+        });
 
         // console.log(attributes)
 
-        if (attributes.feature_ignore && attributes.feature_ignore === '1') {
+        if (attributes.feature_ignore && attributes.feature_ignore === "1") {
             return;
         }
 
         addSymbol(attributes.name);
-        functions.push(attributes)
+        functions.push(attributes);
     });
 
-    fs.writeFileSync('lib/bindings/types.ts', `
+fs.writeFileSync(
+    "lib/bindings/types.ts",
+    `
     /**
      * This file was auto-generated by swig2ts.js
      */
+
+    import { StructuredErrorCallback, GenericErrorCallback, FROM_BUFFER_ASYNC_TYPE } from "../types";
     
-    ${
-        sortByName(typedefs).map((typedef) => {
-            let declaration = ['type'];
-    
+    ${sortByName(typedefs)
+        .map((typedef) => {
+            let declaration = ["type"];
+
             if (typedef.template) {
-                return '';
+                return "";
             }
-            
+
             const classObj = classes.find((obj) => {
-                return (`_${typedef.name}` === `${obj.name}Ptr`);
+                return `_${typedef.name}` === `${obj.name}Ptr`;
             });
-    
-            if (classObj) {
-                declaration = ['export', 'type'];
+
+            if (classObj || /Ptr$/.test(typedef.name)) {
+                declaration = ["export", "type"];
             }
-            
+
             return `
-    ${declaration.join(' ')} ${typedef.name} = {${
-        classObj ? [
-            (classObj.props.map((prop) => {
-                return `
-                ${prop.name}: ${cType2JS(prop.type)},   // ${prop.type}`;
-            }).join('') + '\n'),
-            `getCPtr: {
+    ${declaration.join(" ")} ${typedef.name} = {${
+                classObj
+                    ? [
+                          classObj.props
+                              .map((prop) => {
+                                  let type = cType2JS(prop.type);
+                                  let maybeNull = couldBeNullPointer(type);
+
+                                  return `
+                ${prop.name}: ${maybeNull ? `${type} | null` : type},   // ${prop.type}`;
+                              })
+                              .join("") + "\n",
+                          `getCPtr: {
                 (): number,
-            }`
-         ].join('\n') : ''
-    }}`
-        }).join('')
-    }
+            }`,
+                      ].join("\n")
+                    : ""
+            }}`;
+        })
+        .join("")}
 
-    export type XMLStructuredErrorData = {
-        domain: number; // What part of the library raised this er
-        code: number; // The error code, e.g. an xmlParserError
-        message: string; // human-readable informative error messag
-        level: number; // how consequent is the error (xmlErrorLevel)
-        column: number; // error column # or 0 if N/A (previously int2)
-        file: string; // the filename
-        line: number; // the line number if available
-        str1: string; // extra string information
-        str2: string; // extra string information
-        str3: string; // extra string information
-        int1?: number; // extra number information
-    };
-    
-    export class XMLStructuredError extends Error {
-        domain: number; // What part of the library raised this er
-        code: number; // The error code, e.g. an xmlParserError
-        message: string; // human-readable informative error messag
-        level: number; // how consequent is the error (xmlErrorLevel)
-        column: number; // error column # or 0 if N/A (previously int2)
-        file: string; // the filename
-        line: number; // the line number if available
-        str1: string; // extra string information
-        str2: string; // extra string information
-        str3: string; // extra string information
-        int1?: number; // extra number information
-
-        constructor(error: XMLStructuredErrorData) {
-            super();
-
-            this.domain = error.domain;
-            this.code = error.code;
-            this.message = error.message;
-            this.level = error.level;
-            this.column = error.column;
-            this.file = error.file;
-            this.line = error.line;
-            this.str1 = error.str1;
-            this.str2 = error.str2;
-            this.str3 = error.str3;
-            this.int1 = error.int1;
-        }
-    };
-    
-    export type StructuredErrorCallback = (errors: XMLStructuredError[]) => any;
-    export type GenericErrorCallback = (errors: string[]) => any;
-
-    export enum FROM_BUFFER_ASYNC_TYPE {
-        XML = 0,
-        HTML = 1,
-    };
-    
     export interface NativeBindings {
         /* Constants */
     
-        ${
-            sortByName(constants).map((obj) => {
+        ${sortByName(constants)
+            .map((obj) => {
                 if (!libxml.hasOwnProperty(obj.name)) {
-                    return '';
+                    return "";
                 }
-    
+
                 return `
                 ${obj.name}: ${cType2JS(obj.type)}`;
-            }).join('')
-        }
+            })
+            .join("")}
     
         /* Variables */
     
-        ${
-            sortByName(variables).map((obj) => {
-                if (!libxml.hasOwnProperty(obj.name) || obj.ismember === '1') {
-                    return '';
+        ${sortByName(variables)
+            .map((obj) => {
+                if (!libxml.hasOwnProperty(obj.name) || obj.ismember === "1") {
+                    return "";
                 }
-    
+
                 return `
                 ${obj.name}: ${cType2JS(obj.type)}`;
-            }).join('')
-        }
+            })
+            .join("")}
     
         /* Functions */
     
@@ -439,43 +379,49 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
             <T>(callback: GenericErrorCallback): T
         }
 
-        ${
-            sortByName(functions).map((func) => {
+        ${sortByName(functions)
+            .map((func) => {
                 if (!libxml.hasOwnProperty(func.name)) {
-                    return '';
+                    return "";
                 }
-    
+
                 if (func.constructor) {
-                    return '';
+                    return "";
                 }
-    
+
+                let retVal = cType2JS(func.type, func.wrap_action);
+
+                let maybeNull = couldBeNullPointer(retVal);
+
                 return `
                     ${func.name}: {
-                        /** ${func.params.map((param, index) => {
+                        /** ${func.params
+                            .map((param, index) => {
                                 param.jsType = cType2JS(param.type);
-    
-                                if (param.jsType === 'string') {
-                                    param.jsType = 'string | Buffer | null';
+
+                                if (param.jsType === "string") {
+                                    param.jsType = "string | Buffer | null";
                                 }
-    
+
                                 if (/Ptr$/.test(param.jsType)) {
                                     param.jsType = `${param.jsType} | null`;
                                 }
-    
+
                                 return `
                         * @param ${param.name || `arg${index}`} {${param.jsType}} ${param.type}`;
-                            }).join('')}
-                        * @returns {${cType2JS(func.type, func.wrap_action)}} ${func.type}
+                            })
+                            .join("")}
+                        * @returns {${maybeNull ? `(${retVal} | null)` : retVal}} ${func.type}
                         */
-                        (${
-                            func.params.map((param, index) => {
+                        (${func.params
+                            .map((param, index) => {
                                 return `${sanitizeName(param.name || `arg${index}`)}: ${param.jsType}`;
-                            }).join(', ')
-                        }): ${cType2JS(func.type, func.wrap_action)}
+                            })
+                            .join(", ")}): ${maybeNull ? `${retVal} | null` : retVal}
                     }
                 `;
-            }).join('')
-        }
+            })
+            .join("")}
     
         fromBufferAsync: {
             /** 
@@ -543,13 +489,13 @@ libxml.xmlXPathNodeEval(libxml.xmlPtrToXmlNode(root), './/attribute[@name="kind"
     export type XMLReferenceType = xmlNodePtr | xmlDocPtr | xmlDtdPtr | xmlAttrPtr | xmlElementPtr | xmlNsPtr;
     
     `
-    .replace('type htmlDocPtr =', 'type htmlDocPtr = xmlDocPtr &')
-    .replace('type xmlElementPtr =', 'type xmlElementPtr = xmlNodePtr &'));
+        .replace("type htmlDocPtr =", "type htmlDocPtr = xmlDocPtr &")
+        .replace("type xmlElementPtr =", "type xmlElementPtr = xmlNodePtr &")
+);
 
-
-
-
-fs.writeFileSync('lib/bindings/constants.ts', `
+fs.writeFileSync(
+    "lib/bindings/constants.ts",
+    `
 /**
  * This file was auto-generated by swig2ts.js
  */
@@ -558,27 +504,28 @@ import bindings from "./index";
 import {NativeBindings} from "./types";
 
 export const {${
-    // Object.keys(libxml).sort().map((key) => {
-    //     return `
-    //     ${key},`;
-    // }).join('')
+        // Object.keys(libxml).sort().map((key) => {
+        //     return `
+        //     ${key},`;
+        // }).join('')
 
+        sortByName(constants)
+            .map((obj) => {
+                if (!libxml.hasOwnProperty(obj.name)) {
+                    return "";
+                }
 
-    sortByName(constants).map((obj) => {
-        if (!libxml.hasOwnProperty(obj.name)) {
-            return '';
-        }
-
-        return `
+                return `
         ${obj.name},`;
-    }).join('')
-}
-} = bindings as NativeBindings;`);
+            })
+            .join("")
+    }
+} = bindings as NativeBindings;`
+);
 
-
-
-
-fs.writeFileSync('lib/bindings/variables.ts', `
+fs.writeFileSync(
+    "lib/bindings/variables.ts",
+    `
 /**
  * This file was auto-generated by swig2ts.js
  */
@@ -586,22 +533,22 @@ fs.writeFileSync('lib/bindings/variables.ts', `
 import bindings from "./index";
 import {NativeBindings} from "./types";
 
-export const {${
-    sortByName(variables).map((obj) => {
-        if (!libxml.hasOwnProperty(obj.name) || obj.ismember === '1') {
-            return '';
-        }
+export const {${sortByName(variables)
+        .map((obj) => {
+            if (!libxml.hasOwnProperty(obj.name) || obj.ismember === "1") {
+                return "";
+            }
 
-        return `
+            return `
         ${obj.name},`;
-    }).join('')
-}
-} = bindings as NativeBindings;`);
+        })
+        .join("")}
+} = bindings as NativeBindings;`
+);
 
-
-
-
-fs.writeFileSync('lib/bindings/functions.ts', `
+fs.writeFileSync(
+    "lib/bindings/functions.ts",
+    `
 /**
  * This file was auto-generated by swig2ts.js
  */
@@ -610,25 +557,26 @@ import bindings from "./index";
 import {NativeBindings} from "./types";
 
 export const {${
-    // Object.keys(libxml).sort().map((key) => {
-    //     return `
-    //     ${key},`;
-    // }).join('')
+        // Object.keys(libxml).sort().map((key) => {
+        //     return `
+        //     ${key},`;
+        // }).join('')
 
+        sortByName(functions)
+            .map((func) => {
+                if (!libxml.hasOwnProperty(func.name)) {
+                    return "";
+                }
 
-    sortByName(functions).map((func) => {
-        if (!libxml.hasOwnProperty(func.name)) {
-            return '';
-        }
+                if (func.constructor) {
+                    return "";
+                }
 
-        if (func.constructor) {
-            return '';
-        }
-
-        return `
+                return `
         ${func.name},`;
-    }).join('')
-}
+            })
+            .join("")
+    }
     fromBufferAsync,
     xmlPtrToXmlNode,
     xmlPtrToXmlDoc,
@@ -638,4 +586,5 @@ export const {${
     xmlPtrToXmlNs,
     withStructuredErrors,
     withGenericErrors,
-} = bindings as NativeBindings;`);
+} = bindings as NativeBindings;`
+);

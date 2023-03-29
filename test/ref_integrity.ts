@@ -1,5 +1,5 @@
 import * as libxml from "../index";
-import { XMLElement } from "../lib/node";
+import { XMLElement } from "../index";
 
 if (!global.gc) {
     throw new Error("must run with --expose_gc for ref integrity tests");

@@ -70,7 +70,7 @@
     NAN_METHOD(withStructuredErrors) {
         Nan::HandleScope scope;
 
-        auto array = SWIGV8_ARRAY_NEW();
+        auto array = SWIGV8_ARRAY_NEW(0);
 
         xmlSetStructuredErrorFunc(reinterpret_cast<void*>(&array), XmlSyntaxError::PushToArray);
 
@@ -92,7 +92,7 @@
     NAN_METHOD(withGenericErrors) {
         Nan::HandleScope scope;
 
-        auto array = SWIGV8_ARRAY_NEW();
+        auto array = SWIGV8_ARRAY_NEW(0);
 
         xmlSetGenericErrorFunc(reinterpret_cast<void*>(&array), XmlSyntaxError::GenericPushToArray);
 
