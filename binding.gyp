@@ -1,8 +1,9 @@
 {
     'targets': [
         {
-            'target_name': 'init',
-            'type': 'none',
+            'target_name': 'xmljs',
+            'product_extension': 'node',
+            'type': 'shared_library',
             'actions': [
                 {
                     'action_name': 'init',
@@ -12,12 +13,6 @@
                     'action': ['npm', 'run', 'init'],
                 },
             ],
-        },
-        {
-            'dependencies': ['init'],
-            'target_name': 'xmljs',
-            'product_extension': 'node',
-            'type': 'shared_library',
             'include_dirs': [
                 'src/include',
                 'vendor/libxml2',
