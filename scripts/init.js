@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { execSync } = require("child_process");
 
+console.log("Initializing");
+
 if (
     !fs.existsSync(__dirname + "/../vendor/libxml2/include/libxml/parserInternals.h") ||
     !fs.existsSync(__dirname + "/../vendor/libxml2/globals.c")
