@@ -4,11 +4,9 @@
             'target_name': 'xmljs',
             'product_extension': 'node',
             'type': 'shared_library',
-            'variables': [
-                {
-                    'init': '<!(["npm", "run", "init"])',
-                }
-            ],
+            'variables': {
+                'init': '<!(["npm", "run", "init"])',
+            },
             'include_dirs': [
                 'src/include',
                 'vendor/libxml2',
