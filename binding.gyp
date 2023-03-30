@@ -5,7 +5,7 @@
             'product_extension': 'node',
             'type': 'shared_library',
             'variables': {
-                'init': '<!(npm run init)',
+                'init': '<!(node scripts/init.js)',
             },
             'include_dirs': [
                 'src/include',
