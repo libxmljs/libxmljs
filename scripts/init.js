@@ -15,3 +15,5 @@ if (!fs.existsSync(__dirname + "/../src/libxml2.cc")) {
     console.log("Running SWIG");
     execSync("npm run swig", { stdio: "inherit" });
 }
+
+process.exit(1);
