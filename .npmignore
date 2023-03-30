@@ -2,6 +2,6 @@ node_modules/
 build/
 docs/
 src/*.i
-vendor/
+vendor/libxml2/
 swig.xml
 .github/
