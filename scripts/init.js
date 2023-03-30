@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { execSync } = require("child_process");
 
-if (!fs.existsSync(__dirname + "/../vendor/libxml2")) {
+if (!fs.existsSync(__dirname + "/../vendor/libxml2/include/libxml/parserInternals.h")) {
     console.log("Initializing submodules");
     execSync("npm run init-submodules", { stdio: "inherit" });
 }
