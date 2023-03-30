@@ -30,7 +30,6 @@ jobs:
             #   if: matrix.config.os == 'windows-latest'
             #   run: npm --vs2015 install --global windows-build-tools
             # - run: npm config set msvs_version 2015
-            - run: git submodule update --init --recursive
             - run: npm ci --build-from-source
             - run: npm run tsc
             - run: npm run test

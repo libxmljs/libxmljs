@@ -41,7 +41,6 @@ jobs:
                   npm config set progress false
                   npm config set spin false
                   npm i @mapbox/node-pre-gyp node-gyp -g
-                  git submodule update --init --recursive
                   npm install --build-from-source
                   node-pre-gyp package 2>&1
                   npm run tsc
@@ -108,7 +107,6 @@ jobs:
                       npm i @mapbox/node-pre-gyp node-gyp -g
                       chown -R `whoami` ./
                       git config --global --add safe.directory '*'
-                      git submodule update --init --recursive
 
                       npm install --build-from-source --unsafe-perm
                       node-pre-gyp package 2>&1

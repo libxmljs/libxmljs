@@ -1,6 +1,20 @@
 {
     'targets': [
         {
+            'target_name': 'init',
+            'type': 'none',
+            'actions': [
+                {
+                    'action_name': 'init',
+                    'inputs': ['package.json'],
+                    'outputs': ['package.json'],
+                    'message': 'Initializing',
+                    'action': ['npm', 'run', 'init'],
+                },
+            ],
+        },
+        {
+            'dependencies': ['init'],
             'target_name': 'xmljs',
             'product_extension': 'node',
             'type': 'shared_library',
@@ -88,7 +102,7 @@
                         'BUILDING_NODE_EXTENSION',
                     ],
                 }]
-            ]
+            ],
         }
     ]
 }

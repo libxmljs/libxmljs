@@ -35,7 +35,6 @@ concurrency:
 #               with:
 #                   node-version: 12.x
 #                   cache: "npm"
-#             - run: git submodule update --init --recursive
 #             - run: npm ci --build-from-source
 #             - run: npm run docs
 #             - name: Setup Pages
@@ -59,9 +58,6 @@ jobs:
               with:
                   persist-credentials: false
                   submodules: true # TODO remove this if not using submodules in Hexo
-
-            - name: Submodule
-              run: git submodule update --init --recursive
 
             - name: Install
               run: npm install
