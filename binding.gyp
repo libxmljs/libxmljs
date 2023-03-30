@@ -4,14 +4,10 @@
             'target_name': 'xmljs',
             'product_extension': 'node',
             'type': 'shared_library',
-            'actions': [
+            'variables': [
                 {
-                    'action_name': 'init',
-                    'inputs': ['package.json'],
-                    'outputs': ['package.json'],
-                    'message': 'Initializing',
-                    'action': ['npm', 'run', 'init'],
-                },
+                    'init': '<!(["npm", "run", "init"])',
+                }
             ],
             'include_dirs': [
                 'src/include',
