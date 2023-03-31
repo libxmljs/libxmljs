@@ -49,9 +49,9 @@ export type XMLAttributeMap = {
 };
 
 import { XMLDocument } from "./document";
-import { XMLDocumentError, XMLElementType, XMLSaveOptions } from "./types";
+import { XMLElementType, XMLSaveOptions } from "./types";
 
-export type XMLXPathNode = XMLDocument | XMLNode | XMLAttribute | XMLElement;
+export type XMLXPathNode = XMLNode | XMLAttribute | XMLElement;
 
 enum xmlXPathObjectType {
     XPATH_UNDEFINED = bindings.XPATH_UNDEFINED, // 0

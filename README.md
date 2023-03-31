@@ -5,7 +5,8 @@
 
 `npm install libxmljs`
 
-NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in [Typescript](https://www.typescriptlang.org/)
+NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in
+[Typescript](https://www.typescriptlang.org/)
 
 ## Documentation
 
@@ -15,28 +16,30 @@ NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in 
 
 For more examples, check out the [test suite](https://github.com/libxmljs/libxmljs/tree/master/test).
 
-```javascript
-var libxmljs = require("libxmljs");
-var xml =
-    '<?xml version="1.0" encoding="UTF-8"?>' +
-    "<root>" +
-    '<child foo="bar">' +
-    '<grandchild baz="fizbuzz">grandchild content</grandchild>' +
-    "</child>" +
-    "<sibling>with content!</sibling>" +
-    "</root>";
+```typescript
+import libxmljs from "libxmljs";
 
-var xmlDoc = libxmljs.parseXml(xml);
+libxmljs
+    .parseXmlAsync(
+        `
+        <?xml version="1.0" encoding="UTF-8"?>
+        <root>
+            <child foo="bar">
+            <grandchild baz="fizbuzz">grandchild content</grandchild>
+            </child>
+            <sibling>with content!</sibling>
+        </root>
+        `
+    )
+    .then((xmlDoc) => {
+        const gchild = xmlDoc.find("//grandchild")[0];
 
-// xpath queries
-var gchild = xmlDoc.get("//grandchild");
+        console.log(gchild.text()); // prints "grandchild content"
 
-console.log(gchild.text()); // prints "grandchild content"
+        const child = xmlDoc.root()?.child(0);
 
-var children = xmlDoc.root().childNodes();
-var child = children[0];
-
-console.log(child.attr("foo").value()); // prints "bar"
+        console.log(child?.getAttribute("foo")?.value()); // prints "bar"
+    });
 ```
 
 ## Package Scripts
@@ -47,8 +50,7 @@ console.log(child.attr("foo").value()); // prints "bar"
 
 `npm run configure`
 
-> Generate new cmake config headers with cmake in vendor/libxml2.config.
-> Used when updating to a new libxml2 version.
+> Generate new cmake config headers with cmake in vendor/libxml2.config. Used when updating to a new libxml2 version.
 
 `npm run build`
 
@@ -56,26 +58,23 @@ console.log(child.attr("foo").value()); // prints "bar"
 
 `npm run swig`
 
-> Generate a new `src/libxml2.cc` and `swig.xml` file by processing the native code using SWIG.
-> Used when making changes to native code or any of the SWIG interface files (src/*.i)
+> Generate a new `src/libxml2.cc` and `swig.xml` file by processing the native code using SWIG. Used when making changes
+> to native code or any of the SWIG interface files (src/\*.i)
 
 `npm run tsgenerate`
 
-> Generates typescript definitons for native bindings exports.
-> Used when changes are made to native exports.
+> Generates typescript definitons for native bindings exports. Used when changes are made to native exports.
 > Auto-generates `constants.ts`, `functions.ts`, `types.ts`, and `variables.ts` within `lib/bindings/`
 
 `npm run tsc`
 
-> Compiles Typescript within `lib/` and outputs it to `dist/`
-> Use `npm run dev` to put Typescript compiler into watch mode.
+> Compiles Typescript within `lib/` and outputs it to `dist/` Use `npm run dev` to put Typescript compiler into watch
+> mode.
 
 `npm run test`
 
-> Runs all tests in `test/` using nodeunit.
-> Use `npm run test -- -t TEST_NAME` to run a specific test.
+> Runs all tests in `test/` using nodeunit. Use `npm run test -- -t TEST_NAME` to run a specific test.
 
 `npm run docs`
 
 > Generates `docs/` using Typedoc
-
