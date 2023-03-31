@@ -103,8 +103,8 @@ module.exports.namespace = {
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = children[0].namespace(uri) as XMLNamespace;
-        children[1].namespace(ns);
+        var ns = children[0]?.namespace(uri) as XMLNamespace;
+        children[1]?.namespace(ns);
 
         var results = doc.find("xmlns:child", uri);
         assert.equal(2, children.length);
@@ -142,8 +142,8 @@ module.exports.prefixed_namespace = {
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = children[0].namespace(prefix, uri) as XMLNamespace;
-        children[1].namespace(ns);
+        var ns = children[0]?.namespace(prefix, uri) as XMLNamespace;
+        children[1]?.namespace(ns);
 
         var ns_params = {
             pefname: uri,

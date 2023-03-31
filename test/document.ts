@@ -114,8 +114,8 @@ module.exports.one_child = function (assert: any) {
 module.exports.root_children = function (assert: any) {
     var doc = libxml.Document();
     doc.node("root").node("child-one").parent()?.node("child-two");
-    assert.equal("child-one", doc.childNodes()?.[0].name());
-    assert.equal("child-two", doc.childNodes()?.[1].name());
+    assert.equal("child-one", doc.childNodes()?.[0]?.name());
+    assert.equal("child-two", doc.childNodes()?.[1]?.name());
     assert.done();
 };
 

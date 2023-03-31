@@ -49,9 +49,9 @@ export type XMLAttributeMap = {
 };
 
 import { XMLDocument } from "./document";
-import { XMLDocumentError, XMLElementType, XMLSaveOptions } from "./types";
+import { XMLElementType, XMLSaveOptions } from "./types";
 
-export type XMLXPathNode = XMLDocument | XMLNode | XMLAttribute | XMLElement;
+export type XMLXPathNode = XMLNode | XMLAttribute | XMLElement;
 
 enum xmlXPathObjectType {
     XPATH_UNDEFINED = bindings.XPATH_UNDEFINED, // 0
@@ -451,7 +451,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
                 Object.keys(namespace).forEach((prefix) => {
                     const href = namespace[prefix];
 
-                    xmlXPathRegisterNs(xpathContext, prefix, href);
+                    xmlXPathRegisterNs(xpathContext, prefix, href || null);
                 });
             }
         }
@@ -478,7 +478,7 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         result.nodesetval.forEach((node) => {
             const instance = refToNodeType(node);
             
-            if (instance !== null) {
+            if (instance !== null && !(instance instanceof XMLDocument)) {
                 nodeSet.push(instance);
             }
         });
@@ -506,8 +506,16 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
             ret = result.floatval;
         } else if (result.type === xmlXPathObjectType.XPATH_STRING) {
             ret = result.stringval;
-        } else if (result.type === xmlXPathObjectType.XPATH_NODESET && result.nodesetval.length > 0) {
-            ret = refToNodeType(result.nodesetval[0]);
+        } else if (result.type === xmlXPathObjectType.XPATH_NODESET) {
+            const _ref = result.nodesetval[0];
+
+            if (_ref) {
+                const node = refToNodeType(_ref);
+                
+                if (node !== null && !(node instanceof XMLDocument)) {
+                    ret = node;
+                }
+            }
         }
 
         xmlXPathFreeObject(result);
@@ -661,7 +669,7 @@ export class XMLElement extends XMLNode {
             return this;
         }
         Object.keys(attributes).forEach((k) => {
-            this.setAttribute(k, attributes[k]);
+            this.setAttribute(k, attributes[k] || "");
         });
 
         return this;

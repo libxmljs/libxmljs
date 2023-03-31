@@ -40,10 +40,10 @@ module.exports.siblings = function (assert: any) {
     children.push(root.node("prevSibling"));
     children.push(root.node("child"));
     children.push(root.node("nextSibling"));
-    assert.ok(children[0] == children[1].prevSibling());
-    assert.ok(children[2] == children[1].nextSibling());
-    assert.ok(null == children[0].prevSibling());
-    assert.ok(null == children[2].nextSibling());
+    assert.ok(children[0] == children[1]?.prevSibling());
+    assert.ok(children[2] == children[1]?.nextSibling());
+    assert.ok(null == children[0]?.prevSibling());
+    assert.ok(null == children[2]?.nextSibling());
     assert.done();
 };
 

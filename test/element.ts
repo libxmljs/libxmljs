@@ -131,7 +131,7 @@ module.exports.add_prev_sibling = function (assert: any) {
     var addedSibling = child2.addPrevSibling(prevSibling);
     var children = elem.childNodes();
     assert.equal(3, children.length);
-    assert.equal("prev-sibling", children[1].name());
+    assert.equal("prev-sibling", children[1]?.name());
     assert.done();
 };
 
@@ -146,7 +146,7 @@ module.exports.add_next_sibling = function (assert: any) {
     var addedSibling = child1.addNextSibling(nextSibling);
     var children = elem.childNodes();
     assert.equal(3, children.length);
-    assert.equal("next-sibling", children[1].name());
+    assert.equal("next-sibling", children[1]?.name());
     assert.done();
 };
 
@@ -164,7 +164,7 @@ module.exports.import = function (assert: any) {
 
     assert.ok(newdoc);
     assert.notEqual(doc, newdoc, true);
-    assert.equal("child1", newdoc.root()?.childNodes()[0].name());
+    assert.equal("child1", newdoc.root()?.childNodes()[0]?.name());
     assert.equal(child1, elem.childNodes()[0]); // child1 is the the first child of elem
     assert.done();
 };
@@ -247,7 +247,7 @@ module.exports.replace = function (assert: any) {
 
     assert.equal(doc.root()?.toString(), "<foo>some <enchanted/> evening</foo>");
     assert.equal(doc.root()?.childNodes().length, 3);
-    assert.equal(doc.root()?.childNodes()[1].name(), "enchanted");
+    assert.equal(doc.root()?.childNodes()[1]?.name(), "enchanted");
 
     assert.done();
 };

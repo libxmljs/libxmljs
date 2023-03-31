@@ -8,7 +8,7 @@
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "repository": {
     "type": "git",
     "url": "http://github.com/libxmljs/libxmljs.git"
@@ -23,10 +23,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "init": "node scripts/init.js",
     "init-submodules": "git submodule update --init --recursive",
     "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
-    "install": "node-pre-gyp install --loglevel http || (npm run init && npm run build)",
+    "preinstall": "node scripts/preinstall.js",
+    "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "build": "node-gyp rebuild -j max",
     "build-debug": "node-gyp rebuild -j max --debug",
     "swig": "npm run init && bash scripts/swig.sh && node scripts/swigfix.js",
@@ -42,11 +42,10 @@
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.9",
     "bindings": "~1.3.0",
-    "nan": "~2.17.0"
+    "nan": "^2.17.0"
   },
   "devDependencies": {
     "@types/bindings": "^1.5.0",
-    "nan": "^2.14.2",
     "nodeunit": "^0.11.3",
     "tslint": "^6.1.3",
     "typedoc": "^0.23.28",

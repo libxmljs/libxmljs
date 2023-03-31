@@ -13,7 +13,7 @@ module.exports.gc = function (assert: any) {
     global.gc();
     assert.ok(doc.root(), "root");
     global.gc();
-    assert.equal("child", doc.root()?.childNodes()[0].name(), "child name");
+    assert.equal("child", doc.root()?.childNodes()[0]?.name(), "child name");
     assert.done();
 };
 
@@ -22,8 +22,8 @@ module.exports.references = function (assert: any) {
 
     global.gc();
 
-    assert.ok(nodes[0].doc());
-    assert.equal("child", nodes[1].name());
+    assert.ok(nodes[0]?.doc());
+    assert.equal("child", nodes[1]?.name());
     assert.done();
 };
 

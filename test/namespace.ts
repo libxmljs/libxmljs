@@ -199,7 +199,7 @@ module.exports.local_namespaces = function (assert: any) {
     assert.ok(body);
     decls = body.namespaces(true);
     assert.equal(1, decls.length);
-    assert.equal("urn:example:2", decls[0].href());
+    assert.equal("urn:example:2", decls[0]?.href());
 
     // Make sure default behavior still works,
     // and doesn't get turned on by mistake

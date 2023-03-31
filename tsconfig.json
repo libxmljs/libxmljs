@@ -7,7 +7,9 @@
       "sourceMap": true,
       "outDir": "./dist",
       "strict": true,
-      "removeComments": true
+      "removeComments": true,
+      "noUncheckedIndexedAccess": true,
+      "strictNullChecks": true,
     },
     "include": ["index.ts", "src", "test"],
     "exclude": ["node_modules"]
