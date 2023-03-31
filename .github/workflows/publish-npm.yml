@@ -21,6 +21,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: https://registry.npmjs.org
+            - run: npm run init-submodules
             - run: npm install
             - run: npm run tsc
             - run: npm run test
