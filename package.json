@@ -23,9 +23,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "init": "node scripts/init.js",
     "init-submodules": "git submodule update --init --recursive",
     "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
+    "preinstall": "node scripts/preinstall.js",
     "install": "node-pre-gyp install --fallback-to-build --loglevel http",
     "build": "node-gyp rebuild -j max",
     "build-debug": "node-gyp rebuild -j max --debug",
@@ -41,12 +41,11 @@
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.9",
-    "bindings": "~1.3.0",
-    "nan": "~2.17.0"
+    "bindings": "~1.3.0"
   },
   "devDependencies": {
     "@types/bindings": "^1.5.0",
-    "nan": "^2.14.2",
+    "nan": "^2.17.0",
     "nodeunit": "^0.11.3",
     "tslint": "^6.1.3",
     "typedoc": "^0.23.28",
