@@ -8,7 +8,7 @@
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "repository": {
     "type": "git",
     "url": "http://github.com/libxmljs/libxmljs.git"
