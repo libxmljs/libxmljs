@@ -26,7 +26,7 @@
     "init-submodules": "git submodule update --init --recursive",
     "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
     "preinstall": "node scripts/preinstall.js",
-    "install": "node-pre-gyp install --fallback-to-build --loglevel http",
+    "install": "node-pre-gyp install --fallback-to-build --loglevel http -j max",
     "build": "node-gyp rebuild -j max",
     "build-debug": "node-gyp rebuild -j max --debug",
     "swig": "npm run init && bash scripts/swig.sh && node scripts/swigfix.js",
