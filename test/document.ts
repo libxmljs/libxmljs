@@ -378,6 +378,33 @@ module.exports.fromHtmlFragment = function (assert: any) {
     assert.done();
 };
 
+module.exports.fromXml = function (assert: any) {
+    var xml =
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<!DOCTYPE type [<!ENTITY ent "entity">]>' +
+        '<root><node1>&ent;</node1><node2>node2</node2></root>';
+
+    var parsedXml = libxml.Document.fromXml(xml);
+    var node: any = parsedXml?.get('//node1');
+    var text = node.text();
+    assert.equal(text, 'entity');
+    assert.done();
+};
+
+module.exports.fromXmlAsync = function (assert: any) {
+    var xml =
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<!DOCTYPE type [<!ENTITY ent "entity">]>' +
+        '<root><node1>&ent;</node1><node2>node2</node2></root>';
+
+    libxml.Document.fromXmlAsync(xml, {flags: [libxml.XMLParseFlags.XML_PARSE_NOENT]}).then(parsedXml => {
+        var node: any = parsedXml?.get('//node1');
+        var text = node.text();
+        assert.equal(text, 'entity');
+        assert.done();
+    });
+};
+
 module.exports.validate_rng_memory_usage = function (assert: any) {
     var rng =
         '<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">' +

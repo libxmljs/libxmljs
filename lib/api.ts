@@ -14,8 +14,8 @@ Document.fromXml = (buffer: string | Buffer, options?: XMLParseOptions) => {
     return XMLDocument.fromXml(buffer, options);
 };
 
-Document.fromXmlAsync = (buffer: string | Buffer, options: HTMLParseOptions) => {
-    return XMLDocument.fromHtmlAsync(buffer, options);
+Document.fromXmlAsync = (buffer: string | Buffer, options: XMLParseOptions) => {
+    return XMLDocument.fromXmlAsync(buffer, options);
 };
 
 Document.fromHtml = (buffer: string | Buffer, options?: HTMLParseOptions): HTMLDocument => {
