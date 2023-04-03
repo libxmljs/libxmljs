@@ -6,7 +6,7 @@
 `npm install libxmljs`
 
 NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in
-[Typescript](https://www.typescriptlang.org/)
+Typescript
 
 ## Documentation
 
