@@ -4,3 +4,15 @@ docs/
 src/*.i
 swig.xml
 .github/
+
+# Parts of libxml we don't need
+vendor/libxml2/ChangeLog
+vendor/libxml2/CONTRIBUTING
+vendor/libxml2/doc
+vendor/libxml2/example
+vendor/libxml2/fuzz
+vendor/libxml2/NEWS
+vendor/libxml2/README.*
+vendor/libxml2/result
+vendor/libxml2/test
+vendor/libxml2/TODO*
