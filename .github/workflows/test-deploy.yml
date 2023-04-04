@@ -40,9 +40,8 @@ jobs:
     #               npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --global
     #               npm config set progress false
     #               npm config set spin false
-    #               npm i @mapbox/node-pre-gyp node-gyp -g
     #               npm install --build-from-source
-    #               node-pre-gyp package 2>&1
+    #               npm run package 2>&1
     #               npm run tsc
     #               npm run test
     #         - name: Upload release binary
@@ -86,12 +85,10 @@ jobs:
             - name: Package prebuilt binary
               run: |
                   npm install -g npm@${{ matrix.config.npm-version }}
-                  npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --global
                   npm config set progress false
                   npm config set spin false
-                  npm i @mapbox/node-pre-gyp node-gyp -g
-                  npm install --build-from-source
-                  node-pre-gyp package 2>&1
+                  npm ci --build-from-source
+                  npm run package 2>&1
                   npm run tsc
                   npm run test
             - name: Upload release binary

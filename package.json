@@ -27,6 +27,7 @@
     "configure": "cd vendor/libxml2.config && cmake configure ../libxml2 && cd ../..",
     "preinstall": "node scripts/preinstall.js",
     "install": "node-pre-gyp install --fallback-to-build --loglevel http -j max",
+    "package": "node-pre-gyp package",
     "build": "node-gyp rebuild -j max",
     "build-debug": "node-gyp rebuild -j max --debug",
     "swig": "bash scripts/swig.sh && node scripts/swigfix.js",
