@@ -115,11 +115,7 @@ jobs:
               with:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
-            - name: Set up GCC
-              uses: egor-tensin/setup-gcc@v1
-              with:
-                  version: 10
-                  platform: x64
+            - run: yum install gcc-10 g++-10
             - run: ldd --version
             - run: npm ci --build-from-source
             - run: npm run package 2>&1
