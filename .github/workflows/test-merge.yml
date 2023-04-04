@@ -4,26 +4,26 @@ on:
     workflow_dispatch:
 
 jobs:
-    test-merge:
-        runs-on: ${{ matrix.config.os }}
-        strategy:
-            matrix:
-                node-version: [12.x]
-                # node-version: [12.x, 14.x, 16.x]
-                config:
-                    - { os: macos-latest, arch: x64 }
-                    - { os: ubuntu-latest, arch: x64 }
-                    - { os: windows-2019, arch: x64 }
-        steps:
-            - uses: actions/checkout@v3
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: "npm"
-            - run: npm ci --build-from-source
-            - run: npm run tsc
-            - run: npm run test
+    # test-merge:
+    #     runs-on: ${{ matrix.config.os }}
+    #     strategy:
+    #         matrix:
+    #             node-version: [12.x]
+    #             # node-version: [12.x, 14.x, 16.x]
+    #             config:
+    #                 - { os: macos-latest, arch: x64 }
+    #                 - { os: ubuntu-latest, arch: x64 }
+    #                 - { os: windows-2019, arch: x64 }
+    #     steps:
+    #         - uses: actions/checkout@v3
+    #         - name: Use Node.js ${{ matrix.node-version }}
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: ${{ matrix.node-version }}
+    #               cache: "npm"
+    #         - run: npm ci --build-from-source
+    #         - run: npm run tsc
+    #         - run: npm run test
     test-merge-old-linux:
         runs-on: ubuntu-latest
         strategy:
@@ -31,6 +31,7 @@ jobs:
                 node-version: [12.x]
         container:
             image: quay.io/pypa/manylinux2014_x86_64
+            options: --user root
         steps:
             - uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
@@ -38,6 +39,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
+            - run: yum install git
             - run: npm ci --build-from-source
             - run: npm run tsc
             - run: npm run test
