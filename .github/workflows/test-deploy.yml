@@ -68,9 +68,9 @@ jobs:
                     - { node-version: 16, npm-version: 8 }
                     - { node-version: 17, npm-version: 8 }
                     - { node-version: 18, npm-version: 8 }
-                image: [x86_64, aarch64]
+                container-image: [x86_64, aarch64]
         container:
-            image: quay.io/pypa/manylinux2014_${{ matrix.image }}
+            image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
             options: --user root
         steps:
             - uses: actions/checkout@v3
@@ -78,7 +78,7 @@ jobs:
                   persist-credentials: false
                   submodules: true
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v2
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
