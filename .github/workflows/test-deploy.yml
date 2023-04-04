@@ -50,45 +50,45 @@ jobs:
     #               GITHUB_TOKEN: ${{ github.token }}
     #           with:
     #               asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
-    upload-linux-older:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                config:
-                    - { node-version: 8 }
-                    - { node-version: 9 }
-                    - { node-version: 10 }
-                    - { node-version: 11 }
-                    - { node-version: 12 }
-                    - { node-version: 13 }
-                    - { node-version: 14 }
-                    - { node-version: 15 }
-                container-image: [x86_64]
-        container:
-            image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
-            options: --user root
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  persist-credentials: false
-                  submodules: true
-            - name: Use Node.js ${{ matrix.config.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.config.node-version }}
-                  cache: "npm"
-            - run: ldd --version
-            - run: npm install --unsafe-perm --build-from-source
-            - run: npm run package 2>&1
-            - run: npm run tsc
-            - run: npm run test
-            - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
-              env:
-                  GITHUB_TOKEN: ${{ github.token }}
-              with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+    # upload-linux-older:
+    #     runs-on: ubuntu-latest
+    #     strategy:
+    #         fail-fast: false
+    #         matrix:
+    #             config:
+    #                 - { node-version: 8 }
+    #                 - { node-version: 9 }
+    #                 - { node-version: 10 }
+    #                 - { node-version: 11 }
+    #                 - { node-version: 12 }
+    #                 - { node-version: 13 }
+    #                 - { node-version: 14 }
+    #                 - { node-version: 15 }
+    #             container-image: [x86_64]
+    #     container:
+    #         image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
+    #         options: --user root
+    #     steps:
+    #         - uses: actions/checkout@v3
+    #           with:
+    #               persist-credentials: false
+    #               submodules: true
+    #         - name: Use Node.js ${{ matrix.config.node-version }}
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: ${{ matrix.config.node-version }}
+    #               cache: "npm"
+    #         - run: ldd --version
+    #         - run: npm install --unsafe-perm --build-from-source
+    #         - run: npm run package 2>&1
+    #         - run: npm run tsc
+    #         - run: npm run test
+    #         - name: Upload release binary
+    #           uses: alexellis/upload-assets@0.3.0
+    #           env:
+    #               GITHUB_TOKEN: ${{ github.token }}
+    #           with:
+    #               asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
 
     upload-linux-newer:
         runs-on: ubuntu-latest
@@ -115,6 +115,7 @@ jobs:
               with:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
+            - run: apt install gcc-10 g++-10
             - run: ldd --version
             - run: npm ci --build-from-source
             - run: npm run package 2>&1
