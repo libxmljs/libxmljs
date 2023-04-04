@@ -64,9 +64,6 @@ jobs:
                     - { node-version: 13 }
                     - { node-version: 14 }
                     - { node-version: 15 }
-                    - { node-version: 16 }
-                    - { node-version: 17 }
-                    - { node-version: 18 }
                 container-image: [x86_64]
         container:
             image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
@@ -82,7 +79,7 @@ jobs:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
             - run: ldd --version
-            - run: npm install --build-from-source
+            - run: npm install --unsafe-perm --build-from-source
             - run: npm run package 2>&1
             - run: npm run tsc
             - run: npm run test
@@ -104,7 +101,7 @@ jobs:
                     - { node-version: 18 }
                 container-image: [x86_64]
         container:
-            image: quay.io/pypa/manylinux_2_27_${{ matrix.container-image }}
+            image: quay.io/pypa/manylinux_2_28_${{ matrix.container-image }}
             options: --user root
         steps:
             - uses: actions/checkout@v3
@@ -117,7 +114,7 @@ jobs:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
             - run: ldd --version
-            - run: npm install --build-from-source
+            - run: npm ci --build-from-source
             - run: npm run package 2>&1
             - run: npm run tsc
             - run: npm run test
