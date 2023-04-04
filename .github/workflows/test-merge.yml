@@ -42,6 +42,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
+            - run: ldd --version
             - run: npm ci --build-from-source
             - run: npm run tsc
             - run: npm run test
