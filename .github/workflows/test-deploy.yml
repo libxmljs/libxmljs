@@ -57,17 +57,17 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { node-version: 8.x, npm-version: 6 }
-                    - { node-version: 9.x, npm-version: 6 }
-                    - { node-version: 10.x, npm-version: 6 }
-                    - { node-version: 11.x, npm-version: 6 }
-                    - { node-version: 12.x, npm-version: 8 }
-                    - { node-version: 13.x, npm-version: 8 }
-                    - { node-version: 14.x, npm-version: 8 }
-                    - { node-version: 15.x, npm-version: 8 }
-                    - { node-version: 16.x, npm-version: 8 }
-                    - { node-version: 17.x, npm-version: 8 }
-                    - { node-version: 18.x, npm-version: 8 }
+                    - { node-version: 8, npm-version: 6 }
+                    - { node-version: 9, npm-version: 6 }
+                    - { node-version: 10, npm-version: 6 }
+                    - { node-version: 11, npm-version: 6 }
+                    - { node-version: 12, npm-version: 8 }
+                    - { node-version: 13, npm-version: 8 }
+                    - { node-version: 14, npm-version: 8 }
+                    - { node-version: 15, npm-version: 8 }
+                    - { node-version: 16, npm-version: 8 }
+                    - { node-version: 17, npm-version: 8 }
+                    - { node-version: 18, npm-version: 8 }
                 container-image: [x86_64, aarch64]
         container:
             image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
@@ -77,10 +77,10 @@ jobs:
               with:
                   persist-credentials: false
                   submodules: true
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js ${{ matrix.config.node-version }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
             - run: ldd --version
             - name: Package prebuilt binary
