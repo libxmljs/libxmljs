@@ -102,6 +102,8 @@ jobs:
                 container-image: [x86_64]
         container:
             image: quay.io/pypa/manylinux_2_28_${{ matrix.container-image }}
+            env:
+                PATH: /opt/python/cp36-cp36m/bin:/opt/python/cp37-cp37m/bin:/opt/python/cp38-cp38/bin:/opt/rh/devtoolset-2/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/python/cp35-cp35m/bin:/opt/python/cp36-cp36m/bin:/opt/python/cp37-cp37m/bin:/opt/python/cp38-cp38/bin:/opt/python/cp39-cp39/bin:/opt/rh/devtoolset-8/root/usr/bin
             options: --user root
         steps:
             - uses: actions/checkout@v3
