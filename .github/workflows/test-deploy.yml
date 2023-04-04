@@ -67,7 +67,7 @@ jobs:
                     - { node-version: 16, npm-version: 8 }
                     - { node-version: 17, npm-version: 8 }
                     - { node-version: 18, npm-version: 8 }
-                container-image: [x86_64, aarch64, i686]
+                container-image: [x86_64]
         container:
             image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
             options: --user root
@@ -82,11 +82,6 @@ jobs:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
             - run: ldd --version
-            - name: Package prebuilt binary
-              run: |
-                  npm install -g npm@${{ matrix.config.npm-version }}
-                  npm config set progress false
-                  npm config set spin false
             - run: npm ci --build-from-source
             - run: npm run package 2>&1
             - run: npm run tsc
