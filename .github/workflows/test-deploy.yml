@@ -87,10 +87,10 @@ jobs:
                   npm install -g npm@${{ matrix.config.npm-version }}
                   npm config set progress false
                   npm config set spin false
-                  npm ci --build-from-source
-                  npm run package 2>&1
-                  npm run tsc
-                  npm run test
+            - run: npm ci --build-from-source
+            - run: npm run package 2>&1
+            - run: npm run tsc
+            - run: npm run test
             - name: Upload release binary
               uses: alexellis/upload-assets@0.3.0
               env:
