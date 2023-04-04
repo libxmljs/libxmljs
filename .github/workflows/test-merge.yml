@@ -21,30 +21,23 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
-            # - name: Add msbuild to PATH
-            #   if: matrix.config.os == 'windows-latest'
-            #   uses: microsoft/setup-msbuild@v1.1
-            #   with:
-            #     vs-version: 15.0
-            # - name: Install windows-build-tools
-            #   if: matrix.config.os == 'windows-latest'
-            #   run: npm --vs2015 install --global windows-build-tools
-            # - run: npm config set msvs_version 2015
             - run: npm ci --build-from-source
             - run: npm run tsc
             - run: npm run test
-
-    # publish:
-    #   if: ${{ github.event_name == 'release' }}
-    #   name: Publishing to NPM
-    #   runs-on: ubuntu-18.04
-    #   needs: test
-    #   steps:
-    #     - uses: actions/checkout@v2
-    #     - uses: actions/setup-node@v2
-    #       with:
-    #         node-version: 16
-    #         registry-url: https://registry.npmjs.org
-    #     - run: npm publish
-    #       env:
-    #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    test-merge-old-linux:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [12.x]
+        container:
+            image: quay.io/pypa/manylinux2010_x86_64
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+            - run: npm ci --build-from-source
+            - run: npm run tsc
+            - run: npm run test
