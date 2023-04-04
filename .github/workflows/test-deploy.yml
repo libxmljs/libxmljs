@@ -68,7 +68,7 @@ jobs:
                     - { node-version: 16, npm-version: 8 }
                     - { node-version: 17, npm-version: 8 }
                     - { node-version: 18, npm-version: 8 }
-                container-image: [x86_64, aarch64]
+                container-image: [x86_64, aarch64, i686]
         container:
             image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
             options: --user root
