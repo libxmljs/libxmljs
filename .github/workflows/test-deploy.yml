@@ -109,7 +109,6 @@ jobs:
               with:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
-            - run: apt install gcc-10 g++-10
             - run: ldd --version
             - run: npm ci --build-from-source
             - run: npm run package 2>&1
