@@ -13,7 +13,7 @@
                 'vendor/libxml2.config/include',
                 "<!(node -e \"require('nan')\")"
             ],
-            'cflags': ['-Wall -Wno-unused-result'],
+            'cflags': ['-Wall -Wno-unused-result -O3'],
             'xcode_settings': {
                 'OTHER_CFLAGS': ['-Wall -Wno-unused-result -O3']
             },
