@@ -57,7 +57,7 @@ jobs:
               uses: actions/checkout@master
               with:
                   persist-credentials: false
-                  submodules: true # TODO remove this if not using submodules in Hexo
+                  submodules: true
 
             - name: Install
               run: npm install

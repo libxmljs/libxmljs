@@ -34,12 +34,14 @@ jobs:
             options: --user root
         steps:
             - uses: actions/checkout@v3
+              with:
+                  persist-credentials: false
+                  submodules: true
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
-            - run: yum install git
             - run: npm ci --build-from-source
             - run: npm run tsc
             - run: npm run test
