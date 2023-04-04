@@ -30,7 +30,7 @@ jobs:
             matrix:
                 node-version: [12.x]
         container:
-            image: quay.io/pypa/manylinux2010_x86_64
+            image: quay.io/pypa/manylinux2014
         steps:
             - uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
