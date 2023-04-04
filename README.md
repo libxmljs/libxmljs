@@ -1,12 +1,14 @@
 # libxmljs
 
 [![npm version](https://badge.fury.io/js/libxmljs.svg)](https://badge.fury.io/js/libxmljs)
+[![Downloads monthly](https://img.shields.io/npm/dm/libxmljs.svg)](https://npmjs.org/package/libxmljs)
+[![Downloads total](https://img.shields.io/npm/dt/libxmljs.svg)](https://npmjs.org/package/libxmljs)
 [![Test & Upload](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml)
 
 `npm install libxmljs`
 
 NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in
-[Typescript](https://www.typescriptlang.org/)
+Typescript
 
 ## Documentation
 
