@@ -68,14 +68,9 @@ jobs:
                     - { node-version: 16, npm-version: 8 }
                     - { node-version: 17, npm-version: 8 }
                     - { node-version: 18, npm-version: 8 }
-                image:
-                    [
-                        quay.io/pypa/manylinux2014_x86_64,
-                        quay.io/pypa/manylinux2014_aarch64,
-                        quay.io/pypa/manylinux2014_i686,
-                    ]
+                image: [x86_64, aarch64]
         container:
-            image: ${{ matrix.image }}
+            image: quay.io/pypa/manylinux2014_${{ matrix.image }}
             options: --user root
         steps:
             - uses: actions/checkout@v3
