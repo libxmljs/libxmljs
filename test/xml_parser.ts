@@ -21,6 +21,15 @@ module.exports.parse = function (assert: any) {
     assert.done();
 };
 
+module.exports.parse_with_flags = function (assert: any) {
+    const filename = __dirname + "/../../test/fixtures/parser.xml";
+    const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
+
+    const doc = libxml.parseXml(str, {replaceEntities: true, validateEntities: true});
+    assert.equal(18, doc.getParseFlags());
+    assert.done();
+}
+
 module.exports.parseAsync = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/parser.xml";
     var str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
@@ -45,6 +54,19 @@ module.exports.parseAsync = function (assert: any) {
 
     assert.equal(++x, 1);
 };
+
+module.exports.parse_async_with_replace = function (assert: any) {
+    const filename = __dirname + "/../../test/fixtures/parser.xml";
+    const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
+
+    let x = 0;
+
+    libxml.parseXmlAsync(str, {replaceEntities: true, validateEntities: true}).then((doc) => {
+        assert.equal(18, doc.getParseFlags());
+        assert.done();
+    });
+    assert.equal(++x, 1);
+}
 
 module.exports.parse_buffer = function (assert: any) {
     var filename = __dirname + "/../../test/fixtures/parser-utf16.xml";

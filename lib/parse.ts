@@ -1,23 +1,31 @@
 "use strict";
 
-import { createXMLReference, createXMLReferenceOrThrow } from "./bindings";
+import { createXMLReferenceOrThrow } from "./bindings";
 import { xmlDocPtr } from "./bindings/types";
-import { DEFAULT_HTML_PARSE_OPTIONS, DEFAULT_XML_PARSE_OPTIONS, FROM_BUFFER_ASYNC_TYPE, HTMLParseFlags, HTMLParseOptions, XMLDocumentError, XMLParseFlags, XMLParseOptions, XMLStructuredError } from "./types";
 import {
-    xmlReadMemory,
-    htmlReadMemory,
+    DEFAULT_HTML_PARSE_OPTIONS,
+    DEFAULT_XML_PARSE_OPTIONS,
+    FROM_BUFFER_ASYNC_TYPE,
+    HTMLParseFlags,
+    HTMLParseOptions,
+    XMLDocumentError,
+    XMLParseFlags,
+    XMLParseOptions,
+    XMLStructuredError,
+} from "./types";
+import {
     fromBufferAsync,
+    htmlReadMemory,
     withStructuredErrors,
-    withGenericErrors,
-    xmlGetLastError,
-    xmlDocGetRootElement,
     xmlDocHasRootElement,
+    xmlGetLastError,
+    xmlReadMemory,
 } from "./bindings/functions";
 
-import { XMLDocument, HTMLDocument } from "./document";
+import { HTMLDocument, XMLDocument } from "./document";
 import { XMLNodeError } from "./node";
 
-const htmlOptionsToFlags = (options: HTMLParseOptions) => {
+const htmlOptionsToFlags = (options: HTMLParseOptions): number => {
     const flags: HTMLParseFlags[] = [];
 
     if (DEFAULT_HTML_PARSE_OPTIONS.flags) {
@@ -84,7 +92,7 @@ const xmlProcessDeprecatedOpts = (
     return flags;
 };
 
-const xmlOptionsToFlags = (options: XMLParseOptions) => {
+const xmlOptionsToFlags = (options: XMLParseOptions): number => {
     let flags: XMLParseFlags[] = [];
 
     if (DEFAULT_XML_PARSE_OPTIONS.flags) {
@@ -277,38 +285,48 @@ export const parseHtml = (buffer: string | Buffer, options: HTMLParseOptions = {
         return document;
     });
 
-export const parseBufferAsync = (
-    type: FROM_BUFFER_ASYNC_TYPE,
+export const parseHtmlAsync = async (
     buffer: string | Buffer,
-    options: HTMLParseOptions | XMLParseOptions,
-) => new Promise<XMLDocument|HTMLDocument>((resolve, reject) => {
+    options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS
+): Promise<HTMLDocument> => new Promise<HTMLDocument>((resolve, reject) => {
     fromBufferAsync(
-        type,
+        FROM_BUFFER_ASYNC_TYPE.HTML,
         buffer,
         typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
         options.url || DEFAULT_HTML_PARSE_OPTIONS.url || "",
         options.encoding || DEFAULT_HTML_PARSE_OPTIONS.encoding || "",
-        flagsToInt(options.flags || DEFAULT_HTML_PARSE_OPTIONS.flags || []),
+        htmlOptionsToFlags(options),
         (error: Error | null, document: xmlDocPtr | null) => {
             if (error) {
                 reject(error);
             } else if (document === null) {
                 reject(new Error(XMLDocumentError.NO_REF));
-            } else if (type === FROM_BUFFER_ASYNC_TYPE.HTML) {
+            } else {
                 resolve(createXMLReferenceOrThrow(HTMLDocument, document, XMLDocumentError.NO_REF));
+            }
+        }
+    );
+});
+
+export const parseXmlAsync = async (
+    buffer: string | Buffer,
+    options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS
+): Promise<XMLDocument> => new Promise<HTMLDocument>((resolve, reject) => {
+    fromBufferAsync(
+        FROM_BUFFER_ASYNC_TYPE.XML,
+        buffer,
+        typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
+        options.url || DEFAULT_XML_PARSE_OPTIONS.url || "",
+        options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || "",
+        xmlOptionsToFlags(options),
+        (error: Error | null, document: xmlDocPtr | null) => {
+            if (error) {
+                reject(error);
+            } else if (document === null) {
+                reject(new Error(XMLDocumentError.NO_REF));
             } else {
                 resolve(createXMLReferenceOrThrow(XMLDocument, document, XMLDocumentError.NO_REF));
             }
         }
     );
 });
-
-export const parseHtmlAsync = async (
-    buffer: string | Buffer,
-    options: HTMLParseOptions = DEFAULT_HTML_PARSE_OPTIONS
-): Promise<HTMLDocument> => parseBufferAsync(FROM_BUFFER_ASYNC_TYPE.HTML, buffer, options);
-
-export const parseXmlAsync = async (
-    buffer: string | Buffer,
-    options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS
-): Promise<XMLDocument> => parseBufferAsync(FROM_BUFFER_ASYNC_TYPE.XML, buffer, options);
