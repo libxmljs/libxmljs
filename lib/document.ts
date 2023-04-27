@@ -420,6 +420,10 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
         return _ref.encoding || "";
     }
 
+    public getParseFlags(): number {
+        return this.getNativeReference().parseFlags;
+    }
+
     public type(): string {
         return "document";
     }
