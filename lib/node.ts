@@ -429,12 +429,20 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return children;
     }
 
-    public prevSibling() {
-        return createXMLReference(XMLNode, this.getNativeReference().prev);
+    public prevSibling(): XMLNode|null {
+        const sibling =  refToNodeType(this.getNativeReference().prev);
+        if (sibling === null || sibling instanceof XMLDocument) {
+            return null;
+        }
+        return sibling;
     }
 
-    public nextSibling() {
-        return createXMLReference(XMLNode, this.getNativeReference().next);
+    public nextSibling(): XMLNode|null {
+        const sibling =  refToNodeType(this.getNativeReference().next);
+        if (sibling === null || sibling instanceof XMLDocument) {
+            return null;
+        }
+        return sibling;
     }
 
     public evaluateXPath(xpath: string, namespace?: XPathNamespace): xmlXPathObjectPtr {
