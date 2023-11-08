@@ -429,12 +429,12 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
         return children;
     }
 
-    public prevSibling() {
-        return refToNodeType(this.getNativeReference().prev);
+    public prevSibling(): XMLNode|null {
+        return refToNodeType(this.getNativeReference().prev) as XMLNode|null;
     }
 
-    public nextSibling() {
-        return refToNodeType(this.getNativeReference().next);
+    public nextSibling(): XMLNode|null {
+        return refToNodeType(this.getNativeReference().next) as XMLNode|null;
     }
 
     public evaluateXPath(xpath: string, namespace?: XPathNamespace): xmlXPathObjectPtr {
