@@ -146,6 +146,9 @@ module.exports.xmlns = function (assert: any) {
     var str =
         '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><div>BACON</div><div>ROCKS</div><p>WUT?</p></body></html>';
     var doc = libxml.parseXml(str);
+    
+    var nses = doc.namespaces();
+    assert.equal(nses.length, 1);
 
     var divs = doc.find("//xmlns:div", "http://www.w3.org/1999/xhtml");
     assert.equal(divs.length, 2);
@@ -161,9 +164,12 @@ module.exports.xmlns = function (assert: any) {
 
 module.exports.custom_ns = function (assert: any) {
     var str =
-        '<html xmlns:bacon="http://www.example.com/fake/uri"><head></head><body><bacon:div>BACON</bacon:div><bacon:div>ROCKS</bacon:div><p>WUT?</p></body></html>';
+        '<html xmlns:bacon="http://www.example.com/fake/uri" xmlns:turkey="http://www.example.com/fake/turkey"><turkey:head></turkey:head><body><bacon:div>BACON</bacon:div><bacon:div>ROCKS</bacon:div><p>WUT?</p></body></html>';
     var doc = libxml.parseXml(str);
 
+    var nses = doc.namespaces();
+    assert.equal(nses.length, 2);
+    
     var divs = doc.find("//bacon:div", { bacon: "http://www.example.com/fake/uri" });
     assert.equal(divs.length, 2);
 
