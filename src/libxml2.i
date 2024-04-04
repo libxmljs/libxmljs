@@ -97,7 +97,7 @@
 
   for (int index = 0; $1 != NULL && $1[index] != NULL; index++) {
     // SWIGV8_AppendOutput($result, SWIG_NewPointerObj(SWIG_as_voidptr($1[index]), SWIGTYPE_p__xmlNs, 0 |  0 ));
-    SWIGV8_AppendOutput($result, createWrap(((xmlNode*) $1[index]), SWIGTYPE_p__xmlNs));
+    SWIGV8_AppendOutput($result, createWrapNs($1[index], SWIGTYPE_p__xmlNs));
   }
   
   xmlFree($1);
