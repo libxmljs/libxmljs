@@ -2,7 +2,7 @@
 
 import { HTMLDocument, XMLDocument } from "./document";
 import { XMLElement, XMLText, XMLNamespace, XMLNodeError, XMLNode } from "./node";
-import { parseHtml, parseHtmlAsync, parseXml, parseXmlAsync } from "./parse";
+import { parseHtml, parseHtmlAsync, parseXml, parseXmlAsync, parseSchema } from "./parse";
 import { SaxParser, SaxPushParser } from "./sax";
 import { HTMLParseOptions, XMLParseOptions } from "./types";
 
@@ -93,6 +93,7 @@ export {
     parseXmlAsync,
     parseHtml,
     parseHtmlAsync,
+    parseSchema,
     SaxParser,
     SaxPushParser
 };
