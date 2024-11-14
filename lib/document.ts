@@ -261,20 +261,20 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
             const parser_ctxt = xmlSchemaNewDocParserCtxt(schemaDoc.getNativeReference());
 
             if (parser_ctxt === null) {
-                throw new Error("Could not create context for schema parser");
+                throw new Error("Could not create context for schema parser: " + errors.map(function (e) { return e.message; }).join(", "));
             }
 
             const schema = xmlSchemaParse(parser_ctxt);
 
 
             if (schema === null) {
-                throw new Error("Invalid XSD schema");
+                throw new Error("Invalid XSD schema: " + errors.map(function (e) { return e.message; }).join(", "));
             }
 
             const valid_ctxt = xmlSchemaNewValidCtxt(schema);
 
             if (valid_ctxt === null) {
-                throw new Error("Unable to create a validation context for the schema");
+                throw new Error("Unable to create a validation context for the schema: " + errors.map(function (e) { return e.message; }).join(", "));
             }
 
             const valid =
