@@ -4,17 +4,17 @@
     "module_name": "xmljs",
     "module_path": "./build/Release/",
     "host": "https://github.com",
-    "remote_path": "./libxmljs/libxmljs/releases/download/v{version}/",
+    "remote_path": "./shunkica/libxmljs/releases/download/v{version}/",
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "description": "libxml bindings for v8 javascript engine",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "repository": {
     "type": "git",
-    "url": "http://github.com/libxmljs/libxmljs.git"
+    "url": "https://github.com/shunkica/libxmljs.git"
   },
   "bugs": {
-    "url": "http://github.com/libxmljs/libxmljs/issues"
+    "url": "https://github.com/shunkica/libxmljs/issues"
   },
   "license": "MIT",
   "engines": {

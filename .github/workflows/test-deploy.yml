@@ -47,7 +47,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/shunkica/libxmljs/releases/download/**/*.tar.gz"]'
 
     upload-windows:
         strategy:
@@ -90,7 +90,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/shunkica/libxmljs/releases/download/**/*.tar.gz"]'
 
     upload-linux-older:
         runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/shunkica/libxmljs/releases/download/**/*.tar.gz"]'
 
     upload-linux-newer:
         runs-on: ubuntu-latest
@@ -169,7 +169,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/shunkica/libxmljs/releases/download/**/*.tar.gz"]'
 
     upload-arm-builds:
         strategy:
@@ -238,4 +238,4 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/shunkica/libxmljs/releases/download/**/*.tar.gz"]'
