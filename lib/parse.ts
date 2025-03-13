@@ -229,7 +229,7 @@ export const parseXml = (buffer: string | Buffer, options: XMLParseOptions = DEF
             buffer,
             typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
             options.baseUrl || DEFAULT_XML_PARSE_OPTIONS.baseUrl || "",
-            options.encoding || (typeof buffer === "string" ? "UTF-8" : null),
+            options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || (typeof buffer === "string" ? "UTF-8" : null),
             xmlOptionsToFlags(options)
         );
 
@@ -317,7 +317,7 @@ export const parseXmlAsync = async (
         buffer,
         typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
         options.url || DEFAULT_XML_PARSE_OPTIONS.url || "",
-        options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || "",
+        options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || (typeof buffer === "string" ? "UTF-8" : ""),
         xmlOptionsToFlags(options),
         (error: Error | null, document: xmlDocPtr | null) => {
             if (error) {
