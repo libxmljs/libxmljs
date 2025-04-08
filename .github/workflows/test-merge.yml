@@ -5,23 +5,22 @@ on:
 
 jobs:
     test-merge:
-        runs-on: ${{ matrix.config.os }}
         strategy:
+            fail-fast: false
             matrix:
-                node-version: [12.x]
-                # node-version: [12.x, 14.x, 16.x]
-                config:
-                    - { os: macos-latest, arch: x64 }
-                    - { os: ubuntu-latest, arch: x64 }
-                    - { os: windows-2019, arch: x64 }
+                node-version: ['lts/*', 'latest']
+                os: [macos-latest, ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
         steps:
-            - uses: actions/checkout@v3
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
+            - uses: actions/checkout@v4
               with:
-                python-version: '3.10'
+                submodules: true
+           # - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
+           #   uses: actions/setup-python@v2
+           #   with:
+           #     python-version: '3.10'
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
