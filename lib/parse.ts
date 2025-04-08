@@ -23,6 +23,7 @@ import {
 } from "./bindings/functions";
 
 import { HTMLDocument, XMLDocument } from "./document";
+import { XMLSchema } from "./schema";
 import { XMLNodeError } from "./node";
 
 const htmlOptionsToFlags = (options: HTMLParseOptions): number => {
@@ -265,6 +266,12 @@ export const parseXml = (buffer: string | Buffer, options: XMLParseOptions = DEF
 
         return document;
     });
+
+export const parseSchema = (buffer: string | Buffer, options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS): XMLSchema => {
+    const document = parseXml(buffer, options);
+    const schema = XMLSchema._parseSchema(document);
+    return schema;
+}
 
 export const parseHtml = (buffer: string | Buffer, options: HTMLParseOptions = {}): HTMLDocument =>
     withStructuredErrors((structuredErrors) => {
