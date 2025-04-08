@@ -21,6 +21,20 @@ module.exports.parse = function (assert: any) {
     assert.done();
 };
 
+module.exports.parseWithInvisibleCharacter = function (assert: any) {
+    var strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
+    
+    var doc = libxml.parseXml(strWithInvisibleCharacter)
+    assert.equal("1.0", doc.version());
+    assert.equal("UTF-8", doc.encoding());
+    assert.equal("root", doc.root()?.name());
+    assert.equal("child", (doc.get("child") as XMLElement).name());
+    assert.equal("with love", (doc.get("child") as XMLElement).text());
+    assert.equal("sibling", (doc.get("sibling") as XMLElement).name());
+    assert.equal("with content!", (doc.get("sibling") as XMLElement).text());
+    assert.done();
+}
+
 module.exports.parse_with_flags = function (assert: any) {
     const filename = __dirname + "/../../test/fixtures/parser.xml";
     const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
@@ -54,6 +68,26 @@ module.exports.parseAsync = function (assert: any) {
 
     assert.equal(++x, 1);
 };
+
+
+module.exports.parseAsyncWithInvisibleCharacter = function (assert: any) {
+    var strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
+
+    let x = 0;
+    
+    libxml.parseXmlAsync(strWithInvisibleCharacter).then((doc) => {
+        assert.equal(++x, 2);
+        assert.equal("1.0", doc.version());
+        assert.equal("UTF-8", doc.encoding());
+        assert.equal("root", doc.root()?.name());
+        assert.equal("child", (doc.get("child") as XMLElement).name());
+        assert.equal("with love", (doc.get("child") as XMLElement).text());
+        assert.equal("sibling", (doc.get("sibling") as XMLElement).name());
+        assert.equal("with content!", (doc.get("sibling") as XMLElement).text());
+        assert.done();
+    });
+    assert.equal(++x, 1);
+}
 
 module.exports.parse_async_with_replace = function (assert: any) {
     const filename = __dirname + "/../../test/fixtures/parser.xml";

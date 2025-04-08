@@ -23,6 +23,7 @@ import {
 } from "./bindings/functions";
 
 import { HTMLDocument, XMLDocument } from "./document";
+import { XMLSchema } from "./schema";
 import { XMLNodeError } from "./node";
 
 const htmlOptionsToFlags = (options: HTMLParseOptions): number => {
@@ -229,7 +230,7 @@ export const parseXml = (buffer: string | Buffer, options: XMLParseOptions = DEF
             buffer,
             typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
             options.baseUrl || DEFAULT_XML_PARSE_OPTIONS.baseUrl || "",
-            options.encoding || (typeof buffer === "string" ? "UTF-8" : null),
+            options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || (typeof buffer === "string" ? "UTF-8" : null),
             xmlOptionsToFlags(options)
         );
 
@@ -265,6 +266,12 @@ export const parseXml = (buffer: string | Buffer, options: XMLParseOptions = DEF
 
         return document;
     });
+
+export const parseSchema = (buffer: string | Buffer, options: XMLParseOptions = DEFAULT_XML_PARSE_OPTIONS): XMLSchema => {
+    const document = parseXml(buffer, options);
+    const schema = XMLSchema._parseSchema(document);
+    return schema;
+}
 
 export const parseHtml = (buffer: string | Buffer, options: HTMLParseOptions = {}): HTMLDocument =>
     withStructuredErrors((structuredErrors) => {
@@ -317,7 +324,7 @@ export const parseXmlAsync = async (
         buffer,
         typeof buffer === "string" ? Buffer.byteLength(buffer) : buffer.length,
         options.url || DEFAULT_XML_PARSE_OPTIONS.url || "",
-        options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || "",
+        options.encoding || DEFAULT_XML_PARSE_OPTIONS.encoding || (typeof buffer === "string" ? "UTF-8" : ""),
         xmlOptionsToFlags(options),
         (error: Error | null, document: xmlDocPtr | null) => {
             if (error) {

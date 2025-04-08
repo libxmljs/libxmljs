@@ -64,6 +64,8 @@ import {
     xmlSetNs,
 } from "./bindings/functions";
 
+import { XMLSchema } from "./schema";
+
 export const DEFAULT_XML_SAVE_OPTIONS: XMLSaveOptions = {
     format: true,
 };
@@ -164,6 +166,13 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
     }
 
     /**
+     * @private
+     */
+    public _getDocReference(): xmlDocPtr {
+        return this.getNativeReference();
+    }
+
+    /**
      * Get or set the document root
      *
      * @param node the node to set as the document root
@@ -255,39 +264,8 @@ export class XMLDocument extends XMLReference<xmlDocPtr> {
      * @returns {boolean} valid
      */
     public validate(schemaDoc: XMLDocument) {
-        xmlResetLastError();
-
-        return withStructuredErrors((errors) => {
-            const parser_ctxt = xmlSchemaNewDocParserCtxt(schemaDoc.getNativeReference());
-
-            if (parser_ctxt === null) {
-                throw new Error("Could not create context for schema parser");
-            }
-
-            const schema = xmlSchemaParse(parser_ctxt);
-
-
-            if (schema === null) {
-                throw new Error("Invalid XSD schema");
-            }
-
-            const valid_ctxt = xmlSchemaNewValidCtxt(schema);
-
-            if (valid_ctxt === null) {
-                throw new Error("Unable to create a validation context for the schema");
-            }
-
-            const valid =
-                xmlSchemaValidateDoc(valid_ctxt, this.getNativeReference()) == 0;
-
-            xmlSchemaFree(schema);
-            xmlSchemaFreeValidCtxt(valid_ctxt);
-            xmlSchemaFreeParserCtxt(parser_ctxt);
-
-            this.validationErrors = errors;
-
-            return valid;
-        });
+        const schema = XMLSchema._parseSchema(schemaDoc);
+        return schema.validateDocument(this);
     }
 
     public rngValidate(schemaDoc: XMLDocument): boolean {
