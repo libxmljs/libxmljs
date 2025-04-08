@@ -5,18 +5,16 @@ on:
 
 jobs:
     test-merge:
-        runs-on: ${{ matrix.config.os }}
         strategy:
             fail-fast: false
             matrix:
                 node-version: ['lts/*', 'latest']
-                # node-version: [12.x, 14.x, 16.x]
-                config:
-                    - { os: macos-latest, arch: ARM64 }
-                    - { os: ubuntu-latest, arch: x64 }
-                    - { os: windows-2025, arch: x64 }
+                os: [macos-latest, ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v4
+              with:
+                submodules: true
            # - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
            #   uses: actions/setup-python@v2
            #   with:
