@@ -34,20 +34,6 @@ module.exports.setters = function (assert: any) {
     assert.done();
 };
 
-// removed for interoperability between XMLText and XMLElement
-//
-// module.exports.getters = function (assert: any) {
-//     var doc = libxml.Document();
-//     var elem = libxml.Text(doc, "getters");
-
-//     assert.throws(function () {
-//         elem.name();
-//     }, "text nodes should NOT expose a name");
-
-//     assert.equal("text", elem.type());
-//     assert.done();
-// };
-
 module.exports.remove = function (assert: any) {
     var doc = libxml.Document();
     var elem = libxml.Text(doc, "node content");
