@@ -4,16 +4,27 @@ import * as getBindings from "bindings";
 
 const bindings = getBindings("xmljs");
 
-var SaxParser = function (callbacks: any) {
+
+function SaxParser(callbacks: any) {
     var parser = new bindings.SaxParser();
 
-    // attach callbacks
-    for (var callback in callbacks) {
+    for(var callback in callbacks){
         parser.on(callback, callbacks[callback]);
     }
 
     return parser;
-};
+}
+
+// var SaxParser = function (callbacks: any) {
+//     var parser = new bindings.SaxParser();
+
+//     // attach callbacks
+//     for (var callback in callbacks) {
+//         parser.on(callback, callbacks[callback]);
+//     }
+
+//     return parser;
+// };
 
 // Overriding the prototype, like util.inherit, wipes out the native binding.
 // Copy over the methods instead.
