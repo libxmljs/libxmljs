@@ -69,11 +69,13 @@
                     # node-gyp 2.x doesn't add this anymore
                     # https://github.com/TooTallNate/node-gyp/pull/612
                     'xcode_settings': {
-                        'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
                         'OTHER_LDFLAGS': [
                             '-undefined dynamic_lookup'
                         ],
                     },
+                    'cflags_cc': [
+                        '<!(node -p "parseInt(process.versions.node.split(`.`)[0]) >= 24 ? `-std=c++20` : `-std=c++17`")'
+                    ],
                 }],
                 ['OS=="win"', {
                     'defines': [
