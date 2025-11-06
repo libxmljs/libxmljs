@@ -74,7 +74,7 @@
                         ],
                     },
                     'cflags_cc': [
-                        '<!(node -p "parseInt(process.versions.node.split(`.`)[0]) >= 24 ? `-std=c++20` : `-std=c++17`")'
+                        '<!(node -p "parseInt(process.versions.node.split(\'.\')[0]) >= 24 ? \'-std=c++20\' : \'-std=c++17\'")'
                     ],
                 }],
                 ['OS=="win"', {
