@@ -24,7 +24,7 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
-                  architecture: ${{ matrix.arch }}
+                  architecture: ${{ matrix.arch }} # nodejs doesn't provide arm64 builds for node <= 14 so macos-latest needs explicit x64
                   cache: "npm"
             - run: npm ci --build-from-source
             - run: npm run tsc
