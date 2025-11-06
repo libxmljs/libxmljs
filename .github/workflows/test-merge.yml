@@ -8,9 +8,12 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                # node-version: [16.x]
-                node-version: [14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
+                node-version: [12.x, 14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
                 os: [macos-latest, ubuntu-latest, windows-2022]
+                exclude:
+                    # Node 12 fails to build on Windows 2022 due to missing VS2019 support
+                    - os: windows-2022
+                      node-version: 12.x
         steps:
             - uses: actions/checkout@v3
             - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
@@ -21,6 +24,7 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
+                  architecture: ${{ (matrix.os == 'macos-latest' && (matrix.node-version == '12.x' || matrix.node-version == '14.x')) && 'x64' || '' }}
                   cache: "npm"
             - run: npm ci --build-from-source
             - run: npm run tsc
