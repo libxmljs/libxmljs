@@ -70,7 +70,7 @@ jobs:
                     - { node-version: 20, npm-version: 10 }
                     - { node-version: 22, npm-version: 10 }
                     - { node-version: 24, npm-version: 11 }
-        runs-on: windows-2019
+        runs-on: windows-2022
         steps:
             - uses: actions/checkout@master
               with:
@@ -83,7 +83,7 @@ jobs:
             - name: Package prebuilt binary
               run: |
                   npm install -g npm@${{ matrix.config.npm-version }}
-                  npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --global
+                  npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise" --global
                   npm config set progress false
                   npm install --build-from-source
                   npm run package 2>&1
