@@ -8,8 +8,8 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                node-version: [16.x]
-                # node-version: [12.x, 14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
+                # node-version: [16.x]
+                node-version: [14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
                 os: [macos-latest, ubuntu-latest, windows-2022]
         steps:
             - uses: actions/checkout@v3
