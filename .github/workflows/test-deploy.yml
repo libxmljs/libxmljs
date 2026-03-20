@@ -11,9 +11,9 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # Build prebuilt binaries for Node 22 (LTS) and 24 (current) on both architectures
+                # Build prebuilt binaries for Node 22 (LTS) and 24 (current) across platforms
                 node-version: [22, 24]
-                runner: [ubuntu-22.04, ubuntu-24.04-arm]
+                runner: [ubuntu-22.04, ubuntu-24.04-arm, macos-14]
         runs-on: ${{ matrix.runner }}
         steps:
             # Checkout with submodules to pull in vendored libxml2 source
