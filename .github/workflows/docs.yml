@@ -54,7 +54,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@master
+              uses: actions/checkout@v6
               with:
                   persist-credentials: false
                   submodules: true
@@ -69,7 +69,7 @@ jobs:
               run: git add --force docs
 
             - name: Deploy to GH Pages
-              uses: peaceiris/actions-gh-pages@v3
+              uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   publish_dir: docs

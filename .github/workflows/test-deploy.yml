@@ -22,11 +22,11 @@ jobs:
                 PATH: /opt/python/cp38-cp38/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             options: --user root
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   persist-credentials: false
                   submodules: true
-            - uses: actions/setup-python@v5
+            - uses: actions/setup-python@v6
               with:
                   python-version: "3.12"
             - name: Point node-gyp at Python
@@ -34,7 +34,7 @@ jobs:
                   echo "PYTHON=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
                   echo "npm_config_python=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
             - name: Use Node.js ${{ matrix.config.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
@@ -45,7 +45,7 @@ jobs:
             - run: npm run tsc
             - run: npm run test
             - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
+              uses: alexellis/upload-assets@0.4.1
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
@@ -60,7 +60,7 @@ jobs:
                     - { node-version: 24, npm-version: 11 }
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   fetch-depth: 1
             - uses: uraimo/run-on-arch-action@v2
@@ -102,7 +102,7 @@ jobs:
                       npm run test
 
             - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
+              uses: alexellis/upload-assets@0.4.1
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
