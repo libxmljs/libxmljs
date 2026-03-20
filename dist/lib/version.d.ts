@@ -1,0 +1,11 @@
+declare const version: string;
+import { getMemUsed as memoryUsage, getNodeCount as nodeCount } from "./bindings/functions";
+export { version };
+declare const libxml_version: string;
+export { libxml_version };
+declare const libxml_parser_version: string;
+export { libxml_parser_version };
+declare const libxml_debug_enabled: boolean;
+export { libxml_debug_enabled };
+export { memoryUsage };
+export { nodeCount };
