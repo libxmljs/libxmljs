@@ -1,36 +1,33 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
 import * as libxml from "../index";
 
-module.exports.new = function(assert: any) {
+it('new', () => {
     var doc = libxml.Document();
     var comm = libxml.Comment(doc, 'comment1');
     doc.root(comm);
-    assert.equal('comment1', comm.text());
-    assert.done();
-};
+    assert.strictEqual(comm.text(), 'comment1');
+});
 
-module.exports.text = function(assert: any) {
+it('text', () => {
     var doc = libxml.Document();
     var comm = libxml.Comment(doc);
     comm.text('comment2');
-    assert.equal('comment2', comm.text());
-    assert.done();
-};
+    assert.strictEqual(comm.text(), 'comment2');
+});
 
-
-module.exports.textWithSpecialCharacters = function(assert: any) {
+it('textWithSpecialCharacters', () => {
     var doc = libxml.Document();
     var comm = libxml.Comment(doc);
     var theText = 'my comment <has> special ch&r&cters';
     comm.text(theText);
-    assert.equal(theText, comm.text());
-    assert.done();
-};
+    assert.strictEqual(comm.text(), theText);
+});
 
-module.exports.toStringWithSpecialCharacters = function(assert: any) {
+it('toStringWithSpecialCharacters', () => {
     var doc = libxml.Document();
     var comm = libxml.Comment(doc);
     var theText = 'my comment <has> special ch&r&cters';
     comm.text(theText);
-    assert.equal("<!--" + theText + "-->", comm.toString());
-    assert.done();
-};
+    assert.strictEqual(comm.toString(), "<!--" + theText + "-->");
+});

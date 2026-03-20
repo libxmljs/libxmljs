@@ -1,8 +1,10 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
 var fs = require("fs");
 import libxml from "../index";
 import { XMLAttribute, HTMLParseOptions, parseHtml } from "../index";
 
-const TEST_DIR = __dirname + "/../../test";
+const TEST_DIR = __dirname + "/../test";
 
 function make_error(object: any) {
     var err = new Error(object.message) as any;
@@ -14,7 +16,7 @@ function make_error(object: any) {
     return err;
 }
 
-module.exports.parse = function (assert: any) {
+it('parse', () => {
     var filename = TEST_DIR + "/fixtures/parser.html";
 
     function attempt_parse(encoding: any) {
@@ -22,9 +24,9 @@ module.exports.parse = function (assert: any) {
 
         var doc = parseHtml(str);
 
-        assert.equal("html", doc.root()?.name());
-        assert.equal("Test HTML document", (doc.get("head/title") as any).text());
-        assert.equal("HTML content!", (doc.get("body/span") as any).text());
+        assert.strictEqual(doc.root()?.name(), "html");
+        assert.strictEqual((doc.get("head/title") as any).text(), "Test HTML document");
+        assert.strictEqual((doc.get("body/span") as any).text(), "HTML content!");
     }
 
     // Parse via a string
@@ -32,62 +34,36 @@ module.exports.parse = function (assert: any) {
 
     // Parse via a Buffer
     attempt_parse(null);
+});
 
-    assert.done();
-};
-
-module.exports.parseAsync = function (assert: any) {
+it('parseAsync', async () => {
     var filename = TEST_DIR + "/fixtures/parser.html";
+    var str = fs.readFileSync(filename, "utf-8");
 
-    function attempt_parse(encoding: any) {
-        var str = fs.readFileSync(filename, encoding);
+    var doc = await libxml.parseHtmlAsync(str);
+    assert.strictEqual(doc.root()?.name(), "html");
+    assert.strictEqual((doc.get("head/title") as any).text(), "Test HTML document");
+    assert.strictEqual((doc.get("body/span") as any).text(), "HTML content!");
+});
 
-        let x = 0;
-
-        libxml.parseHtmlAsync(str).then((doc) => {
-            assert.equal(++x, 2);
-            assert.equal("html", doc.root()?.name());
-            assert.equal("Test HTML document", (doc.get("head/title") as any).text());
-            assert.equal("HTML content!", (doc.get("body/span") as any).text());
-        });
-
-        assert.equal(++x, 1);
-    }
-
-    // Parse via a string
-    attempt_parse("utf-8");
-
-    // Parse via a Buffer
-    attempt_parse(null);
-
-    assert.done();
-};
-
-// Although libxml defaults to a utf-8 encoding, if not specifically specified
-// it will guess the encoding based on meta http-equiv tags available
-// This test shows that the "guessed" encoding can be overridden
-module.exports.parse_force_encoding = function (assert: any) {
+it('parse_force_encoding', () => {
     var filename = TEST_DIR + "/fixtures/parser.euc_jp.html";
 
     function attempt_parse(encoding: any, opts: HTMLParseOptions) {
         var str = fs.readFileSync(filename, encoding);
 
         var doc = libxml.parseHtml(str, opts);
-        assert.equal(doc.errors, 0);
-        assert.equal("html", doc.root()?.name());
+        assert.strictEqual(doc.errors.length, 0);
+        assert.strictEqual(doc.root()?.name(), "html");
 
-        // make sure libxml rewrite the meta charset of this document
-
-        // calling toString on the document ensure that it is converted to the
-        // correct internal format and the new meta tag is replaced
         doc.root()?.toString();
-        
+
         let result = doc.find("/html/head/meta/@content")[0];
         var fixedCharset = (result as XMLAttribute).value();
         assert.ok(fixedCharset.indexOf(opts.encoding!.toUpperCase()) !== -1);
 
-        assert.equal("テスト", (doc.get("head/title") as any).text());
-        assert.equal("テスト", (doc.get("body/div") as any).text());
+        assert.strictEqual((doc.get("head/title") as any).text(), "\u30c6\u30b9\u30c8");
+        assert.strictEqual((doc.get("body/div") as any).text(), "\u30c6\u30b9\u30c8");
     }
 
     // Parse via a string
@@ -95,11 +71,9 @@ module.exports.parse_force_encoding = function (assert: any) {
 
     // Parse via a Buffer
     attempt_parse(null, { encoding: "utf-8" });
+});
 
-    assert.done();
-};
-
-module.exports.recoverable_parse = function (assert: any) {
+it('recoverable_parse', () => {
     var recoverableFile = TEST_DIR + "/fixtures/warnings/amp.html";
     var str = fs.readFileSync(recoverableFile, "utf8");
     var recoverableErrors = [
@@ -124,18 +98,17 @@ module.exports.recoverable_parse = function (assert: any) {
     ];
 
     var doc = libxml.parseHtml(str);
-    assert.equal(4, doc.errors.length);
+    assert.strictEqual(doc.errors.length, 4);
     for (var i = 0; i < recoverableErrors.length; i++) {
-        assert.equal(recoverableErrors[i].domain, doc.errors[i]?.domain);
-        assert.equal(recoverableErrors[i].code, doc.errors[i]?.code);
-        assert.equal(recoverableErrors[i].message, doc.errors[i]?.message);
-        assert.equal(recoverableErrors[i].level, doc.errors[i]?.level);
-        assert.equal(recoverableErrors[i].line, doc.errors[i]?.line);
+        assert.strictEqual(doc.errors[i]?.domain, recoverableErrors[i].domain);
+        assert.strictEqual(doc.errors[i]?.code, recoverableErrors[i].code);
+        assert.strictEqual(doc.errors[i]?.message, recoverableErrors[i].message);
+        assert.strictEqual(doc.errors[i]?.level, recoverableErrors[i].level);
+        assert.strictEqual(doc.errors[i]?.line, recoverableErrors[i].line);
     }
-    assert.done();
-};
+});
 
-module.exports.parseOptions = function (assert: any) {
+it('parseOptions', () => {
     var doc = libxml.parseHtml("<a/>", { doctype: false, implied: false }).toString()!;
     assert.ok(doc.indexOf("DOCTYPE") === -1);
     assert.ok(doc.indexOf("body") === -1);
@@ -150,18 +123,16 @@ module.exports.parseOptions = function (assert: any) {
     assert.ok(doc.indexOf("DOCTYPE") > -1);
     assert.ok(doc.indexOf("body") === -1);
     assert.ok(doc.indexOf("<html>") === -1);
-    assert.done();
-};
+});
 
-module.exports.toString = function (assert: any) {
+it('toString', () => {
     var doc = libxml.Document();
-    assert.ok(doc.toString({ declaration: false }) === "");
-    assert.equal(doc.toString({ declaration: false, type: "html" }), "\n");
+    assert.strictEqual(doc.toString({ declaration: false }), "");
+    assert.strictEqual(doc.toString({ declaration: false, type: "html" }), "\n");
 
     doc = libxml.parseHtml("<a></a>");
     assert.ok(doc.toString().indexOf("<?xml") === -1);
     assert.ok(doc.toString({ type: "xml" }).indexOf("<?xml") > -1);
     assert.ok(doc.toString({ type: "xhtml" }).indexOf("<?xml") > -1);
     assert.ok(doc.toString({ type: "xml", selfCloseEmpty: true })!.indexOf("<a/>") > -1);
-    assert.done();
-};
+});

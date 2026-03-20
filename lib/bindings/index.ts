@@ -1,5 +1,5 @@
 import { XMLReferenceType, NativeBindings } from "./types";
-import * as getBindings from "bindings";
+import getBindings from "bindings";
 
 const bindings = getBindings("xmljs");
 
@@ -40,7 +40,7 @@ export class XMLReference<T> {
 
     /**
      * @private
-     * @param _ref 
+     * @param _ref
      */
     constructor(_ref: T) {
         this._ref = _ref;
@@ -68,7 +68,7 @@ export class XMLReference<T> {
 
     /**
      * @private
-     * @returns 
+     * @returns
      */
     protected getNativeReference(): T {
         if (this._ref === null) {
@@ -96,7 +96,7 @@ export class XMLReference<T> {
 
     /**
      * @private
-     * @param ref 
+     * @param ref
      */
     protected setNativeReference(ref: T): void {
         if (ref === null) {

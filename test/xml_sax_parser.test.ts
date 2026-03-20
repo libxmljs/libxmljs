@@ -1,3 +1,5 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
 var fs = require("fs");
 
 import { SaxParser, SaxPushParser } from "../index";
@@ -92,7 +94,6 @@ function argsToArray(args: any) {
 }
 
 function createParser(parser: any, callbacks: any) {
-    // can connect by passing in as arguments to constructor
     var parser = new parser({
         startDocument: function () {
             callbacks.startDocument.push(argsToArray(arguments));
@@ -101,7 +102,6 @@ function createParser(parser: any, callbacks: any) {
             callbacks.endDocument.push(argsToArray(arguments));
         },
         startElementNS: function (elem: any, attrs: any, prefix: any, uri: any, namespaces: any) {
-            // p({e: elem, a: attrs, p: prefix, u: uri, n: namespaces});
             callbacks.startElementNS.push(argsToArray(arguments));
         },
         endElementNS: function (elem: any, prefix: any, uri: any) {
@@ -123,7 +123,6 @@ function createParser(parser: any, callbacks: any) {
         },
     });
 
-    // can also connect directly because it is an event emitter
     parser.on("cdata", function (cdata: any) {
         callbacks.cdata.push(argsToArray(arguments));
     });
@@ -131,18 +130,17 @@ function createParser(parser: any, callbacks: any) {
     return parser;
 }
 
-var filename = __dirname + "/../../test/fixtures/sax_parser.xml";
+var filename = __dirname + "/../test/fixtures/sax_parser.xml";
 
-module.exports.sax = function (assert: any) {
+it('sax', () => {
     var callbacks = clone(callbackTest);
     var str = fs.readFileSync(filename, "utf8");
     var parser = createParser(SaxParser, callbacks);
     parser.parseString(str);
-    assert.deepEqual(callbackControl, callbacks);
-    assert.done();
-};
+    assert.deepStrictEqual(callbacks, callbackControl);
+});
 
-module.exports.sax_push_chunked = function (assert: any) {
+it('sax_push_chunked', () => {
     var callbacks = clone(callbackTest);
     var str_ary = fs.readFileSync(filename, "utf8").split("\n");
     var parser = createParser(SaxPushParser, callbacks);
@@ -152,21 +150,18 @@ module.exports.sax_push_chunked = function (assert: any) {
 
     var control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
-    assert.deepEqual(control, callbacks);
-    assert.done();
-};
+    assert.deepStrictEqual(callbacks, control);
+});
 
-module.exports.string_parser = function (assert: any) {
+it('string_parser', () => {
     var callbacks = clone(callbackTest);
     var str = fs.readFileSync(filename, "utf8");
     var parser = createParser(SaxParser, callbacks);
 
-    // test that the parser can be reused after a gc run
     for (var i = 0; i < 10; i++) {
-        global.gc();
+        global.gc?.();
         parser.parseString(str);
     }
 
     assert.ok(true);
-    assert.done();
-};
+});

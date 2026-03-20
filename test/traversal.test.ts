@@ -1,13 +1,14 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
 import * as libxml from "../index";
 import { XMLElement, XMLNode } from "../index";
 
-module.exports.built = function (assert: any) {
+it('built', () => {
     var doc = libxml.Document();
     var child = doc.node("root").node("child");
     var sibling = doc.root()?.node("sibling");
     var gchild = child.node("grandchild");
 
-    // access document
     assert.ok(doc == gchild.doc());
     assert.ok(doc == doc.root()?.parent());
 
@@ -15,10 +16,9 @@ module.exports.built = function (assert: any) {
     assert.ok(gchild == doc.child(0)?.child(0));
 
     assert.ok(sibling == doc.child(1));
-    assert.done();
-};
+});
 
-module.exports.children = function (assert: any) {
+it('children', () => {
     var children = [];
     var doc = libxml.Document();
     var root = doc.node("root");
@@ -26,14 +26,13 @@ module.exports.children = function (assert: any) {
     children.push(root.node("sibling1"));
     children.push(root.node("sibling2"));
 
-    assert.equal(children.length, doc.childNodes().length);
+    assert.strictEqual(doc.childNodes().length, children.length);
     for (var i = 0; i < children.length; ++i) {
         assert.ok(children[i] == doc.child(i));
     }
-    assert.done();
-};
+});
 
-module.exports.siblings = function (assert: any) {
+it('siblings', () => {
     var children = [];
     var doc = libxml.Document();
     var root = doc.node("root");
@@ -44,52 +43,40 @@ module.exports.siblings = function (assert: any) {
     assert.ok(children[2] == children[1]?.nextSibling());
     assert.ok(null == children[0]?.prevSibling());
     assert.ok(null == children[2]?.nextSibling());
-    assert.done();
-};
+});
 
-module.exports.parsed = function (assert: any) {
+it('parsed', () => {
     var doc = libxml.parseXml('<?xml version="1.0"?>' + "<root><child><grandchild /></child><sibling/></root>");
     assert.ok(doc == (doc.child(0) as XMLElement).doc());
     assert.ok(doc == (doc.child(1) as XMLElement).doc());
     assert.ok(doc == (doc.child(0)?.child(0) as XMLElement).doc());
     assert.ok(doc == doc.root()?.parent());
 
-    // down and back up
-    assert.equal("child", doc.child(0)?.child(0)?.parent()?.name());
+    assert.strictEqual(doc.child(0)?.child(0)?.parent()?.name(), "child");
+    assert.strictEqual(doc.child(0)?.child(0)?.name(), "grandchild");
+    assert.strictEqual(doc.child(1)?.name(), "sibling");
+});
 
-    // propertly access inner nodes
-    assert.equal("grandchild", doc.child(0)?.child(0)?.name());
-
-    // sibling nodes
-    assert.equal("sibling", doc.child(1)?.name());
-    assert.done();
-};
-
-module.exports.parsed_children = function (assert: any) {
+it('parsed_children', () => {
     var doc = libxml.parseXml('<?xml version="1.0"?>' + "<root><prevSibling /><child /><nextSibling /></root>");
     var children = ["prevSibling", "child", "nextSibling"];
 
-    // childNodes
-    assert.ok(3 == doc.childNodes().length);
+    assert.strictEqual(doc.childNodes().length, 3);
     for (var i = 0; i < children.length; ++i) {
-        assert.ok(children[i] == (doc.child(i) as XMLElement).name());
+        assert.strictEqual((doc.child(i) as XMLElement).name(), children[i]);
     }
 
-    // check prev/next sibling
     var child = doc.child(1) as XMLElement;
-    assert.equal("child", child.name());
-    assert.equal(children[0], child.prevSibling()?.name());
-    assert.equal(children[2], child.nextSibling()?.name());
-    assert.ok(null == child.prevSibling()?.prevSibling());
-    assert.ok(null == child.nextSibling()?.nextSibling());
+    assert.strictEqual(child.name(), "child");
+    assert.strictEqual(child.prevSibling()?.name(), children[0]);
+    assert.strictEqual(child.nextSibling()?.name(), children[2]);
+    assert.strictEqual(child.prevSibling()?.prevSibling(), null);
+    assert.strictEqual(child.nextSibling()?.nextSibling(), null);
 
-    // prev/next Element
     var child = doc.child(1) as XMLElement;
-    assert.equal("child", child.name());
-    assert.equal(children[0], child.prevElement()?.name());
-    assert.equal(children[2], child.nextElement()?.name());
-    assert.ok(null == child.prevElement()?.prevElement());
-    assert.ok(null == child.nextElement()?.nextElement());
-
-    assert.done();
-};
+    assert.strictEqual(child.name(), "child");
+    assert.strictEqual(child.prevElement()?.name(), children[0]);
+    assert.strictEqual(child.nextElement()?.name(), children[2]);
+    assert.strictEqual(child.prevElement()?.prevElement(), null);
+    assert.strictEqual(child.nextElement()?.nextElement(), null);
+});

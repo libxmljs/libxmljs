@@ -1,29 +1,28 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
 import * as libxml from "../index";
 
-module.exports.new = function (assert: any) {
+it('new', () => {
     var doc = libxml.Document();
     var pi = libxml.ProcessingInstruction(doc, "mypi", "mycontent");
     doc.root(libxml.Element(doc, "myelem"));
     doc.root()?.addPrevSibling(pi);
 
-    assert.equal(doc.root()?.prevSibling(), pi);
-    assert.equal("mypi", pi.name());
-    assert.equal("mycontent", pi.text());
-    assert.done();
-};
+    assert.strictEqual(doc.root()?.prevSibling(), pi);
+    assert.strictEqual(pi.name(), "mypi");
+    assert.strictEqual(pi.text(), "mycontent");
+});
 
-module.exports.name = function (assert: any) {
+it('name', () => {
     var doc = libxml.Document();
     var pi = libxml.ProcessingInstruction(doc, "mypi");
     pi.name("mynewpi");
-    assert.equal("mynewpi", pi.name());
-    assert.done();
-};
+    assert.strictEqual(pi.name(), "mynewpi");
+});
 
-module.exports.text = function (assert: any) {
+it('text', () => {
     var doc = libxml.Document();
     var pi = libxml.ProcessingInstruction(doc, "mypi");
     pi.text("pi3");
-    assert.equal("pi3", pi.text());
-    assert.done();
-};
+    assert.strictEqual(pi.text(), "pi3");
+});

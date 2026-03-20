@@ -7,196 +7,34 @@ on:
     workflow_dispatch:
 
 jobs:
-    upload-macos:
-        strategy:
-            fail-fast: false
-            matrix:
-                config:
-                    - { node-version: 8, npm-version: 6 }
-                    - { node-version: 9, npm-version: 6 }
-                    - { node-version: 10, npm-version: 6 }
-                    - { node-version: 11, npm-version: 6 }
-                    - { node-version: 12, npm-version: 8 }
-                    - { node-version: 13, npm-version: 8 }
-                    - { node-version: 14, npm-version: 8 }
-                    - { node-version: 15, npm-version: 8 }
-                    - { node-version: 16, npm-version: 8 }
-                    - { node-version: 17, npm-version: 8 }
-                    - { node-version: 18, npm-version: 8 }
-                    - { node-version: 20, npm-version: 10 }
-                    - { node-version: 22, npm-version: 10 }
-                    - { node-version: 24, npm-version: 11 }
-        runs-on: macos-latest
-        steps:
-            - uses: actions/checkout@master
-              with:
-                  fetch-depth: 1
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
-              with:
-                  python-version: "3.10"
-            - uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ matrix.config.node-version }}
-                  registry-url: https://registry.npmjs.org
-
-            - name: Package prebuilt binary
-              run: |
-                  npm install -g npm@${{ matrix.config.npm-version }}
-                  npm config set progress false
-                  npm install --build-from-source
-                  npm run package 2>&1
-                  npm run tsc
-                  npm run test
-            - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
-              env:
-                  GITHUB_TOKEN: ${{ github.token }}
-              with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
-
-    upload-windows:
-        strategy:
-            fail-fast: false
-            matrix:
-                config:
-                    # node-gyp bundled with node <= 14 does not support windows-2022
-                    # - { node-version: 8, npm-version: 6 }
-                    # - { node-version: 9, npm-version: 6 }
-                    # - { node-version: 10, npm-version: 6 }
-                    # - { node-version: 11, npm-version: 6 }
-                    # - { node-version: 12, npm-version: 8 }
-                    # - { node-version: 13, npm-version: 8 }
-                    # - { node-version: 14, npm-version: 8 }
-                    # - { node-version: 15, npm-version: 8 }
-                    - { node-version: 16, npm-version: 8 }
-                    - { node-version: 17, npm-version: 8 }
-                    - { node-version: 18, npm-version: 8 }
-                    - { node-version: 20, npm-version: 10 }
-                    - { node-version: 22, npm-version: 10 }
-                    - { node-version: 24, npm-version: 11 }
-        runs-on: windows-2022
-        steps:
-            - uses: actions/checkout@master
-              with:
-                  fetch-depth: 1
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
-              with:
-                  python-version: "3.10"
-            - uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ matrix.config.node-version }}
-                  registry-url: https://registry.npmjs.org
-
-            - name: Package prebuilt binary
-              run: |
-                  npm install -g npm@${{ matrix.config.npm-version }}
-                  npm config delete msvs_version --global
-                  npm config set msvs_version 2022 --global
-                  npm config set progress false
-                  npm install --build-from-source
-                  npm run package 2>&1
-                  npm run tsc
-                  npm run test
-            - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
-              env:
-                  GITHUB_TOKEN: ${{ github.token }}
-              with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
-
-    upload-linux-older:
+    upload-linux-x64:
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
                 config:
-                    - { node-version: 8 }
-                    - { node-version: 9 }
-                    - { node-version: 10 }
-                    - { node-version: 11 }
-                    - { node-version: 12 }
-                    - { node-version: 13 }
-                    - { node-version: 14 }
-                    - { node-version: 15 }
-                container-image: [x86_64]
-        container:
-            image: quay.io/pypa/manylinux2014_${{ matrix.container-image }}
-            options: --user root
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  persist-credentials: false
-                  submodules: true
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
-              with:
-                  python-version: "3.10"
-            - name: Point node-gyp at Python
-              run: |
-                  echo "PYTHON=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
-                  echo "npm_config_python=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
-            - run: |
-                  which python3 || true
-                  python3 --version || true
-                  echo "pythonLocation=$pythonLocation"
-                  ls -la "$pythonLocation/bin" | head
-            - name: Use Node.js ${{ matrix.config.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.config.node-version }}
-                  cache: "npm"
-            - run: ldd --version
-            - run: npm install --unsafe-perm --build-from-source
-            - run: npm run package 2>&1
-            - run: npm run tsc
-            - run: npm run test
-            - name: Upload release binary
-              uses: alexellis/upload-assets@0.3.0
-              env:
-                  GITHUB_TOKEN: ${{ github.token }}
-              with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
-
-    upload-linux-newer:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                config:
-                    - { node-version: 16 }
-                    - { node-version: 17 }
-                    - { node-version: 18 }
-                    - { node-version: 20 }
                     - { node-version: 22 }
                     - { node-version: 24 }
                 container-image: [x86_64]
         container:
             image: quay.io/pypa/manylinux_2_28_${{ matrix.container-image }}
             env:
-                PATH: /opt/python/cp36-cp36m/bin:/opt/python/cp37-cp37m/bin:/opt/python/cp38-cp38/bin:/opt/rh/devtoolset-2/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/python/cp35-cp35m/bin:/opt/python/cp36-cp36m/bin:/opt/python/cp37-cp37m/bin:/opt/python/cp38-cp38/bin:/opt/python/cp39-cp39/bin:/opt/rh/devtoolset-8/root/usr/bin
+                PATH: /opt/python/cp38-cp38/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             options: --user root
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                   persist-credentials: false
                   submodules: true
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
+            - uses: actions/setup-python@v5
               with:
-                  python-version: "3.10"
+                  python-version: "3.12"
             - name: Point node-gyp at Python
               run: |
                   echo "PYTHON=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
                   echo "npm_config_python=${pythonLocation}/bin/python3" >> "$GITHUB_ENV"
-            - run: |
-                  which python3 || true
-                  python3 --version || true
-                  echo "pythonLocation=$pythonLocation"
-                  ls -la "$pythonLocation/bin" | head
             - name: Use Node.js ${{ matrix.config.node-version }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.config.node-version }}
                   cache: "npm"
@@ -211,38 +49,20 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/jhulford/libxmljs/releases/download/**/*.tar.gz"]'
 
-    upload-arm-builds:
+    upload-linux-arm64:
         strategy:
             fail-fast: false
             matrix:
                 config:
-                    - { node-version: 8, npm-version: 6 }
-                    - { node-version: 9, npm-version: 6 }
-                    - { node-version: 10, npm-version: 6 }
-                    - { node-version: 11, npm-version: 6 }
-                    - { node-version: 12, npm-version: 8 }
-                    - { node-version: 13, npm-version: 8 }
-                    - { node-version: 14, npm-version: 8 }
-                    - { node-version: 15, npm-version: 8 }
-                    - { node-version: 16, npm-version: 8 }
-                    - { node-version: 17, npm-version: 8 }
-                    - { node-version: 18, npm-version: 8 }
-                    - { node-version: 20, npm-version: 10 }
                     - { node-version: 22, npm-version: 10 }
                     - { node-version: 24, npm-version: 11 }
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@master
+            - uses: actions/checkout@v4
               with:
                   fetch-depth: 1
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
-              with:
-                  python-version: "3.10"
-            - name: List files
-              run: ls -l
             - uses: uraimo/run-on-arch-action@v2
               name: Build artifact
               id: build
@@ -264,9 +84,9 @@ jobs:
                   install: |
                       apt update
                       apt install -y curl python3 build-essential git
-                      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
                       source ~/.nvm/nvm.sh
-                      nvm install v${{matrix.config.node-version}}
+                      nvm install v${{ matrix.config.node-version }}
                       npm install -g npm@${{ matrix.config.npm-version }}
 
                   run: |
@@ -286,4 +106,4 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  asset_paths: '["./build/stage/libxmljs/libxmljs/releases/download/**/*.tar.gz"]'
+                  asset_paths: '["./build/stage/jhulford/libxmljs/releases/download/**/*.tar.gz"]'

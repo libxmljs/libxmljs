@@ -1,6 +1,6 @@
 var events = require("events");
 
-import * as getBindings from "bindings";
+import getBindings from "bindings";
 
 const bindings = getBindings("xmljs");
 

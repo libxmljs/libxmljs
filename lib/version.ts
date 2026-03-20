@@ -1,5 +1,14 @@
 
-const version = require("../../package.json").version;
+import * as path from "path";
+// Resolve package.json from both source (lib/) and compiled (dist/lib/) locations
+function loadPackageVersion(): string {
+    try {
+        return require(path.join(__dirname, "..", "package.json")).version;
+    } catch {
+        return require(path.join(__dirname, "..", "..", "package.json")).version;
+    }
+}
+const version = loadPackageVersion();
 
 import { __xmlParserVersion, getMemUsed as memoryUsage, getNodeCount as nodeCount} from "./bindings/functions";
 import { VERSION } from "./bindings/constants";
