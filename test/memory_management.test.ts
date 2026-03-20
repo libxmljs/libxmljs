@@ -1,19 +1,19 @@
-import { it, beforeEach } from 'node:test';
+import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'child_process';
 import * as path from 'path';
 import * as libxml from "../index";
 import { XMLElement } from "../index";
 
-var nodeVersion = process.versions.node;
-var majorVersion = parseInt(nodeVersion.split('.')[0]!, 10);
-var shouldSkip = majorVersion <= 12;
+const nodeVersion = process.versions.node;
+const majorVersion = parseInt(nodeVersion.split('.')[0]!, 10);
+const shouldSkip = majorVersion <= 12;
 
 // Run a memory test in an isolated subprocess so tsx module caching
 // doesn't interfere with GC-based assertions.
 function runIsolated(scriptBody: string) {
-    var tsxBin = path.join(__dirname, '..', 'node_modules', '.bin', 'tsx');
-    var script = `
+    const tsxBin = path.join(__dirname, '..', 'node_modules', '.bin', 'tsx');
+    const script = `
         var libxml = require('./index');
         var XMLElement = libxml.XMLElement;
 
@@ -53,7 +53,7 @@ function runIsolated(scriptBody: string) {
 }
 
 function makeDocument() {
-    var body =
+    const body =
         "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<root><outer><middle><inner><center/></inner></middle></outer></root>";
     return libxml.parseXml(body);
@@ -63,13 +63,13 @@ function collectGarbage(minCycles?: number, maxCycles?: number) {
     minCycles = minCycles || 5;
     maxCycles = maxCycles || 20;
 
-    var cycles = 0;
-    var freedRss = 0;
-    var usage = process.memoryUsage();
+    let cycles = 0;
+    let freedRss = 0;
+    let usage = process.memoryUsage();
     do {
         global.gc?.();
 
-        var usageAfterGc = process.memoryUsage();
+        const usageAfterGc = process.memoryUsage();
         freedRss = usage.rss - usageAfterGc.rss;
         usage = usageAfterGc;
 
@@ -167,12 +167,12 @@ it('inaccessible_tree_freed', () => {
 
 it('namespace_list_freed', () => {
     collectGarbage();
-    var doc = makeDocument();
-    var el = doc.get("//center") as XMLElement;
+    const doc = makeDocument();
+    const el = doc.get("//center") as XMLElement;
     el.namespace("bar", null);
-    var xmlMemBefore = libxml.memoryUsage();
-    var xmlCountBefore = libxml.nodeCount();
-    for (var i = 0; i < 1000; i++) {
+    const xmlMemBefore = libxml.memoryUsage();
+    const xmlCountBefore = libxml.nodeCount();
+    for (let i = 0; i < 1000; i++) {
         el.namespaces();
     }
     collectGarbage();

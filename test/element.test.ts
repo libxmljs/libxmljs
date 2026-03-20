@@ -4,16 +4,16 @@ import * as libxml from "../index";
 import { XMLElement } from "../index";
 
 it('new', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Element(doc, "name1");
+    const doc = libxml.Document();
+    const elem = libxml.Element(doc, "name1");
     doc.root(elem);
     assert.strictEqual(elem.name(), "name1");
     assert.strictEqual(doc.root()?.name(), "name1");
 });
 
 it('newWithContent', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Element(doc, "name1", "content && more content <>");
+    const doc = libxml.Document();
+    const elem = libxml.Element(doc, "name1", "content && more content <>");
     doc.root(elem);
     assert.strictEqual(elem.name(), "name1");
     assert.strictEqual(doc.root()?.name(), "name1");
@@ -21,8 +21,8 @@ it('newWithContent', () => {
 });
 
 it('setters', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
 
     assert.strictEqual(elem.text(), "");
     elem.text("content && more content <>");
@@ -34,16 +34,16 @@ it('setters', () => {
 });
 
 it('getters', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
 
     assert.strictEqual(elem.type(), "element");
 });
 
 it('remove', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
-    var child = elem.node("child");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
+    const child = elem.node("child");
     assert.ok(doc.get("/name1/child"));
 
     child.remove();
@@ -51,8 +51,8 @@ it('remove', () => {
 });
 
 it('toString', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
     assert.strictEqual(elem.toString(), "<name1/>");
     elem.node("child");
     assert.strictEqual(elem.toString(), "<name1><child/></name1>");
@@ -63,8 +63,8 @@ it('toString', () => {
 });
 
 it('toStringWithEncoding', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
     assert.strictEqual(elem.toString({ type: "xhtml" }), "<name1></name1>");
     elem.node("child1").text("Something\xA0with a non-breaking space");
     assert.strictEqual(elem.toString({ type: "xhtml" }), "<name1><child1>Something\xA0with a non-breaking space</child1></name1>");
@@ -79,71 +79,71 @@ it('toStringWithEncoding', () => {
 });
 
 it('path', () => {
-    var doc = libxml.Document();
-    var root = doc.node("root");
-    var gchild = root.node("child").node("grandchild");
-    var sibling = doc.root()?.node("sibling");
+    const doc = libxml.Document();
+    const root = doc.node("root");
+    const gchild = root.node("child").node("grandchild");
+    const sibling = doc.root()?.node("sibling");
     assert.strictEqual(gchild.path(), "/root/child/grandchild");
     assert.strictEqual(sibling?.path(), "/root/sibling");
 });
 
 it('move', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
-    var child = elem.node("child");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
+    const child = elem.node("child");
     assert.ok(doc.get("/name1/child"));
 
     child.remove();
-    var name2 = elem.node("name2");
+    const name2 = elem.node("name2");
     name2.addChild(child);
     assert.ok(!doc.get("/name1/child"));
     assert.ok(doc.get("/name1/name2/child"));
 });
 
 it('addChild', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
-    var newChild = libxml.Element(doc, "new-child");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
+    const newChild = libxml.Element(doc, "new-child");
     elem.addChild(newChild);
     assert.ok(doc.get("/name1/new-child"));
 });
 
 it('add_prev_sibling', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
 
-    var child1 = elem.node("child1");
-    var child2 = elem.node("child2");
+    const _child1 = elem.node("child1");
+    const child2 = elem.node("child2");
     assert.strictEqual(elem.childNodes().length, 2);
-    var prevSibling = libxml.Element(doc, "prev-sibling");
-    var addedSibling = child2.addPrevSibling(prevSibling);
-    var children = elem.childNodes();
+    const prevSibling = libxml.Element(doc, "prev-sibling");
+    const _addedSibling = child2.addPrevSibling(prevSibling);
+    const children = elem.childNodes();
     assert.strictEqual(children.length, 3);
     assert.strictEqual(children[1]?.name(), "prev-sibling");
 });
 
 it('add_next_sibling', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    const doc = libxml.Document();
+    const elem = doc.node("name1");
 
-    var child1 = elem.node("child1");
-    var child2 = elem.node("child2");
+    const child1 = elem.node("child1");
+    const _child2 = elem.node("child2");
     assert.strictEqual(elem.childNodes().length, 2);
-    var nextSibling = libxml.Element(elem.doc()!, "next-sibling");
-    var addedSibling = child1.addNextSibling(nextSibling);
-    var children = elem.childNodes();
+    const nextSibling = libxml.Element(elem.doc()!, "next-sibling");
+    const _addedSibling = child1.addNextSibling(nextSibling);
+    const children = elem.childNodes();
     assert.strictEqual(children.length, 3);
     assert.strictEqual(children[1]?.name(), "next-sibling");
 });
 
 it('import', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("name1");
+    let doc = libxml.Document();
+    const elem = doc.node("name1");
 
-    var child1 = elem.node("child1");
+    const child1 = elem.node("child1");
     doc = child1.doc()!;
 
-    var newdoc = libxml.Document();
+    const newdoc = libxml.Document();
     newdoc.node("newdoc");
 
     newdoc.root()?.addChild(child1);
@@ -155,9 +155,9 @@ it('import', () => {
 });
 
 it('clone', () => {
-    var doc = libxml.Document();
-    var elem = doc.node("child");
-    var elem2 = elem.clone();
+    const doc = libxml.Document();
+    const elem = doc.node("child");
+    const elem2 = elem.clone();
 
     assert.ok(elem2 instanceof XMLElement);
 
@@ -169,20 +169,20 @@ it('clone', () => {
 });
 
 it('namespace', () => {
-    var str =
+    const str =
         '<?xml version="1.0" encoding="UTF-8"?>\n' +
         '<root xmlns:bacon="http://www.example.com/fake/uri"><node bacon:attr-with-ns="attr-with-ns-value" attr-without-ns="attr-withoug-ns-vavlue" /></root>';
-    var doc = libxml.parseXml(str);
-    var node = doc.get("node");
+    const doc = libxml.parseXml(str);
+    const node = doc.get("node");
 
     assert.ok(node instanceof XMLElement);
 
     if (node instanceof XMLElement) {
-        var attrs = node?.attrs();
+        const attrs = node?.attrs();
 
         attrs.forEach(function (attr: any) {
-            var name = attr.name();
-            var ns = attr.namespace();
+            const name = attr.name();
+            const ns = attr.namespace();
 
             if (name === "attr-with-ns") {
                 assert.strictEqual(ns.prefix(), "bacon");
@@ -196,9 +196,9 @@ it('namespace', () => {
 });
 
 it('replace', () => {
-    var str = "<foo>some <bar/> evening</foo>";
-    var doc = libxml.parseXml(str);
-    var bar = doc.get("bar");
+    const str = "<foo>some <bar/> evening</foo>";
+    let doc = libxml.parseXml(str);
+    let bar = doc.get("bar");
 
     assert.ok(bar instanceof XMLElement);
 
@@ -220,7 +220,7 @@ it('replace', () => {
 
     doc = libxml.parseXml(str);
     bar = doc.get("bar");
-    var enchant = libxml.parseXml("<enchanted/>");
+    const enchant = libxml.parseXml("<enchanted/>");
     assert.ok(bar instanceof XMLElement);
 
     if (bar instanceof XMLElement) {
@@ -234,10 +234,10 @@ it('replace', () => {
 });
 
 it('add_child_merge_text', () => {
-    var str = "<foo>bar</foo>";
-    var doc = libxml.parseXml(str);
-    var foo = doc.root();
-    var baz = libxml.Text(doc, "baz");
+    const str = "<foo>bar</foo>";
+    const doc = libxml.parseXml(str);
+    const foo = doc.root();
+    const baz = libxml.Text(doc, "baz");
 
     assert.ok(foo instanceof XMLElement);
 

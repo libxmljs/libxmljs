@@ -4,29 +4,29 @@ import * as libxml from "../index";
 import { XMLAttribute, XMLElement, XMLNamespace } from "../index";
 
 it('get', () => {
-    var doc = libxml.Document();
-    var root = doc.node("root");
-    var child = root.node("child");
-    var grandchild = child.node("grandchild");
+    const doc = libxml.Document();
+    const root = doc.node("root");
+    const child = root.node("child");
+    const grandchild = child.node("grandchild");
 
     assert.strictEqual(doc.get("child"), child);
     assert.strictEqual((doc.get("child") as XMLElement).get("grandchild"), grandchild);
 });
 
 it('get_missing', () => {
-    var doc = libxml.Document();
-    var root = doc.node("root");
+    const doc = libxml.Document();
+    const _root = doc.node("root");
 
-    var missing = doc.get("missing/text()");
+    const missing = doc.get("missing/text()");
     assert.strictEqual(missing, null);
 });
 
 it('get_attr', () => {
-    var doc = libxml.Document();
-    var root = doc.node("root");
-    var child = root.node("child");
+    let doc = libxml.Document();
+    const root = doc.node("root");
+    const child = root.node("child");
     child.setAttribute("attr", "val");
-    var attr = child.getAttribute("attr");
+    const attr = child.getAttribute("attr");
 
     assert.strictEqual(doc.get("//@attr"), attr);
     assert.strictEqual((doc.get("//@attr") as XMLAttribute).value(), "val");
@@ -41,8 +41,8 @@ it('get_attr', () => {
 });
 
 it('get_non_nodeset', () => {
-    var doc = libxml.Document();
-    var root = doc.node("root");
+    const doc = libxml.Document();
+    const _root = doc.node("root");
 
     assert.strictEqual(doc.get("true()"), true);
     assert.strictEqual(doc.get("false()"), false);
@@ -51,27 +51,27 @@ it('get_non_nodeset', () => {
 });
 
 it('find', () => {
-    var children = [];
-    var doc = libxml.Document();
-    var root = doc.node("root");
+    const children = [];
+    const doc = libxml.Document();
+    const root = doc.node("root");
     children.push(root.node("child"));
     children.push(root.node("child"));
 
-    var results = doc.find("child");
+    const results = doc.find("child");
     assert.strictEqual(children.length, 2);
     assert.strictEqual(results.length, 2);
 
-    for (var child = 0; child < children.length; ++child) {
+    for (let child = 0; child < children.length; ++child) {
         assert.strictEqual(results[child], children[child]);
     }
 });
 
 describe('namespace', () => {
     it('get', () => {
-        var doc = libxml.Document();
-        var root = doc.node("root");
-        var child = root.node("child");
-        var grandchild = child.node("grandchild");
+        const doc = libxml.Document();
+        const root = doc.node("root");
+        const child = root.node("child");
+        const grandchild = child.node("grandchild");
         grandchild.namespace("nsuri");
 
         assert.strictEqual(doc.get("child"), child);
@@ -79,19 +79,19 @@ describe('namespace', () => {
     });
 
     it('find', () => {
-        var children = [];
-        var doc = libxml.Document();
-        var root = doc.node("root");
+        const children = [];
+        const doc = libxml.Document();
+        const root = doc.node("root");
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = children[0]?.namespace("nsuri") as XMLNamespace;
+        const ns = children[0]?.namespace("nsuri") as XMLNamespace;
         children[1]?.namespace(ns);
 
-        var results = doc.find("xmlns:child", "nsuri");
+        const results = doc.find("xmlns:child", "nsuri");
         assert.strictEqual(children.length, 2);
         assert.strictEqual(results.length, 2);
-        for (var child = 0; child < children.length; ++child) {
+        for (let child = 0; child < children.length; ++child) {
             assert.strictEqual(results[child], children[child]);
         }
     });
@@ -99,15 +99,15 @@ describe('namespace', () => {
 
 describe('prefixed_namespace', () => {
     it('get', () => {
-        var doc = libxml.Document();
-        var root = doc.node("root");
-        var child = root.node("child");
-        var grandchild = child.node("grandchild");
+        const doc = libxml.Document();
+        const root = doc.node("root");
+        const child = root.node("child");
+        const grandchild = child.node("grandchild");
         grandchild.namespace("pefname", "nsuri");
 
         assert.strictEqual(doc.get("child"), child);
 
-        var ns_params = {
+        const ns_params = {
             pefname: "nsuri",
         };
 
@@ -115,23 +115,23 @@ describe('prefixed_namespace', () => {
     });
 
     it('find', () => {
-        var children = [];
-        var doc = libxml.Document();
-        var root = doc.node("root");
+        const children = [];
+        const doc = libxml.Document();
+        const root = doc.node("root");
         children.push(root.node("child"));
         children.push(root.node("child"));
 
-        var ns = children[0]?.namespace("pefname", "nsuri") as XMLNamespace;
+        const ns = children[0]?.namespace("pefname", "nsuri") as XMLNamespace;
         children[1]?.namespace(ns);
 
-        var ns_params = {
+        const ns_params = {
             pefname: "nsuri",
         };
 
-        var results = doc.find("pefname:child", ns_params);
+        const results = doc.find("pefname:child", ns_params);
         assert.strictEqual(children.length, 2);
         assert.strictEqual(results.length, 2);
-        for (var child = 0; child < children.length; ++child) {
+        for (let child = 0; child < children.length; ++child) {
             assert.strictEqual(results[child], children[child]);
         }
     });

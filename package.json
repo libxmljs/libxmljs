@@ -35,7 +35,7 @@
     "tsgenerate-debug": "lldb -- `which node` scripts/swig2ts.js",
     "tsc": "node --stack_size=10000 -e \"process.argv=['node','tsc','--diagnostics','--extendedDiagnostics','--listEmittedFiles'];require('./node_modules/typescript/lib/tsc.js')\"",
     "dev": "node --stack-size=10000 -e \"process.argv=['node','tsc','-w'];require('./node_modules/typescript/lib/tsc.js')\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint 'lib/**/*.ts' 'test/**/*.ts' 'index.ts'",
     "test": "tsx --expose_gc --test test/*.test.ts",
     "docs": "typedoc --includeVersion --excludePrivate --out docs lib/index.ts"
   },
@@ -46,6 +46,9 @@
   },
   "devDependencies": {
     "@types/bindings": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "eslint": "^10.1.0",
     "tsx": "^4.21.0",
     "typedoc": "^0.28.17",
     "typescript": "^5.9.3"

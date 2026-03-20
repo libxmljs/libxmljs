@@ -1,14 +1,14 @@
-var events = require("events");
+const events = require("events");
 
 import getBindings from "bindings";
 
 const bindings = getBindings("xmljs");
 
-var SaxParser = function (callbacks: any) {
-    var parser = new bindings.SaxParser();
+const SaxParser = function (callbacks: any) {
+    const parser = new bindings.SaxParser();
 
     // attach callbacks
-    for (var callback in callbacks) {
+    for (const callback in callbacks) {
         parser.on(callback, callbacks[callback]);
     }
 
@@ -17,13 +17,13 @@ var SaxParser = function (callbacks: any) {
 
 // Overriding the prototype, like util.inherit, wipes out the native binding.
 // Copy over the methods instead.
-for (var k in events.EventEmitter.prototype) bindings.SaxParser.prototype[k] = events.EventEmitter.prototype[k];
+for (const k1 in events.EventEmitter.prototype) bindings.SaxParser.prototype[k1] = events.EventEmitter.prototype[k1];
 
-var SaxPushParser = function (callbacks: any) {
-    var parser = new bindings.SaxPushParser();
+const SaxPushParser = function (callbacks: any) {
+    const parser = new bindings.SaxPushParser();
 
     // attach callbacks
-    for (var callback in callbacks) {
+    for (const callback in callbacks) {
         parser.on(callback, callbacks[callback]);
     }
 
@@ -32,7 +32,7 @@ var SaxPushParser = function (callbacks: any) {
 
 // Overriding the prototype, like util.inherit, wipes out the native binding.
 // Copy over the methods instead.
-for (var k in events.EventEmitter.prototype) bindings.SaxPushParser.prototype[k] = events.EventEmitter.prototype[k];
+for (const k2 in events.EventEmitter.prototype) bindings.SaxPushParser.prototype[k2] = events.EventEmitter.prototype[k2];
 
 export { SaxParser };
 export { SaxPushParser };

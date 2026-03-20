@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import * as libxml from "../index";
 
 it('new', () => {
-    var doc = libxml.Document();
-    var pi = libxml.ProcessingInstruction(doc, "mypi", "mycontent");
+    const doc = libxml.Document();
+    const pi = libxml.ProcessingInstruction(doc, "mypi", "mycontent");
     doc.root(libxml.Element(doc, "myelem"));
     doc.root()?.addPrevSibling(pi);
 
@@ -14,15 +14,15 @@ it('new', () => {
 });
 
 it('name', () => {
-    var doc = libxml.Document();
-    var pi = libxml.ProcessingInstruction(doc, "mypi");
+    const doc = libxml.Document();
+    const pi = libxml.ProcessingInstruction(doc, "mypi");
     pi.name("mynewpi");
     assert.strictEqual(pi.name(), "mynewpi");
 });
 
 it('text', () => {
-    var doc = libxml.Document();
-    var pi = libxml.ProcessingInstruction(doc, "mypi");
+    const doc = libxml.Document();
+    const pi = libxml.ProcessingInstruction(doc, "mypi");
     pi.text("pi3");
     assert.strictEqual(pi.text(), "pi3");
 });

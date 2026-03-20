@@ -105,7 +105,7 @@ export class XMLReference<T> {
 
         this._ref = ref;
 
-        refMap.set(ref as Object, this);
+        refMap.set(ref as object, this);
     }
 }
 

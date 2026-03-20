@@ -6,13 +6,13 @@ function collectGarbage(minCycles: number, maxCycles?: number) {
     minCycles = minCycles || 3;
     maxCycles = maxCycles || 10;
 
-    var cycles = 0;
-    var freedRss = 0;
-    var usage = process.memoryUsage();
+    let cycles = 0;
+    let freedRss = 0;
+    let usage = process.memoryUsage();
     do {
         global.gc?.();
 
-        var usageAfterGc = process.memoryUsage();
+        const usageAfterGc = process.memoryUsage();
         freedRss = usage.rss - usageAfterGc.rss;
         usage = usageAfterGc;
 

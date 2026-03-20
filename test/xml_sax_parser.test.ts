@@ -1,19 +1,19 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-var fs = require("fs");
+const fs = require("fs");
 
 import { SaxParser, SaxPushParser } from "../index";
 
 function clone(obj: any) {
     if (obj == null || typeof obj != "object") return obj;
 
-    var temp = new obj.constructor();
-    for (var key in obj) temp[key] = clone(obj[key]);
+    const temp = new obj.constructor();
+    for (const key in obj) temp[key] = clone(obj[key]);
 
     return temp;
 }
 
-var callbackTest = {
+const callbackTest = {
     startDocument: [],
     endDocument: [],
 
@@ -29,7 +29,7 @@ var callbackTest = {
     error: [],
 };
 
-var callbackControl = {
+const callbackControl = {
     startDocument: [[]],
 
     endDocument: [[]],
@@ -94,17 +94,17 @@ function argsToArray(args: any) {
 }
 
 function createParser(parser: any, callbacks: any) {
-    var parser = new parser({
+    const p = new parser({
         startDocument: function () {
             callbacks.startDocument.push(argsToArray(arguments));
         },
         endDocument: function () {
             callbacks.endDocument.push(argsToArray(arguments));
         },
-        startElementNS: function (elem: any, attrs: any, prefix: any, uri: any, namespaces: any) {
+        startElementNS: function (_elem: any, _attrs: any, _prefix: any, _uri: any, _namespaces: any) {
             callbacks.startElementNS.push(argsToArray(arguments));
         },
-        endElementNS: function (elem: any, prefix: any, uri: any) {
+        endElementNS: function (_elem: any, _prefix: any, _uri: any) {
             callbacks.endElementNS.push(argsToArray(arguments));
         },
         characters: function (chars: any) {
@@ -112,53 +112,53 @@ function createParser(parser: any, callbacks: any) {
                 callbacks.characters.push(argsToArray(arguments));
             }
         },
-        comment: function (msg: any) {
+        comment: function (_msg: any) {
             callbacks.comment.push(argsToArray(arguments));
         },
-        warning: function (msg: any) {
+        warning: function (_msg: any) {
             callbacks.warning.push(argsToArray(arguments));
         },
-        error: function (msg: any) {
+        error: function (_msg: any) {
             callbacks.error.push(argsToArray(arguments));
         },
     });
 
-    parser.on("cdata", function (cdata: any) {
+    p.on("cdata", function (_cdata: any) {
         callbacks.cdata.push(argsToArray(arguments));
     });
 
-    return parser;
+    return p;
 }
 
-var filename = __dirname + "/../test/fixtures/sax_parser.xml";
+const filename = __dirname + "/../test/fixtures/sax_parser.xml";
 
 it('sax', () => {
-    var callbacks = clone(callbackTest);
-    var str = fs.readFileSync(filename, "utf8");
-    var parser = createParser(SaxParser, callbacks);
+    const callbacks = clone(callbackTest);
+    const str = fs.readFileSync(filename, "utf8");
+    const parser = createParser(SaxParser, callbacks);
     parser.parseString(str);
     assert.deepStrictEqual(callbacks, callbackControl);
 });
 
 it('sax_push_chunked', () => {
-    var callbacks = clone(callbackTest);
-    var str_ary = fs.readFileSync(filename, "utf8").split("\n");
-    var parser = createParser(SaxPushParser, callbacks);
-    for (var i = 0; i < str_ary.length; ++i) {
+    const callbacks = clone(callbackTest);
+    const str_ary = fs.readFileSync(filename, "utf8").split("\n");
+    const parser = createParser(SaxPushParser, callbacks);
+    for (let i = 0; i < str_ary.length; ++i) {
         parser.push(str_ary[i], i + 1 == str_ary.length);
     }
 
-    var control = clone(callbackControl);
+    const control = clone(callbackControl);
     control.error = [["Extra content at the end of the document\n"]];
     assert.deepStrictEqual(callbacks, control);
 });
 
 it('string_parser', () => {
-    var callbacks = clone(callbackTest);
-    var str = fs.readFileSync(filename, "utf8");
-    var parser = createParser(SaxParser, callbacks);
+    const callbacks = clone(callbackTest);
+    const str = fs.readFileSync(filename, "utf8");
+    const parser = createParser(SaxParser, callbacks);
 
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         global.gc?.();
         parser.parseString(str);
     }

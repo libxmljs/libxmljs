@@ -5,10 +5,10 @@ import * as libxml from "../index";
 import { XMLSaveOptions, XMLElement, XMLParseOptions, XMLStructuredError } from "../index";
 
 it('parse', () => {
-    var filename = __dirname + "/../test/fixtures/parser.xml";
-    var str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
+    const filename = __dirname + "/../test/fixtures/parser.xml";
+    const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
 
-    var doc = libxml.parseXml(str);
+    const doc = libxml.parseXml(str);
     assert.strictEqual(doc.version(), "1.0");
     assert.strictEqual(doc.encoding(), "UTF-8");
     assert.strictEqual(doc.root()?.name(), "root");
@@ -23,9 +23,9 @@ it('parse', () => {
 });
 
 it('parseWithInvisibleCharacter', () => {
-    var strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
+    const strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
 
-    var doc = libxml.parseXml(strWithInvisibleCharacter)
+    const doc = libxml.parseXml(strWithInvisibleCharacter)
     assert.strictEqual(doc.version(), "1.0");
     assert.strictEqual(doc.encoding(), "UTF-8");
     assert.strictEqual(doc.root()?.name(), "root");
@@ -44,10 +44,10 @@ it('parse_with_flags', () => {
 });
 
 it('parseAsync', async () => {
-    var filename = __dirname + "/../test/fixtures/parser.xml";
-    var str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
+    const filename = __dirname + "/../test/fixtures/parser.xml";
+    const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
 
-    var doc = await libxml.parseXmlAsync(str);
+    const doc = await libxml.parseXmlAsync(str);
     assert.strictEqual(doc.version(), "1.0");
     assert.strictEqual(doc.encoding(), "UTF-8");
     assert.strictEqual(doc.root()?.name(), "root");
@@ -62,9 +62,9 @@ it('parseAsync', async () => {
 });
 
 it('parseAsyncWithInvisibleCharacter', async () => {
-    var strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
+    const strWithInvisibleCharacter = "\uFEFF<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><child>with love</child><sibling>with content!</sibling></root>";
 
-    var doc = await libxml.parseXmlAsync(strWithInvisibleCharacter);
+    const doc = await libxml.parseXmlAsync(strWithInvisibleCharacter);
     assert.strictEqual(doc.version(), "1.0");
     assert.strictEqual(doc.encoding(), "UTF-8");
     assert.strictEqual(doc.root()?.name(), "root");
@@ -78,28 +78,28 @@ it('parse_async_with_replace', async () => {
     const filename = __dirname + "/../test/fixtures/parser.xml";
     const str = fs.readFileSync(filename, "utf8").replace(/[\r]+/g, '');
 
-    var doc = await libxml.parseXmlAsync(str, {replaceEntities: true, validateEntities: true});
+    const doc = await libxml.parseXmlAsync(str, {replaceEntities: true, validateEntities: true});
     assert.strictEqual(doc.getParseFlags(), 18);
 });
 
 it('parse_buffer', () => {
-    var filename = __dirname + "/../test/fixtures/parser-utf16.xml";
-    var buf = fs.readFileSync(filename);
+    const filename = __dirname + "/../test/fixtures/parser-utf16.xml";
+    const buf = fs.readFileSync(filename);
 
-    var doc = libxml.parseXml(buf);
+    const doc = libxml.parseXml(buf);
     assert.strictEqual(doc.version(), "1.0");
     assert.strictEqual(doc.encoding(), "UTF-16");
     assert.strictEqual(doc.root()?.name(), "root");
 });
 
 it('recoverable_parse', () => {
-    var filename = __dirname + "/../test/fixtures/warnings/ent9.xml";
-    var str = fs.readFileSync(filename, "utf8");
+    const filename = __dirname + "/../test/fixtures/warnings/ent9.xml";
+    const str = fs.readFileSync(filename, "utf8");
 
-    var doc = libxml.parseXml(str);
+    const doc = libxml.parseXml(str);
 
     assert.strictEqual(doc.errors.length, 1);
-    var err = doc.errors.shift()!;
+    const err = doc.errors.shift()!;
     assert.ok(err instanceof Error);
     assert.strictEqual(err.domain, 3);
     assert.strictEqual(err.column, 13);
@@ -113,26 +113,30 @@ it('baseurl_xml', () => {
         return;
     }
 
-    var str = '<!DOCTYPE example SYSTEM "baseurl.dtd">\n' + '<example msg="&happy;"/>\n';
+    const str = '<!DOCTYPE example SYSTEM "baseurl.dtd">\n' + '<example msg="&happy;"/>\n';
 
-    var doc = libxml.Document.fromXml(str, {
-        validateEntities: true,
-        replaceEntities: true,
-    });
-    assert.ok(doc.errors.length > 0);
+    {
+        const doc = libxml.Document.fromXml(str, {
+            validateEntities: true,
+            replaceEntities: true,
+        });
+        assert.ok(doc.errors.length > 0);
+    }
 
-    var doc = libxml.Document.fromXml(str, {
-        validateEntities: true,
-        replaceEntities: true,
-        baseUrl: __dirname + "/../test/fixtures/example.xml",
-    });
-    assert.strictEqual(doc.errors.length, 0);
+    {
+        const doc = libxml.Document.fromXml(str, {
+            validateEntities: true,
+            replaceEntities: true,
+            baseUrl: __dirname + "/../test/fixtures/example.xml",
+        });
+        assert.strictEqual(doc.errors.length, 0);
+    }
 });
 
 it('fatal_error', () => {
-    var filename = __dirname + "/../test/fixtures/errors/comment.xml";
-    var str = fs.readFileSync(filename, "utf8");
-    var err: XMLStructuredError | null = null;
+    const filename = __dirname + "/../test/fixtures/errors/comment.xml";
+    const str = fs.readFileSync(filename, "utf8");
+    let err: XMLStructuredError | null = null;
 
     try {
         libxml.parseXml(str);
@@ -142,7 +146,7 @@ it('fatal_error', () => {
         }
     }
 
-    var errorControl = {
+    const errorControl = {
         domain: 1,
         code: 4,
         message: "Start tag expected, '<' not found\n",
@@ -161,7 +165,7 @@ it('fatal_error', () => {
 
 it('parse_options', () => {
     function test_parser_option(input: any, options: XMLParseOptions, expected: any, saveOptions?: XMLSaveOptions) {
-        var output = libxml.parseXml(input, options).toString(saveOptions);
+        let output = libxml.parseXml(input, options).toString(saveOptions);
         output = output.replace(/^<\?xml version="1.0" encoding="UTF-8"\?>\n/, "");
         output = output.replace(/\n$/, "");
         assert.strictEqual(output, expected);

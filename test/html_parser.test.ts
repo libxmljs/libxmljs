@@ -1,13 +1,13 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-var fs = require("fs");
+const fs = require("fs");
 import libxml from "../index";
 import { XMLAttribute, HTMLParseOptions, parseHtml } from "../index";
 
 const TEST_DIR = __dirname + "/../test";
 
 function make_error(object: any) {
-    var err = new Error(object.message) as any;
+    const err = new Error(object.message) as any;
     err.domain = object.domain;
     err.code = object.code;
     err.level = object.level;
@@ -17,12 +17,12 @@ function make_error(object: any) {
 }
 
 it('parse', () => {
-    var filename = TEST_DIR + "/fixtures/parser.html";
+    const filename = TEST_DIR + "/fixtures/parser.html";
 
     function attempt_parse(encoding: any) {
-        var str = fs.readFileSync(filename, encoding);
+        const str = fs.readFileSync(filename, encoding);
 
-        var doc = parseHtml(str);
+        const doc = parseHtml(str);
 
         assert.strictEqual(doc.root()?.name(), "html");
         assert.strictEqual((doc.get("head/title") as any).text(), "Test HTML document");
@@ -37,29 +37,29 @@ it('parse', () => {
 });
 
 it('parseAsync', async () => {
-    var filename = TEST_DIR + "/fixtures/parser.html";
-    var str = fs.readFileSync(filename, "utf-8");
+    const filename = TEST_DIR + "/fixtures/parser.html";
+    const str = fs.readFileSync(filename, "utf-8");
 
-    var doc = await libxml.parseHtmlAsync(str);
+    const doc = await libxml.parseHtmlAsync(str);
     assert.strictEqual(doc.root()?.name(), "html");
     assert.strictEqual((doc.get("head/title") as any).text(), "Test HTML document");
     assert.strictEqual((doc.get("body/span") as any).text(), "HTML content!");
 });
 
 it('parse_force_encoding', () => {
-    var filename = TEST_DIR + "/fixtures/parser.euc_jp.html";
+    const filename = TEST_DIR + "/fixtures/parser.euc_jp.html";
 
     function attempt_parse(encoding: any, opts: HTMLParseOptions) {
-        var str = fs.readFileSync(filename, encoding);
+        const str = fs.readFileSync(filename, encoding);
 
-        var doc = libxml.parseHtml(str, opts);
+        const doc = libxml.parseHtml(str, opts);
         assert.strictEqual(doc.errors.length, 0);
         assert.strictEqual(doc.root()?.name(), "html");
 
         doc.root()?.toString();
 
-        let result = doc.find("/html/head/meta/@content")[0];
-        var fixedCharset = (result as XMLAttribute).value();
+        const result = doc.find("/html/head/meta/@content")[0];
+        const fixedCharset = (result as XMLAttribute).value();
         assert.ok(fixedCharset.indexOf(opts.encoding!.toUpperCase()) !== -1);
 
         assert.strictEqual((doc.get("head/title") as any).text(), "\u30c6\u30b9\u30c8");
@@ -74,9 +74,9 @@ it('parse_force_encoding', () => {
 });
 
 it('recoverable_parse', () => {
-    var recoverableFile = TEST_DIR + "/fixtures/warnings/amp.html";
-    var str = fs.readFileSync(recoverableFile, "utf8");
-    var recoverableErrors = [
+    const recoverableFile = TEST_DIR + "/fixtures/warnings/amp.html";
+    const str = fs.readFileSync(recoverableFile, "utf8");
+    const recoverableErrors = [
         make_error({
             domain: 5,
             code: 23,
@@ -97,9 +97,9 @@ it('recoverable_parse', () => {
         make_error({ domain: 5, code: 68, message: "htmlParseEntityRef: no name\n", level: 2, line: 15, column: 4 }),
     ];
 
-    var doc = libxml.parseHtml(str);
+    const doc = libxml.parseHtml(str);
     assert.strictEqual(doc.errors.length, 4);
-    for (var i = 0; i < recoverableErrors.length; i++) {
+    for (let i = 0; i < recoverableErrors.length; i++) {
         assert.strictEqual(doc.errors[i]?.domain, recoverableErrors[i].domain);
         assert.strictEqual(doc.errors[i]?.code, recoverableErrors[i].code);
         assert.strictEqual(doc.errors[i]?.message, recoverableErrors[i].message);
@@ -109,7 +109,7 @@ it('recoverable_parse', () => {
 });
 
 it('parseOptions', () => {
-    var doc = libxml.parseHtml("<a/>", { doctype: false, implied: false }).toString()!;
+    let doc = libxml.parseHtml("<a/>", { doctype: false, implied: false }).toString()!;
     assert.ok(doc.indexOf("DOCTYPE") === -1);
     assert.ok(doc.indexOf("body") === -1);
     assert.ok(doc.indexOf("<html>") === -1);
@@ -126,7 +126,7 @@ it('parseOptions', () => {
 });
 
 it('toString', () => {
-    var doc = libxml.Document();
+    let doc = libxml.Document();
     assert.strictEqual(doc.toString({ declaration: false }), "");
     assert.strictEqual(doc.toString({ declaration: false, type: "html" }), "\n");
 

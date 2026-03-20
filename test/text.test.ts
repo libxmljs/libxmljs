@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import * as libxml from "../index";
 
 it('invalid_new', () => {
-    var doc = libxml.Document();
+    const doc = libxml.Document();
 
     assert.throws(() => {
         //@ts-ignore
@@ -16,15 +16,15 @@ it('invalid_new', () => {
 });
 
 it('new', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Text(doc, "node content");
+    const doc = libxml.Document();
+    const elem = libxml.Text(doc, "node content");
     doc.root(elem);
     assert.strictEqual(elem.text(), "node content");
 });
 
 it('setters', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Text(doc, "node content");
+    const doc = libxml.Document();
+    const elem = libxml.Text(doc, "node content");
 
     assert.strictEqual(elem.text(), "node content");
     elem.text("content && more content <>");
@@ -32,8 +32,8 @@ it('setters', () => {
 });
 
 it('remove', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Text(doc, "node content");
+    const doc = libxml.Document();
+    const elem = libxml.Text(doc, "node content");
     doc.root(elem);
     assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\nnode content\n');
     elem.remove();
@@ -41,17 +41,17 @@ it('remove', () => {
 });
 
 it('toString', () => {
-    var doc = libxml.Document();
-    var elem = libxml.Text(doc, "node content");
+    const doc = libxml.Document();
+    const elem = libxml.Text(doc, "node content");
     doc.root(elem);
     assert.strictEqual(elem.toString(), "node content");
 });
 
 it('addChild', () => {
-    var doc = libxml.Document();
+    const doc = libxml.Document();
 
-    var newTextNode = libxml.Text(doc, "my text");
-    var newElement = libxml.Element(doc, "div");
+    const newTextNode = libxml.Text(doc, "my text");
+    const newElement = libxml.Element(doc, "div");
 
     newElement.addChild(newTextNode);
     doc.root(newElement);
@@ -59,12 +59,12 @@ it('addChild', () => {
 });
 
 it('addSiblings', () => {
-    var doc = libxml.Document();
+    const doc = libxml.Document();
 
-    var parentNode = libxml.Element(doc, "div");
-    var child = parentNode.node("child", "i'm a child");
-    var prevTextNode = libxml.Text(doc, "before text");
-    var nextTextNode = libxml.Text(doc, "after text");
+    const parentNode = libxml.Element(doc, "div");
+    const child = parentNode.node("child", "i'm a child");
+    const prevTextNode = libxml.Text(doc, "before text");
+    const nextTextNode = libxml.Text(doc, "after text");
 
     child.addPrevSibling(prevTextNode);
     child.addNextSibling(nextTextNode);
@@ -73,14 +73,14 @@ it('addSiblings', () => {
 });
 
 it('add_prev_sibling_merge_text', () => {
-    var str = "<foo>bar<baz/></foo>";
-    var doc = libxml.parseXml(str);
-    var bar = doc.root()?.childNodes()[0];
+    const str = "<foo>bar<baz/></foo>";
+    const doc = libxml.parseXml(str);
+    const bar = doc.root()?.childNodes()[0];
 
-    var qux = libxml.Text(doc, "qux");
+    const qux = libxml.Text(doc, "qux");
     bar?.addPrevSibling(qux);
 
-    var children = doc.root()?.childNodes();
+    const children = doc.root()?.childNodes();
     assert.deepStrictEqual(children?.length, 2);
     assert.deepStrictEqual(children?.[0]?.text(), "quxbar");
     assert.ok(children?.[0] != qux);
@@ -90,14 +90,14 @@ it('add_prev_sibling_merge_text', () => {
 });
 
 it('add_next_sibling_merge_text', () => {
-    var str = "<foo>bar<baz/></foo>";
-    var doc = libxml.parseXml(str);
-    var bar = doc.root()?.childNodes()[0];
+    const str = "<foo>bar<baz/></foo>";
+    const doc = libxml.parseXml(str);
+    const bar = doc.root()?.childNodes()[0];
 
-    var qux = libxml.Text(doc, "qux");
+    const qux = libxml.Text(doc, "qux");
     bar?.addNextSibling(qux);
 
-    var children = doc.root()?.childNodes();
+    const children = doc.root()?.childNodes();
     assert.deepStrictEqual(children?.length, 2);
     assert.deepStrictEqual(children?.[0]?.text(), "barqux");
     assert.ok(children?.[0] != qux);
