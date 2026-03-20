@@ -13,13 +13,23 @@ jobs:
             - uses: actions/checkout@v6
               with:
                   fetch-depth: 1
+
+            # Configure Node and the npm registry for publishing
             - uses: actions/setup-node@v6
               with:
                   node-version: 22
                   registry-url: https://registry.npmjs.org
+
+            # Install deps (prebuilt binary is downloaded, no build-from-source needed)
             - run: npm install
+
+            # Verify TypeScript compiles cleanly before publishing
             - run: npm run tsc
+
+            # Run the full test suite as a final gate
             - run: npm run test
+
+            # Publish to npm using the NPM_TOKEN secret for auth
             - run: npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

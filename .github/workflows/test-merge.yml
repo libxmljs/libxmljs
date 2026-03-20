@@ -5,21 +5,32 @@ on:
 
 jobs:
     test-merge:
-        runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-                node-version: [22.x, 24.x]
+                # Test against Node 22 (LTS) and 24 (current) on both architectures
+                node-version: [22, 24]
+                runner: [ubuntu-22.04, ubuntu-24.04-arm]
+        runs-on: ${{ matrix.runner }}
         steps:
             - uses: actions/checkout@v6
+
+            # Python is required by node-gyp to compile native C++ addons
             - uses: actions/setup-python@v6
               with:
                   python-version: "3.12"
+
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
+
+            # Install deps and compile native libxml2 bindings from source
             - run: npm ci --build-from-source
+
+            # Verify TypeScript compiles cleanly
             - run: npm run tsc
+
+            # Run the full test suite (node:test via tsx)
             - run: npm run test
