@@ -3,12 +3,14 @@
 [![npm version](https://badge.fury.io/js/libxmljs.svg)](https://badge.fury.io/js/libxmljs)
 [![Downloads monthly](https://img.shields.io/npm/dm/libxmljs.svg)](https://npmjs.org/package/libxmljs)
 [![Downloads total](https://img.shields.io/npm/dt/libxmljs.svg)](https://npmjs.org/package/libxmljs)
-[![Test & Upload](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/libxmljs/libxmljs/actions/workflows/test-deploy.yml)
+[![Test & Upload](https://github.com/jhulford/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/jhulford/libxmljs/actions/workflows/test-deploy.yml)
 
 `npm install libxmljs`
 
 NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in
-Typescript
+Typescript.
+
+This is a fork of [libxmljs/libxmljs](https://github.com/libxmljs/libxmljs) with support for **Node.js 22 and 24**, prebuilt binaries for **linux-x64** and **linux-arm64**, and modernized dev tooling.
 
 ## Documentation
 
@@ -16,7 +18,7 @@ Typescript
 
 ## Examples
 
-For more examples, check out the [test suite](https://github.com/libxmljs/libxmljs/tree/master/test).
+For more examples, check out the [test suite](https://github.com/jhulford/libxmljs/tree/master/test).
 
 ```javascript
 import libxmljs from "libxmljs";
@@ -73,9 +75,13 @@ libxmljs
 > Compiles Typescript within `lib/` and outputs it to `dist/` Use `npm run dev` to put Typescript compiler into watch
 > mode.
 
+`npm run lint`
+
+> Runs eslint against `lib/`, `test/`, and `index.ts`.
+
 `npm run test`
 
-> Runs all tests in `test/` using nodeunit. Use `npm run test -- -t TEST_NAME` to run a specific test.
+> Runs all tests in `test/` using Node's built-in test runner (`node:test`) via `tsx`. Use `npm run test -- --test-name-pattern="TEST_NAME"` to run a specific test.
 
 `npm run docs`
 
