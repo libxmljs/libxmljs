@@ -6,6 +6,10 @@ on:
             - "*"
     workflow_dispatch:
 
+# Sets permissions for OIDC token to publish to npm
+permissions:
+    id-token: write
+
 jobs:
     publish:
         runs-on: ubuntu-latest
@@ -29,7 +33,5 @@ jobs:
             # Run the full test suite as a final gate
             - run: npm run test
 
-            # Publish to npm using the NPM_TOKEN secret for auth
-            - run: npm publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            # Publish to npm using OIDC token (no secrets needed)
+            - run: npm publish --provenance

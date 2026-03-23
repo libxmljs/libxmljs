@@ -86,3 +86,154 @@ libxmljs
 `npm run docs`
 
 > Generates `docs/` using Typedoc
+
+## Publishing
+
+This project uses automated GitHub Actions workflows for publishing. All publishing is done via Git tags.
+
+### Prerequisites
+
+1. **Initial Package Setup** (one-time):
+   - Manually publish first version (e.g., `0.0.1-beta.1`) to establish package
+   - After package exists, configure OIDC for automated publishing
+
+2. **OIDC Setup** (for automated publishing):
+   - Go to npm → Account Settings → Access Tokens → GitHub Actions
+   - Add your GitHub repository and enable OIDC
+   - More secure than static tokens, no secrets needed
+
+3. **Branch protection**: Ensure your main branch is properly protected
+
+### Publishing Process (Protected Main Branch)
+
+Since the main branch is protected, all releases go through release branches and pull requests.
+
+#### Patch Release (Bug Fixes)
+
+```bash
+# 1. Create release branch
+git checkout -b release/v1.0.13
+
+# 2. Bump patch version
+npm version patch
+
+# 3. Push release branch and create PR
+git push origin release/v1.0.13
+# Create PR: release/v1.0.13 → main
+# Get PR approved and merged
+
+# 4. Tag the merged commit on main
+git checkout main
+git pull origin main
+git tag v1.0.13
+git push origin v1.0.13
+```
+
+#### Minor Release (New Features)
+
+```bash
+# 1. Create release branch
+git checkout -b release/v1.1.0
+
+# 2. Bump minor version
+npm version minor
+
+# 3. Push release branch and create PR
+git push origin release/v1.1.0
+# Create PR: release/v1.1.0 → main
+# Get PR approved and merged
+
+# 4. Tag the merged commit on main
+git checkout main
+git pull origin main
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+#### Major Release (Breaking Changes)
+
+```bash
+# 1. Create release branch
+git checkout -b release/v2.0.0
+
+# 2. Bump major version
+npm version major
+
+# 3. Push release branch and create PR
+git push origin release/v2.0.0
+# Create PR: release/v2.0.0 → main
+# Get PR approved and merged
+
+# 4. Tag the merged commit on main
+git checkout main
+git pull origin main
+git tag v2.0.0
+git push origin v2.0.0
+```
+
+#### Pre-release (Beta/Alpha)
+
+```bash
+# 1. Create pre-release branch
+git checkout -b prerelease/v1.1.0-beta.1
+
+# 2. Bump version with pre-release identifier
+npm version 1.1.0-beta.1  # or 1.1.0-alpha.1, 1.1.0-rc.1, etc.
+
+# 3. Push pre-release branch and create PR
+git push origin prerelease/v1.1.0-beta.1
+# Create PR: prerelease/v1.1.0-beta.1 → main
+# Get PR approved and merged
+
+# 4. Tag the merged commit on main
+git checkout main
+git pull origin main
+git tag v1.1.0-beta.1
+git push origin v1.1.0-beta.1
+```
+
+#### Installing Pre-release Versions
+
+```bash
+# Install latest pre-release
+npm install libxmljs@beta
+
+# Install specific pre-release version
+npm install libxmljs@1.1.0-beta.1
+
+# Install latest alpha
+npm install libxmljs@alpha
+
+# Install latest release candidate
+npm install libxmljs@rc
+```
+
+#### Quick Reference
+
+| Release Type | Command | Example Tag |
+|---|---|---|
+| Patch | `npm version patch` | `v1.0.13` |
+| Minor | `npm version minor` | `v1.1.0` |
+| Major | `npm version major` | `v2.0.0` |
+| Beta | `npm version 1.1.0-beta.1` | `v1.1.0-beta.1` |
+| Alpha | `npm version 1.1.0-alpha.1` | `v1.1.0-alpha.1` |
+| RC | `npm version 1.1.0-rc.1` | `v1.1.0-rc.1` |
+
+### What Gets Published
+
+- **Prebuilt binaries**: `{Node 22, 24} × {linux-x64, linux-arm64, macos-arm64}`
+- **npm package**: Includes compiled TypeScript and native bindings
+- **Documentation**: Deployed to GitHub Pages
+- **GitHub release**: Contains all prebuilt binary tarballs
+
+### Manual Testing Before Release
+
+```bash
+# Test the build locally
+npm run build
+npm run tsc
+npm run test
+
+# Test from git URL in another project
+yarn add github:jhulford/libxmljs#aws-arm-x86-builds
+```
