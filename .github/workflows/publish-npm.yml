@@ -26,6 +26,25 @@ jobs:
                   node-version: 22
                   registry-url: https://registry.npmjs.org
 
+            # Read version from package.json
+            - name: Get package version
+              id: package
+              run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+            # Validate tag matches package version
+            - name: Validate tag version
+              run: |
+                TAG_VERSION="${{ github.ref_name }}"
+                PACKAGE_VERSION="${{ steps.package.outputs.version }}"
+                echo "Tag version: $TAG_VERSION"
+                echo "Package version: $PACKAGE_VERSION"
+                if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+                  echo "❌ Error: Tag '$TAG_VERSION' does not match package version '$PACKAGE_VERSION'"
+                  echo "❌ Tag must exactly match package version: '$PACKAGE_VERSION'"
+                  exit 1
+                fi
+                echo "✅ Tag version matches package version"
+
             # Install deps (prebuilt binary is downloaded, no build-from-source needed)
             - run: npm install
 
