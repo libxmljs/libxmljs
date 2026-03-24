@@ -1,0 +1,138 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  pages: write
+  pull-requests: write
+
+jobs:
+  build-and-upload:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Build prebuilt binaries for Node 22 (LTS) and 24 (current) across platforms
+        node-version: [22, 24]
+        runner: [ubuntu-22.04, ubuntu-24.04-arm, macos-14]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      # Checkout with submodules to pull in vendored libxml2 source
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          submodules: true
+
+      # Python is required by node-gyp to compile native C++ addons
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      # Install deps and compile native libxml2 bindings from source
+      - run: npm ci --build-from-source
+
+      # Package the compiled binary into a tarball for distribution via node-pre-gyp
+      - run: npm run package 2>&1
+
+      # Verify TypeScript compiles cleanly
+      - run: npm run tsc
+
+      # Run the full test suite (node:test via tsx)
+      - run: npm run test
+
+      # Upload the prebuilt binary tarball to the GitHub release
+      - name: Upload release binary
+        uses: alexellis/upload-assets@0.4.1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./build/stage/jhulford/libxmljs/releases/download/**/*.tar.gz"]'
+
+  publish:
+    needs: [build-and-upload]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      # Read version from package.json
+      - name: Get package version
+        id: package
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      # Configure Node and the npm registry for publishing
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Install deps (prebuilt binary is downloaded, no build-from-source needed)
+      - run: npm install
+
+      # Verify TypeScript compiles cleanly before publishing
+      - run: npm run tsc
+
+      # Run the full test suite as a final gate
+      - run: npm run test
+
+      # Create GitHub release before publishing
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.package.outputs.version }}
+          body: |
+            Prebuilt binaries for @jhulford/libxmljs version ${{ steps.package.outputs.version }}
+
+            ## Installation
+            ```bash
+            npm install @jhulford/libxmljs@${{ steps.package.outputs.version }}
+            ```
+
+            ## Supported Platforms
+            - Linux x64 (Node 22, 24)
+            - Linux arm64 (Node 22, 24)
+            - macOS arm64 (Node 22, 24)
+          draft: false
+          prerelease: ${{ contains(steps.package.outputs.version, 'alpha') || contains(steps.package.outputs.version, 'beta') || contains(steps.package.outputs.version, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      # Publish to npm using OIDC token (no secrets needed)
+      - run: npm publish --provenance
+
+  build-docs:
+    needs: [publish]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          submodules: true
+
+      - name: Install
+        run: npm install
+
+      - name: Build Docs
+        run: npm run docs
+
+      - name: Add docs
+        run: git add --force docs
+
+      - name: Deploy to GH Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
