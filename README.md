@@ -1,11 +1,11 @@
-# libxmljs
+# @jhulford/libxmljs
 
-[![npm version](https://badge.fury.io/js/libxmljs.svg)](https://badge.fury.io/js/libxmljs)
-[![Downloads monthly](https://img.shields.io/npm/dm/libxmljs.svg)](https://npmjs.org/package/libxmljs)
-[![Downloads total](https://img.shields.io/npm/dt/libxmljs.svg)](https://npmjs.org/package/libxmljs)
+[![npm version](https://badge.fury.io/js/%40jhulford%2Flibxmljs.svg)](https://badge.fury.io/js/@jhulford/libxmljs)
+[![Downloads monthly](https://img.shields.io/npm/dm/%40jhulford%2Flibxmljs.svg)](https://npmjs.org/package/@jhulford/libxmljs)
+[![Downloads total](https://img.shields.io/npm/dt/%40jhulford%2Flibxmljs.svg)](https://npmjs.org/package/@jhulford/libxmljs)
 [![Test & Upload](https://github.com/jhulford/libxmljs/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/jhulford/libxmljs/actions/workflows/test-deploy.yml)
 
-`npm install libxmljs`
+`npm install @jhulford/libxmljs`
 
 NodeJS bindings for [libxml2](https://en.wikipedia.org/wiki/Libxml2) written in
 Typescript.
@@ -196,16 +196,16 @@ git push origin v1.1.0-beta.1
 
 ```bash
 # Install latest pre-release
-npm install libxmljs@beta
+npm install @jhulford/libxmljs@beta
 
 # Install specific pre-release version
-npm install libxmljs@1.1.0-beta.1
+npm install @jhulford/libxmljs@1.1.0-beta.1
 
 # Install latest alpha
-npm install libxmljs@alpha
+npm install @jhulford/libxmljs@alpha
 
 # Install latest release candidate
-npm install libxmljs@rc
+npm install @jhulford/libxmljs@rc
 ```
 
 #### Quick Reference
@@ -236,4 +236,7 @@ npm run test
 
 # Test from git URL in another project
 yarn add github:jhulford/libxmljs#aws-arm-x86-builds
+
+# Or test the published package
+npm install @jhulford/libxmljs@alpha
 ```

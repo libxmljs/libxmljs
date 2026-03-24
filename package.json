@@ -1,5 +1,5 @@
 {
-  "name": "libxmljs",
+  "name": "@jhulford/libxmljs",
   "binary": {
     "module_name": "xmljs",
     "module_path": "./build/Release/",
