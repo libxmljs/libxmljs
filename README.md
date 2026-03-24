@@ -14,7 +14,7 @@ This is a fork of [libxmljs/libxmljs](https://github.com/libxmljs/libxmljs) with
 
 ## Documentation
 
-[https://libxmljs.github.io/libxmljs/](https://libxmljs.github.io/libxmljs/)
+[https://jhulford.github.io/libxmljs](https://jhulford.github.io/libxmljs)
 
 ## Examples
 

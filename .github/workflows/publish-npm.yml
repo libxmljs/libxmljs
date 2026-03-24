@@ -4,6 +4,8 @@ on:
     push:
         tags:
             - "*"
+        branches:
+            - master
     workflow_dispatch:
 
 # Sets permissions for OIDC token to publish to npm
