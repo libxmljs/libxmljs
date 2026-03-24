@@ -5,52 +5,32 @@ on:
 
 jobs:
     test-merge:
-        runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
             matrix:
-                node-version: [12.x, 14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
-                os: [macos-latest, ubuntu-latest, windows-2022]
-                exclude:
-                    # Node 12 fails to build on Windows 2022 due to missing VS2019 support
-                    - os: windows-2022
-                      node-version: 12.x
-                    - os: windows-2022
-                      node-version: 14.x
+                # Test against Node 22 (LTS) and 24 (current) across platforms
+                node-version: [22, 24]
+                runner: [ubuntu-22.04, ubuntu-24.04-arm, macos-14]
+        runs-on: ${{ matrix.runner }}
         steps:
-            - uses: actions/checkout@v3
-            - name: Force Python 3.10 (newer versions do not work with node-gyp version bundled with node v12)
-              uses: actions/setup-python@v2
+            - uses: actions/checkout@v6
+
+            # Python is required by node-gyp to compile native C++ addons
+            - uses: actions/setup-python@v6
               with:
-                python-version: '3.10'
+                  python-version: "3.12"
+
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
-                  architecture: ${{ (matrix.os == 'macos-latest' && (matrix.node-version == '12.x' || matrix.node-version == '14.x')) && 'x64' || '' }}
                   cache: "npm"
+
+            # Install deps and compile native libxml2 bindings from source
             - run: npm ci --build-from-source
+
+            # Verify TypeScript compiles cleanly
             - run: npm run tsc
+
+            # Run the full test suite (node:test via tsx)
             - run: npm run test
-    # test-merge-linux:
-    #     runs-on: ubuntu-latest
-    #     strategy:
-    #         matrix:
-    #             node-version: [12.x]
-    #     container:
-    #         image: quay.io/pypa/manylinux2014_x86_64
-    #         options: --user root
-    #     steps:
-    #         - uses: actions/checkout@v3
-    #           with:
-    #               persist-credentials: false
-    #               submodules: true
-    #         - name: Use Node.js ${{ matrix.node-version }}
-    #           uses: actions/setup-node@v3
-    #           with:
-    #               node-version: ${{ matrix.node-version }}
-    #               cache: "npm"
-    #         - run: ldd --version
-    #         - run: npm ci --build-from-source
-    #         - run: npm run tsc
-    #         - run: npm run test

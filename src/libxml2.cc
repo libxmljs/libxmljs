@@ -1228,7 +1228,7 @@ SWIGRUNTIME SwigV8ReturnValue _SWIGV8_wrap_equals(const SwigV8Arguments &args) {
 
   if(args.Length() != 1) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for equals.");
 
-  res1 = SWIG_GetInstancePtr(args.Holder(), &arg1);
+  res1 = SWIG_GetInstancePtr(args.This(), &arg1);
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ERROR, "Could not get pointer from 'this' object for equals.");
   }
@@ -1254,7 +1254,7 @@ SWIGRUNTIME SwigV8ReturnValue _wrap_getCPtr(const SwigV8Arguments &args) {
   intptr_t result;
   int res1;
 
-  res1 = SWIG_GetInstancePtr(args.Holder(), &arg1);
+  res1 = SWIG_GetInstancePtr(args.This(), &arg1);
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "getCPtr" "', argument " "1"" of type '" "void *""'");
   }
@@ -7187,7 +7187,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlBuffer(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlBuffer *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlBuffer.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlBuffer.");
@@ -7892,7 +7892,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlNotation(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlNotation *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlNotation.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlNotation.");
@@ -8259,7 +8259,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlEnumeration(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlEnumeration *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlEnumeration.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlEnumeration.");
@@ -9260,7 +9260,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlAttribute(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlAttribute *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlAttribute.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlAttribute.");
@@ -9822,7 +9822,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlElementContent(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlElementContent *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlElementContent.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlElementContent.");
@@ -12607,7 +12607,7 @@ static void _wrap_delete__xmlElement(const v8::WeakCallbackInfo<SWIGV8_Proxy> &d
 static SwigV8ReturnValue _wrap_new__xmlElement(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlElement *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlElement.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlElement.");
@@ -13009,7 +13009,7 @@ static void _wrap_delete__xmlNs(const v8::WeakCallbackInfo<SWIGV8_Proxy> &data) 
 static SwigV8ReturnValue _wrap_new__xmlNs(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlNs *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlNs.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlNs.");
@@ -13969,7 +13969,7 @@ static void _wrap_delete__xmlDtd(const v8::WeakCallbackInfo<SWIGV8_Proxy> &data)
 static SwigV8ReturnValue _wrap_new__xmlDtd(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlDtd *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlDtd.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlDtd.");
@@ -14689,7 +14689,7 @@ static void _wrap_delete__xmlAttr(const v8::WeakCallbackInfo<SWIGV8_Proxy> &data
 static SwigV8ReturnValue _wrap_new__xmlAttr(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlAttr *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlAttr.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlAttr.");
@@ -15067,7 +15067,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlID(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlID *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlID.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlID.");
@@ -15403,7 +15403,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlRef(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlRef *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlRef.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlRef.");
@@ -16774,7 +16774,7 @@ static void _wrap_delete__xmlNode(const v8::WeakCallbackInfo<SWIGV8_Proxy> &data
 static SwigV8ReturnValue _wrap_new__xmlNode(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlNode *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlNode.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlNode.");
@@ -18313,7 +18313,7 @@ static void _wrap_delete__xmlDoc(const v8::WeakCallbackInfo<SWIGV8_Proxy> &data)
 static SwigV8ReturnValue _wrap_new__xmlDoc(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlDoc *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlDoc.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlDoc.");
@@ -18535,7 +18535,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlDOMWrapCtxt(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlDOMWrapCtxt *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlDOMWrapCtxt.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlDOMWrapCtxt.");
@@ -29155,7 +29155,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlError(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlError *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlError.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlError.");
@@ -43236,7 +43236,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlValidCtxt(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlValidCtxt *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlValidCtxt.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlValidCtxt.");
@@ -47777,7 +47777,7 @@ static void _wrap_delete__xmlEntity(const v8::WeakCallbackInfo<SWIGV8_Proxy> &da
 static SwigV8ReturnValue _wrap_new__xmlEntity(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlEntity *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlEntity.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlEntity.");
@@ -49543,7 +49543,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlParserInput(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlParserInput *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlParserInput.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlParserInput.");
@@ -49851,7 +49851,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlParserNodeInfo(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlParserNodeInfo *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlParserNodeInfo.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlParserNodeInfo.");
@@ -50041,7 +50041,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlParserNodeInfoSeq(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlParserNodeInfoSeq *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlParserNodeInfoSeq.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlParserNodeInfoSeq.");
@@ -55397,7 +55397,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlParserCtxt(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlParserCtxt *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlParserCtxt.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlParserCtxt.");
@@ -55648,7 +55648,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSAXLocator(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSAXLocator *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSAXLocator.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSAXLocator.");
@@ -57444,7 +57444,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSAXHandler(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSAXHandler *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSAXHandler.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSAXHandler.");
@@ -59013,7 +59013,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSAXHandlerV1(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSAXHandlerV1 *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSAXHandlerV1.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSAXHandlerV1.");
@@ -59584,7 +59584,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlCharEncodingHandler(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlCharEncodingHandler *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlCharEncodingHandler.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlCharEncodingHandler.");
@@ -60639,7 +60639,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xlinkHandler(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xlinkHandler *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xlinkHandler.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xlinkHandler.");
@@ -66498,7 +66498,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlParserInputBuffer(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlParserInputBuffer *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlParserInputBuffer.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlParserInputBuffer.");
@@ -66951,7 +66951,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlOutputBuffer(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlOutputBuffer *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlOutputBuffer.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlOutputBuffer.");
@@ -73494,7 +73494,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlNodeSet(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlNodeSet *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlNodeSet.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlNodeSet.");
@@ -74168,7 +74168,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathObject(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathObject *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathObject.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathObject.");
@@ -74327,7 +74327,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathType(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathType *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathType.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathType.");
@@ -74484,7 +74484,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathVariable(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathVariable *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathVariable.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathVariable.");
@@ -74643,7 +74643,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathFunct(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathFunct *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathFunct.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathFunct.");
@@ -74802,7 +74802,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathAxis(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathAxis *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathAxis.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathAxis.");
@@ -77165,7 +77165,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathContext(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathContext *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathContext.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathContext.");
@@ -77884,7 +77884,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlXPathParserContext(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlXPathParserContext *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlXPathParserContext.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlXPathParserContext.");
@@ -85459,7 +85459,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlChSRange(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlChSRange *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlChSRange.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlChSRange.");
@@ -85596,7 +85596,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlChLRange(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlChLRange *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlChLRange.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlChLRange.");
@@ -85839,7 +85839,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlChRangeGroup(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlChRangeGroup *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlChRangeGroup.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlChRangeGroup.");
@@ -87046,7 +87046,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__htmlElemDesc(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _htmlElemDesc *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__htmlElemDesc.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__htmlElemDesc.");
@@ -87268,7 +87268,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__htmlEntityDesc(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _htmlEntityDesc *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__htmlEntityDesc.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__htmlEntityDesc.");
@@ -98569,7 +98569,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlURI(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlURI *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlURI.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlURI.");
@@ -103053,7 +103053,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaAnnot(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaAnnot *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaAnnot.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaAnnot.");
@@ -104478,7 +104478,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaAttribute(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaAttribute *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaAttribute.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaAttribute.");
@@ -104615,7 +104615,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaAttributeLink(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaAttributeLink *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaAttributeLink.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaAttributeLink.");
@@ -104787,7 +104787,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaWildcardNs(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaWildcardNs *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaWildcardNs.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaWildcardNs.");
@@ -105433,7 +105433,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaWildcard(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaWildcard *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaWildcard.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaWildcard.");
@@ -106460,7 +106460,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaAttributeGroup(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaAttributeGroup *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaAttributeGroup.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaAttributeGroup.");
@@ -106597,7 +106597,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaTypeLink(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaTypeLink *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaTypeLink.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaTypeLink.");
@@ -106734,7 +106734,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaFacetLink(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaFacetLink *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaFacetLink.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaFacetLink.");
@@ -108971,7 +108971,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaType(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaType *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaType.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaType.");
@@ -110911,7 +110911,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaElement(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaElement *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaElement.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaElement.");
@@ -111584,7 +111584,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaFacet(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaFacet *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaFacet.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaFacet.");
@@ -111940,7 +111940,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchemaNotation(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchemaNotation *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchemaNotation.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchemaNotation.");
@@ -113296,7 +113296,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlSchema(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlSchema *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlSchema.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlSchema.");
@@ -119564,7 +119564,7 @@ fail:
 static SwigV8ReturnValue _wrap_new__xmlLocationSet(const SwigV8Arguments &args) {
   SWIGV8_HANDLESCOPE();
   
-  SWIGV8_OBJECT self = args.Holder();
+  SWIGV8_OBJECT self = args.This();
   _xmlLocationSet *result;
   if(self->InternalFieldCount() < 1) SWIG_exception_fail(SWIG_ERROR, "Illegal call of constructor _wrap_new__xmlLocationSet.");
   if(args.Length() < 0 || args.Length() > 0) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_new__xmlLocationSet.");

@@ -1,0 +1,433 @@
+import { it, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import * as libxml from "../index";
+
+const VALIDATE_RSS_TOLERANCE = 1;
+
+function rssAfterGarbageCollection(maxCycles?: any): number {
+    maxCycles || (maxCycles = 10);
+
+    let rss = libxml.memoryUsage();
+    let freedMemory = 0;
+    do {
+        global.gc?.();
+
+        const rssAfterGc = libxml.memoryUsage();
+        freedMemory = rss - rssAfterGc;
+        rss = rssAfterGc;
+
+        maxCycles--;
+    } while (freedMemory !== 0 && maxCycles > 0);
+
+    return rss;
+}
+
+it('getDtd', () => {
+    let doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>\n<root></root>');
+    let dtd = doc.getDtd();
+    assert.strictEqual(dtd, null);
+    doc = libxml.parseXml('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<root></root>');
+    assert.ok(doc);
+    dtd = doc.getDtd();
+    assert.strictEqual(dtd?.name, "html");
+    assert.strictEqual(dtd?.externalId, null);
+    assert.strictEqual(dtd?.systemId, null);
+    doc = libxml.parseXml(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html SYSTEM "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>'
+    );
+    dtd = doc.getDtd();
+    assert.strictEqual(dtd?.name, "html");
+    assert.strictEqual(dtd?.externalId, null);
+    assert.strictEqual(dtd?.systemId, "http://www.w3.org/TR/html4/strict.dtd");
+    doc = libxml.parseXml(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<root></root>'
+    );
+    dtd = doc.getDtd();
+    assert.strictEqual(dtd?.name, "html");
+    assert.strictEqual(dtd?.externalId, "-//W3C//DTD HTML 4.01//EN");
+    assert.strictEqual(dtd?.systemId, "http://www.w3.org/TR/html4/strict.dtd");
+});
+
+it('setDtd', () => {
+    const doc = libxml.Document();
+    doc.setDtd("html");
+    assert.ok(doc);
+    assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n');
+    doc.setDtd("html", "bacon", "bacon");
+    assert.ok(doc);
+    assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "bacon" "bacon">\n');
+    doc.setDtd("html", null);
+    assert.ok(doc);
+    assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n');
+    assert.throws(() => {
+        // @ts-ignore
+        doc.setDtd(5);
+    });
+    assert.ok(doc);
+    assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n');
+    assert.throws(() => {
+        // @ts-ignore
+        doc.setDtd();
+    });
+    assert.ok(doc);
+    assert.strictEqual(doc.toString(), '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n');
+});
+
+it('blank', () => {
+    const doc = libxml.Document();
+    assert.ok(doc);
+    assert.strictEqual(doc.version(), "1.0");
+    assert.strictEqual(doc.encoding(), "utf8");
+});
+
+it('version', () => {
+    const doc = libxml.Document("2.0");
+    assert.ok(doc);
+    assert.strictEqual(doc.version(), "2.0");
+    assert.strictEqual(doc.encoding(), "utf8");
+});
+
+it('type', () => {
+    const doc = libxml.Document("2.0");
+    assert.strictEqual(doc.type(), "document");
+});
+
+it('full', () => {
+    const doc = libxml.Document("2.0", "UTF-8");
+    assert.ok(doc);
+    assert.strictEqual(doc.version(), "2.0");
+    assert.strictEqual(doc.encoding(), "UTF-8");
+});
+
+it('null_root', () => {
+    const doc = libxml.Document();
+    assert.strictEqual(doc.root(), null);
+});
+
+it('new_root', () => {
+    const doc = libxml.Document();
+    const root = doc.node("root");
+    assert.strictEqual(root.name(), "root");
+    assert.strictEqual(doc.root(), root);
+
+    root.node("child").parent()?.node("child");
+
+    assert.strictEqual(doc.root()?.name(), (doc.get("/root") as any).name());
+});
+
+it('one_child', () => {
+    const doc = libxml.Document();
+    const parent = doc.node("root").node("child-one").parent();
+    assert.notStrictEqual(parent, null);
+    parent?.node("child-two");
+    assert.strictEqual(doc.child(0)?.name(), "child-one");
+    assert.strictEqual(doc.child(1)?.name(), "child-two");
+});
+
+it('root_children', () => {
+    const doc = libxml.Document();
+    doc.node("root").node("child-one").parent()?.node("child-two");
+    assert.strictEqual(doc.childNodes()?.[0]?.name(), "child-one");
+    assert.strictEqual(doc.childNodes()?.[1]?.name(), "child-two");
+});
+
+it('xpath', () => {
+    const doc = libxml.Document();
+    doc.node("root").node("child").parent()?.node("child");
+    assert.strictEqual(doc.find("child")?.length, 2);
+});
+
+it('xpath_child', () => {
+    const doc = libxml.Document();
+    doc.node("root").node("child-one").parent()?.node("child-two");
+    assert.strictEqual((doc.get("child-one") as any).name(), "child-one");
+    assert.strictEqual((doc.get("child-two") as any).name(), "child-two");
+});
+
+it('toString', () => {
+    const control = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        "<root>",
+        '  <child to="wongfoo">',
+        '    <grandchild from="julie numar">with love</grandchild>',
+        "  </child>",
+        "  <sibling>with content!</sibling>",
+        "</root>",
+        "",
+    ].join("\n");
+
+    const doc = libxml.Document();
+    const root = doc.node("root");
+
+    // @ts-ignore
+    const _child = root
+        .node("child")
+        .attr({ to: "wongfoo" })
+        // @ts-ignore
+        .node("grandchild", "with love")
+        .attr({ from: "julie numar" });
+    root.node("sibling", "with content!");
+    assert.strictEqual(doc.toString(), control);
+});
+
+it('add_child_nodes', () => {
+    const doc1_string = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<root><child to="wongfoo"><grandchild from="julie numar">with love</grandchild></child><sibling>with content!</sibling></root>',
+    ].join("\n");
+
+    const doc2_string = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<root><child to="wongfoo"></child><sibling>with content!</sibling></root>',
+    ].join("\n");
+
+    const doc1 = libxml.parseXml(doc1_string);
+    const doc2 = libxml.parseXml(doc2_string);
+
+    const gchild = doc1.child(0)?.child(0);
+    assert.ok(gchild);
+    doc2.child(0)?.addChild(gchild);
+    assert.strictEqual(doc2.toString(), doc1.toString());
+});
+
+it('add_cdata_nodes', () => {
+    const doc1_string = ['<?xml version="1.0" encoding="UTF-8"?>', '<root><child to="wongfoo"/></root>'].join("\n");
+
+    const expected_string = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        "<root>",
+        '  <child to="wongfoo"><![CDATA[<p>Bacon</p>]]></child>',
+        "</root>",
+        "",
+    ].join("\n");
+
+    const doc1 = libxml.parseXml(doc1_string);
+    doc1.child(0)?.cdata("<p>Bacon</p>");
+    assert.strictEqual(doc1.toString(), expected_string);
+});
+
+it('cloned_node', () => {
+    const _rssBefore = rssAfterGarbageCollection();
+
+    const gchild_string = '<grandchild from="julie numar">with love</grandchild>';
+    const doc1_string = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<root><child to="wongfoo">' + gchild_string + "</child><sibling>with content!</sibling></root>",
+        "",
+    ].join("\n");
+
+    const doc2_string = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<root><child to="wongfoo"/><sibling>with content!</sibling></root>',
+        "",
+    ].join("\n");
+
+    const doc1 = libxml.parseXml(doc1_string);
+    const doc2 = libxml.parseXml(doc2_string);
+
+    const gchild = doc1.child(0)?.child(0);
+
+    doc2.child(0)?.addChild(gchild!);
+
+    assert.strictEqual(doc2.toString(), doc1.toString());
+
+    assert.notStrictEqual(doc2.child(0)?.child(0), gchild);
+
+    gchild?.remove();
+
+    assert.strictEqual(doc1.toString(false), doc2_string);
+    assert.strictEqual(doc2.toString(false), doc1_string);
+});
+
+it('validate', () => {
+    const xsd =
+        '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
+    const xml_valid = '<?xml version="1.0"?><comment>A comment</comment>';
+    const xml_invalid = '<?xml version="1.0"?><commentt>A comment</commentt>';
+
+    const xsdDoc = libxml.parseXml(xsd);
+
+    const xmlDocValid = libxml.parseXml(xml_valid);
+    const xmlDocInvalid = libxml.parseXml(xml_invalid);
+
+    assert.strictEqual(xmlDocValid.validate(xsdDoc), true);
+    assert.strictEqual(xmlDocValid.validationErrors.length, 0);
+
+    assert.strictEqual(xmlDocInvalid.validate(xsdDoc), false);
+    assert.strictEqual(xmlDocInvalid.validationErrors.length, 1);
+});
+
+it('rngValidate', () => {
+    const rng =
+        '<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">' +
+        "<zeroOrMore>" +
+        '<element name="card">' +
+        '<element name="name">' +
+        "<text/>" +
+        "</element>" +
+        '<element name="email">' +
+        "<text/>" +
+        "</element>" +
+        "</element>" +
+        "</zeroOrMore>" +
+        "</element>";
+
+    const xml_valid =
+        "<addressBook>" +
+        "<card>" +
+        "<name>John Smith</name>" +
+        "<email>js@example.com</email>" +
+        "</card>" +
+        "<card>" +
+        "<name>Fred Bloggs</name>" +
+        "<email>fb@example.net</email>" +
+        "</card>" +
+        "</addressBook>";
+
+    const xml_invalid =
+        "<addressBook>" +
+        "<card>" +
+        "<Name>John Smith</Name>" +
+        "<email>js@example.com</email>" +
+        "</card>" +
+        "<card>" +
+        "<name>Fred Bloggs</name>" +
+        "<email>fb@example.net</email>" +
+        "</card>" +
+        "</addressBook>";
+
+    const rngDoc = libxml.parseXml(rng);
+    const xmlDocValid = libxml.parseXml(xml_valid);
+    const xmlDocInvalid = libxml.parseXml(xml_invalid);
+
+    assert.strictEqual(xmlDocValid.rngValidate(rngDoc), true);
+    assert.strictEqual(xmlDocValid.validationErrors.length, 0);
+
+    assert.strictEqual(xmlDocInvalid.rngValidate(rngDoc), false);
+    assert.strictEqual(xmlDocInvalid.validationErrors.length, 1);
+});
+
+describe('errors', () => {
+    it('empty_html_doc', () => {
+        const xml_only_comments = "<!-- empty -->";
+        const doc = libxml.parseHtml(xml_only_comments);
+        assert.strictEqual(doc.root(), null);
+
+        assert.throws(() => {
+            doc.get("*");
+        }, /Document has no root element/);
+
+        assert.throws(() => {
+            doc.find("*");
+        }, /Document has no root element/);
+
+        assert.throws(() => {
+            doc.child(1);
+        }, /Document has no root element/);
+
+        assert.throws(() => {
+            doc.childNodes();
+        }, /Document has no root element/);
+
+        assert.throws(() => {
+            doc.namespaces();
+        }, /Document has no root element/);
+    });
+});
+
+it('validate_memory_usage', () => {
+    const xsd =
+        '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="comment" type="xs:string"/></xs:schema>';
+    const xml = '<?xml version="1.0"?><comment>A comment</comment>';
+
+    const xsdDoc = libxml.parseXml(xsd);
+    const xmlDoc = libxml.parseXml(xml);
+
+    const _rssBefore = rssAfterGarbageCollection();
+
+    for (let i = 0; i < 10000; ++i) {
+        xmlDoc.validate(xsdDoc);
+    }
+});
+
+it('fromHtml', () => {
+    const html = "<p>A paragraph with <span>inline tags</span></p>";
+    const header =
+        '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n<html><body>';
+    const footer = "</body></html>\n";
+
+    const parsedHtml = libxml.Document.fromHtml(html);
+
+    assert.strictEqual(parsedHtml.toString(), header + html + footer);
+});
+
+it('fromHtmlFragment', () => {
+    const html = "<p>A paragraph with <span>inline tags</span></p>";
+
+    const parsedHtml = libxml.Document.fromHtmlFragment(html);
+
+    assert.strictEqual(parsedHtml.toString(), html + "\n");
+});
+
+it('fromXml', () => {
+    const xml =
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<!DOCTYPE type [<!ENTITY ent "entity">]>' +
+        '<root><node1>&ent;</node1><node2>node2</node2></root>';
+
+    const parsedXml = libxml.Document.fromXml(xml);
+    const node: any = parsedXml?.get('//node1');
+    const text = node.text();
+    assert.strictEqual(text, 'entity');
+});
+
+it('fromXmlAsync', async () => {
+    const xml =
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<!DOCTYPE type [<!ENTITY ent "entity">]>' +
+        '<root><node1>&ent;</node1><node2>node2</node2></root>';
+
+    const parsedXml = await libxml.Document.fromXmlAsync(xml, {flags: [libxml.XMLParseFlags.XML_PARSE_NOENT]});
+    const node: any = parsedXml?.get('//node1');
+    const text = node.text();
+    assert.strictEqual(text, 'entity');
+});
+
+it('validate_rng_memory_usage', () => {
+    const rng =
+        '<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">' +
+        "<zeroOrMore>" +
+        '<element name="card">' +
+        '<element name="name">' +
+        "<text/>" +
+        "</element>" +
+        '<element name="email">' +
+        "<text/>" +
+        "</element>" +
+        "</element>" +
+        "</zeroOrMore>" +
+        "</element>";
+
+    const xml_valid =
+        "<addressBook>" +
+        "<card>" +
+        "<name>John Smith</name>" +
+        "<email>js@example.com</email>" +
+        "</card>" +
+        "<card>" +
+        "<name>Fred Bloggs</name>" +
+        "<email>fb@example.net</email>" +
+        "</card>" +
+        "</addressBook>";
+
+    const rngDoc = libxml.parseXml(rng);
+    const xmlDoc = libxml.parseXml(xml_valid);
+
+    const _rssBefore = rssAfterGarbageCollection();
+
+    for (let i = 0; i < 10000; ++i) {
+        xmlDoc.rngValidate(rngDoc);
+    }
+
+    assert.ok(rssAfterGarbageCollection() - _rssBefore < VALIDATE_RSS_TOLERANCE);
+});

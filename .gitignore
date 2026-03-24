@@ -4,7 +4,7 @@ build/
 node_modules/
 npm-debug.log
 .DS_Store
-dist/
+dist/test/
 .vscode
 crash.log
 swig.xml
