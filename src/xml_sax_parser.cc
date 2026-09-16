@@ -84,6 +84,9 @@ void XmlSaxParser::releaseContext() {
 
 NAN_METHOD(XmlSaxParser::NewParser) {
     Nan::HandleScope scope;
+    if (!info.IsConstructCall()) {
+        return Nan::ThrowTypeError("SaxParser must be called with new");
+    }
     XmlSaxParser *parser = new XmlSaxParser();
     parser->Wrap(info.Holder());
 
@@ -92,6 +95,9 @@ NAN_METHOD(XmlSaxParser::NewParser) {
 
 NAN_METHOD(XmlSaxParser::NewPushParser) {
     Nan::HandleScope scope;
+    if (!info.IsConstructCall()) {
+        return Nan::ThrowTypeError("SaxPushParser must be called with new");
+    }
     XmlSaxParser *parser = new XmlSaxParser();
     parser->initialize_push_parser();
     parser->Wrap(info.Holder());
@@ -113,7 +119,15 @@ void XmlSaxParser::Callback(const char *what, int argc,
     // get the 'emit' function from ourselves
     v8::Local<v8::Value> emit_v =
         Nan::Get(this->handle(), Nan::New(emit_symbol)).ToLocalChecked();
-    assert(emit_v->IsFunction());
+
+    // 'emit' is supplied by the JavaScript wrapper; if it is missing or has
+    // been overwritten with a non-function, raise a JS exception instead of
+    // aborting the process.
+    if (!emit_v->IsFunction()) {
+        delete[] args;
+        Nan::ThrowTypeError("SaxParser instance has no 'emit' function");
+        return;
+    }
 
     // trigger the event
     Nan::MakeCallback(this->handle(), v8::Local<v8::Function>::Cast(emit_v),

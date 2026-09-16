@@ -257,6 +257,29 @@
     NAN_METHOD(fromBufferAsync) {
         Nan::HandleScope scope;
 
+        if (!info[0]->IsNumber()) {
+            return Nan::ThrowTypeError("fromBufferAsync: type must be a number");
+        }
+        if (!info[1]->IsString() && !node::Buffer::HasInstance(info[1])) {
+            return Nan::ThrowTypeError(
+                "fromBufferAsync: buffer must be a string or a Buffer");
+        }
+        if (!info[2]->IsNumber()) {
+            return Nan::ThrowTypeError("fromBufferAsync: length must be a number");
+        }
+        if (!info[3]->IsString()) {
+            return Nan::ThrowTypeError("fromBufferAsync: url must be a string");
+        }
+        if (!info[4]->IsString()) {
+            return Nan::ThrowTypeError("fromBufferAsync: encoding must be a string");
+        }
+        if (!info[5]->IsNumber()) {
+            return Nan::ThrowTypeError("fromBufferAsync: flags must be a number");
+        }
+        if (!info[6]->IsFunction()) {
+            return Nan::ThrowTypeError("fromBufferAsync: callback must be a function");
+        }
+
         auto type =     Nan::To<int>(info[0]).FromJust();
         auto buffer =   info[1];
         auto length =   Nan::To<int>(info[2]).FromJust();
