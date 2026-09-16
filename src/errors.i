@@ -70,6 +70,11 @@
     NAN_METHOD(withStructuredErrors) {
         Nan::HandleScope scope;
 
+        if (info.Length() < 1 || !info[0]->IsFunction()) {
+            return Nan::ThrowTypeError(
+                "withStructuredErrors: first argument must be a function");
+        }
+
         auto array = SWIGV8_ARRAY_NEW(0);
 
         xmlSetStructuredErrorFunc(reinterpret_cast<void*>(&array), XmlSyntaxError::PushToArray);
@@ -91,6 +96,11 @@
     
     NAN_METHOD(withGenericErrors) {
         Nan::HandleScope scope;
+
+        if (info.Length() < 1 || !info[0]->IsFunction()) {
+            return Nan::ThrowTypeError(
+                "withGenericErrors: first argument must be a function");
+        }
 
         auto array = SWIGV8_ARRAY_NEW(0);
 
