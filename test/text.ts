@@ -106,7 +106,10 @@ module.exports.add_prev_sibling_merge_text = function (assert: any) {
 
     var children = doc.root()?.childNodes();
     assert.strictEqual(children?.length, 2);
-    assert.strictEqual("quxbar", children?.[0]?.text());
+    var node = children?.[0];
+    if (node instanceof libxml.XMLElement) {
+        assert.strictEqual("quxbar", node?.text());
+    }
     assert.ok(children?.[0] != qux);
 
     // passed node is not changed
@@ -126,7 +129,10 @@ module.exports.add_next_sibling_merge_text = function (assert: any) {
 
     var children = doc.root()?.childNodes();
     assert.strictEqual(children?.length, 2);
-    assert.strictEqual("barqux", children?.[0]?.text());
+    var node = children?.[0];
+    if (node instanceof libxml.XMLElement) {
+        assert.strictEqual("barqux", node?.text());
+    }
     assert.ok(children?.[0] != qux);
 
     assert.strictEqual(doc, qux.parent());
