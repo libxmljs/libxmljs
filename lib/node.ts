@@ -41,6 +41,7 @@ import bindings from "./bindings";
 export enum XMLNodeError {
     NO_REF = "Node has no native reference",
     NO_DOC = "Node has no document",
+    NO_NAMESPACES = "Node has no namespaces",
 }
 export type XPathNamespace = string | XMLNamespace | { [key: string]: string };
 
@@ -417,12 +418,18 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
      */
     public childNodes() {
         const _ref = this.getNativeReference()
-        const children: XMLElement[] = [];
+        const children: XMLNode[] = [];
 
         let child = _ref.children;
 
         while (child !== null) {
-            children.push(createXMLReferenceOrThrow(XMLElement, child, XMLNodeError.NO_REF));
+            // https://nvd.nist.gov/vuln/detail/cve-2024-34391
+            if (child.type == XMLElementType.XML_ENTITY_DECL) {
+                // TODO: improve this by making a new class like XMLNode for XMLEntityDecl
+                children.push(createXMLReferenceOrThrow(XMLNode, child, XMLNodeError.NO_REF));
+            } else {
+                children.push(createXMLReferenceOrThrow(XMLElement, child, XMLNodeError.NO_REF));
+            }
             child = child.next;
         }
 
@@ -605,6 +612,11 @@ export class XMLNode extends XMLReference<xmlNodePtr> {
 
         const _ref = this.getNativeReference();
 
+        // https://nvd.nist.gov/vuln/detail/cve-2024-34392
+        if (_ref.type === XMLElementType.XML_ENTITY_DECL) { 
+            throw new Error(XMLNodeError.NO_NAMESPACES);
+        }
+
         if (onlyLocal === true) {
             let namespace = _ref.nsDef;
 
@@ -714,7 +726,7 @@ export class XMLElement extends XMLNode {
         }
 
         this.childNodes().forEach((child) => {
-            xmlUnlinkNode(child.getNativeReference());
+            child.remove();
         });
 
         xmlNodeSetContent(_ref, content);
